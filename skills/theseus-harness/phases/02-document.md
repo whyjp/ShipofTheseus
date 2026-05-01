@@ -1,33 +1,29 @@
-# Phase 2 — Document Review
+# Phase 02 — 의도 문서 리뷰
 
-## Goal
+## 한 줄 요약
+**의도 문서를 *문서로서* 검증한다** — 명확성·완전성·내부 일관성. 구현 추론은 아직 시작하지 않는다.
 
-Have a reviewer agent stress-test the intent doc from Phase 1 *as a document* — clarity, completeness, internal consistency — before any implementation reasoning happens.
+## 입력
+- `intent/01-intent.md` 만 (원문 요청은 일부러 제공하지 않는다 — 리뷰어는 문서만 보고 판단해야 함).
 
-## Inputs
+## 서브에이전트
+[`../agents/doc-reviewer.md`](../agents/doc-reviewer.md) 로 `Agent(subagent_type="general-purpose")`.
 
-- `.theseus/$RUN_ID/01-intent.md`
+## 산출물
+`intent/02-intent-review.md`:
 
-## Sub-agent
+ⓐ **판정** — `accept` | `revise` | `reject`.
+ⓑ **명확성 이슈** — 두 가지로 읽힐 수 있는 문장 (행 번호 인용 필수).
+ⓒ **일관성 이슈** — 제약 A 와 비목표 B 가 충돌 등.
+ⓓ **누락** — 템플릿 섹션이 형식만 채워져 있고 의미 없는 곳.
+ⓔ **재작성 제안** — 가장 나쁜 셋에 대해 구체적 대안 문장.
 
-Spawn `Agent(subagent_type="general-purpose")` with [`../agents/doc-reviewer.md`](../agents/doc-reviewer.md). Do **not** pass the original raw request — the reviewer must judge the intent doc on its own terms.
+## 성공 기준
 
-## Output
+판정마다 행-수준 인용이 붙어 있다. 인용 없는 판정은 무효 — 재실행.
 
-`.theseus/$RUN_ID/02-intent-review.md` with:
+## 지휘자 후속
 
-- **Verdict** — `accept` | `revise` | `reject`.
-- **Clarity issues** — sentences that are ambiguous or under-defined.
-- **Consistency issues** — internal contradictions (e.g. constraint A and non-goal B fighting).
-- **Missing sections** — anything from the template that wasn't filled in meaningfully.
-- **Suggested rewrites** — concrete proposed wording for the worst offenders.
-
-## Success criterion
-
-The verdict is justified by line-level evidence from `01-intent.md`. A verdict without quotes is insufficient — re-run.
-
-## What the conductor does next
-
-- `accept` → proceed to Phase 3.
-- `revise` → re-run Phase 1 with the review attached. Track the iteration count; stop after 3 attempts and ask the user.
-- `reject` → halt and ask the user. The intent is fundamentally unclear.
+ⓐ `accept` → 페이즈 03.
+ⓑ `revise` → 리뷰 첨부해 페이즈 01 재실행. 시도 3 회 캡, 초과 시 사용자 질의.
+ⓒ `reject` → 정지, 사용자 질의. 의도 자체가 근본적으로 모호.

@@ -1,53 +1,56 @@
-# Sprint `NN` Report
+# 스프린트 `NN` 보고서
 
-> Run id: `<RUN_ID>` · Sprint: `NN` · Checkpoint commit: `<sha>` · Started: `<ISO>` · Ended: `<ISO>`
+> **프로젝트:** `<프로젝트명>` · **스프린트:** `NN`
+> **체크포인트 커밋:** `<sha>`
+> **시작:** `<ISO>` · **종료:** `<ISO>`
+> **이 스프린트 소요:** `<n분 n초>` · **누적 경과:** `<n분 n초>` · **현재 시각:** `<ISO>`
 
-## Suites
+## 스위트
 
-| Suite | Pass | Fail | Skip | Duration | Coverage |
-| ----- | ---: | ---: | ---: | -------: | -------: |
-| BE unit | | | | | |
-| BE integration | | | | | |
-| FE unit | | | | | |
-| FE integration | | | | | |
+| 스위트 | 통과 | 실패 | 스킵 | 소요 | 커버리지 |
+| ----- | ---: | ---: | ---: | ---: | ------: |
+| BE 단위 | | | | | |
+| BE 통합 | | | | | |
+| FE 단위 | | | | | |
+| FE 통합 | | | | | |
 | E2E | | | | | n/a |
-| Property-based (if applicable) | | | | | n/a |
+| 속성 기반 (해당 시) | | | | | n/a |
 
-## Failing tests
+## 실패 테스트
 
-- `path::test_name` — first-line error message
+- `path::test_name` — 첫 줄 에러 메시지
 - …
 
-## Score
+## 점수
 
 ```json
-<paste output of scoring/score.py here>
+<scoring/score.py 출력 그대로 paste>
 ```
 
-### Sub-scores
+### 차원별 sub-score
 
-| Dimension | This sprint | Prior sprint | Δ |
-| --------- | ----------: | -----------: | ---: |
+| 차원 | 이 스프린트 | 직전 | Δ |
+| ---- | ---------: | ---: | ---: |
 | correctness | | | |
 | scope_fit | | | |
-| solid | | | |
+| solid (DIP 위반 여부) | | | |
 | coverage | | | |
 | fe_be_parity | | | |
 | e2e_pass | | | |
 
-## Hard caps applied
+## 적용된 hard cap
 
-- <none, or list with reasons>
+- <없음, 또는 항목별 사유>
 
-## Verdict
+## 판정
 
-`pass` (≥ 0.9) | `iterate` (< 0.9, no regression) | `regression` (drop > 0.05)
+`pass` (≥ 0.9) | `iterate` (< 0.9, 회귀 아님) | `regression` (Δ -0.05 초과)
 
-## Notes for next sprint
+## 다음 스프린트 메모
 
-- <Concrete fixes the implementer should pick up next>
-- <Any property-based test ideas surfaced from coverage holes>
+- <구현자가 다음에 잡을 구체적 수정>
+- <커버리지 구멍에서 떠오른 property test 아이디어>
 
-## Bisect link (only if regression)
+## 바이섹트 링크 (회귀 시에만)
 
-See `sprints/NN-bisect.md`.
+`sprints/NN/bisect.md` 참조.

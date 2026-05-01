@@ -1,4 +1,4 @@
-"""Tests for the score.py rubric. Run: python -m pytest scoring/test_score.py -q"""
+"""score.py 테스트. 실행: python -m pytest scoring/test_score.py -q"""
 
 from __future__ import annotations
 
@@ -6,8 +6,6 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-
-import pytest
 
 SCORE = Path(__file__).parent / "score.py"
 
@@ -34,6 +32,7 @@ def _green_inputs() -> dict:
         "files_touched": 10,
         "modules_passing_solid": 4,
         "modules_total": 4,
+        "dip_violation": False,
         "be_coverage": 0.95,
         "fe_coverage": 0.92,
         "fe_be_parity": "full",
@@ -114,3 +113,22 @@ def test_zero_files_touched_does_not_divide_by_zero():
     inputs["files_mapped_to_todos"] = 0
     _, out = _run(inputs)
     assert out["sub_scores"]["scope_fit"] == 1.0
+
+
+def test_dip_violation_caps_total_at_06():
+    inputs = _green_inputs()
+    inputs["dip_violation"] = True
+    rc, out = _run(inputs)
+    assert rc == 1
+    assert out["score"] == 0.6
+    assert out["dip_violation"] is True
+    assert any("dip_violation" in c for c in out["caps_applied"])
+
+
+def test_dip_violation_caps_solid_subscore_at_05():
+    inputs = _green_inputs()
+    inputs["dip_violation"] = True
+    inputs["modules_passing_solid"] = 4
+    inputs["modules_total"] = 4
+    _, out = _run(inputs)
+    assert out["sub_scores"]["solid"] == 0.5

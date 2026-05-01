@@ -1,30 +1,26 @@
-# Phase 3 — Independent Comprehension
+# Phase 03 — 독립 재이해 (콜드)
 
-## Goal
+## 한 줄 요약
+**의도 문서가 의미를 전달하는지 왕복으로 검증한다.** 원문도, 리뷰 결과도, 지휘자의 추론도 본 적 없는 fresh 에이전트가 의도 문서만 읽고 자기 말로 다시 써본다. 차이가 크면 의도 문서가 잘못된 것.
 
-Verify the intent doc transmits meaning, not just words. A *fresh* sub-agent — with no knowledge of the original request, the reviewer's verdict, or your own reasoning — reads the intent doc and writes back what it understood. If the round-trip loses meaning, the doc is wrong.
+## 입력
+- `intent/01-intent.md` 만.
 
-## Inputs
+## 서브에이전트
+**반드시 fresh `Agent(subagent_type="general-purpose")`** — 이전 컨텍스트를 절대 공유하지 않음. [`../agents/independent-comprehender.md`](../agents/independent-comprehender.md) 의 self-contained 프롬프트로.
 
-- `.theseus/$RUN_ID/01-intent.md` (only — nothing else)
+## 산출물
+`intent/03-comprehension.md`:
 
-## Sub-agent
+ⓐ **내가 이해한 목표** — 한 문단, 자기 말.
+ⓑ **성공의 모습** — 외부에서 관찰 가능한 결과.
+ⓒ **나라면 어디부터** — 첫 3 단계.
+ⓓ **불확실한 점** — 사용자에게 물어야 할 항목 (반드시 1개 이상).
 
-Spawn a *new* `Agent(subagent_type="general-purpose")` with [`../agents/independent-comprehender.md`](../agents/independent-comprehender.md). The prompt must be self-contained: do not reference earlier conversation. Treat the agent as if it walked into the building this morning.
+## 성공 기준
 
-## Output
+지휘자가 `01-intent.md` 의 "무엇을" 과 본 문서의 "내가 이해한 목표" 를 diff 한다. 의미상 차이가 크면 (범위·스테이크홀더·성공지표 변동) 의도 문서가 실패한 것 — 페이즈 01 재실행.
 
-`.theseus/$RUN_ID/03-comprehension.md`:
+## 왜 이 페이즈가 필요한가
 
-- **What I understand the goal to be** — restated in the agent's own words.
-- **What success looks like** — observable outcomes.
-- **Where I'd start** — first 3 implementation steps the agent would take.
-- **What I'm uncertain about** — list of "I would need to ask the user…" items.
-
-## Success criterion
-
-The conductor (you) does a *diff* between this doc and `01-intent.md`. If the comprehender's "what I understand" diverges meaningfully from the intent's "what" — different scope, different stakeholders, different success metric — the intent doc failed and Phase 1 must be re-run with the divergence as feedback.
-
-## Why this phase exists
-
-This is the first Ouroboros bite: the harness's own output (`01-intent.md`) becomes the next agent's input, and the agent's output is checked against the original. Drift gets caught here, before any code costs time.
+우로보로스의 첫 번째 자기 무는 지점. 출력(`01-intent.md`)을 다음 입력으로 흘리고, 그 결과를 원본과 대조해 표류를 잡는다. 코드 시간 들기 전에.

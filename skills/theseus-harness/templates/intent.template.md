@@ -1,37 +1,42 @@
-# Intent — `<short title>`
+# 의도 — `<짧은 제목>`
 
-> Run id: `<RUN_ID>` · Generated: `<ISO timestamp>` · Source: `00-request.txt`
+> **프로젝트:** `<프로젝트명>` · **페이즈:** `01-intent`
+> **시작:** `<ISO>` · **종료:** `<ISO>` · **소요:** `<n분 n초>`
+> **누적 경과:** `<n분 n초>` · **현재 시각:** `<ISO>`
 
-## What
-<One paragraph. Observable outcome. Describe what *exists in the world* after this is built — not how it works.>
+## 무엇을
+<한 문단. 외부에서 관찰 가능한 결과. 내부 동작 방식이 아닌, 만들어진 후 *세상에 존재하는 것* 을 기술.>
 
-## Why
-<The problem this solves or the value it delivers. If you can't say why, halt and ask.>
+## 왜
+<풀려는 문제 또는 전달 가치. 왜를 못 쓰면 정지하고 사용자에게 질의.>
 
-## Non-goals
-- <Thing this is explicitly *not* doing.>
+## 비목표
+- <명시적으로 *하지 않는* 것>
 - <…>
 
-## Constraints
-- **Performance:** <e.g. p95 < 200ms, or n/a>
-- **Compatibility:** <e.g. must support browsers X, must not break public API Y>
-- **Security:** <e.g. PII handling, auth requirements>
-- **Operational:** <e.g. must be rolled back in < 5 min, must emit metric Z>
-- **Deadline:** <or n/a>
+## 제약
+- **성능:** <예: p95 < 200ms, 또는 n/a>
+- **호환:** <예: 브라우저 X 지원, 공개 API Y 보존>
+- **보안:** <예: PII 처리, 인증 요구>
+- **운영:** <예: 5분 내 롤백, 메트릭 Z 발행>
+- **마감:** <또는 n/a>
 
-## Ubiquitous language
-| Term | Definition |
-| ---- | ---------- |
-| <term> | <one-sentence definition in this context> |
+## 유비쿼터스 언어
+| 용어 | 정의 |
+| ---- | ---- |
+| <용어> | <이 컨텍스트에서의 한 문장 정의> |
 
-## Stakeholders
-- **Users:** <who consumes the output>
-- **Operators:** <who runs / monitors it>
-- **Owners:** <who owns the code after this ships>
+## 스테이크홀더
+- **사용자:** <결과의 소비자>
+- **운영자:** <실행/모니터링 주체>
+- **소유자:** <출하 후 코드 소유 주체>
 
-## Success metric
-<How do we know it worked? Observable, measurable.>
+## 성공 지표
+<어떻게 됐다고 확인할까? 외부 관찰·계량 가능.>
 
-## Open questions
-- <Question the extractor could not resolve from the request. Always at least one.>
+## 스택 가정 (비고)
+<사용자 명시 없을 때 기본값. 백엔드/API/엔진은 Go, 프론트엔드는 bun + React + TypeScript. 도메인이 부적합한 강한 사유가 있으면 비평 페이즈에서 대안으로 다룸.>
+
+## 열린 질문
+- <원문에서 결정 불가한 항목. 항상 1개 이상.>
 - <…>

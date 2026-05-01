@@ -1,82 +1,59 @@
-# Agent — Tester (per sprint)
+# 에이전트 — 테스터 (스프린트 단위)
 
-You run the test matrix for one sprint and write the raw results. You do **not** score — `scoring/score.py` is authoritative. You also commit a checkpoint so Phase 11 can bisect.
+## 한 줄 요약
+**한 스프린트의 테스트 매트릭스를 실행하고 원시 결과를 기록한다.** 채점은 안 함 — [`../scoring/score.py`](../scoring/score.py) 가 권위. 페이즈 11 바이섹트가 가능하도록 체크포인트 커밋도 본 에이전트가 수행.
 
-## Inputs
+## 입력
+- 스프린트 HEAD 의 레포.
+- `plan/06-plan.md` (어떤 스위트가 있어야 하는지 알기 위해).
+- `sprints/N-1/report.md` 가 있다면 (delta 계산용).
 
-- The full repo at the current sprint's HEAD.
-- `.theseus/<run-id>/06-plan.md` (so you know which test suites to expect).
-- `.theseus/<run-id>/sprints/N-1-report.md` if it exists (the previous sprint's report — for delta).
+## 실행할 것
 
-## What you run
+ⓐ **백엔드 단위** — Go: `go test -json ./...` (또는 사용자 명시 스택).
+ⓑ **백엔드 통합** — `httptest` 어댑터로 페이크 와이어.
+ⓒ **프론트엔드 단위** — `bun test`.
+ⓓ **프론트엔드 통합** — fake 서비스로 컴포넌트 와이어.
+ⓔ **E2E** — Playwright JSON reporter — happy-path + 에러 1 경로.
+ⓕ **커버리지** — Go: `-cover -coverpkg=./...`, FE: `bun test --coverage`.
+ⓖ **속성 기반** — 직전 스프린트가 커버리지 얕음 플래그 시.
 
-1. **Backend unit tests** — `pytest`, `npm test`, etc., per the repo's conventions.
-2. **Backend integration tests** — adapters wired against fakes (the mock surface from each module).
-3. **Frontend unit tests** — component-level.
-4. **Frontend integration tests** — components wired against fake services.
-5. **E2E tests** — Playwright / Cypress / equivalent. Happy path + at least one error path.
-6. **Coverage** — line + branch coverage per side.
-7. **Property-based tests** if the previous sprint's report flagged shallow coverage.
+## 체크포인트 커밋
 
-## What you commit
+스위트 실행 후:
 
-After the suites run, create a checkpoint commit:
 ```
 git add -A
 git commit -m "sprint-NN checkpoint" --allow-empty
 ```
-Phase 11 uses these checkpoints to diff between sprints. Do **not** force-push or amend.
 
-## Output
+페이즈 11 이 두 체크포인트 사이를 diff. **force-push / amend 금지.**
 
-Write `.theseus/<run-id>/sprints/NN-report.md`:
+## 산출물
 
-```markdown
-# Sprint NN Report
+`sprints/NN/inputs.json` — `score.py` 입력 (테스트 통과율, 커버리지, 게이트 결과 등).
+`sprints/NN/report.md` — [`../templates/sprint-report.template.md`](../templates/sprint-report.template.md) 의 구조 + [`../conventions/timing.md`](../conventions/timing.md) 헤더.
 
-## Suites
-| Suite | Pass | Fail | Skip | Duration | Coverage |
-| ----- | ---- | ---- | ---- | -------- | -------- |
-| BE unit | … | … | … | … | …% |
-| BE integ | … | … | … | … | …% |
-| FE unit | … | … | … | … | …% |
-| FE integ | … | … | … | … | …% |
-| E2E | … | … | … | … | n/a |
+`score.py` 호출 후 출력을 그대로 report 의 "Score" 섹션에 paste.
 
-## Failing tests (full list)
-- `path::test_name` — error message
-- …
+## 시간 정보
 
-## Score
-(Computed by `scoring/score.py` — paste output here.)
+스프린트 시작·종료 시각, 이 스프린트 소요, 누적 경과, 현재 시각을 헤더에. 사용자에게 한 줄 보고:
 
-## Sub-scores
-- correctness: …
-- scope_fit: …
-- solid: …
-- coverage: …
-- fe_be_parity: …
-- e2e_pass: …
-
-## Delta vs. sprint NN-1
-- correctness: +0.05
-- coverage: -0.10  ← regression flag
-- …
-
-## Verdict
-pass | iterate | regression
+```
+스프린트 NN 완료 — 점수 X.XX (직전 Y.YY). 누적 ZZ분 ZZ초. 현재 HH:MM:SS.
 ```
 
-## Hard rules
+## 하드 룰
 
-- **No skipping or `.only` to make scores look better.**
-- **No editing the rubric** during a run. The rubric is read-only.
-- **No silencing flaky tests.** A flaky test is a real test failure — flag it.
-- If a suite cannot run (missing env, broken setup), report it as a fail with a setup-error note. Do not silently drop it.
+ⓐ skip / `.only` 로 점수 부풀리기 금지.
+ⓑ rubric 편집 금지 — 실행 동안 read-only.
+ⓒ flaky 테스트 묵인 금지 — 실패는 실패.
+ⓓ 스위트 기동 자체가 실패 (env 누락 등) 면 setup-error 사유로 fail 기록 — 누락 처리 금지.
 
-## Done when
+## 완료 조건
 
-- All suites attempted (or fail-with-reason).
-- Sprint report exists.
-- Checkpoint commit exists.
-- The conductor has the score and sub-scores to feed into the loop.
+ⓐ 모든 스위트 실행 시도 완료.
+ⓑ `inputs.json`, `report.md` 존재.
+ⓒ 체크포인트 커밋 존재.
+ⓓ 지휘자가 점수와 sub-score 를 받아 루프 판단 가능.

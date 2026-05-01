@@ -1,46 +1,56 @@
-# Phase 11 — Regression Bisect
+# Phase 11 — 회귀 바이섹트
 
-## Goal
+## 한 줄 요약
+**점수가 0.05 이상 하락한 스프린트가 발생하면 *추가 구현 전* 에 원인 판자를 찾는다.** 테세우스의 배에 잘못된 판자가 박혀 있다 — 더 박기 전에 빼낸다. 분석가는 진단만, 코드 수정 금지.
 
-When a sprint's score drops > 0.05 from the previous sprint, find the offending change *before* any further implementation. The Ship of Theseus has a bad plank — replace it before laying more.
+## 트리거
 
-## Trigger
+페이즈 10 의 루프가 `score(N) < score(N-1) - 0.05` 일 때 자동 호출. 수동: `score.py --bisect`.
 
-Phase 10's loop calls this whenever `score(sprint_n) < score(sprint_n-1) - 0.05`. Manual trigger: `score.py --bisect <run-id> <sprint>`.
+## 입력
+- `sprints/N-1/report.md` (마지막 양호)
+- `sprints/N/report.md` (회귀)
+- 두 체크포인트 사이의 `git diff`
+- 스프린트 N 의 실패 테스트 목록 + 에러 메시지
 
-## Inputs
+## 서브에이전트
+[`../agents/regression-analyst.md`](../agents/regression-analyst.md). **코드 편집 금지** — 진단만.
 
-- `.theseus/$RUN_ID/sprints/N-1-report.md` (last good)
-- `.theseus/$RUN_ID/sprints/N-report.md` (the regression)
-- The git diff between the two sprints' commits (each sprint commits a checkpoint — see `agents/tester.md`).
-- Failing test names + error messages from sprint N.
+## 산출물
+`sprints/NN/bisect.md` — [`../conventions/timing.md`](../conventions/timing.md) 헤더 + 다음:
 
-## Sub-agent
+ⓐ **무엇이 떨어졌나** — 어떤 sub-score 가 얼마만큼.
+ⓑ **무엇이 변했나** — diff 요약 (파일·함수·라인).
+ⓒ **주 가설** — 함수/라인 수준에서 단일 후보. 실패 테스트 1개 이상이 이 가설과 정합.
+ⓓ **반대 가설** — 최소 1개, 왜 덜 가능성 있는지.
+ⓔ **권고** — 다음 셋 중 하나:
+  ① `revert <commit-or-file>` — 외과적 되돌림.
+  ② `re-architect <module>` — 더 깊은 SOLID 위반의 증상 → 그 모듈에 대해 페이즈 06 부터 재실행.
+  ③ `accept` — 회귀가 실은 의도된 변화 (제약이 중간에 바뀜) — 사용자가 명시 확인.
 
-Spawn `Agent(subagent_type="general-purpose")` with [`../agents/regression-analyst.md`](../agents/regression-analyst.md). The analyst is forbidden from editing code — it only diagnoses.
+## 지휘자 후속
 
-## Output
+[`../conventions/interview.md`](../conventions/interview.md) 규칙으로 사용자에게:
 
-`.theseus/$RUN_ID/sprints/NN-bisect.md`:
+```
+회귀 바이섹트 결과를 어떻게 처리할까요?
 
-- **What dropped** — which sub-scores dropped, by how much.
-- **What changed** — diff summary between sprint N-1 and N (files, functions, lines).
-- **Hypothesis** — single most likely root cause, named at the function-or-line level.
-- **Evidence** — at least one failing test traced to the hypothesized change.
-- **Counter-hypotheses** — at least one alternative explanation, with why it's less likely.
-- **Recommendation** — one of:
-  - `revert <commit-or-file>` (precise revert of the offending plank).
-  - `re-architect <module>` (the change is symptomatic of a deeper SOLID violation — re-run from Phase 6 for that module).
-  - `accept` (the regression is real but expected, e.g. a constraint changed mid-flight; user must confirm).
+스프린트 N 에서 점수가 0.92 → 0.78 로 떨어졌습니다. 분석가는 `path/a.go:42` 의 토큰 만료 검사 제거가 원인으로 봅니다.
 
-## Conductor next steps
+선택지:
+1. revert: `path/a.go` 의 해당 블록만 되돌리기
+2. re-architect: 인증 모듈 자체를 계획부터 재실행
+3. accept: 회귀가 의도된 변화 (제약 변경)
+4. 정지: 사람이 직접 살펴보기
+```
 
-The conductor presents the bisect summary to the user via `AskUserQuestion` with the analyst's recommendation as the default option. **No further implementation work proceeds without user ack.**
+**사용자 ack 없이 추가 구현 금지.**
 
-## Why this phase exists
+## 왜 필요한가
 
-This is the second Ouroboros bite specifically wired to refuse forward motion when the loop is going backward. Without it, recursive harnesses tend to "fix" regressions by piling on more code, ratcheting the system into worse shape sprint by sprint.
+우로보로스의 두 번째 자기 무는 지점이며, 회귀 직후 추가 구현 차단을 위한 강제 게이트. 없으면 재귀 하네스는 회귀를 더 많은 코드로 "고치려" 하고, 스프린트마다 누적 악화로 들어간다.
 
-## Success criterion
+## 성공 기준
 
-A `bisect.md` exists, names a specific commit/file/function, and the user has explicitly ack'd one of the three recommendations. No bisect = no continuation.
+ⓐ `bisect.md` 가 특정 commit/파일/함수를 명시.
+ⓑ 사용자가 명시적으로 세 권고 중 하나를 ack — 없으면 다음 스프린트 진행 불가.

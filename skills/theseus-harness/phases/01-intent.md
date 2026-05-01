@@ -1,36 +1,38 @@
-# Phase 1 — Intent Extraction
+# Phase 01 — 의도 추출
 
-## Goal
+## 한 줄 요약
+**사용자 원문 요청을 구조화된 의도 문서로 만들어 모든 후속 에이전트가 같은 출발점을 갖게 한다.** 해석은 하되, 답을 정하지는 않는다.
 
-Turn the user's raw request into a structured intent document so every downstream agent has the same starting point.
+## 입력
+- 사용자의 원본 요청 (대화 첫 메시지).
+- `naming/00-naming.md` (프로젝트명·모듈명 확정본).
+- 레포의 `README.md` 와 분명한 진입점 — 의도가 실 코드에 grounding 되도록.
 
-## Inputs
+## 서브에이전트
+[`../agents/intent-extractor.md`](../agents/intent-extractor.md) 프롬프트로 `Agent(subagent_type="general-purpose")` 호출.
 
-- `.theseus/$RUN_ID/00-request.txt` — the raw request.
-- The repo's `README.md` and any obvious entry points (so the agent grounds the request in real code).
+## 산출물
+`intent/01-intent.md` — [`../templates/intent.template.md`](../templates/intent.template.md) 의 모든 섹션 채움. 헤더는 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 정보 포함.
 
-## Sub-agent
+채울 항목:
 
-Spawn `Agent(subagent_type="general-purpose")` with the prompt at [`../agents/intent-extractor.md`](../agents/intent-extractor.md). Pass the raw request and the repo root as context.
+ⓐ **무엇을** — 한 문단, 외부에서 관찰 가능한 결과.
+ⓑ **왜** — 풀려는 문제 또는 전달 가치.
+ⓒ **비목표** — 명시적으로 범위 밖.
+ⓓ **제약** — 성능·호환·보안·운영·마감.
+ⓔ **유비쿼터스 언어** — 도메인 용어 정의.
+ⓕ **스테이크홀더** — 결과의 소비자.
+ⓖ **성공 지표** — 외부에서 관찰·계량 가능.
+ⓗ **열린 질문** — 원문에서 결정 불가한 것 (반드시 1개 이상).
 
-## Output
+## 성공 기준
 
-Write `.theseus/$RUN_ID/01-intent.md` using the template at [`../templates/intent.template.md`](../templates/intent.template.md). The doc must contain:
+ⓐ 문서 자족성 — 원문을 보지 않은 사람이 이 문서만 읽고 무엇을 만들어야 할지 알 수 있다.
+ⓑ 기본 백엔드 스택은 사용자가 명시 없으면 Go 로 가정하되, 이 문서는 기술 비종속이다 — 스택 선택은 페이즈 06 (계획) 의 책임. 의도 단계는 "Go 가 자연스러운가" 정도의 메모만 허용.
+ⓒ 열린 질문이 비어 있지 않다.
 
-- **What** — one paragraph, observable outcome.
-- **Why** — the problem being solved or the value delivered.
-- **Non-goals** — things explicitly out of scope.
-- **Constraints** — hard requirements (perf, compat, security, deadline).
-- **Ubiquitous language** — domain terms with definitions.
-- **Stakeholders** — who consumes the output.
-- **Open questions** — anything the agent could not resolve from the request alone.
+## 흔한 실패
 
-## Success criterion
-
-The doc is *self-contained*: someone who has not seen the original request can read the intent doc and know exactly what to build. If you, as the conductor, find yourself filling in gaps from memory, the phase failed — re-run it.
-
-## Common failure modes
-
-- Agent restates the request verbatim instead of extracting intent. Re-run with explicit instruction to *interpret*, not echo.
-- Agent assumes a tech stack not mentioned. The intent doc is technology-agnostic; stack decisions happen in Phase 6.
-- Open questions list is empty. There are *always* open questions. Empty list = lazy extraction.
+ⓐ 원문을 그대로 복창 — 해석 없음. 재실행 지시.
+ⓑ 명시 안 된 스택을 결정해버림 — 의도 단계에서 결정 금지, 가정 메모만 허용.
+ⓒ 열린 질문 0개 — 게으른 추출. 재실행.

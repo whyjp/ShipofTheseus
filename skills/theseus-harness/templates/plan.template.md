@@ -1,71 +1,74 @@
-# Plan — `<short title>`
+# 계획 — `<짧은 제목>`
 
-> Run id: `<RUN_ID>` · Generated: `<ISO timestamp>` · Source: `01-intent.md` + `04-answers.md` + `05-decisions.md`
+> **프로젝트:** `<프로젝트명>` · **페이즈:** `06-plan`
+> **시작:** `<ISO>` · **종료:** `<ISO>` · **소요:** `<n분 n초>`
+> **누적 경과:** `<n분 n초>` · **현재 시각:** `<ISO>`
 
-## Architectural overview
-<One paragraph: which modules will exist, which talk to which, where the ports are.>
+## 아키텍처 개요
+<한 문단: 어떤 모듈이 존재하는가, 무엇이 무엇과 통신하는가, 포트가 어디 위치하는가. SoC 와 DIP 가 보이도록 작성.>
 
-## Module map
-| Module | Layer | Responsibility | Port |
-| ------ | ----- | -------------- | ---- |
-| `backend/auth` | application | Authn + session | `AuthService` |
-| `backend/auth/adapter/jwt` | adapter | JWT impl of `AuthService` | — |
-| `frontend/login` | ui | Login form + flow | — |
+## 모듈 맵
+| 모듈 | 레이어 | 책임 | 포트 |
+| ---- | ----- | ---- | ---- |
+| `be4fe/auth` | application | 인증 + 세션 | `AuthService` |
+| `be4fe/auth/adapter/jwt` | adapter | JWT 구현체 | — |
+| `fe/login` | ui | 로그인 폼 + 흐름 | — |
 | `…` | … | … | … |
 
-## TODOs
+## TODO 목록
 
-### § 1. Scaffolding
-- **T-001 — Create `backend/auth/` module skeleton**
-  - module: `backend/auth`
-  - layer: domain
-  - depends_on: []
-  - done_when: package exists, exports empty `AuthService` port
-  - tests: `backend/auth/test_module_loads.py`
-  - mock_surface: `FakeAuthService` (returns canned values)
+### § 1. 스캐폴딩
+- **T-001 — `be4fe/auth/` 모듈 스켈레톤 생성**
+  - 모듈: `be4fe/auth`
+  - 레이어: domain
+  - 의존: []
+  - 완료 조건: 패키지 존재, 빈 `AuthService` 포트 export
+  - 테스트: `be4fe/auth/module_test.go` (모듈 로드)
+  - 목 표면: `FakeAuthService` (canned 값 반환)
 
-### § 2. Test infrastructure
-- **T-010 — Set up unit + integration harness**
-  - module: `tests/`
-  - layer: test
-  - depends_on: []
-  - done_when: `pytest` runs, `npm test` runs, both green on empty suite
-  - tests: meta-test that asserts both runners exit 0
-  - mock_surface: n/a
+### § 2. 테스트 인프라
+- **T-010 — 단위 + 통합 하네스 셋업**
+  - 모듈: `tests/`
+  - 레이어: test
+  - 의존: []
+  - 완료 조건: `go test ./...` 와 `bun test` 모두 빈 스위트에서 0 종료
+  - 테스트: 두 러너의 0 종료를 확인하는 메타 테스트
+  - 목 표면: n/a
 
-- **T-011 — Set up E2E harness (Playwright)**
-  - module: `tests/e2e/`
-  - layer: test
-  - depends_on: []
-  - done_when: smoke test loads the app and asserts title
-  - tests: `tests/e2e/smoke.spec.ts`
-  - mock_surface: n/a
+- **T-011 — E2E 하네스 (Playwright)**
+  - 모듈: `tests/e2e/`
+  - 레이어: test
+  - 의존: []
+  - 완료 조건: 앱 로드 + 타이틀 검증 smoke 통과
+  - 테스트: `tests/e2e/smoke.spec.ts`
+  - 목 표면: n/a
 
-### § 3. Backend feature TODOs
+### § 3. 백엔드 기능 TODO
 - **T-020 — …**
 
-### § 4. Frontend feature TODOs
+### § 4. 프론트엔드 기능 TODO
 - **T-040 — …**
 
-### § 5. Wiring TODOs
+### § 5. 연결 TODO
 - **T-060 — …**
 
-### § 6. Hardening TODOs
-- **T-080 — Add error-path E2E for login failure**
+### § 6. 하드닝 TODO
+- **T-080 — 로그인 실패 에러 경로 E2E**
   - …
 
-## Dependency DAG (summary)
+## 의존 DAG (요약)
 ```
 T-001 ─┬─ T-020 ─┬─ T-022 ── T-060 ─┐
        └─ T-021 ─┘                  ├─ T-080
-T-010 ── (gates all T-0NN tests)    │
-T-011 ───────────────────────────── ┘
+T-010 ── (모든 T-0NN 테스트 게이트)  │
+T-011 ─────────────────────────────┘
 T-040 ── T-041 ── T-060
 ```
 
-## Rationale notes
-- <Why this split? Why these ports?>
-- <Trade-offs deliberately accepted (link to `05-critique.md`).>
+## 설계 근거
+- <왜 이 분할? 왜 이 포트 경계?>
+- <명시적으로 받아들인 트레이드오프 — `intent/05-critique.md` 링크>
+- <DIP 강화 포인트 — 어떤 의존이 인터페이스 뒤로 갔는가>
 
-## Open follow-ups (deferred, not in this plan)
-- <Item the critic flagged as out-of-scope but worth doing later.>
+## 보류 항목 (이 계획에 미포함)
+- <비평가가 범위 외로 플래그했으나 가치 있는 후속>

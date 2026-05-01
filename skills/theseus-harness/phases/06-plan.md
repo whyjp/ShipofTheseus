@@ -1,40 +1,57 @@
-# Phase 6 — Plan (TODO-shaped)
+# Phase 06 — 계획 (TODO 형)
 
-## Goal
+## 한 줄 요약
+**TODO 단위의 평탄한 구현 계획을 만든다.** 각 TODO 는 한 번의 서브에이전트 호출로 끝낼 수 있을 만큼 작고, 명확한 "완료 조건" 을 갖는다.
 
-Produce an implementation plan as a flat list of TODO items, each small enough that a single sub-agent can finish it in one invocation, each with a defined "done" condition.
+## 입력
+- `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-critique.md`, `intent/05-decisions.md`
+- `naming/00-naming.md` (모듈명 확정본)
 
-## Inputs
+## 서브에이전트
+[`../agents/planner.md`](../agents/planner.md) 로 `Agent(subagent_type="Plan")`.
 
-- `.theseus/$RUN_ID/01-intent.md`
-- `.theseus/$RUN_ID/04-answers.md`
-- `.theseus/$RUN_ID/05-critique.md` + `05-decisions.md`
+## 산출물
+`plan/06-plan.md` — [`../templates/plan.template.md`](../templates/plan.template.md) 의 7개 필드를 모든 TODO 에 채움:
 
-## Sub-agent
+| 필드 | 의미 |
+| ---- | ---- |
+| `ID` | `T-001`, `T-002`, … |
+| `제목` | 명령형 한 줄 |
+| `모듈` | 명명 페이즈에서 정해진 모듈명 (`be4fe/auth`, `fe/login` 등) |
+| `레이어` | `domain` / `application` / `adapter` / `ui` / `infra` / `test` |
+| `의존` | 다른 TODO ID 목록 |
+| `완료 조건` | 외부 관찰·테스트 가능 |
+| `테스트` | 단위·통합·E2E 어느 것을 같이 출하 |
+| `목 표면` | 노출하는 포트/페이크 |
 
-Spawn `Agent(subagent_type="Plan")` with [`../agents/planner.md`](../agents/planner.md).
+## 필수 섹션
 
-## Output
+ⓐ **스캐폴딩** — 모듈 경계, 포트 인터페이스, 패키지 레이아웃. 로직 전.
+ⓑ **테스트 인프라** — 단위·통합·E2E 하네스 셋업. 첫 기능 TODO 전.
+ⓒ **백엔드 기능 TODO** — 의존에 따라 프론트와 교차 배치.
+ⓓ **프론트엔드 기능 TODO** — 동일.
+ⓔ **연결 TODO** — 모듈 간 e2e 연결.
+ⓕ **하드닝 TODO** — 에러 경로, 엣지, 옵저버빌리티.
 
-`.theseus/$RUN_ID/06-plan.md` using [`../templates/plan.template.md`](../templates/plan.template.md). Each TODO has:
+## 기본 스택
 
-- **ID** — `T-001`, `T-002`, …
-- **Title** — imperative, one line.
-- **Module** — which architectural module it lives in (e.g. `backend/auth`, `frontend/components/login`).
-- **Layer** — `domain` | `application` | `adapter` | `ui` | `infra` | `test`.
-- **Depends on** — list of TODO IDs.
-- **Done when** — observable, testable condition.
-- **Tests** — the unit and/or E2E tests this TODO must ship with.
-- **Mock surface** — the port/interface this TODO exposes for mocking, if any.
+사용자가 다른 스택을 명시하지 않으면:
 
-The plan **must** include:
+ⓐ **백엔드 / API / 엔진** — Go (`net/http`, `chi` 또는 `echo`, 표준 라이브러리 우선).
+ⓑ **프론트엔드** — bun + React (Phase 12 의 웹뷰와 같은 런타임 패밀리, 빌드 도구 통일).
+ⓒ **테스트 — Go** — 표준 `testing` + `testify`. 통합은 `httptest`.
+ⓓ **테스트 — FE** — `bun test` + `playwright` (E2E).
 
-- A "scaffolding" section that creates the module boundaries before any logic is written.
-- A "test infra" section that sets up the unit and E2E test harnesses *before* the first feature TODO.
-- Backend and frontend TODOs interleaved by dependency, not lumped at the end.
+다른 스택 결정이 있다면 `intent/05-decisions.md` 또는 `intent/04-answers.md` 에 명시되어 있어야 한다.
 
-## Success criterion
+## TODO 사이즈 룰
 
-- Every TODO is achievable in one sub-agent invocation (rule of thumb: < 200 lines of code touched).
-- Dependencies form a DAG — no cycles.
-- Every leaf TODO has at least one test TODO downstream of it.
+ⓐ 한 서브에이전트 호출에 끝낼 수 있을 것 (대략 < 200 LOC 변경).
+ⓑ 단일 외부 관찰 가능한 "완료 조건".
+ⓒ 테스트 같은 줄에 명시 — "테스트는 T-099 에서" 금지.
+
+## 성공 기준
+
+ⓐ `의존` 그래프가 acyclic — 본인이 검증.
+ⓑ 모든 leaf TODO 아래에 테스트 TODO 가 최소 하나.
+ⓒ 모든 TODO 제목에 "and" 없음 — 있으면 분할 신호.

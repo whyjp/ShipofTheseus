@@ -1,33 +1,37 @@
-# Phase 4 — Clarification Dialogue
+# Phase 04 — 사용자 질의
 
-## Goal
+## 한 줄 요약
+**의도 문서의 모호함을 사용자와 직접 해소하는 유일한 페이즈.** [`../conventions/interview.md`](../conventions/interview.md) 컨벤션을 예외 없이 따른다 — 두괄식·1회 1질의·숫자 객관식 5개 이하.
 
-Resolve every ambiguity in the intent doc by asking the user — directly, with concrete options. This is the only phase that *requires* the user's voice.
+## 입력
+- `intent/01-intent.md`
+- `intent/03-comprehension.md` (재이해에서 표류한 지점)
 
-## Inputs
+## 서브에이전트
+[`../agents/clarifier.md`](../agents/clarifier.md). 이 에이전트는 *질의 목록만 작성* 한다 — 사용자에게 직접 묻지 않음. 묻는 사람은 지휘자.
 
-- `.theseus/$RUN_ID/01-intent.md`
-- `.theseus/$RUN_ID/03-comprehension.md` (where the round-trip drifted)
+## 산출물
 
-## Sub-agent
+ⓐ `intent/04-questions.md` — 질의 리스트. 각 항목: 질문 텍스트, 왜 중요한지, 보기 후보(객관식이면).
+ⓑ `intent/04-answers.md` — 사용자 답을 시각과 함께 기록.
 
-Spawn `Agent(subagent_type="general-purpose")` with [`../agents/clarifier.md`](../agents/clarifier.md). The clarifier produces a *question list* — it does not ask the user directly. The conductor (you) is the one who asks via `AskUserQuestion`, because only the conductor has the live conversation.
+## 지휘자 동작 (강제)
 
-## Output
+각 질문마다:
 
-Two files:
+① 두괄식 한 줄 요약을 먼저 출력.
+② 다음 문단에 배경·트레이드오프.
+③ 객관식이면 숫자 5개 이하로 — `AskUserQuestion` 의 `options` 배열에 라벨 `"1"` … `"4"`. 5번째 옵션이 필요하면 별도 자유 응답 후속으로 분리.
+④ 자유 응답이 본질이면 도구 없이 평문으로 질의.
+⑤ 답을 받기 전에는 다음 질문으로 넘어가지 않는다 — 사용자가 답할 때까지 다른 페이즈 호출 금지.
 
-1. `.theseus/$RUN_ID/04-questions.md` — the clarifier's question list, each entry with: question text, why it matters, candidate answers (multiple choice when possible).
-2. `.theseus/$RUN_ID/04-answers.md` — the user's answers, captured verbatim with timestamps.
+## 성공 기준
 
-## How the conductor asks
+ⓐ `04-answers.md` 가 `04-questions.md` 의 모든 항목을 커버. `TBD` 또는 `?` 표시 없음.
+ⓑ "사용자가 결정 보류" 같은 응답도 명시적으로 기록 (페이즈 05 비평이 이를 다시 다룸).
 
-For each question in `04-questions.md`:
+## 흔한 실패
 
-- If candidate answers exist → use `AskUserQuestion` with up to 4 options + "other".
-- If freeform → ask in plain prose.
-- **Never assume** an answer to push forward. If the user says "you decide," capture that explicitly as a deferred decision and flag it in the critique phase.
-
-## Success criterion
-
-`04-answers.md` covers every question in `04-questions.md`, with no `TBD` or `?` markers. Halts that warranted halting actually halted.
+ⓐ 질문 6개 이상 — 차원이 섞임. clarifier 재실행해 차원별로 재구성.
+ⓑ 객관식인데 알파벳 라벨 — 컨벤션 위반. 수정 후 재질의.
+ⓒ 두괄식 누락 — 사용자가 끝까지 읽어야 핵심이 나오는 질문은 무효.

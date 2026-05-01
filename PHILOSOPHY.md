@@ -1,38 +1,70 @@
-# Philosophy
+# 철학
 
-## Why "Ship of Theseus"?
+## 한 줄 요약
+**테세우스의 배라는 이름은 "재조립·재구현 후에도 같은 이름으로 불릴 자격" 을 묻는 사고 실험이자, 도자기 장인의 작업 방식을 코드로 옮긴 메타포다.** 마음에 드는 결과가 나올 때까지 모듈을 깨고 다시 빚는다 — 그러나 매 회차마다 더 단단해진다. 그 단단함을 만드는 골격이 **의존성 역전(DIP)** 과 **관심사 분리(SoC)**, 그리고 결과를 계량하는 **점수·회귀 바이섹트** 다.
 
-The Ship of Theseus is the thought experiment about identity under continual replacement: if every plank is replaced, is it still the same ship? Software answers this in the affirmative — a feature reaches "done" only after every weak plank has been swapped for a sound one. The harness in this repo is the dock where that swapping happens, in disciplined, scored sprints.
+## 도자기 장인의 비유
 
-## Lineage
+좋은 장인은 흙을 빚다 마음에 들지 않으면 깨버리고 처음부터 다시 빚는다. 깨는 행위는 실패가 아니라 표준 작업이다. 단, 깨려면 다음 셋이 갖춰져 있어야 한다.
 
-The harness is a synthesis of three loop-shaped patterns from the AI-coding community:
+ⓐ **언제 깨야 할지 아는 기준** — 본 하네스의 점수 임계 0.9, 그리고 0.05 이상의 하락이 그 기준이다.
+ⓑ **무엇을 깰지 아는 도구** — 회귀 바이섹트가 잘못된 판자를 라인 단위로 짚는다.
+ⓒ **다시 빚는 절차의 재현 가능성** — 모든 페이즈 산출물이 파일로 남아 어느 시점으로든 되돌아갈 수 있다.
 
-- **Ralph loop** — A tight, recursive loop that asks the model to do the work, evaluate its own output, and re-attempt with the evaluation feedback wired back in. Strength: relentless iteration. Weakness: drift and over-confidence without external grounding.
-- **OhMy-series harness** — Adds explicit *roles* (planner, implementer, reviewer, tester) and external evaluators so each role keeps the others honest. Strength: separation of concerns and adversarial review. Weakness: role transitions can lose context.
-- **Ouroboros harness** — The serpent eats its tail: the harness's own outputs become the next iteration's inputs, with provenance preserved so any regression is bisectable. Strength: full traceability. Weakness: easy to bloat without scoring discipline.
+장인은 점토 일부만 갈기도 하지만(`revert`), 형이 근본부터 잘못됐다 싶으면 통째로 깨버리고 페이즈 06 (계획) 부터 다시 시작한다(`re-architect`). 후자는 후퇴가 아니라 정상적 의사결정이다 — 잘못된 형 위에 더 빚는 것이 진짜 후퇴다.
 
-Theseus harness combines these with a hard quality gate (score ≥ 0.9) and a regression-bisect step that compares the current code against the last known good plank when the score drops.
+## 왜 테세우스인가 (재방문)
 
-## Methodologies invoked
+배의 모든 판자를 갈아도 같은 배라고 부를 수 있는가 — 이 질문에 코드는 "그렇다, **단, 매 판자가 sound 하다는 보증이 누적되어 있다면**" 으로 답한다. 본 하네스의 모든 페이즈·게이트·점수·바이섹트는 그 보증을 누적시키기 위한 장치다. 결과물이 처음 의도한 타이틀로 끝까지 불릴 자격을 만든다.
 
-The quality gates and sprint loop are not arbitrary — each gate maps to a well-established practice:
+## 가장 중요한 원칙: 의존성 역전(DIP)
 
-- **TDD (Test-Driven Development)** — Red, green, refactor. The sprint loop *is* the red-green cycle, with refactor folded into each iteration's "improve until score ≥ threshold" step.
-- **BDD (Behavior-Driven Development)** — Intent docs and clarifications follow a Given/When/Then shape so the spec is executable in spirit.
-- **SOLID** — Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion. The quality gate explicitly checks for each (see `phases/10-quality-gates.md`).
-- **DDD (Domain-Driven Design)** — Intent extraction asks for the ubiquitous language and bounded context before any code is written.
-- **Hexagonal / Ports & Adapters** — The "individual modules with mocks" requirement is hexagonal in spirit: each module has a port, and the test harness can swap real adapters for mocks.
-- **Clean Architecture** — Dependencies point inward toward the domain. Cross-cutting concerns live at the edges.
-- **Property-based testing** — When unit tests pass but coverage feels shallow, the tester agent is instructed to add property-based tests (Hypothesis, fast-check, etc.) before claiming done.
-- **Mutation testing** — Optional gate for high-stakes modules: a coverage number is only as good as the bugs it catches.
+SOLID 다섯 중 본 하네스는 **DIP 를 최우선** 으로 본다. 이유:
 
-## The loop, in one paragraph
+ⓐ DIP 가 깨지면 **테스트 가능성** 이 통째로 무너진다. 도메인이 콘크리트 어댑터를 직접 부르는 순간, 페이크를 꽂을 자리가 없어 단위 테스트가 통합 테스트로 변질된다.
+ⓑ DIP 가 살아 있으면 나머지 SOLID 위반은 **국지적 수술** 로 고칠 수 있다. 반대는 성립하지 않는다 — DIP 가 깨진 상태에서 SRP/OCP 만 신경 쓰는 것은 모래 위 정원이다.
+ⓒ DIP 는 **모듈 교체 비용** 을 결정한다. 장인이 빚은 도자기를 깨고 다시 빚으려면, 그 부분이 도려낼 수 있도록 분리되어 있어야 한다. DIP 가 그 분리선이다.
 
-A request enters as raw intent. Agent A extracts and documents it; Agent B reviews the doc; a *fresh* Agent C re-comprehends it without seeing A's reasoning; Agent D runs a clarifying dialogue with the user; Agent E critiques the resulting spec for mis-choices and proposes alternatives. Only then does planning begin — and planning itself runs the same five-step loop. Implementation proceeds module by module, each module shipped with unit tests *and* mock-driven integration tests. A test sprint scores the result against a rubric (correctness, scope-fit, SOLID, coverage, FE/BE parity, E2E pass). If the score is below 0.9, the loop iterates. If the score *drops* between sprints, the regression-bisect agent compares the current state against the last known good sprint and surfaces the offending diff before any further work is allowed.
+품질 게이트(페이즈 09) 는 SOLID 다섯 중 **DIP 위반은 단독 hard fail**, 나머지 넷은 부분 감점으로 다룬다. 회귀 바이섹트(페이즈 11) 도 원인 후보 중 DIP 위반을 가장 먼저 의심한다.
 
-## Non-goals
+## 두 번째로 중요한 원칙: 관심사 분리(SoC)
 
-- This harness does not replace human judgment on architectural direction — it surfaces options and forces the human (or top-level Claude) to choose explicitly.
-- It does not chase 100% coverage. 0.9 is the gate; beyond that is diminishing returns.
-- It does not run autonomously without supervision on production systems. The clarification phase is a hard checkpoint with the user.
+SoC 는 단위 테스트 기반을 가장 쉽게 다지는 수단이다.
+
+ⓐ 도메인·애플리케이션·어댑터·UI 가 분리되어 있으면, 단위 테스트는 도메인을 페이크로 둘러싸고 빠르게 돈다.
+ⓑ 모듈마다 단일 책임을 가지면, 테스트가 짚어내는 실패는 위치도 단일하다 — 디버깅 시간을 곱셈으로 줄인다.
+ⓒ SoC 는 DIP 의 *전제* 다. 분리되지 않은 코드에서는 의존을 역전할 곳이 없다.
+
+설계자(planner) 는 모듈 경계를 먼저 그린 다음 기능 TODO 를 배치한다. "기능부터 만들고 분리는 나중에" 같은 순서는 본 하네스에서 명시 거부.
+
+## 합성한 패턴
+
+ⓐ **Ralph 루프** — 모델이 작업·자가 평가·재시도하는 짧은 루프. 강점: 끈질긴 반복. 약점: 외부 grounding 없는 표류와 자만.
+ⓑ **OhMy 시리즈 하네스** — 역할(설계자, 구현자, 리뷰어, 테스터)을 명시 분리하고 외부 평가자를 둠. 강점: 적대적 리뷰와 관심사 분리. 약점: 역할 전환 시 컨텍스트 손실.
+ⓒ **우로보로스 하네스** — 자기 꼬리를 무는 뱀. 출력이 다음 입력이 되고 출처가 보존되어 회귀를 바이섹트할 수 있다. 강점: 추적 가능성. 약점: 점수 규율 없으면 비대화.
+
+여기에 ① 점수 ≥ 0.9 의 하드 게이트, ② 점수 0.05 하락 시 즉시 발동되는 회귀 바이섹트, ③ DIP 우선 채점, ④ 매 페이즈에 시작·경과·현재 시각 표기로 사용자가 실시간을 체감할 수 있게 한 점, ⑤ 사용자 명시 없을 때 백엔드 기본값 Go, ⑥ FE/BE 채점 분리 — 가 더해진다.
+
+## 매핑한 방법론
+
+ⓐ **TDD** — 스프린트 루프 자체가 red-green-refactor. "임계 점수까지 개선" 이 refactor 단계.
+ⓑ **BDD** — 의도 문서와 사용자 답이 Given/When/Then 형태를 지향.
+ⓒ **SOLID** — 품질 게이트가 다섯 모두 명시 검증. **DIP 가 최우선.**
+ⓓ **DDD** — 의도 추출에서 유비쿼터스 언어와 경계 컨텍스트를 먼저 정한다.
+ⓔ **Hexagonal / 포트-어댑터** — 모든 모듈이 포트를 노출, 어댑터는 모킹으로 교체 가능.
+ⓕ **Clean Architecture** — 의존이 도메인 안쪽으로 흐른다. 횡단 관심사는 가장자리.
+ⓖ **실용주의 프로그래머 (Pragmatic Programmer)** — *DRY*, *직교성*, *깨진 창문 금지*, *돌이킬 수 있게 만들어라*. 페이즈 산출물의 파일-아웃 정책이 "돌이킬 수 있게" 의 직접적 적용.
+ⓗ **소프트웨어 아키텍처: 디 하드 파츠 / 클린 아키텍처** — 컴포넌트 응집도, 안정성-추상성 균형, 의존성 방향. 품질 게이트의 SOLID 점검은 이 책들의 휴리스틱과 정합.
+ⓘ **속성 기반 테스트** — 단위 테스트가 통과해도 커버리지 모양이 얕으면 테스터가 property test 추가.
+ⓙ **돌연변이 테스트(선택)** — 고위험 모듈은 커버리지가 실제 버그를 잡는지까지 검증.
+
+## 한 문단으로 보는 루프
+
+요구가 들어오면 ① 프로젝트와 모듈 이름을 고르고, ② 의도를 문서로 만들고, ③ 그 문서만으로 다른 에이전트가 다시 이해해보고, ④ 사용자에게 모호함을 두괄식·1질의·숫자 객관식으로 묻고, ⑤ 비평 에이전트가 미스초이스와 대안을 제시한다. ⑥ TODO 형 계획을 SoC 를 먼저 그어 세우고, ⑦ 콜드 리딩으로 검증한다. ⑧ 모듈별로 코드·테스트·목 표면을 한 번에 출하하고, ⑨ DIP 를 최우선으로 다섯 게이트를 통과시킨다. ⑩ 점수 0.9 가 나올 때까지 무한 스프린트로 반복하되, ⑪ 점수가 0.05 이상 하락하면 즉시 회귀 바이섹트로 원인 판자를 찾고, 깊은 DIP 위반의 증상이면 모듈을 깨고 페이즈 06 부터 다시 빚는다. ⑫ 마지막에 모듈 구성도와 의도, 단위·E2E 테스트를 탭으로 보여주는 bun 기반 인터랙티브 웹뷰를 자동 생성하고, ⑬ 사용자에게 핸드오프한다.
+
+## 비목표
+
+ⓐ 사람의 아키텍처 판단을 대체하지 않는다 — 옵션을 드러내고 명시적으로 선택하게 만든다.
+ⓑ 100% 커버리지를 추구하지 않는다. 0.9 가 게이트, 그 너머는 한계 효용 체감.
+ⓒ 운영 시스템에서 사람 감독 없이 자율 실행하지 않는다. 사용자 질의 페이즈는 하드 체크포인트.
+ⓓ "한 번에 끝나는" 결과를 약속하지 않는다 — 깨고 다시 빚는 것이 정상 작업.

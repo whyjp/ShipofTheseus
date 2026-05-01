@@ -1,32 +1,30 @@
-# Phase 7 — Plan Recursion (Re-plan)
+# Phase 07 — 계획 재이해 (콜드)
 
-## Goal
+## 한 줄 요약
+**계획 자체에 페이즈 03 와 같은 콜드 리딩을 적용한다.** 의도 문서, 비평, 사용자 답을 본 적 없는 fresh 에이전트가 계획만 읽고 무엇을 만들 것인지 거꾸로 추론한다. 의도와 어긋나면 계획이 잘못된 것.
 
-Run the same intent→review→comprehension→clarify→critique loop *on the plan itself*. The Ouroboros bites a second time: the plan is now the artifact under scrutiny.
+## 입력
+- `plan/06-plan.md` 만.
 
-## Inputs
+## 서브에이전트
+**fresh `Agent(subagent_type="general-purpose")`**, [`../agents/plan-reviewer.md`](../agents/plan-reviewer.md) 의 self-contained 프롬프트.
 
-- `.theseus/$RUN_ID/06-plan.md` (only)
+## 답해야 할 4 질문
 
-## Sub-agent
+① 이 계획만 보면 어떤 기능을 만드는 것인가? (한 문단, 자기 말)
+② 어떤 TODO 부터 시작하겠는가? 이유는?
+③ 과소 명세·과대 사이즈·순서 어긋남이 보이는 TODO 는?
+④ 누락·잘못된 의존은?
 
-Spawn a *fresh* `Agent(subagent_type="general-purpose")` with [`../agents/plan-reviewer.md`](../agents/plan-reviewer.md). The agent has not seen the intent doc — it reads the plan cold and must answer:
+## 산출물
+`plan/07-plan-review.md` — 4 답 + 판정 (`accept` | `revise` | `reject`).
 
-1. From this plan alone, what feature is being built?
-2. What would I implement first?
-3. What in this plan looks underspecified, oversized, or out of order?
-4. What dependencies are missing or wrong?
+## 지휘자 후속
 
-## Output
+ⓐ ① 답을 `intent/01-intent.md` 의 "무엇을" 과 diff. 의미상 어긋나면 → 계획이 의도를 인코딩하지 못함 → 페이즈 06 재실행.
+ⓑ `revise` → 리뷰 첨부해 페이즈 06 재실행. 시도 3 회 캡.
+ⓒ `accept` → 페이즈 08.
 
-`.theseus/$RUN_ID/07-plan-review.md` with the four answers above plus a verdict (`accept` | `revise` | `reject`).
+## 왜 필요한가
 
-## Conductor next steps
-
-- The conductor diffs the reviewer's answer to (1) against `01-intent.md`. Mismatch = the plan does not encode the intent → re-run Phase 6.
-- Verdict `revise` → re-run Phase 6 with the review attached. Cap at 3 attempts.
-- Verdict `accept` → proceed to Phase 8.
-
-## Why this phase exists
-
-Most coding harnesses skip plan review and pay for it during implementation when "obvious" steps turn out to require unstated infra. Catching this here costs a single agent invocation; catching it during sprint 4 costs a full bisect.
+대부분의 코딩 하네스는 계획 리뷰를 건너뛰고 구현 도중 "당연한" 단계가 사실은 미명세 인프라를 요구한다는 사실을 알게 된다. 여기서 한 번의 에이전트 호출로 잡으면 스프린트 4 회분의 바이섹트 비용을 아낀다.

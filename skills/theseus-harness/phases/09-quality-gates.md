@@ -1,42 +1,39 @@
-# Phase 9 — Quality Gates
+# Phase 09 — 5종 품질 게이트
 
-## Goal
+## 한 줄 요약
+**테스트 실행 전에 다섯 게이트로 *코드 모양* 을 감사한다.** 모양이 어긋나면 다음 스프린트가 잘못된 형태에 시간을 소진한다.
 
-Before any tests run, audit the implementation against five fixed gates. A failure here means the test sprint will burn cycles on the wrong shape of code — fix the shape first.
+## 5 게이트
 
-## The five gates
+| # | 게이트 | 무엇을 보는가 | fail 신호 |
+| - | ----- | ------------ | -------- |
+| 1 | **의도 일치** | 만든 것이 `01-intent.md` + `04-answers.md` + `05-decisions.md` 와 맞는가 | 요청 안 한 기능 등장, 또는 요청 기능 누락 |
+| 2 | **범위 규율** | 계획 외 변경 있는가 | TODO 가 인가하지 않은 파일 변경 |
+| 3 | **SOLID** | 모듈별 SRP/OCP/LSP/ISP/DIP | 변경 사유 2개 클래스, 포트 자리에 콘크리트 |
+| 4 | **테스트 모양** | 모든 public 표면에 단위, 모든 교차 모듈 경로에 통합, 사용자 시나리오 happy-path E2E | public 함수에 테스트 없음, 모듈에 페이크 없음 |
+| 5 | **FE/BE 패리티** | 양쪽 모두 동등한 테스트 깊이 | BE 80% 커버리지 + FE 스냅샷만 |
 
-| Gate | What it checks | Fail signal |
-| ---- | -------------- | ----------- |
-| **Intent fidelity** | Does what was built match `01-intent.md` + `04-answers.md`? | Feature exists that wasn't requested, or requested feature is missing. |
-| **Scope discipline** | Anything outside the plan's TODO list? | Files touched that no TODO authorized. |
-| **SOLID** | SRP / OCP / LSP / ISP / DIP per module. | A class with > 1 reason to change; concrete deps where ports were specified; interface fatness. |
-| **Test coverage shape** | Every public surface has a unit test; every cross-module path has an integration test; happy-path E2E exists. | Public function with no test; module without a fake/mock; no E2E for the user-visible flow. |
-| **FE/BE parity** | If the feature spans frontend and backend, both sides have equivalent test depth. | Backend has 80% coverage and frontend has snapshot-only tests. |
+## 입력
+- `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-decisions.md`
+- `plan/06-plan.md`, `impl/08-impl-log.md`
+- 디스크 위 실제 코드 — 에이전트는 로그 믿지 말고 파일 Read.
 
-## Inputs
+## 서브에이전트
+[`../agents/quality-gate.md`](../agents/quality-gate.md).
 
-- `.theseus/$RUN_ID/01-intent.md`, `04-answers.md`, `06-plan.md`, `08-impl-log.md`
-- The actual code on disk (the agent must `Read` files, not trust the log).
+## 산출물
+`quality/09-quality-gate.md`:
 
-## Sub-agent
+ⓐ 게이트마다 `pass` | `fail` + 증거 (`경로:라인` 인용).
+ⓑ fail 마다 remediation TODO (`T-NNN-fix`) — 계획에 폴드백.
+ⓒ 종합 판정: `proceed` | `remediate-then-proceed` | `halt`.
 
-Spawn `Agent(subagent_type="general-purpose")` with [`../agents/quality-gate.md`](../agents/quality-gate.md).
+## 헤더 시간 정보 검증
 
-## Output
+각 페이즈 산출물 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타가 빠지면 자동 fail (게이트 1 의 일부).
 
-`.theseus/$RUN_ID/09-quality-gate.md`:
+## 지휘자 후속
 
-- For each gate: `pass` | `fail` + evidence (file:line citations).
-- For each fail: a remediation TODO that gets folded back into the plan as `T-NNN-fix`.
-- An overall verdict: `proceed` | `remediate-then-proceed` | `halt`.
-
-## Conductor next steps
-
-- `proceed` → Phase 10.
-- `remediate-then-proceed` → re-run Phase 8 for the fix-TODOs only, then re-run Phase 9.
-- `halt` → ask the user. Something structural is wrong.
-
-## Success criterion
-
-Each gate's verdict is backed by at least one `path/to/file.ext:NN` citation. Verdicts without citations are not credible — re-run.
+ⓐ `proceed` → 페이즈 10.
+ⓑ `remediate-then-proceed` → 페이즈 08 을 fix-TODO 만 재실행 → 페이즈 09 재실행.
+ⓒ `halt` → 사용자 질의. 구조적 문제.

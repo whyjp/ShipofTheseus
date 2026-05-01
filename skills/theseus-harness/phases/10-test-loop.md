@@ -1,66 +1,71 @@
-# Phase 10 — Test Sprint Loop
+# Phase 10 — 무한 스프린트 루프
 
-## Goal
+## 한 줄 요약
+**점수 ≥ 0.9 가 나올 때까지 무한 반복한다.** 회수 캡 없음. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) 로, 사용자 ack 없이는 추가 구현 금지.
 
-Run the full test matrix, score it, and iterate until score ≥ 0.9. Every iteration is a *sprint* with its own report. No hand-tweaking the score — `scoring/score.py` is authoritative.
+## 매 스프린트 테스트 매트릭스
 
-## Test matrix (per sprint)
+ⓐ 백엔드 단위 — Go `testing` (또는 사용자 명시 스택).
+ⓑ 백엔드 통합 — `httptest` 로 어댑터 페이크.
+ⓒ 프론트엔드 단위 — `bun test` + 컴포넌트 단위.
+ⓓ 프론트엔드 통합 — fake 서비스로 컴포넌트 와이어드.
+ⓔ E2E — Playwright 등 — happy-path + 에러 1 경로.
+ⓕ 속성 기반 (직전 스프린트가 커버리지 얕음 플래그 시).
 
-1. **Backend unit tests** — every public function in the domain and application layers.
-2. **Backend integration tests** — adapters wired against fakes.
-3. **Frontend unit tests** — components in isolation.
-4. **Frontend integration tests** — components wired against fake services.
-5. **E2E tests** — the user-visible happy path + at least one error path.
-6. **Property-based tests** (if the rubric flags shallow coverage).
+## 서브에이전트
+[`../agents/tester.md`](../agents/tester.md). 테스터는 *실행* 만, 채점은 안 함 — 채점은 [`../scoring/score.py`](../scoring/score.py) 가 권위.
 
-## Sub-agent
+## 산출물 (스프린트별)
+`sprints/NN/report.md` — [`../templates/sprint-report.template.md`](../templates/sprint-report.template.md), 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 필수.
+`sprints/NN/inputs.json` — `score.py` 입력.
+`sprints/NN/bisect.md` — 회귀 트리거 시.
 
-Spawn `Agent(subagent_type="general-purpose")` with [`../agents/tester.md`](../agents/tester.md). The tester *runs* the suites and writes the raw results; it does not score. Scoring is mechanical.
+각 스프린트는 git 체크포인트 커밋 (테스터가 수행) — 페이즈 11 이 바이섹트할 수 있도록.
 
-## Output (per sprint)
+## 루프 (의사코드)
 
-`.theseus/$RUN_ID/sprints/NN-report.md`:
-
-- Sprint number.
-- Each suite: pass/fail counts, duration, coverage %.
-- Score (from `scoring/score.py`) with sub-scores per rubric dimension.
-- Delta vs. previous sprint (per dimension).
-- Verdict: `pass` (score ≥ 0.9) | `iterate` (score < 0.9) | `regression` (score dropped > 0.05).
-
-## The loop
-
-```python
+```
 sprint = 1
 prev_score = None
 while True:
-    results = run_test_matrix()
-    score, sub_scores = score_py(rubric, results, prior=prev_score)
-    write_sprint_report(sprint, results, score, sub_scores, prev_score)
+    suite = run_test_matrix()
+    inputs = build_score_inputs(suite, gate_results)
+    score, sub = score.py(inputs, prior=prev_score)
+    write `sprints/{sprint:02d}/report.md` (timing header 포함)
+    write `sprints/{sprint:02d}/inputs.json`
+    report_to_user_with_timing(sprint, score, prev_score)
 
     if score >= 0.9:
         return "pass"
 
     if prev_score is not None and score < prev_score - 0.05:
-        run_phase_11_bisect(sprint)        # writes sprints/NN-bisect.md
-        wait_for_human_ack()                # AskUserQuestion
+        run_phase_11 → `sprints/{sprint:02d}/bisect.md`
+        ack = AskUserQuestion(권고: revert | re-architect | accept | 정지)
+        if ack == 정지: halt
 
-    failing_dimensions = [d for d, s in sub_scores.items() if s < 0.9]
-    spawn_implementer(failing_dimensions, results.failing_tests)
-
+    failing_dims = [d for d, s in sub.items() if s < 0.9]
+    spawn_implementer(failing_dims, suite.failing_tests)
     prev_score = score
     sprint += 1
-    if sprint > 8:
-        halt_and_ask_user()                 # safety cap
+    # 캡 없음 — 무한 루프
 ```
 
-## Success criterion
+## 사용자 보고 (매 스프린트)
 
-- `score ≥ 0.9` is achieved without disabling tests, lowering thresholds, or editing the rubric.
-- All sprint reports are present in `sprints/`.
-- If any sprint triggered Phase 11, a `bisect.md` exists alongside the report and the user has ack'd.
+[`../conventions/timing.md`](../conventions/timing.md) 룰에 따라 매 스프린트 종료 시 한 줄 보고:
 
-## Anti-patterns the tester is forbidden from
+```
+스프린트 NN 완료 — 점수 0.78 (직전 0.81). 누적 23분 11초. 현재 18:07:23. 다음 시도 진행.
+```
 
-- Marking a flaky test as skipped to raise the score.
-- Lowering coverage thresholds to pass a gate.
-- "Adapting the rubric" — the rubric is read-only during a run.
+## 성공 기준
+
+ⓐ 점수 ≥ 0.9 도달 — 테스트 비활성화·임계값 낮추기·rubric 편집 없이.
+ⓑ 모든 스프린트 보고서 존재.
+ⓒ 회귀 트리거가 있었던 스프린트는 `bisect.md` 가 동행, 사용자 ack 기록.
+
+## 금지된 안티 패턴 (테스터)
+
+ⓐ flaky 테스트 skip 처리 → 점수 부풀리기.
+ⓑ 커버리지 임계 낮추기.
+ⓒ "rubric 조정" — rubric 은 실행 동안 read-only.
