@@ -19,6 +19,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓕ 빌드 스크립트 / TOML / docs/ / 폐기 / 병렬·메모리: [`conventions/build-and-config.md`](conventions/build-and-config.md)
 ⓖ **단계별 의존성 분리·핑거프린트·재진입**: [`conventions/contracts.md`](conventions/contracts.md)
 ⓗ **에이전트 역할별 모델(Opus/Sonnet/Haiku) 매핑**: [`conventions/models.md`](conventions/models.md)
+ⓘ **2버전 이상 격리 병렬 경쟁 + 머지 (LLM 비결정성 극복)**: [`conventions/competition.md`](conventions/competition.md)
 
 ## 산출물 트리
 
@@ -96,6 +97,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓖ 모든 모듈은 sh + bat 스크립트, TOML 설정 + `.example` 동행, `docs/` 폴더.
 ⓗ 수정·리팩터링 시 기존 코드 폐기 우선. 라이브 전 중간 산출물 보존.
 ⓘ 병렬 서브에이전트 환영 — RAM 50% / 동시 E2E 2개 / 같은 파일 직렬 가드.
+ⓘ-1 페이즈 06/08/11 에서 명확한 단일안이 보이지 않으면 **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자 또는 머지 ([`conventions/competition.md`](conventions/competition.md)). LLM 비결정성을 분기·경쟁·합병으로 정공법 극복.
 ⓙ 사용자 진행 보고에 누적 경과 시간 1줄 항상 포함.
 ⓚ **모든 산출물에 frontmatter (skill_name, skill_version, phase, project_id, fingerprint, prev_fingerprint, produced_at) 필수.**
 ⓛ 페이즈 산출 파일을 지휘자가 손대지 않는다 — 잘못되면 페이즈 재실행.

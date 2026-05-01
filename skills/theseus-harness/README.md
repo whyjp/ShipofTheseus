@@ -8,7 +8,7 @@
 ⓐ [`SKILL.md`](SKILL.md) — 지휘자가 가장 먼저 읽는 라이트 인덱스. 14 페이즈 표 + 모델 컬럼 + 단계 재진입 룰.
 ⓑ [`phases/`](phases/) — 페이즈 00–13.
 ⓒ [`agents/`](agents/) — 13 개 서브에이전트 프롬프트 (각각 권장 모델 명시).
-ⓓ [`conventions/`](conventions/) — 7 컨벤션 모듈:
+ⓓ [`conventions/`](conventions/) — 8 컨벤션 모듈:
   ⓓ-1 [`interview.md`](conventions/interview.md) — 두괄식·1질의·숫자 5개·확증 회귀(인지 트릭).
   ⓓ-2 [`timing.md`](conventions/timing.md) — 산출물 헤더 시간 메타·라이브 보고.
   ⓓ-3 [`diagrams.md`](conventions/diagrams.md) — 마인드맵→유즈케이스→시퀀스 진화.
@@ -16,6 +16,7 @@
   ⓓ-5 [`build-and-config.md`](conventions/build-and-config.md) — sh+bat 빌드 스크립·TOML·docs/·폐기 우선·중간 데이터·.gitattributes·병렬·메모리 가드.
   ⓓ-6 [`contracts.md`](conventions/contracts.md) — 산출물 frontmatter — **단계 재진입 가능성**.
   ⓓ-7 [`models.md`](conventions/models.md) — 에이전트 역할별 Opus/Sonnet/Haiku 매핑.
+  ⓓ-8 [`competition.md`](conventions/competition.md) — **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자/머지. LLM 비결정성 극복.
 ⓔ [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 ⓕ [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 ⓖ [`templates/`](templates/) — intent / plan / sprint-report / naming 템플릿 + bun 기반 webview 스캐폴드.
