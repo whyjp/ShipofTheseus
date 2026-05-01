@@ -29,7 +29,7 @@ inputs JSON 형식 (모든 필드 필수, 명시 표시 외):
 }
 
 stdout 으로 결과 JSON, exit code:
-  0  = 임계 통과
+  0  = 임계 통과 (기본 임계 0.999 — 자율 최대 결과 지향)
   1  = 임계 미달
   2  = 회귀 트리거 (--prior 비교)
 """
@@ -133,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--inputs", required=True, help="sprint-inputs.json 경로")
     p.add_argument("--prior", help="이전 스프린트 score 출력 경로 (회귀 판정용)")
-    p.add_argument("--threshold", type=float, default=0.9)
+    p.add_argument("--threshold", type=float, default=0.999)
     p.add_argument("--regression-threshold", type=float, default=0.05)
     args = p.parse_args(argv)
 

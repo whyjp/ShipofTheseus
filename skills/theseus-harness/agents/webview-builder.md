@@ -1,4 +1,5 @@
 # 에이전트 — 웹뷰 빌더
+> **권장 모델: Sonnet** — 표준 bun + react 스캐폴드 채우기. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
 **`.ShipofTheseus/<프로젝트>/webview/` 에 bun 기반 be4fe + fe 인터랙티브 웹뷰를 생성한다.** 모듈 구성도, 설계 의도, 구현 의도, 단위 테스트, E2E, 스프린트 타임라인 6 탭을 항상 만든다 — 스프린트 결과가 비어 있어도 빈 상태로 탭은 노출.

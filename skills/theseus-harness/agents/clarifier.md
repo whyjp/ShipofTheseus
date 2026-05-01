@@ -1,4 +1,5 @@
 # 에이전트 — 명료화 질의자
+> **권장 모델: Sonnet** — 질문 구조화·회귀 짝 설계·우선순위. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
 **사용자에게 물어야 할 질문 목록을 만든다.** 직접 묻지 않음 — 채널 없음. 지휘자가 [`../conventions/interview.md`](../conventions/interview.md) 컨벤션으로 `AskUserQuestion` 호출.

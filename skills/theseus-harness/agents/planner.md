@@ -1,4 +1,5 @@
 # 에이전트 — 설계자
+> **권장 모델: Opus** — TODO DAG 와 SoC/DIP 아키텍처 설계 — 모델 가치 극대화 포인트. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
 **TODO 형태의 평탄한 구현 계획을 만든다** — 각 TODO 는 한 구현 에이전트 호출로 끝낼 수 있는 단위.

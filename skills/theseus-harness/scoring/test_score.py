@@ -25,6 +25,7 @@ def _run(inputs: dict, prior: dict | None = None, **flags) -> tuple[int, dict]:
 
 
 def _green_inputs() -> dict:
+    """모든 차원 1.0 — 임계 0.999 자율 최대 기준 통과용."""
     return {
         "test_pass_rate": 1.0,
         "intent_fidelity": 1.0,
@@ -33,19 +34,33 @@ def _green_inputs() -> dict:
         "modules_passing_solid": 4,
         "modules_total": 4,
         "dip_violation": False,
-        "be_coverage": 0.95,
-        "fe_coverage": 0.92,
+        "be_coverage": 1.0,
+        "fe_coverage": 1.0,
         "fe_be_parity": "full",
         "e2e_passing": 5,
         "e2e_total": 5,
     }
 
 
-def test_perfect_inputs_pass():
+def test_perfect_inputs_pass_at_999_threshold():
     rc, out = _run(_green_inputs())
     assert rc == 0
     assert out["passes_threshold"] is True
-    assert out["score"] >= 0.9
+    assert out["score"] >= 0.999
+
+
+def test_near_perfect_misses_999_threshold():
+    inputs = _green_inputs()
+    inputs["be_coverage"] = 0.95
+    inputs["fe_coverage"] = 0.92
+    rc, out = _run(inputs)
+    # 임계 0.999 기본값에서는 통과 못 함 — 자율 최대 결과 지향
+    assert rc == 1
+    assert out["passes_threshold"] is False
+    # 같은 입력이 임계 0.9 에서는 통과해야 함
+    rc, out = _run(inputs, threshold=0.9)
+    assert rc == 0
+    assert out["passes_threshold"] is True
 
 
 def test_failing_e2e_drops_score_below_threshold():
@@ -102,7 +117,8 @@ def test_no_regression_when_within_threshold():
     prior = {"score": 0.92}
     inputs = _green_inputs()
     inputs["test_pass_rate"] = 0.95
-    rc, out = _run(inputs, prior=prior)
+    # 회귀 임계는 0.05 — prior 0.92 vs current ~0.987 → 회귀 아님. 단, 0.999 임계는 미달이므로 명시 0.9.
+    rc, out = _run(inputs, prior=prior, threshold=0.9)
     assert out["regression_triggered"] is False
     assert rc == 0
 

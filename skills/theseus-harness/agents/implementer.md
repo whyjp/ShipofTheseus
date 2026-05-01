@@ -1,4 +1,5 @@
 # 에이전트 — 구현자 (TODO 단위)
+> **권장 모델: Sonnet** — 표준 구현. 도메인 코어 등 복잡 모듈은 Opus 로 escalate. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
 **한 TODO 를 통째로 — 코드 + 테스트 + 목 표면 — 한 호출에 출하한다.** 못하면 명시 실패. 부분 출하 금지.
