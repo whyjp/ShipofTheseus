@@ -66,7 +66,7 @@ entry_blocked: false
 
 ## 예상 진행 (G2 미니 모드)
 
-1. **페이즈 00 ~ 04** — 명명·의도·인터뷰. PRD 가 *이슈 본문* 으로 입력 → [`prd-handling.md`](../skills/theseus-harness/conventions/prd-handling.md) 의 1 클릭 확정 흐름.
+1. **페이즈 00 ~ 04** — 명명·의도·인터뷰. PRD 가 *이슈 본문* 으로 입력 → [`interview.md`](../skills/theseus-harness/conventions/interview.md) "PRD/스펙 입력 처리" 절의 1 클릭 확정 흐름 (v0.4.0 PR-13 흡수).
 2. **페이즈 05 비평 스킵** — G2 미니 모드는 비평 페이즈 부분 스킵 (단일 모듈 + 명확한 회귀 케이스라 비평이 미스초이스 잡을 표면 좁음). 단 critic 이 *한 줄* 이라도 적대적 의견 출력 — 동의로만 끝나지 않음.
 3. **페이즈 06 ~ 07 계획** — TODO 1 ~ 3 개. 시퀀스 다이어그램 의무는 유지.
 4. **페이즈 08 구현** — 단일 모듈 패치 + 회귀 가드 테스트.

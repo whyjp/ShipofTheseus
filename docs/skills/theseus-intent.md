@@ -37,7 +37,7 @@
 ⓓ **확증 회귀** — 사용자 답변이 모순될 때 자동 회귀 질의.
 ⓔ **PRD 처리 허들** — 충실한 PRD 가 입력이어도 인터뷰 항목 생략 금지. PRD 추출값은 객관식 1 번 보기로 제시.
 
-자세한 컨벤션은 [`../../skills/theseus-harness/conventions/interview.md`](../../skills/theseus-harness/conventions/interview.md) + [`../../skills/theseus-harness/conventions/prd-handling.md`](../../skills/theseus-harness/conventions/prd-handling.md).
+자세한 컨벤션은 [`../../skills/theseus-harness/conventions/interview.md`](../../skills/theseus-harness/conventions/interview.md) (PRD 처리는 같은 파일의 "PRD/스펙 입력 처리" 절 — v0.4.0 PR-13 prd-handling 흡수).
 
 ## 인터뷰 항목
 
@@ -77,4 +77,4 @@ A. 확증 회귀 — 모순된 두 답변을 표시하고 사용자에게 어느
 - [`../../skills/theseus-harness/conventions/interview.md`](../../skills/theseus-harness/conventions/interview.md) — 인터뷰 컨벤션.
 - [`../../skills/theseus-harness/conventions/spec-catalog.md`](../../skills/theseus-harness/conventions/spec-catalog.md) — 도메인별 NFR 카탈로그.
 - [`../../skills/theseus-harness/conventions/grades.md`](../../skills/theseus-harness/conventions/grades.md) — 그레이드 시스템.
-- [`../../skills/theseus-harness/conventions/prd-handling.md`](../../skills/theseus-harness/conventions/prd-handling.md) — PRD 처리 허들.
+- [`../../skills/theseus-harness/conventions/interview.md`](../../skills/theseus-harness/conventions/interview.md) "PRD/스펙 입력 처리" 절 — PRD 처리 허들 (v0.4.0 PR-13 흡수).

@@ -52,7 +52,7 @@ orchestrator 와의 차이는 [`theseus-orchestrator.md`](theseus-orchestrator.m
 | 18 | [`sub-agents.md`](../../skills/theseus-harness/conventions/sub-agents.md) | 서브 에이전트 재귀 분해 |
 | 19 | [`indexing.md`](../../skills/theseus-harness/conventions/indexing.md) | 산출물 = DB·비직렬성 트리 인덱싱 |
 | 20 | [`resume.md`](../../skills/theseus-harness/conventions/resume.md) | 리줌 (중단/재개)·state.json |
-| 21 | [`prd-handling.md`](../../skills/theseus-harness/conventions/prd-handling.md) | PRD 처리 허들·인터뷰 스킵 금지 |
+| 21 | [`interview.md`](../../skills/theseus-harness/conventions/interview.md) "PRD/스펙 입력 처리" 절 | PRD 처리 허들·인터뷰 스킵 금지 (v0.4.0 PR-13: prd-handling 흡수) |
 
 ## 채점기
 

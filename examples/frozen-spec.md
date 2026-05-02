@@ -2,7 +2,7 @@
 
 ## 시나리오
 
-성숙한 코드베이스 (예: 100k LOC SaaS) 에 *결제 통합* 을 추가한다. PRD 가 충실히 작성되어 있고 CI 도 정착. 본 하네스가 PRD 처리 룰 ([`prd-handling.md`](../skills/theseus-harness/conventions/prd-handling.md)) 로 인터뷰 스킵 금지를 강제하지만, *답 자체는 PRD 의 1번 보기 1 클릭* 으로 빠르게 통과.
+성숙한 코드베이스 (예: 100k LOC SaaS) 에 *결제 통합* 을 추가한다. PRD 가 충실히 작성되어 있고 CI 도 정착. 본 하네스가 PRD 처리 룰 ([`interview.md`](../skills/theseus-harness/conventions/interview.md) "PRD/스펙 입력 처리" 절, v0.4.0 PR-13 흡수) 로 인터뷰 스킵 금지를 강제하지만, *답 자체는 PRD 의 1번 보기 1 클릭* 으로 빠르게 통과.
 
 ## 호출 예시
 
