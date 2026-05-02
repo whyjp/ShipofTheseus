@@ -23,7 +23,21 @@ import sys
 from pathlib import Path
 
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
-TIMING_HEADER_RE = re.compile(r"\A>\s*\*\*시작:\*\*.*?\n(>.*\n)*", re.MULTILINE)
+
+# v0.2.1 회귀 수정: 템플릿이 "# 제목" → 빈 줄 → "> **프로젝트:**" → "> **시작:**" 순서이므로
+# 기존 `\A>\s*\*\*시작:\*\*` 앵커는 절대 매치되지 않아 timing 헤더가 strip 되지 않았다.
+# 결과적으로 같은 내용을 다른 시각에 재실행하면 fingerprint 가 달라져
+# "timing-invariant fingerprint" 라는 contracts.md 의 핵심 약속이 깨져 있었다.
+# 수정: 본문 어디에 위치하든(첫 줄 / 제목 다음 / 본문 중간) timing 블록을 식별·strip.
+TIMING_BLOCK_RE = re.compile(r"(?:^>[^\n]*\n)+", re.MULTILINE)
+TIMING_MARKERS = (
+    "**시작:**",
+    "**종료:**",
+    "**소요:**",
+    "**누적 경과:**",
+    "**현재 시각:**",
+    "**이 스프린트 소요:**",
+)
 
 
 def parse_frontmatter(text: str) -> tuple[dict, str]:
@@ -88,9 +102,19 @@ def render_frontmatter(fm: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _is_timing_block(block: str) -> bool:
+    return any(marker in block for marker in TIMING_MARKERS)
+
+
 def canonical_body(body: str) -> str:
-    """timing 헤더와 후행 공백 제거, 행 끝 정규화."""
-    body = TIMING_HEADER_RE.sub("", body, count=1)
+    """timing 헤더와 후행 공백 제거, 행 끝 정규화.
+
+    timing 블록은 본문 어디에 있어도 식별해 strip — 단, 일반 인용 블록
+    (timing 마커가 없는) 은 보존. 이로써 *같은 내용 + 다른 시각* 은 항상
+    동일 fingerprint 를 산출한다 ([`contracts.md`](../conventions/contracts.md))."""
+    def _replace(match: "re.Match[str]") -> str:
+        return "" if _is_timing_block(match.group(0)) else match.group(0)
+    body = TIMING_BLOCK_RE.sub(_replace, body)
     body = body.replace("\r\n", "\n").replace("\r", "\n")
     return "\n".join(line.rstrip() for line in body.split("\n")).strip() + "\n"
 

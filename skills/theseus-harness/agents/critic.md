@@ -64,7 +64,7 @@
 python skills/theseus-harness/scoring/fingerprint.py compute \
   --file .ShipofTheseus/<프로젝트>/intent/05-critique.md \
   --prev .ShipofTheseus/<프로젝트>/intent/04-answers.md \
-  --skill-version 0.2.0
+  --skill-version 0.2.1
 ```
 
 페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.

@@ -89,10 +89,13 @@ app.get("/api/sprints", async (c) => {
   for (const name of (await readdir(dir)).sort()) {
     const sdir = join(dir, name);
     if (!(await stat(sdir)).isDirectory()) continue;
+    // v0.2.1: score 는 별도 score.json (score.py --out 산출).
+    // inputs.json 은 score.py 의 *입력* (test_pass_rate 등) — score 필드 없음.
     sprints.push({
       sprint: name,
       report: await readMarkdownOptional(join(sdir, "report.md")),
       inputs: await readJsonOptional(join(sdir, "inputs.json")),
+      score: await readJsonOptional(join(sdir, "score.json")),
       bisect: await readMarkdownOptional(join(sdir, "bisect.md")),
     });
   }

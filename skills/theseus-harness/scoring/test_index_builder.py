@@ -15,7 +15,7 @@ BUILDER = Path(__file__).parent / "index_builder.py"
 def _make_artifact(root: Path, rel: str, fp: str, prev: str | None, **extra) -> Path:
     p = root / rel
     p.parent.mkdir(parents=True, exist_ok=True)
-    fm_lines = ["---", "skill_name: theseus-harness", "skill_version: 0.2.0",
+    fm_lines = ["---", "skill_name: theseus-harness", "skill_version: 0.2.1",
                 f"phase: {extra.get('phase', '01-intent')}",
                 f"fingerprint: {fp}",
                 f"prev_fingerprint: {prev or 'null'}",

@@ -135,6 +135,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--prior", help="이전 스프린트 score 출력 경로 (회귀 판정용)")
     p.add_argument("--threshold", type=float, default=0.999)
     p.add_argument("--regression-threshold", type=float, default=0.05)
+    p.add_argument(
+        "--out",
+        help=(
+            "score 출력 JSON 을 파일로도 저장 (예: sprints/NN/score.json). "
+            "stdout 은 그대로 유지 — webview/be4fe 가 score.json 을 직접 로드해 "
+            "Sprints 차트의 데이터 소스로 사용 (v0.2.1 회귀 수정)."
+        ),
+    )
     args = p.parse_args(argv)
 
     with open(args.inputs) as f:
@@ -173,6 +181,12 @@ def main(argv: list[str] | None = None) -> int:
     }
     json.dump(output, sys.stdout, indent=2, ensure_ascii=False)
     sys.stdout.write("\n")
+
+    if args.out:
+        # webview/be4fe 가 score.json 을 직접 로드 — Sprints 차트의 데이터 소스.
+        with open(args.out, "w", encoding="utf-8") as f:
+            json.dump(output, f, indent=2, ensure_ascii=False)
+            f.write("\n")
 
     if regression:
         return 2
