@@ -1,0 +1,27 @@
+# 플랫폼 이식 — 줄 끝 정규화
+* text=auto eol=lf
+
+# windows 전용 스크립트는 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# unix 스크립트는 LF
+*.sh text eol=lf
+
+# 이미지·바이너리
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+# 잠금/대용량 — diff 비활성화 또는 binary 처리
+go.sum -diff
+go.work.sum -diff
+bun.lockb binary
+package-lock.json -diff
+yarn.lock -diff

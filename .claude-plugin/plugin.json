@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "shipoftheseus",
+  "version": "0.2.0",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 의도 추출부터 무한 스프린트 루프, 회귀 바이섹트, bun 기반 인터랙티브 웹뷰 자동 생성, 핸드오프까지.",
+  "author": {
+    "name": "whyjp",
+    "url": "https://github.com/whyjp/shipoftheseus"
+  },
+  "homepage": "https://github.com/whyjp/shipoftheseus",
+  "repository": "https://github.com/whyjp/shipoftheseus.git",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skill",
+    "harness",
+    "tdd",
+    "solid",
+    "dip",
+    "ouroboros",
+    "ralph-loop"
+  ],
+  "skills": [
+    {
+      "name": "theseus-harness",
+      "path": "./skills/theseus-harness",
+      "entry": "SKILL.md"
+    }
+  ]
+}

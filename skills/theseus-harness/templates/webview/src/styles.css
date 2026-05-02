@@ -1,0 +1,51 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+  color-scheme: light dark;
+  --fg: #1a1a1a;
+  --fg-muted: #555;
+  --bg: #fafafa;
+  --bg-elev: #fff;
+  --border: #ddd;
+  --accent: #2563eb;
+  --bad: #dc2626;
+  --good: #16a34a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e6e6e6;
+    --fg-muted: #aaa;
+    --bg: #111;
+    --bg-elev: #1a1a1a;
+    --border: #333;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); }
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.timing-header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg-elev); border-bottom: 1px solid var(--border);
+  padding: 8px 16px; display: flex; gap: 24px; font-size: 13px; color: var(--fg-muted);
+}
+.timing-header strong { color: var(--fg); margin-right: 4px; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--bg-elev); }
+.tabs button {
+  padding: 12px 20px; border: none; background: transparent;
+  color: var(--fg-muted); cursor: pointer; font-size: 14px;
+  border-bottom: 2px solid transparent;
+}
+.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-body { padding: 24px; flex: 1; }
+.empty-state { color: var(--fg-muted); padding: 48px; text-align: center; }
+.markdown { max-width: 920px; line-height: 1.6; }
+.markdown pre { background: var(--bg); padding: 12px; border-radius: 4px; overflow: auto; }
+.markdown code { background: var(--bg); padding: 2px 4px; border-radius: 3px; }
+.score-pill {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  font-weight: 600; font-size: 13px;
+}
+.score-pill.good { background: rgba(22, 163, 74, 0.15); color: var(--good); }
+.score-pill.bad { background: rgba(220, 38, 38, 0.15); color: var(--bad); }
+.sprint-row { padding: 12px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px; }
+.sprint-row h3 { margin: 0 0 4px 0; }

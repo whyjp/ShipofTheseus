@@ -1,0 +1,14 @@
+# .ShipofTheseus/ 의 내용은 ignore — 단, 자기 평가 (theseus-self) 는 부트스트래핑 reference 로 보존
+.ShipofTheseus/*
+!.ShipofTheseus/theseus-self
+!.ShipofTheseus/theseus-self/**
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+node_modules/
+.env
+.env.local
+dist/
+.vite/
+bun.lockb
