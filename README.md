@@ -134,6 +134,7 @@ scripts\self-check.bat         # windows
 
 ## 더 읽을거리
 
+- [`examples/`](examples/) — 3 시나리오 (evolving-spec / frozen-spec / fix-bug) — 페이즈 04 의 사전 위임 8 답 + Q-D8 verification commands 답 실제 입력 예시.
 - [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미, Ralph 루프·OhMy 시리즈·우로보로스 합성 근거, SOLID/TDD/BDD/DDD/Hexagonal 매핑.
 - [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차, 35 self_lint 체크 목록.
 - [`INSTALL.md`](INSTALL.md) — 설치·갱신·트러블슈팅.
