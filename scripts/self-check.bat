@@ -2,11 +2,11 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0\.."
 
-echo ==^> self_lint (18 체크)
+echo ==^> self_lint (35 체크)
 python skills\theseus-harness\scoring\self_lint.py || exit /b 1
 
 echo.
-echo ==^> pytest 16 케이스
+echo ==^> pytest 99 케이스
 python -m pytest skills\theseus-harness\scoring\ -q || exit /b 1
 
 echo.

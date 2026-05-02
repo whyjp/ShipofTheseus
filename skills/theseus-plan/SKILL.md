@@ -1,6 +1,6 @@
 ---
 name: theseus-plan
-version: 0.2.1
+version: 0.2.2
 description: TODO DAG 계획 작성 + 콜드 재이해 (시퀀스 다이어그램 동봉, 경쟁 트리거 가능). theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
 ---
 

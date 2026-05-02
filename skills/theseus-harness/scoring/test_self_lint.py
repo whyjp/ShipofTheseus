@@ -19,6 +19,7 @@ def _run_lint() -> dict:
         [sys.executable, str(SELF_LINT)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return json.loads(proc.stdout)
 
@@ -28,6 +29,7 @@ def _run_score() -> dict:
         [sys.executable, str(SELF_LINT), "--score"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return json.loads(proc.stdout)
 

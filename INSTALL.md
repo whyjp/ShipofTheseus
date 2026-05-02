@@ -124,7 +124,7 @@ cp -r ~/src/shipoftheseus/skills/* /path/to/your/project/.claude/skills/
 설치 후 (저장소 루트에서):
 
 ```bash
-# 일괄 점검 — 34 self_lint 체크 + pytest + sample 채점 + 자기 점수 + 핑거프린트 체인
+# 일괄 점검 — 35 self_lint 체크 + pytest + sample 채점 + 자기 점수 + 핑거프린트 체인
 ./scripts/self-check.sh        # linux/mac
 scripts\self-check.bat         # windows
 ```
@@ -138,7 +138,7 @@ python skills/theseus-harness/scoring/score.py \
   --inputs skills/theseus-harness/templates/sample-inputs.json
 ```
 
-자기 점수 임계 0.99999 통과 + self_lint 34/34 + pytest 모두 통과해야 정상.
+자기 점수 임계 0.99999 통과 + self_lint 35/35 + pytest 모두 통과해야 정상.
 
 ## 7. 제거
 

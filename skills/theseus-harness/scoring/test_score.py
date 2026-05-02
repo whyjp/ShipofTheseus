@@ -13,18 +13,18 @@ SCORE = Path(__file__).parent / "score.py"
 def _run(inputs: dict, prior: dict | None = None, **flags) -> tuple[int, dict]:
     import tempfile
     # 매 호출마다 독립 임시 파일 — 여러 테스트가 같은 경로를 공유하면 race / stale 위험.
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(inputs, f)
         inputs_path = Path(f.name)
     args = [sys.executable, str(SCORE), "--inputs", str(inputs_path)]
     if prior is not None:
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
             json.dump(prior, f)
             prior_path = Path(f.name)
         args += ["--prior", str(prior_path)]
     for k, v in flags.items():
         args += [f"--{k.replace('_', '-')}", str(v)]
-    proc = subprocess.run(args, capture_output=True, text=True)
+    proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
     return proc.returncode, json.loads(proc.stdout)
 
 

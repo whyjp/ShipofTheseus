@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.2.1
+version: 0.2.2
 description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 명명 → 의도+마인드맵 → 교차 이해 → 사용자 질의+유즈케이스+스택 점검 → 비평 → 계획+시퀀스 → 재계획 → 구현 → 5종 게이트 → 점수 0.999 도달까지 무한 스프린트 → 회귀 바이섹트 → bun be4fe+fe 웹뷰 자동 생성 → 핸드오프. 단계별 산출물에 핑거프린트+스킬 버전 포함, 외부에서 던져진 산출물로 *다음 단계부터 재진입* 가능. 사용자 질의는 두괄식·1회 1질의·숫자 객관식 5개 이하. 백엔드 기본 Go, FE 기본 bun + React + TS. 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
@@ -87,7 +87,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 본 하네스는 자기 자신에게 자기의 평가 절차를 적용한다 — 우로보로스의 진짜 발현. 자세한 절차는 [`../../BOOTSTRAP.md`](../../BOOTSTRAP.md). 핵심:
 
 ⓐ **임계 0.99999** — 자기 표준은 사용자 프로젝트 임계 0.999 보다 한 단계 빡빡.
-ⓑ **`scoring/self_lint.py`** — 18 체크로 컨벤션·교차 링크·버전·frontmatter·경쟁 룰 객관 측정. `--score` 모드.
+ⓑ **`scoring/self_lint.py`** — 35 체크로 컨벤션·교차 링크·버전·frontmatter·경쟁 룰·인코딩 비호환 가드 객관 측정. `--score` 모드.
 ⓒ **`scripts/self-check.{sh,bat}`** — lint + 16 pytest + sample + self_score + 핑거프린트 체인 일괄.
 ⓓ **회차 누적** — `.ShipofTheseus/theseus-self/sprints/NN/` 점수 시계열로 본 하네스가 더 단단해지는지 객관 측정.
 

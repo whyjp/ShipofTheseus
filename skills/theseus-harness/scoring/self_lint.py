@@ -487,6 +487,79 @@ def check_rewrite_trigger_multidimensional(repo_root: Path, skill_root: Path) ->
     return issues
 
 
+def check_subprocess_encoding_explicit(skill_root: Path) -> list[str]:
+    """
+    C35 — Windows 인코딩 비호환 가드 (회귀 아닌 *원래 잠재* 버그 재유입 방지).
+
+    배경 (v0.2.2 외부 리뷰): `subprocess.run(text=True)` 와
+    `tempfile.NamedTemporaryFile(mode="w")` 의 *기본* 인코딩이 OS 로케일
+    의존 (Windows 한국어 = cp949) 이라, 자식 Python 이 한국어 JSON 을
+    출력하면 부모가 디코딩 못 한 바이트에서 잘려 JSON 파싱 실패. 결과적으로
+    `test_self_score_meets_99999` 가 0.8 까지 떨어져 정직 박스의 가장 큰
+    약속(`self_score=1.0`) 이 *OS 의존* 이었음 — *작동하다 깨진 회귀가 아니라
+    v0.2.0 부터 Windows 에서 한 번도 작동한 적 없는 잠재 버그*.
+
+    본 체크는 *모든 새 테스트/도구* 에 같은 비호환이 재유입되는 것을 패턴
+    매칭으로 막는다 — `scoring/` 의 `.py` 파일에서:
+      ⓐ `tempfile.NamedTemporaryFile(... mode="w" ...)` 호출에 `encoding=`
+         미명시 → fail.
+      ⓑ `subprocess.run(... text=True ...)` 호출에 `encoding=` 미명시 → fail.
+         단, 부모가 `PYTHONIOENCODING` 을 자식에 전달하는 경우는 conftest.py 가
+         처리 — 본 체크는 *방어 심층화* 로 명시도 강제.
+      ⓒ `scoring/conftest.py` 존재 (pytest 세션 부트 자체).
+
+    검출 휴리스틱: 호출 멀티라인 가능성 때문에 함수 호출 단위로 묶어 검사.
+    `encoding=` 키워드가 같은 호출의 닫는 괄호 *전* 에 있는지 본다.
+    """
+    issues: list[str] = []
+
+    conftest = skill_root / "scoring" / "conftest.py"
+    if not conftest.exists():
+        issues.append("scoring/conftest.py 누락 — Windows 자식 Python stdout 인코딩 가드 부재")
+    else:
+        text = conftest.read_text(encoding="utf-8")
+        if "PYTHONIOENCODING" not in text:
+            issues.append("scoring/conftest.py 가 PYTHONIOENCODING 박지 않음")
+
+    # 호출 단위 패턴 — re.DOTALL 로 멀티라인 호출 감쌈.
+    tempfile_pat = re.compile(
+        r"tempfile\.NamedTemporaryFile\s*\((?P<args>[^()]*?)\)",
+        re.DOTALL,
+    )
+    subprocess_pat = re.compile(
+        r"subprocess\.run\s*\((?P<args>[^()]*(?:\([^()]*\)[^()]*)*?)\)",
+        re.DOTALL,
+    )
+
+    for py in sorted((skill_root / "scoring").glob("*.py")):
+        # 본 체크 자체는 자기 자신 정규식을 검사 대상에 포함시키면 안 됨 — 메타 회피.
+        if py.name == "self_lint.py":
+            continue
+        body = py.read_text(encoding="utf-8")
+        for m in tempfile_pat.finditer(body):
+            call = m.group(0)
+            if 'mode="w"' not in call and "mode='w'" not in call:
+                continue   # 읽기 또는 바이너리 — 인코딩 무관
+            if "encoding=" not in call:
+                line_no = body.count("\n", 0, m.start()) + 1
+                issues.append(
+                    f"scoring/{py.name}:{line_no} tempfile.NamedTemporaryFile(mode='w') 에 encoding= 누락 — "
+                    f"Windows cp949 비호환 위험"
+                )
+        for m in subprocess_pat.finditer(body):
+            call = m.group(0)
+            if "text=True" not in call:
+                continue   # bytes 모드 — 명시 디코딩 안 함, OK
+            if "encoding=" not in call:
+                line_no = body.count("\n", 0, m.start()) + 1
+                issues.append(
+                    f"scoring/{py.name}:{line_no} subprocess.run(text=True) 에 encoding= 누락 — "
+                    f"부모 디코딩이 OS 로케일에 떨어짐"
+                )
+
+    return issues
+
+
 def check_no_rule_duplication(skill_root: Path) -> list[str]:
     """
     C32 — 룰 본문 중복 검출 휴리스틱.
@@ -798,6 +871,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C32", "no rule duplication across conventions (fragmentation DRY)", check_no_rule_duplication),
     ("C33", "PRD handling hurdle (no interview skip even with full PRD)", check_prd_handling_wired),
     ("C34", "rewrite trigger generalized to all deep quality violations (multi-dimensional, not DIP-only)", check_rewrite_trigger_multidimensional),
+    ("C35", "subprocess/tempfile encoding explicit (Windows cp949 latent-bug guard, v0.2.2)", check_subprocess_encoding_explicit),
 ]
 
 
@@ -852,6 +926,7 @@ def compute_self_score(repo_root: Path) -> dict:
         [sys.executable, "-m", "pytest", str(skill_root / "scoring" / "test_score.py"), "-q", "--tb=no"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         cwd=str(skill_root),
     )
     pytest_pass_count = pytest_total_count = 0
@@ -880,6 +955,7 @@ def compute_self_score(repo_root: Path) -> dict:
         ],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     try:
         sample_score = json.loads(sample_proc.stdout)["score"]
@@ -903,6 +979,11 @@ def compute_self_score(repo_root: Path) -> dict:
 
 
 def main(argv: Iterable[str] | None = None) -> int:
+    # 본 스크립트가 직접 실행될 때 stdout 이 OS 로케일(cp949) 로 떨어지면 한국어
+    # issue 메시지의 em-dash 같은 문자에서 UnicodeEncodeError 가 발생한다 — C35
+    # 가 잡으려는 회귀와 같은 부류. 자기 출력도 같은 가드로.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     p = argparse.ArgumentParser()
     p.add_argument(
         "--repo-root",

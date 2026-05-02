@@ -1,6 +1,6 @@
 ---
 name: theseus-handoff
-version: 0.2.1
+version: 0.2.2
 description: 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + 웹뷰 실행 명령 + (자율 권한 시) PR 생성. theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
 ---
 

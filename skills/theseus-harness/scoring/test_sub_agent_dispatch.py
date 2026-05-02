@@ -12,25 +12,27 @@ DISPATCH = Path(__file__).parent / "sub_agent_dispatch.py"
 
 
 def _run_decide(module_spec: dict, grade: int = 4) -> tuple[int, dict]:
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(module_spec, f)
         path = Path(f.name)
     proc = subprocess.run(
         [sys.executable, str(DISPATCH), "decide", "--module-spec", str(path), "--grade", str(grade)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 
 
 def _run_merge(results: list[dict], mode: str = "parallel") -> tuple[int, dict]:
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(results, f)
         path = Path(f.name)
     proc = subprocess.run(
         [sys.executable, str(DISPATCH), "merge", "--results", str(path), "--mode", mode],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 

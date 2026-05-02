@@ -12,7 +12,7 @@ STAG = Path(__file__).parent / "stagnation.py"
 
 
 def _run(history: dict, **flags) -> tuple[int, dict]:
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(history, f)
         path = Path(f.name)
     args = [sys.executable, str(STAG), "--history", str(path)]
@@ -22,7 +22,7 @@ def _run(history: dict, **flags) -> tuple[int, dict]:
                 args.append(f"--{k.replace('_', '-')}")
         else:
             args += [f"--{k.replace('_', '-')}", str(v)]
-    proc = subprocess.run(args, capture_output=True, text=True)
+    proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
     return proc.returncode, json.loads(proc.stdout)
 
 

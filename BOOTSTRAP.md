@@ -83,6 +83,7 @@
 | C32 | 룰 본문 중복 부재 (fragmentation DRY) |
 | C33 | PRD 처리 허들 (충실한 PRD 도 인터뷰 스킵 금지) |
 | C34 | 깨고 다시 빚기 트리거 다차원 일반화 (DIP 단일이 아닌 6 차원) |
+| C35 | scoring/ 의 모든 `subprocess.run(text=True)` + `tempfile.NamedTemporaryFile(mode="w")` 가 `encoding=` 명시 + `conftest.py` 의 `PYTHONIOENCODING=utf-8` 박힘 (Windows cp949 잠재 버그 가드 — 회귀가 아닌 *원래 잠재* 버그) |
 
 실행:
 ```bash
@@ -110,7 +111,7 @@ python skills/theseus-harness/scoring/self_lint.py --score
 self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ```
 
-ⓐ `lint_score` — 34 self_lint 체크 통과율 (현재 34/34 = 1.0)
+ⓐ `lint_score` — 35 self_lint 체크 통과율 (현재 35/35 = 1.0)
 ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (현재 12/12 = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
 ⓒ `sample_score` — `templates/sample-inputs.json` 채점 (현재 1.0)
 
