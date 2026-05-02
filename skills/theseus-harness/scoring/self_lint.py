@@ -325,6 +325,22 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_grades_wired(skill_root: Path) -> list[str]:
+    """C27 — grades.md + grade_assess.py + SKILL.md 호출 표 + phase 04 Q-G1."""
+    issues: list[str] = []
+    if not (skill_root / "conventions" / "grades.md").exists():
+        return ["conventions/grades.md 누락 — 그레이드 시스템 정의 필요"]
+    if not (skill_root / "scoring" / "grade_assess.py").exists():
+        issues.append("scoring/grade_assess.py 누락 — 자동 그레이드 추정 도구 필요")
+    skill = _read(skill_root / "SKILL.md")
+    if "Grade 1" not in skill or "Grade 5" not in skill or "grades.md" not in skill:
+        issues.append("SKILL.md 가 호출 그레이드 표 (G1~G5) 또는 grades.md 링크 누락")
+    p4 = _read(skill_root / "phases" / "04-clarify.md")
+    if "Q-G1" not in p4 or "grade" not in p4.lower():
+        issues.append("phases/04-clarify.md 가 Q-G1 그레이드 확정 첫 질의 누락")
+    return issues
+
+
 def check_fragmentation_policy(skill_root: Path) -> list[str]:
     """C26 — fragmentation.md 가 존재 + SKILL.md 가 인덱스 형태 (룰 본문 비대화 방지)."""
     issues: list[str] = []
@@ -445,6 +461,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C24", "checkpoints + dacapo + Q-D7 wired", check_checkpoints_wired),
     ("C25", "test-invariants + dacapo present (AIDE/Phase V)", check_test_invariants_present),
     ("C26", "fragmentation policy enforced (SKILL.md is index, not heavy)", check_fragmentation_policy),
+    ("C27", "grades wired (grades.md + grade_assess.py + SKILL call table + phase04 Q-G1)", check_grades_wired),
 ]
 
 

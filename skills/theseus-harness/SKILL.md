@@ -27,6 +27,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓝ **테스트 목적 보호 — 불변 조건 + Phase V 측정 유효성**: [`conventions/test-invariants.md`](conventions/test-invariants.md)
 ⓞ **Da Capo 루프 (AIDE × LLM Wiki 결합 — 자기 강화 회귀)**: [`conventions/dacapo.md`](conventions/dacapo.md)
 ⓟ **파편화 우선 설계 (단일 헤비 스킬 금지)**: [`conventions/fragmentation.md`](conventions/fragmentation.md)
+ⓠ **그레이드 시스템 — 작업 복잡도별 허들 (G1 호출 거부 ~ G5 빡빡 모드)**: [`conventions/grades.md`](conventions/grades.md)
 
 ## 산출물 트리
 
@@ -129,7 +130,14 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓚ **모든 산출물에 frontmatter (skill_name, skill_version, phase, project_id, fingerprint, prev_fingerprint, produced_at) 필수.**
 ⓛ 페이즈 산출 파일을 지휘자가 손대지 않는다 — 잘못되면 페이즈 재실행.
 
-## 호출 / 호출 금지
+## 호출 그레이드 — [`conventions/grades.md`](conventions/grades.md) 의 허들
 
-ⓐ 다중 모듈, 의도 모호, SOLID 경계 리팩터, 새 도메인 → 호출.
-ⓑ 한 줄 수정, 기계적 리네임, 명시 throwaway → 금지.
+**호출 직후 첫 동작 = `scoring/grade_assess.py` 자동 추정 + 페이즈 04 의 Q-G1 객관식 확정.** 그레이드별 페이즈/컨벤션 활성화로 단순 작업 over-engineering 차단.
+
+| Grade | 호출 시점 | 본 하네스 동작 |
+| ----- | -------- | ------------ |
+| **Grade 1** Trivial | 한 줄 수정 / 리네임 / typo / throwaway | **호출 거부, 단순 응답 권고** |
+| **Grade 2** Simple | 단일 모듈 작은 기능 (~100 LOC) | 미니 (5 페이즈 / 7 컨벤션 / 임계 0.95) |
+| **Grade 3** Standard | 다중 모듈 단일 사이드 | 12 페이즈 / 12 컨벤션 / 임계 0.97 |
+| **Grade 4** Complex | FE+BE / 새 도메인 / SOLID 리팩터 (default) | 14 페이즈 풀 / 26 컨벤션 / 임계 0.999 |
+| **Grade 5** Mission Critical | 결제 / 금융 / 안전 시스템 | 14 풀 + 빡빡 모드 / 임계 0.99999 |

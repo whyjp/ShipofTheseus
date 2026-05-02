@@ -25,6 +25,7 @@
   ⓓ-14 [`test-invariants.md`](conventions/test-invariants.md) — **테스트 목적 보호** — 불변 조건/가변 조건 분리, Phase V 측정 유효성 점검 (프로브 오버헤드/베이스라인/편차).
   ⓓ-15 [`dacapo.md`](conventions/dacapo.md) — **Da Capo 루프** — AIDE 4 오퍼레이터 매핑 + Two Outputs Rule + 모순 감지 + 방어 테스트 회귀 검증.
   ⓓ-16 [`fragmentation.md`](conventions/fragmentation.md) — **파편화 우선** — 단일 헤비 스킬 금지, 컨벤션·페이즈·에이전트·도구 모두 SRP 분해.
+  ⓓ-17 [`grades.md`](conventions/grades.md) — **그레이드 시스템** — G1(Trivial 호출 거부) ~ G5(Mission Critical 빡빡), 그레이드별 페이즈·컨벤션 활성화, 자동 추정 + Q-G1 사용자 확정으로 단순 작업 over-engineering 차단.
 ⓔ [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 ⓕ [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 ⓖ [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 19 체크 + `--score` 모드, 임계 **0.99999** (자기 표준).
