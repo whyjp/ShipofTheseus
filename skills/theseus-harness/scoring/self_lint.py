@@ -292,6 +292,56 @@ def check_spec_catalog_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_checkpoints_wired(skill_root: Path) -> list[str]:
+    """C24 — checkpoints.md + checkpoint.py + autonomy.md Q-D7 + dacapo.md cross-link."""
+    issues: list[str] = []
+    if not (skill_root / "conventions" / "checkpoints.md").exists():
+        return ["conventions/checkpoints.md 누락"]
+    if not (skill_root / "scoring" / "checkpoint.py").exists():
+        issues.append("scoring/checkpoint.py 누락")
+    autonomy = _read(skill_root / "conventions" / "autonomy.md")
+    if "Q-D7" not in autonomy:
+        issues.append("autonomy.md 가 Q-D7 (체크포인트 회귀 정책) 누락")
+    dacapo_path = skill_root / "conventions" / "dacapo.md"
+    if dacapo_path.exists() and "checkpoints" not in _read(dacapo_path).lower() and "백트랙" not in _read(dacapo_path):
+        issues.append("dacapo.md 가 checkpoints.md 와 cross-link 누락")
+    return issues
+
+
+def check_test_invariants_present(skill_root: Path) -> list[str]:
+    """C25 — test-invariants.md + dacapo.md 가 존재 + Phase V / 불변 조건 명시."""
+    issues: list[str] = []
+    inv = skill_root / "conventions" / "test-invariants.md"
+    if not inv.exists():
+        return ["conventions/test-invariants.md 누락 — 테스트 목적 보호 룰 정의 필요"]
+    text = _read(inv)
+    if "Phase V" not in text:
+        issues.append("test-invariants.md 가 'Phase V' 측정 유효성 점검 명시 누락")
+    if "불변 조건" not in text and "invariants" not in text.lower():
+        issues.append("test-invariants.md 가 '불변 조건' 명시 누락")
+    dacapo = skill_root / "conventions" / "dacapo.md"
+    if not dacapo.exists():
+        issues.append("conventions/dacapo.md 누락 — Da Capo 루프 정의 필요")
+    return issues
+
+
+def check_fragmentation_policy(skill_root: Path) -> list[str]:
+    """C26 — fragmentation.md 가 존재 + SKILL.md 가 인덱스 형태 (룰 본문 비대화 방지)."""
+    issues: list[str] = []
+    frag = skill_root / "conventions" / "fragmentation.md"
+    if not frag.exists():
+        return ["conventions/fragmentation.md 누락 — 파편화 우선 룰 정의 필요"]
+    skill = _read(skill_root / "SKILL.md")
+    # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심 — 임계 12000 자
+    if len(skill) > 12000:
+        issues.append(
+            f"SKILL.md 길이 {len(skill)} 자 — 임계 12000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
+        )
+    if "fragmentation.md" not in skill:
+        issues.append("SKILL.md 가 fragmentation.md 를 노출하지 않음")
+    return issues
+
+
 def check_no_user_interrupt_post_phase04(skill_root: Path) -> list[str]:
     """
     C23 — 페이즈 05~13 본문에 사용자 인터럽트 호출 패턴이 *있으면* fail.
@@ -392,6 +442,9 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C21", "spec-catalog wired into intent-extractor/clarifier/phase09/template", check_spec_catalog_wired),
     ("C22", "resources + ceiling wired into phase04/phase10/spec-catalog", check_resources_ceiling_wired),
     ("C23", "no user interrupt in phases 05-13 (autonomy.md interview-only rule)", check_no_user_interrupt_post_phase04),
+    ("C24", "checkpoints + dacapo + Q-D7 wired", check_checkpoints_wired),
+    ("C25", "test-invariants + dacapo present (AIDE/Phase V)", check_test_invariants_present),
+    ("C26", "fragmentation policy enforced (SKILL.md is index, not heavy)", check_fragmentation_policy),
 ]
 
 
