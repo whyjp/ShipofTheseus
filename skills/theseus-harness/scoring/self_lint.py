@@ -309,7 +309,12 @@ def check_checkpoints_wired(skill_root: Path) -> list[str]:
 
 
 def check_test_invariants_present(skill_root: Path) -> list[str]:
-    """C25 — test-invariants.md + dacapo.md 가 존재 + Phase V / 불변 조건 명시."""
+    """
+    C25 — test-invariants.md (Phase V + 불변 조건) + dacapo.md (얇은 인덱스).
+
+    dacapo.md 는 fragmentation.md DRY 룰 따라 *얇은 인덱스* 만 — 본문 의사코드
+    재진술 금지 (lessons/checkpoints/test-invariants/phase 10 가 source).
+    """
     issues: list[str] = []
     inv = skill_root / "conventions" / "test-invariants.md"
     if not inv.exists():
@@ -319,9 +324,66 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
         issues.append("test-invariants.md 가 'Phase V' 측정 유효성 점검 명시 누락")
     if "불변 조건" not in text and "invariants" not in text.lower():
         issues.append("test-invariants.md 가 '불변 조건' 명시 누락")
+
     dacapo = skill_root / "conventions" / "dacapo.md"
     if not dacapo.exists():
-        issues.append("conventions/dacapo.md 누락 — Da Capo 루프 정의 필요")
+        issues.append("conventions/dacapo.md 누락")
+        return issues
+    dacapo_text = _read(dacapo)
+
+    # 얇은 인덱스 — 핵심 매핑 표 + 신규 2 개념 (방어 테스트 / 모순 감지) 만
+    for must_have in ["AIDE 4 오퍼레이터", "Two Outputs", "방어 테스트", "모순 감지", "고유 신규"]:
+        if must_have not in dacapo_text:
+            issues.append(f"dacapo.md 의 얇은 인덱스 핵심 항목 누락: '{must_have}'")
+    # 본문 의사코드 재진술 금지 — phase 10 의 의사코드 시그니처가 dacapo 본문에 통째로 있으면 fail
+    duplicated_pseudocode = (
+        "run_test_matrix()" in dacapo_text
+        and "find_regression_target" in dacapo_text
+        and "regress_to" in dacapo_text
+    )
+    if duplicated_pseudocode:
+        issues.append(
+            "dacapo.md 가 본문 의사코드를 재진술 — fragmentation.md DRY 위반. "
+            "본문 룰은 lessons/checkpoints/phase 10 이 source, dacapo 는 매핑만"
+        )
+    return issues
+
+
+def check_no_rule_duplication(skill_root: Path) -> list[str]:
+    """
+    C32 — 룰 본문 중복 검출 휴리스틱.
+
+    fragmentation.md 안티 패턴 ⓒ "한 룰을 두 파일에서 다르게 정의" 방지.
+    *룰 본문* 의 시그니처 문구가 *2 컨벤션 이상* 에 동시 등장하면 의심.
+    예외: 매핑/cross-link 컨벤션 (fragmentation/dacapo/indexing) 은
+    *위치 가리킴* 이 본업이라 시그니처 등장이 정상 — allow_referrers 로 제외.
+    """
+    # (signature, primary_owner) — primary_owner 외 다른 컨벤션에 등장하면 fail
+    signatures = [
+        ("두괄식 + 한 번에 하나",                                   "interview.md"),
+        ("Q-D1: 회귀(페이즈 11)",                                   "autonomy.md"),
+        ("닥터 스트레인지의 14,000,605",                              "checkpoints.md"),
+        ("종합 정체 (window=3, eps=0.005)",                          "lessons.md"),
+        ("천정 도달 (avg ≥ 추정 천정의 90%)",                        "resources.md"),
+        ("phase 05~13 본문에 사용자 인터럽트 호출 *없음*",             "autonomy.md"),
+        # fragmentation.md / dacapo.md / indexing.md / SKILL.md / README 는 매핑이 본업 — 제외
+    ]
+    allow_referrers = {
+        "fragmentation.md", "dacapo.md", "indexing.md",
+        "SKILL.md", "README.md", "BOOTSTRAP.md",
+    }
+    issues: list[str] = []
+    convention_files = list((skill_root / "conventions").glob("*.md"))
+    for sig, owner in signatures:
+        for cf in convention_files:
+            if cf.name == owner or cf.name in allow_referrers:
+                continue
+            text = _read(cf)
+            if sig in text:
+                issues.append(
+                    f"중복 룰 본문 의심: '{sig}' 가 {owner} 의 source 인데 "
+                    f"{cf.name} 에도 등장 — fragmentation.md DRY 위반"
+                )
     return issues
 
 
@@ -595,6 +657,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C29", "sub-agents recursion (sub-agents.md + dispatch + input contract matrix + AIDE ops)", check_sub_agents_wired),
     ("C30", "indexing wired (indexing.md + index_builder + non-serial frontmatter meta)", check_indexing_wired),
     ("C31", "resume wired (resume.md + resume.py + state.json + Progress tab + /api/state)", check_resume_wired),
+    ("C32", "no rule duplication across conventions (fragmentation DRY)", check_no_rule_duplication),
 ]
 
 

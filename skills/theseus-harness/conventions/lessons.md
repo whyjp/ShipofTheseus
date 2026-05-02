@@ -109,6 +109,16 @@ lesson_pack:
 
   # 사용자가 결정한 자율 위임 수준 (autonomy.md)
   autonomy_level: 1                       # 1 = 최대 자율, 정체 시에도 자동 rewrite
+
+  # 방어 테스트 (dacapo.md §"방어 테스트") — 정상 등록 lesson 의무 필드
+  defense_test:
+    test_id: "T-AUTH-DEFENSE-042"
+    test_path: "internal/auth/defense_test.go::TestExpiredTokenStillRejected"
+    reproduces_failure: "지난 실패 X 조건 + 그 레슨이 적용된 코드"
+    added_to_regression_suite: true
+    added_at: "2026-05-01T18:42:11+09:00"
+    # 본 방어 테스트가 *나중에* 깨지면 → dacapo.md §"모순 감지" 의 wiki/contradictions/
+    # 기록 + 레슨 무효화 + Da Capo 재진입.
 ```
 
 ## 부분 수정 vs 깨고 다시 작성 — 판단 기준

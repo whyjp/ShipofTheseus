@@ -32,6 +32,35 @@ producer_agent: planner              # agents/<name>.md 의 name
 
 frontmatter 다음 줄 부터는 [`timing.md`](timing.md) 의 시간 메타 헤더, 그 다음이 본문.
 
+## 모순 감지 디렉터리 (`wiki/contradictions/`)
+
+[`dacapo.md`](dacapo.md) §"모순 감지" 의 표준 구현. 새 레슨이 기존 레슨을 반박할 때 *덮어쓰지 않고* 본 디렉터리에 기록 (LLM Wiki 핵심 룰 — Contradictions flagged, not overwritten):
+
+```
+.ShipofTheseus/<프로젝트>/wiki/contradictions/<YYYY-MM-DD>-<topic>.md
+```
+
+각 파일은 다음 frontmatter + 본문 구조 ([`indexing.md`](indexing.md) 가 자동 인덱싱):
+
+```yaml
+---
+skill_name: theseus-harness
+skill_version: 0.2.0
+phase: contradiction-record
+project_id: <proj>
+project_run: <run>
+fingerprint: sha256:...
+prev_fingerprint: <invalidated lesson 의 fingerprint>
+produced_at: <ISO>
+producer_agent: lessons-or-regression-analyst
+contradiction_kind: lesson_invalidation | decision_reversal | invariant_change
+invalidated_ids: ["lesson-042", "defense_test_042"]
+adopted_ids:    ["lesson-067", "defense_test_067"]
+---
+```
+
+본 디렉터리 산출물도 [`fingerprint.py`](../scoring/fingerprint.py) 의 chain 검증 대상 — 무결성 일관.
+
 ## 비직렬성 메타 확장 ([`indexing.md`](indexing.md))
 
 본 하네스의 산출물이 *멀티버스 분기 + 서브에이전트 재귀* 로 비선형 트리를 가지므로, [`indexing.md`](indexing.md) 가 정의한 추가 필드를 frontmatter 에 박는다 — 일반 선형 산출물은 모두 null:
