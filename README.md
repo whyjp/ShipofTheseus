@@ -97,10 +97,11 @@ for s in ~/src/shipoftheseus/skills/*/; do
 done
 ```
 
-또는 플러그인 매니페스트 ([`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)) 를 통해:
+또는 Claude Code 마켓플레이스 패턴 (본 저장소가 마켓플레이스 + 단일 플러그인 동시 역할 — [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) 등록):
 
-```bash
-claude plugin install https://github.com/whyjp/shipoftheseus
+```
+/plugin marketplace add https://github.com/whyjp/shipoftheseus
+/plugin install shipoftheseus@shipoftheseus
 ```
 
 ## 산출물 위치

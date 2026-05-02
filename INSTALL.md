@@ -82,15 +82,21 @@ for s in ~/src/shipoftheseus/skills/*/; do
 done
 ```
 
-## 3. Claude Code 플러그인 매니저 (권장 미래 형태)
+## 3. Claude Code 플러그인 매니저 — 마켓플레이스 패턴 (권장)
 
-본 저장소 루트의 `.claude-plugin/plugin.json` 은 9 스킬 모두를 선언한다. 플러그인 매니저가 지원되는 버전에서는:
+본 저장소는 *동시에* 마켓플레이스 + 단일 플러그인 역할 — `.claude-plugin/marketplace.json` 이 본 repo 를 마켓플레이스로 등록하고 `.claude-plugin/plugin.json` 이 9 스킬을 선언. Claude Code 세션 안에서:
 
 ```bash
-claude plugin install https://github.com/whyjp/shipoftheseus
+# ① 마켓플레이스 등록 (한 번만)
+/plugin marketplace add https://github.com/whyjp/shipoftheseus
+
+# ② 플러그인 설치
+/plugin install shipoftheseus@shipoftheseus
 ```
 
-또는 마켓플레이스 등록 후 `claude plugin install shipoftheseus` 로 설치 가능 (해당 기능 가용성에 따라). 9 스킬이 한 번에 등록된다.
+설치 후 9 스킬 (`/theseus-orchestrator`, `/theseus-harness`, 7 분해 스킬) 이 한 번에 등록된다. 업데이트는 `/plugin marketplace update shipoftheseus` 로 원격 변경 반영.
+
+> **⚠️ `claude plugin install <url>` 직접 호출은 안 됨** — Claude Code 의 플러그인 매니저는 마켓플레이스에 *먼저 등록된* 플러그인만 설치한다. URL 직접 install 패턴은 미지원이며 `Plugin not found in any configured marketplace` 에러가 난다. 위 두 단계가 표준.
 
 ## 4. 업스트림 갱신
 
