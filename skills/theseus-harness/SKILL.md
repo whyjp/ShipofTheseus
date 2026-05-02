@@ -31,6 +31,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓡ **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
 ⓢ **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: [`conventions/indexing.md`](conventions/indexing.md)
 ⓣ **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
+ⓤ **PRD 처리 — 충실한 문서가 인터뷰 스킵하지 않게 하는 허들**: [`conventions/prd-handling.md`](conventions/prd-handling.md)
 
 ## 산출물 트리
 

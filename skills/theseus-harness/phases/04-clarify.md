@@ -33,6 +33,10 @@
 
 본 페이즈의 **가장 첫 질의**. `scoring/grade_assess.py` 의 자동 추정을 두괄식으로 보여주고 5 보기 객관식으로 사용자 확정. Grade 1 (Trivial) 답이면 본 하네스 즉시 종료 + 단순 응답 권고.
 
+## PRD 입력 처리 — 인터뷰 스킵 금지 ([`../conventions/prd-handling.md`](../conventions/prd-handling.md))
+
+사용자가 PRD/스펙 문서를 첨부했어도 본 페이즈의 *모든 인터뷰 항목* 은 생략 안 됨. PRD 추출값은 객관식의 1번 보기로 제안되고, 사용자가 빠르게 1 클릭 확정. 각 답에 `user_explicit_confirmation: true` + `confirmed_at` timestamp 필수. self_lint C33 이 누락된 항목 자동 검출 → 페이즈 05 진입 거부.
+
 ## 사전 위임 카탈로그 (페이즈 04 의 마지막 6 질의)
 
 본 페이즈가 *유일한* 사용자 인터럽트 지점이므로, 후속 페이즈(05~13) 의 모든 자율 결정 정책을 *여기서* 한 번에 결정한다. [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 Q-D1 ~ Q-D6 6 질의를 Q-G1 + 일반 질의 *뒤에* 차례로 진행:

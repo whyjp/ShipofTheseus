@@ -349,6 +349,45 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_prd_handling_wired(skill_root: Path) -> list[str]:
+    """
+    C33 — PRD 처리 룰 박힘 + 인터뷰 스킵 금지 허들.
+
+    검증 항목:
+      ⓐ conventions/prd-handling.md 존재
+      ⓑ phase 04 가 PRD 처리 절차 + user_explicit_confirmation 명시
+      ⓒ agents/clarifier.md 가 PRD 입력 시 1 클릭 확정 룰 명시
+      ⓓ agents/intent-extractor.md 가 PRD → 후보 매핑 명시 (선택적, 권고)
+    """
+    issues: list[str] = []
+    prd = skill_root / "conventions" / "prd-handling.md"
+    if not prd.exists():
+        return ["conventions/prd-handling.md 누락 — PRD 충실해도 인터뷰 스킵 금지 허들 부재"]
+
+    text = _read(prd)
+    for must_have in [
+        "user_explicit_confirmation",
+        "1 클릭",
+        "인터뷰 스킵",
+        "Q-D1",
+        "확증 회귀",
+    ]:
+        if must_have not in text:
+            issues.append(f"prd-handling.md 가 '{must_have}' 명시 누락")
+
+    p4 = _read(skill_root / "phases" / "04-clarify.md")
+    if "prd-handling.md" not in p4 or "user_explicit_confirmation" not in p4:
+        issues.append(
+            "phases/04-clarify.md 가 PRD 처리 절차 또는 user_explicit_confirmation 의무 누락"
+        )
+
+    cl = _read(skill_root / "agents" / "clarifier.md")
+    if "prd-handling.md" not in cl and "user_explicit_confirmation" not in cl:
+        issues.append("agents/clarifier.md 가 PRD 입력 시 명시 확정 룰 누락")
+
+    return issues
+
+
 def check_no_rule_duplication(skill_root: Path) -> list[str]:
     """
     C32 — 룰 본문 중복 검출 휴리스틱.
@@ -658,6 +697,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C30", "indexing wired (indexing.md + index_builder + non-serial frontmatter meta)", check_indexing_wired),
     ("C31", "resume wired (resume.md + resume.py + state.json + Progress tab + /api/state)", check_resume_wired),
     ("C32", "no rule duplication across conventions (fragmentation DRY)", check_no_rule_duplication),
+    ("C33", "PRD handling hurdle (no interview skip even with full PRD)", check_prd_handling_wired),
 ]
 
 
