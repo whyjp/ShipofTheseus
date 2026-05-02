@@ -1,7 +1,7 @@
 ---
 name: theseus-sprint
 version: 0.2.2
-description: 무한 스프린트 루프 (임계 0.95~0.99999 그레이드별) + 회귀 바이섹트 + 정체 감지 + 천정 자동 조정 + 멀티버스. theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
+description: 페이즈 10–11 분해 — 무한 스프린트 (G2~G5 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 멀티버스. 단일 source 는 ../theseus-harness/.
 ---
 
 # theseus-sprint — 페이즈 10–11 분해 stub

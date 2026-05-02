@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
 version: 0.2.2
-description: 본 하네스의 14 페이즈 진행을 8 분해 스킬(theseus-intent/plan/implement/quality/sprint/webview/handoff) 로 위임하는 인덱스. 각 분해 스킬은 독립 호출 가능하며, 산출물 frontmatter (contracts.md) 가 스킬 간 인터페이스. 단순 호출은 grade-assess 로 거부 또는 미니 모드. 사용자 인터뷰는 페이즈 04 한 번만, 이후 인터럽트 0.
+description: theseus-harness 의 14 페이즈를 8 분해 스킬로 순차 위임. frontmatter 자동 핸드오프, 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단순 호출은 G1 자동 거부.
 ---
 
 # theseus-orchestrator — 분해 스킬 진행 제어

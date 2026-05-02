@@ -951,6 +951,32 @@ def check_anti_patterns_consolidation(repo_root: Path, skill_root: Path) -> list
     return issues
 
 
+def check_description_length_and_anti_pattern(repo_root: Path, skill_root: Path) -> list[str]:
+    """C41 — 9 SKILL.md description 이 200자 이하 + theseus-harness/orchestrator 는 anti-pattern 마커 보유."""
+    issues: list[str] = []
+    skill_dirs = [
+        "theseus-harness", "theseus-orchestrator", "theseus-intent",
+        "theseus-plan", "theseus-implement", "theseus-quality",
+        "theseus-sprint", "theseus-webview", "theseus-handoff",
+    ]
+    for name in skill_dirs:
+        path = repo_root / "skills" / name / "SKILL.md"
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        m = re.search(r"^description:\s*(.+?)$", text, re.MULTILINE)
+        if not m:
+            issues.append(f"{name}: frontmatter description 누락")
+            continue
+        desc = m.group(1).strip()
+        if len(desc) > 200:
+            issues.append(f"{name}: description {len(desc)}자 — 200자 초과 (PR-12 압축 후)")
+        if name in ("theseus-harness", "theseus-orchestrator"):
+            if not any(marker in desc for marker in ("사용 금지", "거부", "G1")):
+                issues.append(f"{name}: description 에 anti-pattern 마커 (사용 금지/거부/G1) 누락")
+    return issues
+
+
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
     """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
     issues: list[str] = []
@@ -1016,6 +1042,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C38", "INSTALL.md fresh-user prep + self-check stack-only mode (PR-2, v0.4.0)", check_install_fresh_user_section),
     ("C39", "resources opt-in supplementary ceiling + Q-D3 sub-option (PR-3, v0.4.0)", check_resources_supplementary_ceiling),
     ("C40", "anti-patterns consolidation catalog (PR-11, v0.4.0)", check_anti_patterns_consolidation),
+    ("C41", "description compressed (≤200) + anti-pattern preserved (PR-12, v0.4.0)", check_description_length_and_anti_pattern),
 ]
 
 

@@ -1,7 +1,7 @@
 ---
 name: theseus-quality
 version: 0.2.2
-description: 5 게이트 + Phase V 측정 유효성 + frontmatter 검증. theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
+description: 페이즈 09 분해 — 5 게이트 (DIP 우선, 단독 hard cap 0.6) + Phase V 측정 유효성 + frontmatter 검증. 단일 source 는 ../theseus-harness/.
 ---
 
 # theseus-quality — 페이즈 09 분해 stub

@@ -1,7 +1,7 @@
 ---
 name: theseus-intent
 version: 0.2.2
-description: 프로젝트 명명 + 의도 추출 + 마인드맵 + 의도 리뷰 + 콜드 재이해 + 사용자 질의(Q-G1+Q-D1~D7+NFR) + 비평·대안. theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
+description: 페이즈 00–05 분해 — 명명/의도/마인드맵/콜드 재이해/사용자 질의/비평. 단일 source 는 ../theseus-harness/. frontmatter 가 입출력 계약.
 ---
 
 # theseus-intent — 페이즈 00–05 분해 stub

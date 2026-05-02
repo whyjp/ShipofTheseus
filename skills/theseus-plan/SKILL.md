@@ -1,7 +1,7 @@
 ---
 name: theseus-plan
 version: 0.2.2
-description: TODO DAG 계획 작성 + 콜드 재이해 (시퀀스 다이어그램 동봉, 경쟁 트리거 가능). theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
+description: 페이즈 06–07 분해 — TODO DAG 계획 + 콜드 재이해. 시퀀스 다이어그램 의무. 경쟁 트리거 가능. 단일 source 는 ../theseus-harness/.
 ---
 
 # theseus-plan — 페이즈 06–07 분해 stub
