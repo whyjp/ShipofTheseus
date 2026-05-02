@@ -917,6 +917,27 @@ def check_install_fresh_user_section(repo_root: Path, skill_root: Path) -> list[
     return issues
 
 
+def check_resources_supplementary_ceiling(repo_root: Path, skill_root: Path) -> list[str]:
+    """C39 — resources.md 의 opt-in 보조 천정 절 + 컨셉 충돌 + 기본 비활성 + Q-D3 sub-option 흡수 일관."""
+    issues: list[str] = []
+    resources = (skill_root / "conventions" / "resources.md").read_text(encoding="utf-8")
+    autonomy = (skill_root / "conventions" / "autonomy.md").read_text(encoding="utf-8")
+
+    if "Opt-In 보조 천정" not in resources:
+        issues.append("resources.md: Opt-In 보조 천정 절 누락 (PR-3)")
+    if "컨셉 충돌" not in resources:
+        issues.append("resources.md: 컨셉 충돌 명시 누락 (PR-3)")
+    if "기본 비활성" not in resources:
+        issues.append("resources.md: 기본 비활성 명시 누락 (PR-3)")
+    if "[supplementary_ceiling]" not in resources:
+        issues.append("resources.md: config.toml schema 누락 (PR-3)")
+
+    if "1-aux" not in autonomy or "2-aux" not in autonomy:
+        issues.append("autonomy.md: Q-D3 sub-option (1-aux/2-aux) 흡수 누락 (PR-3)")
+
+    return issues
+
+
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
     """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
     issues: list[str] = []
@@ -980,6 +1001,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C36", "Q-D8 Verification Commands wired (oh-my-ralph latch, v0.3.0)", check_qd8_verification_commands_wired),
     ("C37", "decomposed stub standalone honesty (동반 필요 명시, v0.4.0)", check_decomposed_standalone_honesty),
     ("C38", "INSTALL.md fresh-user prep + self-check stack-only mode (PR-2, v0.4.0)", check_install_fresh_user_section),
+    ("C39", "resources opt-in supplementary ceiling + Q-D3 sub-option (PR-3, v0.4.0)", check_resources_supplementary_ceiling),
 ]
 
 
