@@ -22,6 +22,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓘ **2버전 이상 격리 병렬 경쟁 + 머지 (LLM 비결정성 극복)**: [`conventions/competition.md`](conventions/competition.md)
 ⓙ **무한 재귀 정체 극복 — 레슨 전달 + 강제 재작성**: [`conventions/lessons.md`](conventions/lessons.md)
 ⓚ **도메인별 NFR 자동 제안 카탈로그 (성능·가용성·보안·운영·FE)**: [`conventions/spec-catalog.md`](conventions/spec-catalog.md)
+ⓛ **리소스 기반 임계 + 천정 자동 조정 (로컬/K8s/EC2 프로파일)**: [`conventions/resources.md`](conventions/resources.md)
 
 ## 산출물 트리
 

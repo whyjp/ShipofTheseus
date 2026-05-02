@@ -72,7 +72,27 @@ while True:
         continue
 
     if stag["stagnant_dims"]:
-        # 차원 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
+        # ②-1 천정 검토 — 정체 차원이 NFR 측정 (latency/RPS) 이면
+        # resource_ceiling.detect 로 추정 천정 도달 여부 판단 (resources.md)
+        for dim in stag["stagnant_dims"]:
+            if dim in {"p99_ms", "p95_ms", "rps", "latency_ms"}:
+                ceiling = resource_ceiling.detect(
+                    measurements=dim_history[dim],
+                    current_threshold=nfr_thresholds[dim],
+                    estimated_ceiling=resource_profile.estimated_ceiling[dim],
+                    metric=dim,
+                )
+                if ceiling["near_ceiling"]:
+                    # 자동 조정 권고 — 사용자 ack 필수 (autonomy.md 의 임계 변경)
+                    ack = AskUserQuestion(
+                        f"리소스 천정 도달: 측정 {ceiling['avg']} 이 추정 천정의 "
+                        f"{ceiling['ceiling_pct_actual']*100:.0f}%. 임계 조정?",
+                        options=ceiling["user_options"],
+                    )
+                    apply_user_choice(ack, dim)
+                    continue   # 다음 차원으로
+
+        # ②-2 천정 아닌 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
         snapshot_current_impl_to(`sprints/{sprint:02d}/snapshot/`)
         for module in identify_modules_for_dims(stag["stagnant_dims"]):
             spawn_implementer(

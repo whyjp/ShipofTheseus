@@ -14,6 +14,9 @@
 
 ⓐ `intent/04-questions.md` — 질의 리스트. 각 항목: 질문 텍스트, 왜 중요한지, 보기 후보(객관식이면).
 ⓑ `intent/04-answers.md` — 사용자 답을 시각과 함께 기록.
+ⓒ `intent/04-resource-profile.md` — 리소스 프로파일 합의 + 추정 천정. [`../conventions/resources.md`](../conventions/resources.md).
+ⓓ `intent/04-stack.md` — 언어/컴파일러/패키지 매니저 합의. [`../conventions/stack.md`](../conventions/stack.md).
+ⓔ NFR 임계 확정값은 `intent/01-intent.md` 의 "성능/스펙" 표를 in-place 갱신 (`proposed: true` → 사용자 답).
 
 ## 지휘자 동작 (강제)
 

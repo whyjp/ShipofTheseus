@@ -292,6 +292,27 @@ def check_spec_catalog_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_resources_ceiling_wired(skill_root: Path) -> list[str]:
+    """C22 — resources.md + resource_ceiling.py 가 phase 04, phase 10, spec-catalog 에 박힘."""
+    issues: list[str] = []
+    res = skill_root / "conventions" / "resources.md"
+    if not res.exists():
+        return ["conventions/resources.md 누락 — 리소스 기반 NFR 추정치 필요"]
+    ceiling = skill_root / "scoring" / "resource_ceiling.py"
+    if not ceiling.exists():
+        issues.append("scoring/resource_ceiling.py 누락 — 천정 감지 도구 필요")
+    p4 = _read(skill_root / "phases" / "04-clarify.md")
+    if "resource-profile" not in p4 and "resources.md" not in p4:
+        issues.append("phases/04-clarify.md 가 resource-profile 산출물 또는 resources.md 참조 누락")
+    p10 = _read(skill_root / "phases" / "10-test-loop.md")
+    if "resource_ceiling" not in p10 and "천정" not in p10:
+        issues.append("phases/10-test-loop.md 가 resource_ceiling 또는 천정 자동 조정 누락")
+    sc = _read(skill_root / "conventions" / "spec-catalog.md")
+    if "resources.md" not in sc and "리소스" not in sc:
+        issues.append("conventions/spec-catalog.md 가 resources.md 또는 리소스 기반 임계 언급 누락")
+    return issues
+
+
 def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
     """C20 — lessons.md 와 stagnation.py 가 phase 10, implementer, planner 에 박힘."""
     issues: list[str] = []
@@ -335,6 +356,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C19", "autonomy convention present + cross-referenced", check_autonomy_convention_present),
     ("C20", "lessons + stagnation wired into phase10/implementer/planner", check_lessons_stagnation_wired),
     ("C21", "spec-catalog wired into intent-extractor/clarifier/phase09/template", check_spec_catalog_wired),
+    ("C22", "resources + ceiling wired into phase04/phase10/spec-catalog", check_resources_ceiling_wired),
 ]
 
 
