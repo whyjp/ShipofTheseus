@@ -5,10 +5,24 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContai
 import { getJSON } from "../lib/api";
 import { EmptyState } from "../components/EmptyState";
 
+// v0.2.1 회귀 수정 (Cursor Bugbot PR#1 지적):
+// inputs.json 은 score.py 의 *입력* (test_pass_rate, coverage 등) — `score` 필드 없음.
+// 차트가 항상 빈 상태였던 원인. score.py --out 으로 산출되는 score.json 을 읽는다.
+type ScoreOutput = {
+  score: number;
+  raw_score: number;
+  sub_scores: Record<string, number | null>;
+  caps_applied: string[];
+  dip_violation: boolean;
+  passes_threshold: boolean;
+  regression_triggered?: boolean;
+};
+
 type Sprint = {
   sprint: string;
   report: string | null;
   inputs: any | null;
+  score: ScoreOutput | null;
   bisect: string | null;
 };
 
@@ -26,9 +40,9 @@ export function Sprints() {
   const chartData = sprints
     .map((s) => ({
       sprint: s.sprint,
-      score: s.inputs?.score ?? null,
+      score: s.score?.score ?? null,
     }))
-    .filter((d) => d.score != null);
+    .filter((d): d is { sprint: string; score: number } => d.score != null);
 
   return (
     <div>
@@ -47,7 +61,7 @@ export function Sprints() {
       )}
 
       {sprints.map((s) => {
-        const score = s.inputs?.score;
+        const score = s.score?.score;
         const isOpen = open === s.sprint;
         return (
           <div className="sprint-row" key={s.sprint}>

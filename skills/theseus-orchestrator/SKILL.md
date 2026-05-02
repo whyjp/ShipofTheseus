@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.2.0
+version: 0.2.1
 description: 본 하네스의 14 페이즈 진행을 8 분해 스킬(theseus-intent/plan/implement/quality/sprint/webview/handoff) 로 위임하는 인덱스. 각 분해 스킬은 독립 호출 가능하며, 산출물 frontmatter (contracts.md) 가 스킬 간 인터페이스. 단순 호출은 grade-assess 로 거부 또는 미니 모드. 사용자 인터뷰는 페이즈 04 한 번만, 이후 인터럽트 0.
 ---
 
@@ -177,7 +177,7 @@ def invoke_skill(skill_name: str, inputs: list, **kwargs):
             "python", "../theseus-harness/scoring/fingerprint.py",
             "compute", "--file", str(art),
             "--prev", str(prev_artifact_for(art)),
-            "--skill-version", "0.2.0",
+            "--skill-version", "0.2.1",
         ])
     return artifacts
 

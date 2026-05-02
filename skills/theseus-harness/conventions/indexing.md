@@ -54,7 +54,7 @@ T-020/sub/A.2/sub/A.2.x, A.2.y                       ← 깊이 2
 ```yaml
 ---
 skill_name: theseus-harness
-skill_version: 0.2.0
+skill_version: 0.2.1
 phase: 06-plan
 project_id: atlas-ledger
 project_run: 20260501-174412

@@ -1,6 +1,6 @@
 ---
 name: theseus-implement
-version: 0.2.0
+version: 0.2.1
 description: TODO 별 모듈 단위 구현 (코드 + 테스트 + 목 표면 한 호출에). theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
 ---
 

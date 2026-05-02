@@ -17,7 +17,7 @@ def _make_artifact(root: Path, rel: str, fp: str, prev: str | None, phase: str =
     fm = "\n".join([
         "---",
         "skill_name: theseus-harness",
-        "skill_version: 0.2.0",
+        "skill_version: 0.2.1",
         f"phase: {phase}",
         f"fingerprint: {fp}",
         f"prev_fingerprint: {prev or 'null'}",

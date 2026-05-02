@@ -17,7 +17,7 @@
 ```yaml
 ---
 skill_name: theseus-harness
-skill_version: 0.2.0
+skill_version: 0.2.1
 phase: 06-plan                       # phases/<id> 와 동일
 project_id: atlas-ledger             # naming 페이즈에서 확정한 프로젝트명
 project_run: 20260501-174412         # 같은 프로젝트의 별 실행 식별 (timing/start.json 의 epoch)
@@ -45,7 +45,7 @@ frontmatter 다음 줄 부터는 [`timing.md`](timing.md) 의 시간 메타 헤�
 ```yaml
 ---
 skill_name: theseus-harness
-skill_version: 0.2.0
+skill_version: 0.2.1
 phase: contradiction-record
 project_id: <proj>
 project_run: <run>

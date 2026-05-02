@@ -17,8 +17,20 @@
 
 ## 산출물 (스프린트별)
 `sprints/NN/report.md` — [`../templates/sprint-report.template.md`](../templates/sprint-report.template.md), 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 필수.
-`sprints/NN/inputs.json` — `score.py` 입력.
+`sprints/NN/inputs.json` — `score.py` 입력 (test_pass_rate, coverage, modules_passing_solid 등).
+`sprints/NN/score.json` — `score.py --out` 산출. **v0.2.1 부터 의무** — `inputs.json` 은 *입력* 이고 `score.json` 이 *출력* (score / raw_score / sub_scores / caps_applied / dip_violation / passes_threshold). webview/be4fe `/api/sprints` 가 이 파일을 직접 로드해 Sprints 차트의 데이터 소스로 사용.
 `sprints/NN/bisect.md` — 회귀 트리거 시.
+
+**score.py 호출 형식 (v0.2.1)**:
+
+```bash
+python scoring/score.py \
+  --inputs sprints/NN/inputs.json \
+  --prior sprints/N-1/score.json \
+  --out sprints/NN/score.json
+```
+
+`--out` 누락 시 `inputs.json` 만 남고 `score.json` 미산출 → webview Sprints 차트가 빈 상태 (Cursor Bugbot PR#1 지적 회귀).
 
 각 스프린트는 git 체크포인트 커밋 (테스터가 수행) — 페이즈 11 이 바이섹트할 수 있도록.
 
@@ -34,9 +46,13 @@ forbidden_strategies = []
 while True:
     suite = run_test_matrix()
     inputs = build_score_inputs(suite, gate_results)
-    score, sub = score.py(inputs, prior=prev_scores[-1] if prev_scores else None)
-    write `sprints/{sprint:02d}/report.md` (timing header 포함)
-    write `sprints/{sprint:02d}/inputs.json`
+    write `sprints/{sprint:02d}/inputs.json` (score.py 입력)
+    score, sub = score.py(
+        inputs=`sprints/{sprint:02d}/inputs.json`,
+        prior=`sprints/{sprint-1:02d}/score.json` if prev_scores else None,
+        out=`sprints/{sprint:02d}/score.json`,            # v0.2.1 의무 — webview 차트 데이터 소스
+    )
+    write `sprints/{sprint:02d}/report.md` (timing header + score.json 본문 paste)
     prev_scores.append(score)
     for d, v in sub.items(): dim_history[d].append(v)
     report_to_user_with_timing(sprint, score, prev_scores)

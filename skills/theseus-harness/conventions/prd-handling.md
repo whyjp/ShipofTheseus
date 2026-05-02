@@ -25,7 +25,7 @@ frontmatter:
 ```yaml
 ---
 skill_name: theseus-harness
-skill_version: 0.2.0
+skill_version: 0.2.1
 phase: prd-source
 project_id: <proj>
 project_run: <run>
