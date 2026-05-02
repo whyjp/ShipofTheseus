@@ -6,7 +6,30 @@
 ## 입력
 - `intent/01-intent.md`
 - `intent/04-answers.md`
+- `intent/04-autonomy.md` — Q-D1~Q-D8 사전 위임 답 (8 줄)
+- `intent/04-verification.md` — **진입 게이트** (oh-my-ralph Verification Commands 패턴, v0.3.0). frontmatter `entry_blocked: true` 면 본 페이즈 진입 거부 — 사용자가 외부 완료 검증 명령을 제시 안 함. `commands_count > 0 || manual_only == true` 일 때만 진입 허용.
 - 레포의 기존 코드 (이미 일부를 풀고 있는 prior art 탐색).
+
+## 진입 가드 (v0.3.0)
+
+비평 에이전트는 본 페이즈 시작 전에 다음 검증:
+
+```python
+verification_fm = read_frontmatter("intent/04-verification.md")
+if verification_fm.get("entry_blocked", False):
+    raise SkillEntryError(
+        "Q-D8 Verification Commands 부재 — oh-my-ralph 룰 차용. "
+        "intent/04-verification.md 의 bash 블록을 채우거나 manual_only=true 로 표시 후 재시도. "
+        "검증 없는 자율 진행은 본 하네스가 거부."
+    )
+if verification_fm.get("manual_only", False):
+    log_warning(
+        "manual_only=true — 페이즈 09 의 e2e_pass 차원 cap 0.95 적용. "
+        "핸드오프에서 외부 검증 책임 사용자 명시."
+    )
+```
+
+이 가드가 v0.3.0 의 가장 중요한 외부 정합 게이트.
 
 ## 서브에이전트
 [`../agents/critic.md`](../agents/critic.md).

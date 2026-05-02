@@ -1,5 +1,7 @@
 # Ship of Theseus — 재귀 멀티 에이전트 코딩 하네스
 
+> **English readers**: see [`README.en.md`](README.en.md) — single-page summary in English.
+
 ## 한 줄 요약
 
 **조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 8 분해 스킬 + 1 인덱스 스킬 + 1 플래그십(단일 source of truth)으로 파편화해 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (전체 자동 진행) 또는 [`theseus-harness`](skills/theseus-harness/SKILL.md) (단일 호출).
@@ -97,10 +99,11 @@ for s in ~/src/shipoftheseus/skills/*/; do
 done
 ```
 
-또는 플러그인 매니페스트 ([`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)) 를 통해:
+또는 Claude Code 마켓플레이스 패턴 (본 저장소가 마켓플레이스 + 단일 플러그인 동시 역할 — [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) 등록):
 
-```bash
-claude plugin install https://github.com/whyjp/shipoftheseus
+```
+/plugin marketplace add https://github.com/whyjp/shipoftheseus
+/plugin install shipoftheseus@shipoftheseus
 ```
 
 ## 산출물 위치
@@ -133,6 +136,7 @@ scripts\self-check.bat         # windows
 
 ## 더 읽을거리
 
+- [`examples/`](examples/) — 3 시나리오 (evolving-spec / frozen-spec / fix-bug) — 페이즈 04 의 사전 위임 8 답 + Q-D8 verification commands 답 실제 입력 예시.
 - [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미, Ralph 루프·OhMy 시리즈·우로보로스 합성 근거, SOLID/TDD/BDD/DDD/Hexagonal 매핑.
 - [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차, 35 self_lint 체크 목록.
 - [`INSTALL.md`](INSTALL.md) — 설치·갱신·트러블슈팅.

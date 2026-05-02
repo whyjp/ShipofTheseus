@@ -92,7 +92,22 @@
 3. 핸드오프(페이즈 13) 에서만 일괄 보고
 ```
 
-답을 `intent/04-autonomy.md` 에 6 줄 표로 기록. 이후 모든 후속 페이즈는 본 답을 *유일한 ack source* 로 사용 — 추가 질의 금지.
+### Q-D8. Verification Commands — 외부 완료 판정 (oh-my-ralph 차용, v0.3.0 신규)
+
+본 하네스의 6 차원 rubric 가중평균 ≥ 0.999 는 *내부 정합* 측정이다 — 마크다운 산출물·테스트 통과율·SOLID 정합. 그러나 *외부에서 보아 완료* 인지는 별 문제 — 사용자 도메인의 acceptance test 가 통과해야 한다. [team-attention/oh-my-ralph](https://github.com/team-attention/oh-my-ralph) 의 *Verification Commands* 룰을 차용 — 사용자가 직접 실행 가능한 검증 스니펫을 제시해야 페이즈 05 (비평) 진입 허용.
+
+```
+질의: 본 작업의 *완료* 를 어떻게 검증하는가?
+
+선택지:
+1. CI 명령 그대로 사용 — 자유 응답으로 명령 한 줄 paste (예: `npm test && npm run typecheck && npm run lint`)
+2. 새 검증 스니펫 작성 — 자유 응답으로 bash 블록 직접 입력 (acceptance criteria 별로 한 줄씩)
+3. 자동 검증 불가 — 수동 검증만 (`manual_only: true`). 페이즈 09 게이트 의 `e2e_pass` 차원을 경고로 강하 (cap 0.95) + 핸드오프에서 외부 검증 책임 명시.
+```
+
+답이 1/2 면 사용자가 입력한 명령들을 `intent/04-verification.md` 의 `Verification Commands` 블록에 기록 + acceptance criteria `[SC-N]` 매핑 + frontmatter 에 `commands_count: <N>` + `manual_only: false` + `entry_blocked: false`. 답이 3 이면 같은 파일의 `Manual Verification` 섹션에 수기 절차 기록 + frontmatter `commands_count: 0` + `manual_only: true` + `entry_blocked: false`. **답 누락 또는 답 1/2 인데 Verification Commands 블록 비었으면 frontmatter `entry_blocked: true` 박힘** — [`agents/critic.md`](../agents/critic.md) 가 본 frontmatter 검사 후 페이즈 05 진입을 SkillEntryError 로 거부. self_lint C36 가 phases 04/05 + clarifier 의 Q-D8 wiring (entry_blocked / manual_only / oh-my-ralph 키워드) 일관성 검증.
+
+답을 `intent/04-autonomy.md` 에 8 줄 표로 기록 (Q-D1 ~ Q-D8). 이후 모든 후속 페이즈는 본 답을 *유일한 ack source* 로 사용 — 추가 질의 금지.
 
 ## 결정 분류표 (갱신)
 

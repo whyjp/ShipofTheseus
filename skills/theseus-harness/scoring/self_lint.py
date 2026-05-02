@@ -487,6 +487,74 @@ def check_rewrite_trigger_multidimensional(repo_root: Path, skill_root: Path) ->
     return issues
 
 
+def check_qd8_verification_commands_wired(skill_root: Path) -> list[str]:
+    """
+    C36 — Q-D8 (Verification Commands, oh-my-ralph 차용, v0.3.0) wiring 일관성.
+
+    배경: 본 하네스의 6 차원 rubric 가중평균 ≥ 0.999 는 *내부 정합* 측정 —
+    *외부에서 보아 완료* 인지는 사용자 정의 검증 명령으로만 판정. oh-my-ralph
+    의 *Verification Commands* 룰 차용. 페이즈 04 끝의 Q-D8 답이 누락되거나
+    intent/04-verification.md 의 Verification Commands 블록이 비면 페이즈 05
+    진입 거부 — 검증 없는 자율 진행은 본 하네스가 거부.
+
+    검증 항목:
+      ⓐ conventions/autonomy.md 에 ### Q-D8 섹션 + entry_blocked + manual_only
+         + oh-my-ralph 키워드.
+      ⓑ phases/04-clarify.md 의 산출물 목록에 intent/04-verification.md +
+         Q-D8 본문 명시.
+      ⓒ agents/clarifier.md 의 동작 단계에 Q-D8 처리 룰 (entry_blocked 박음
+         로직).
+      ⓓ phases/05-critique.md 의 입력에 04-verification.md + 진입 가드 의사
+         코드 (entry_blocked 검사).
+      ⓔ templates/verification.template.md 존재 + frontmatter 의 commands_count
+         + manual_only + entry_blocked 키 포함.
+    """
+    issues: list[str] = []
+
+    autonomy = _read(skill_root / "conventions" / "autonomy.md")
+    for must_have in ["### Q-D8", "entry_blocked", "manual_only", "oh-my-ralph"]:
+        if must_have not in autonomy:
+            issues.append(f"conventions/autonomy.md 가 Q-D8 wiring 키워드 '{must_have}' 누락")
+
+    phase04 = _read(skill_root / "phases" / "04-clarify.md")
+    if "04-verification.md" not in phase04:
+        issues.append("phases/04-clarify.md 산출물 목록에 04-verification.md 누락")
+    if "Q-D8" not in phase04:
+        issues.append("phases/04-clarify.md 본문에 Q-D8 명시 누락")
+    if "8 답" not in phase04 and "Q-D1 ~ Q-D8" not in phase04:
+        issues.append("phases/04-clarify.md 가 사전 위임 8 답 (Q-D1~Q-D8) 명시 누락")
+
+    clarifier = _read(skill_root / "agents" / "clarifier.md")
+    if "Q-D8" not in clarifier:
+        issues.append("agents/clarifier.md 동작에 Q-D8 처리 룰 누락")
+    if "entry_blocked" not in clarifier:
+        issues.append("agents/clarifier.md 가 entry_blocked frontmatter 박음 룰 누락")
+
+    phase05 = _read(skill_root / "phases" / "05-critique.md")
+    if "04-verification.md" not in phase05:
+        issues.append("phases/05-critique.md 입력 목록에 04-verification.md 누락")
+    if "entry_blocked" not in phase05:
+        issues.append(
+            "phases/05-critique.md 진입 가드에 entry_blocked 검사 누락 — "
+            "Q-D8 검증 부재 시 페이즈 05 진입을 막는 의사코드 필요"
+        )
+    if "SkillEntryError" not in phase05 and "진입 거부" not in phase05:
+        issues.append("phases/05-critique.md 가 진입 거부 메커니즘 명시 누락")
+
+    template = skill_root / "templates" / "verification.template.md"
+    if not template.exists():
+        issues.append("templates/verification.template.md 누락 — 사용자/하네스가 채울 reference 부재")
+    else:
+        tmpl_text = _read(template)
+        for key in ["commands_count", "manual_only", "entry_blocked"]:
+            if f"{key}:" not in tmpl_text:
+                issues.append(f"templates/verification.template.md frontmatter 에 '{key}' 키 누락")
+        if "Verification Commands" not in tmpl_text:
+            issues.append("templates/verification.template.md 본문에 'Verification Commands' 섹션 누락")
+
+    return issues
+
+
 def check_subprocess_encoding_explicit(skill_root: Path) -> list[str]:
     """
     C35 — Windows 인코딩 비호환 가드 (회귀 아닌 *원래 잠재* 버그 재유입 방지).
@@ -872,6 +940,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C33", "PRD handling hurdle (no interview skip even with full PRD)", check_prd_handling_wired),
     ("C34", "rewrite trigger generalized to all deep quality violations (multi-dimensional, not DIP-only)", check_rewrite_trigger_multidimensional),
     ("C35", "subprocess/tempfile encoding explicit (Windows cp949 latent-bug guard, v0.2.2)", check_subprocess_encoding_explicit),
+    ("C36", "Q-D8 Verification Commands wired (oh-my-ralph latch, v0.3.0)", check_qd8_verification_commands_wired),
 ]
 
 

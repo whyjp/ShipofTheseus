@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "shipoftheseus",
+  "owner": {
+    "name": "whyjp",
+    "url": "https://github.com/whyjp/shipoftheseus"
+  },
+  "metadata": {
+    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 21 컨벤션 + 13 에이전트 + 채점기를 9 스킬로 파편화.",
+    "version": "0.2.2"
+  },
+  "plugins": [
+    {
+      "name": "shipoftheseus",
+      "source": "./",
+      "description": "한 요구를 처음 의도한 타이틀로 끝까지 부를 자격을 만들기 위한 재귀 코딩 하네스. 명명 → 의도 → 계획 → 구현 → 5 게이트 → 무한 스프린트 → 회귀 바이섹트 → bun 웹뷰 → 핸드오프. 9 스킬 (orchestrator 인덱스 + 7 페이즈 분해 stub + flagship harness 단일 source of truth).",
+      "category": "harness",
+      "tags": [
+        "claude-code",
+        "skill",
+        "harness",
+        "tdd",
+        "solid",
+        "dip",
+        "ouroboros",
+        "ralph-loop",
+        "multi-agent"
+      ]
+    }
+  ]
+}
