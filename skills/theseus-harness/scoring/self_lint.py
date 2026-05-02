@@ -904,6 +904,30 @@ def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
+    """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
+    issues: list[str] = []
+    decomposed_skills = [
+        "theseus-orchestrator", "theseus-intent", "theseus-plan",
+        "theseus-implement", "theseus-quality", "theseus-sprint",
+        "theseus-webview", "theseus-handoff",
+    ]
+    for skill_name in decomposed_skills:
+        skill_path = repo_root / "skills" / skill_name / "SKILL.md"
+        if not skill_path.exists():
+            issues.append(f"{skill_name}/SKILL.md 누락")
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        if "단독 호출" in text and "../theseus-harness/" in text:
+            jump_count = text.count("../theseus-harness/")
+            if jump_count > 0 and "동반" not in text and "필요" not in text:
+                issues.append(
+                    f"{skill_name}: 단독 호출 주장하나 본문이 ../theseus-harness/ "
+                    f"{jump_count} 번 점프 — '동반 필요' 명시 누락"
+                )
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -941,6 +965,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C34", "rewrite trigger generalized to all deep quality violations (multi-dimensional, not DIP-only)", check_rewrite_trigger_multidimensional),
     ("C35", "subprocess/tempfile encoding explicit (Windows cp949 latent-bug guard, v0.2.2)", check_subprocess_encoding_explicit),
     ("C36", "Q-D8 Verification Commands wired (oh-my-ralph latch, v0.3.0)", check_qd8_verification_commands_wired),
+    ("C37", "decomposed stub standalone honesty (동반 필요 명시, v0.4.0)", check_decomposed_standalone_honesty),
 ]
 
 

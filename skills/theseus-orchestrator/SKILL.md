@@ -66,9 +66,18 @@ def enter_skill(input_artifacts: list[Path]):
 
 자세한 그레이드 매트릭스는 [`../theseus-harness/conventions/grades.md`](../theseus-harness/conventions/grades.md).
 
-## 단독 호출 가능성
+## 단독 호출 가능성 (재진입)
 
-각 분해 스킬은 **valid frontmatter 입력만 있으면 단독 호출 가능**:
+> **단독 호출 시 의존성:** 본 stub 은 *위임 + 인터페이스* 만. 룰 본문은 [`../theseus-harness/`](../theseus-harness/) 단일 source 에 위치. **fresh user 가 본 stub 만 설치하면 본문 점프가 모두 dead link** — 본 저장소 전체 또는 최소 [`../theseus-harness/`](../theseus-harness/) 동반 설치 필요.
+
+```bash
+# 반드시 theseus-harness 동반 설치 후
+/theseus-orchestrator --from <input_dir>
+```
+
+`<input_dir>` 의 frontmatter 가 본 스킬의 *입력 계약* 을 만족하면 진입.
+
+각 분해 스킬도 valid frontmatter 입력만 있으면 재진입 가능 (단, harness 동반 필수):
 
 ⓐ "이미 의도 문서 있음 → 계획부터" → `theseus-plan` 단독 호출.
 ⓑ "구현 끝났음 → 게이트만" → `theseus-quality` 단독 호출.

@@ -56,7 +56,7 @@
 | [`theseus-sprint`](skills/theseus-sprint/SKILL.md) | 페이즈 10–11. 무한 스프린트 루프 (그레이드별 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 천정 자동 조정 + 멀티버스. | [docs/skills/theseus-sprint.md](docs/skills/theseus-sprint.md) |
 | [`theseus-webview`](skills/theseus-webview/SKILL.md) | 페이즈 12. bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). | [docs/skills/theseus-webview.md](docs/skills/theseus-webview.md) |
 | [`theseus-handoff`](skills/theseus-handoff/SKILL.md) | 페이즈 13. 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + 웹뷰 실행 명령 + (자율 권한 시) PR 생성. | [docs/skills/theseus-handoff.md](docs/skills/theseus-handoff.md) |
-| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. 분해 스킬 없이 단독 호출도 가능. | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
+| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. **분해 스킬 없이 단독 호출 가능 — 분해 stub 은 본문이 본 플래그십 점프이므로 fresh user 가 분해 stub 만 설치하면 dead link.** | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
 
 스킬 간 인터페이스는 산출물 frontmatter ([`conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약. 검증 실패 시 다음 스킬이 진입을 거부 — 분해의 안전 장치.
 
