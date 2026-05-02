@@ -21,6 +21,7 @@
   ⓒ 객관식이면 보기 5개 이하, 무조건 숫자 라벨.
   ⓓ 자유 응답이 본질이면 그렇게 표시.
 ⑥ *블로킹 파워* 순으로 정렬 — NFR + 스택 점검은 항상 우선 (게이트 영향이 가장 큼).
+⑦ **Q-D8 Verification Commands 처리 (oh-my-ralph 차용, v0.3.0)** — [`../conventions/autonomy.md`](../conventions/autonomy.md) §Q-D8. 사용자 답 1/2 시 사용자가 입력한 bash 명령들을 `intent/04-verification.md` 의 ``` ```bash``` 블록에 그대로 paste + acceptance criteria `[SC-1]..[SC-N]` 매핑 표 작성. 답 3 시 같은 파일의 `Manual Verification` 섹션에 수기 절차 + frontmatter 의 `manual_only: true` 박음. **답 누락 또는 답 1/2 인데 Verification Commands 블록 비었으면 본 산출물에 `commands_count: 0` + `entry_blocked: true` frontmatter 박고 페이즈 05 진입 차단** ([`../phases/05-critique.md`](../phases/05-critique.md) 가 본 frontmatter 검사 후 진입 거부).
 
 ## 산출물
 
@@ -67,4 +68,6 @@ python skills/theseus-harness/scoring/fingerprint.py compute \
 
 ## 완료 조건
 
-`04-questions.md` 존재, 8 질문 이하, 각 질문에 두괄식 + "왜 중요한가" + 보기 또는 자유 응답 표시.
+ⓐ `04-questions.md` 존재, 8 질문 이하, 각 질문에 두괄식 + "왜 중요한가" + 보기 또는 자유 응답 표시.
+ⓑ `04-autonomy.md` 의 8 줄 표 (Q-D1 ~ Q-D8) 모두 답 채워짐.
+ⓒ `04-verification.md` 의 frontmatter `entry_blocked: false` 또는 `manual_only: true` — 페이즈 05 진입 가능 상태.

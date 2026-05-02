@@ -17,7 +17,8 @@
 ⓒ `intent/04-resource-profile.md` — 리소스 프로파일 합의 + 추정 천정. [`../conventions/resources.md`](../conventions/resources.md).
 ⓓ `intent/04-stack.md` — 언어/컴파일러/패키지 매니저 합의. [`../conventions/stack.md`](../conventions/stack.md).
 ⓔ NFR 임계 확정값은 `intent/01-intent.md` 의 "성능/스펙" 표를 in-place 갱신 (`proposed: true` → 사용자 답).
-ⓕ `intent/04-autonomy.md` — [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 사전 위임 카탈로그 Q-D1 ~ Q-D6 답 6 줄. **이게 페이즈 05 진입 조건** — 답이 빠지면 페이즈 05 시작 불가.
+ⓕ `intent/04-autonomy.md` — [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 사전 위임 카탈로그 Q-D1 ~ Q-D8 답 8 줄. **이게 페이즈 05 진입 조건** — 답이 빠지면 페이즈 05 시작 불가.
+ⓖ `intent/04-verification.md` — Q-D8 답에 따른 *외부 완료 검증* 산출물 (oh-my-ralph Verification Commands 패턴). bash 검증 스니펫 + acceptance criteria `[SC-N]` 매핑 + 선택적 manual 절차. **답이 1/2 면 `Verification Commands` 블록 비어있으면 페이즈 05 진입 거부**, 답이 3 (`manual_only: true`) 이면 페이즈 09 게이트의 `e2e_pass` 차원 cap 0.95 + 핸드오프 경고.
 
 ## 지휘자 동작 (강제)
 
@@ -37,9 +38,9 @@
 
 사용자가 PRD/스펙 문서를 첨부했어도 본 페이즈의 *모든 인터뷰 항목* 은 생략 안 됨. PRD 추출값은 객관식의 1번 보기로 제안되고, 사용자가 빠르게 1 클릭 확정. 각 답에 `user_explicit_confirmation: true` + `confirmed_at` timestamp 필수. self_lint C33 이 누락된 항목 자동 검출 → 페이즈 05 진입 거부.
 
-## 사전 위임 카탈로그 (페이즈 04 의 마지막 6 질의)
+## 사전 위임 카탈로그 (페이즈 04 의 마지막 8 질의)
 
-본 페이즈가 *유일한* 사용자 인터럽트 지점이므로, 후속 페이즈(05~13) 의 모든 자율 결정 정책을 *여기서* 한 번에 결정한다. [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 Q-D1 ~ Q-D6 6 질의를 Q-G1 + 일반 질의 *뒤에* 차례로 진행:
+본 페이즈가 *유일한* 사용자 인터럽트 지점이므로, 후속 페이즈(05~13) 의 모든 자율 결정 정책을 *여기서* 한 번에 결정한다. [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 Q-D1 ~ Q-D8 8 질의를 Q-G1 + 일반 질의 *뒤에* 차례로 진행:
 
 ⓐ Q-D1 — 회귀 권고 자동 적용 정책 (페이즈 11)
 ⓑ Q-D2 — 경쟁 resolve 자동 적용 정책 (competition.md)
@@ -47,8 +48,10 @@
 ⓓ Q-D4 — 정체 누적 시 정책 (lessons.md)
 ⓔ Q-D5 — 자율 패키지 업데이트 정책 (stack.md)
 ⓕ Q-D6 — 자율 결정 보고 빈도
+ⓖ Q-D7 — 체크포인트 회귀 + 멀티버스 정책 (checkpoints.md)
+ⓗ **Q-D8 — Verification Commands** (oh-my-ralph 차용, v0.3.0). 사용자가 *외부 완료 검증* 명령을 제시해야 페이즈 05 진입. 답이 1/2 면 `intent/04-verification.md` 의 bash 블록 채움, 답이 3 (`manual_only: true`) 이면 페이즈 09 의 `e2e_pass` 차원 cap 0.95 + 핸드오프 경고.
 
-답을 `intent/04-autonomy.md` 에 기록. **이 6 답이 빠지면 페이즈 05 진입 불가** — 페이즈 04 가 마지막 인터럽트이므로 사전 위임 답 없이는 후속 자율 진행이 정의 안 된다.
+답을 `intent/04-autonomy.md` (8 줄 표) + Q-D8 의 verification 본문은 `intent/04-verification.md` 에 기록. **8 답 + verification 산출물 모두 valid 해야 페이즈 05 진입** — 페이즈 04 가 마지막 인터럽트이므로 사전 위임 + 검증 명령 부재 시 후속 자율 진행이 정의 안 된다.
 
 ## 성공 기준
 
