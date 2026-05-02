@@ -19,52 +19,5 @@
     "dip",
     "ouroboros",
     "ralph-loop"
-  ],
-  "skills": [
-    {
-      "name": "theseus-orchestrator",
-      "path": "./skills/theseus-orchestrator",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-intent",
-      "path": "./skills/theseus-intent",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-plan",
-      "path": "./skills/theseus-plan",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-implement",
-      "path": "./skills/theseus-implement",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-quality",
-      "path": "./skills/theseus-quality",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-sprint",
-      "path": "./skills/theseus-sprint",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-webview",
-      "path": "./skills/theseus-webview",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-handoff",
-      "path": "./skills/theseus-handoff",
-      "entry": "SKILL.md"
-    },
-    {
-      "name": "theseus-harness",
-      "path": "./skills/theseus-harness",
-      "entry": "SKILL.md"
-    }
   ]
 }
