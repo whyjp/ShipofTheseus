@@ -353,42 +353,72 @@ def check_prd_handling_wired(skill_root: Path) -> list[str]:
     """
     C33 — PRD 처리 룰 박힘 + 인터뷰 스킵 금지 허들.
 
-    검증 항목:
-      ⓐ conventions/prd-handling.md 존재
+    검증 항목 (PR-13 이후 — prd-handling.md 가 interview.md 로 흡수됨):
+      ⓐ interview.md 에 PRD/스펙 입력 처리 절 존재
       ⓑ phase 04 가 PRD 처리 절차 + user_explicit_confirmation 명시
-      ⓒ agents/clarifier.md 가 PRD 입력 시 1 클릭 확정 룰 명시
-      ⓓ agents/intent-extractor.md 가 PRD → 후보 매핑 명시 (선택적, 권고)
+      ⓒ agents/clarifier.md 가 PRD 입력 시 명시 확정 룰 명시
     """
     issues: list[str] = []
-    prd = skill_root / "conventions" / "prd-handling.md"
-    if not prd.exists():
-        return ["conventions/prd-handling.md 누락 — PRD 충실해도 인터뷰 스킵 금지 허들 부재"]
 
-    text = _read(prd)
-    # 핵심 키워드 — passive default 채택 차단을 위한 active critique 룰 명시 검증
+    # PR-13: prd-handling.md → interview.md 흡수. interview.md 의 흡수 절 검증.
+    interview = skill_root / "conventions" / "interview.md"
+    if not interview.exists():
+        return ["conventions/interview.md 누락 — 인터뷰 룰 정의 필요"]
+
+    text = _read(interview)
+    # 핵심 키워드 — passive default 채택 차단을 위한 명시 검증
     for must_have in [
         "user_explicit_confirmation",
         "prd_evidence_cited",
-        "alternative_proposals_offered",
-        "default 강조 금지",
-        "drift_reason",
-        "비평가",
-        "Q-D1",
-        "확증 회귀",
+        "PRD/스펙 입력 처리",
         "인터뷰 스킵",
+        "confirmed_at",
     ]:
         if must_have not in text:
-            issues.append(f"prd-handling.md 가 '{must_have}' 명시 누락")
+            issues.append(f"interview.md 가 '{must_have}' 명시 누락 (C33 PRD 처리 허들)")
 
     p4 = _read(skill_root / "phases" / "04-clarify.md")
-    if "prd-handling.md" not in p4 or "user_explicit_confirmation" not in p4:
+    if "user_explicit_confirmation" not in p4:
         issues.append(
             "phases/04-clarify.md 가 PRD 처리 절차 또는 user_explicit_confirmation 의무 누락"
         )
 
     cl = _read(skill_root / "agents" / "clarifier.md")
-    if "prd-handling.md" not in cl and "user_explicit_confirmation" not in cl:
+    if "user_explicit_confirmation" not in cl:
         issues.append("agents/clarifier.md 가 PRD 입력 시 명시 확정 룰 누락")
+
+    return issues
+
+
+def check_convention_consolidation_prd(repo_root: Path, skill_root: Path) -> list[str]:
+    """C42 — interview.md 가 PRD/스펙 입력 처리 절 흡수 + prd-handling.md 제거 + dead link 부재."""
+    issues: list[str] = []
+
+    # 1. interview.md has the absorbed section
+    interview_path = skill_root / "conventions" / "interview.md"
+    interview = interview_path.read_text(encoding="utf-8")
+    if "PRD/스펙 입력 처리" not in interview:
+        issues.append("interview.md: PRD/스펙 입력 처리 흡수 절 누락 (PR-13)")
+    if "prd-handling.md 흡수" not in interview:
+        issues.append("interview.md: prd-handling 흡수 명시 누락 (PR-13)")
+
+    # 2. prd-handling.md is gone
+    if (skill_root / "conventions" / "prd-handling.md").exists():
+        issues.append("prd-handling.md 가 여전히 존재 — interview.md 로 흡수되어야 (PR-13)")
+
+    # 3. No dead links to prd-handling.md
+    import re
+    targets = (
+        list((skill_root / "phases").glob("*.md"))
+        + list((skill_root / "agents").glob("*.md"))
+        + [skill_root / "SKILL.md", skill_root / "README.md"]
+    )
+    for t in targets:
+        if not t.exists():
+            continue
+        text = t.read_text(encoding="utf-8")
+        if "prd-handling.md" in text:
+            issues.append(f"{t.name}: dead link 'prd-handling.md' 잔존 (PR-13)")
 
     return issues
 
@@ -1043,6 +1073,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C39", "resources opt-in supplementary ceiling + Q-D3 sub-option (PR-3, v0.4.0)", check_resources_supplementary_ceiling),
     ("C40", "anti-patterns consolidation catalog (PR-11, v0.4.0)", check_anti_patterns_consolidation),
     ("C41", "description compressed (≤200) + anti-pattern preserved (PR-12, v0.4.0)", check_description_length_and_anti_pattern),
+    ("C42", "interview ← prd-handling consolidation + no dead links (PR-13, v0.4.0)", check_convention_consolidation_prd),
 ]
 
 

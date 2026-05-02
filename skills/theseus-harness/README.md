@@ -29,7 +29,7 @@
   ⓓ-18 [`sub-agents.md`](conventions/sub-agents.md) — **서브에이전트 재귀 분해** — 모듈→하위 모듈 자동 분해 (LOC>200 / 복합 책임 / 다중 스택 / 회귀 누적), parallel/sequential/competition 모드, 깊이 2 한도, 단독 호출 input 계약 매트릭스.
   ⓓ-19 [`indexing.md`](conventions/indexing.md) — **산출물 = DB, 비직렬성 트리 인덱싱** — 멀티버스(우주 분기) × 서브에이전트(재귀 분해) 3차원 그래프, frontmatter 비직렬성 메타 (universe/parent_branch/parent_module/depth/branch_kind), INDEX.md/index.json 자동 갱신, 사용자/에이전트 오해 방지 허들.
   ⓓ-20 [`resume.md`](conventions/resume.md) — **리줌 (중단/재개)** — 매우 장기간 작업 중 사용자가 webview Progress 탭으로 라이브 관찰, 중단 시 `state.json` 자동 기록, `resume.py next` 가 마지막 valid 페이즈 다음 진입점 자동 결정, 부분 산출물 자동 폐기, 무결성 깨짐 시 사용자 ack 1 회만.
-  ⓓ-21 [`prd-handling.md`](conventions/prd-handling.md) — **PRD 처리 허들** — 충실한 PRD 가 입력이어도 페이즈 04 의 모든 인터뷰 항목 (Q-G1+Q-D1~D7+NFR+스택) 생략 금지. PRD 추출값은 객관식 1번 보기로, 사용자 1 클릭 확정 + `user_explicit_confirmation: true` + timestamp 강제. 인터럽트 0 약속의 *전제* 보호.
+  ⓓ-21 [`interview.md`](conventions/interview.md) "PRD/스펙 입력 처리" 절 — **PRD 처리 허들** — 충실한 PRD 가 입력이어도 페이즈 04 의 모든 인터뷰 항목 (Q-G1+Q-D1~D7+NFR+스택) 생략 금지. PRD 추출값은 객관식 1번 보기로, 사용자 1 클릭 확정 + `user_explicit_confirmation: true` + timestamp 강제. 인터럽트 0 약속의 *전제* 보호. (PR-13: 별도 컨벤션 → interview.md 흡수, 28→27 컨벤션)
 ⓔ [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 ⓕ [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 ⓖ [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 19 체크 + `--score` 모드, 임계 **0.99999** (자기 표준).

@@ -45,7 +45,7 @@
 
 ## 자체 lint — 객관 측정 도구
 
-[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **34 개 체크** 로 본 저장소를 검사 (회차마다 새 체크 추가, 부트스트래핑 회귀 누적):
+[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **42 개 체크** 로 본 저장소를 검사 (회차마다 새 체크 추가, 부트스트래핑 회귀 누적):
 
 | # | 체크 |
 | - | --- |
@@ -84,6 +84,13 @@
 | C33 | PRD 처리 허들 (충실한 PRD 도 인터뷰 스킵 금지) |
 | C34 | 깨고 다시 빚기 트리거 다차원 일반화 (DIP 단일이 아닌 6 차원) |
 | C35 | scoring/ 의 모든 `subprocess.run(text=True)` + `tempfile.NamedTemporaryFile(mode="w")` 가 `encoding=` 명시 + `conftest.py` 의 `PYTHONIOENCODING=utf-8` 박힘 (Windows cp949 잠재 버그 가드 — 회귀가 아닌 *원래 잠재* 버그) |
+| C36 | Q-D8 Verification Commands wired (oh-my-ralph 차용, v0.3.0) |
+| C37 | 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합 (동반 필요 명시, v0.4.0) |
+| C38 | INSTALL.md fresh-user 환경 점검 절 + self-check.{sh,bat} --check-stack-only 모드 (PR-2, v0.4.0) |
+| C39 | resources.md opt-in 보조 천정 절 + Q-D3 sub-option (PR-3, v0.4.0) |
+| C40 | 안티 패턴 통합 카탈로그 (PR-11, v0.4.0) |
+| C41 | description 200자 이하 압축 + anti-pattern 마커 보존 (PR-12, v0.4.0) |
+| C42 | interview ← prd-handling 흡수 + dead link 부재 (PR-13, 28→27 컨벤션, v0.4.0) |
 
 실행:
 ```bash
@@ -111,7 +118,7 @@ python skills/theseus-harness/scoring/self_lint.py --score
 self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ```
 
-ⓐ `lint_score` — 35 self_lint 체크 통과율 (현재 35/35 = 1.0)
+ⓐ `lint_score` — 42 self_lint 체크 통과율 (현재 42/42 = 1.0)
 ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (현재 12/12 = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
 ⓒ `sample_score` — `templates/sample-inputs.json` 채점 (현재 1.0)
 
@@ -126,7 +133,7 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ③ 페이즈 08 (보완 구현) — 실제 phase/agent/convention 본문 갱신
 ④ self_lint 재실행 → 0 fail 확인
 ⑤ `--score` 모드로 임계 0.99999 통과 확인
-⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (현재 C34 까지 누적, 다음 회차 C35+) → ② 로 회귀
+⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (현재 C42 까지 누적, 다음 회차 C43+) → ② 로 회귀
 ⑦ 회차 산출물을 `.ShipofTheseus/theseus-self/sprints/NN/` 로 누적 (다음 회차의 reference)
 
 회차 간 비교는 `quality-gate.md` 의 `self_score` 시계열로 — 본 하네스가 매 릴리스 *더 단단해지는지* 객관 측정.
