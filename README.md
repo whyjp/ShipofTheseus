@@ -1,7 +1,8 @@
-# Ship of Theseus — 스킬 저장소
+# Ship of Theseus — 재귀 멀티 에이전트 코딩 하네스
 
 ## 한 줄 요약
-**조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 재귀 멀티 에이전트 코딩 하네스 모음. 플래그십 스킬은 [`theseus-harness`](skills/theseus-harness/SKILL.md).
+
+**조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 8 분해 스킬 + 1 인덱스 스킬 + 1 플래그십(단일 source of truth)으로 파편화해 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (전체 자동 진행) 또는 [`theseus-harness`](skills/theseus-harness/SKILL.md) (단일 호출).
 
 ## 현재 성숙도 — 정직 박스 (v0.2.1)
 
@@ -12,43 +13,136 @@
 > ⓒ **임계 0.999 / 자기 임계 0.99999 는 SLO 가용성이 아닙니다** — 6 차원 rubric 가중평균 + DIP 단독 hard cap 0.6 + 5 hard cap 의 *명명 규칙* 입니다. 외부 사용자에게 "99.999% 신뢰 가능" 으로 오해되지 않도록 본 README 에서 명시.
 > ⓓ **v0.3.0 의 유일 시급 목표**: 첫 외부 실 프로젝트 적용 1 건 + 4 메트릭(인터럽트 0 / 14 페이즈 시간 / 의도 일치 / 채택 가능) post-mortem. 그때까지 새 컨벤션·새 도구 추가 동결.
 
+## 왜 "테세우스의 배" 인가
+
+배의 모든 판자를 하나씩 갈아 끼워도 같은 배라고 부를 수 있는가 — 이 사고 실험이 본 저장소의 핵심 은유다. 코드는 페이즈마다, 스프린트마다 분해·재조립·재구현되지만, **최초 의도한 타이틀의 결과물이라고 부를 수 있는 신뢰**가 끝까지 유지되어야 한다. 하네스의 모든 게이트와 점수, 회귀 바이섹트는 그 신뢰를 담보하기 위해 존재한다.
+
+깊은 설계 동기, 도자기 장인 비유, Ralph 루프·OhMy 시리즈·우로보로스 합성 근거는 [`PHILOSOPHY.md`](PHILOSOPHY.md) 참조.
+
+## 어떤 작업에 쓰는가
+
+ⓐ **추천 (G3 이상)** — 다중 모듈 / FE+BE 동시 / 도메인이 미정착인 신규 기능 / 회귀 바이섹트가 필요한 장기 리팩터.
+ⓑ **거부 (G1)** — 한 줄 수정, 오타 정정, 단일 함수 추가. 본 하네스가 자기 거부 — `intent` 페이즈에서 grade-assess 가 G1 으로 판정되면 호출이 종료된다 ([`conventions/grades.md`](skills/theseus-harness/conventions/grades.md)).
+ⓒ **미니 모드 (G2)** — 단일 모듈·단일 스택의 작은 기능. 페이즈 일부 스킵.
+
+## 14 페이즈 파이프라인
+
+| 단계 | 페이즈 | 담당 스킬 | 산출물 |
+| ---: | ----- | -------- | ------ |
+| 00 | 명명 | `theseus-intent` | `naming/00-naming.md` |
+| 01–05 | 의도·마인드맵·교차 이해·인터뷰·비평 | `theseus-intent` | `intent/01..05*.md` |
+| 06–07 | TODO DAG 계획·재이해 | `theseus-plan` | `plan/06..07*.md` |
+| 08 | 모듈 구현 (코드+테스트+빌드) | `theseus-implement` | `impl/08-impl-log.md` + 코드 |
+| 09 | 5 종 게이트 + Phase V 측정 유효성 | `theseus-quality` | `quality/09-quality-gate.md` |
+| 10–11 | 무한 스프린트 루프 + 회귀 바이섹트 + 멀티버스 | `theseus-sprint` | `sprints/NN/{report,inputs,bisect}.*` |
+| 12 | bun 기반 인터랙티브 웹뷰 자동 생성 | `theseus-webview` | `webview/` (hono + react, 6 탭) |
+| 13 | 한 줄 요약 + 점수 시계열 + (자율 시) PR 생성 | `theseus-handoff` | `handoff/13-handoff.md` |
+
+플래그십 [`theseus-harness`](skills/theseus-harness/SKILL.md) 가 위 모든 페이즈의 *콘텐츠 단일 source of truth* — 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기. 분해 스킬은 *형태와 인터페이스만* 정의하고 본문을 위임한다.
+
+## 수록 스킬 (9 개)
+
+| 스킬 | 역할 | 가이드 |
+| ---- | ---- | ----- |
+| [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) | 14 페이즈를 8 분해 스킬로 순차 위임하는 인덱스. 단순 호출은 grade-assess 로 거부 또는 미니 모드로 자동 다운시프트. 사용자 인터뷰는 페이즈 04 한 번. | [docs/skills/theseus-orchestrator.md](docs/skills/theseus-orchestrator.md) |
+| [`theseus-intent`](skills/theseus-intent/SKILL.md) | 페이즈 00–05. 명명 + 의도 추출 + 마인드맵 + 콜드 재이해 + 사용자 질의(Q-G1+Q-D1~D7+NFR) + 비평·대안. | [docs/skills/theseus-intent.md](docs/skills/theseus-intent.md) |
+| [`theseus-plan`](skills/theseus-plan/SKILL.md) | 페이즈 06–07. TODO DAG 계획 + 시퀀스 다이어그램 + 콜드 재이해. 경쟁 트리거 가능. | [docs/skills/theseus-plan.md](docs/skills/theseus-plan.md) |
+| [`theseus-implement`](skills/theseus-implement/SKILL.md) | 페이즈 08. TODO 별 모듈 단위 구현 (코드 + 테스트 + 목 표면 한 호출에). | [docs/skills/theseus-implement.md](docs/skills/theseus-implement.md) |
+| [`theseus-quality`](skills/theseus-quality/SKILL.md) | 페이즈 09. 5 게이트 + Phase V 측정 유효성 + frontmatter 검증. | [docs/skills/theseus-quality.md](docs/skills/theseus-quality.md) |
+| [`theseus-sprint`](skills/theseus-sprint/SKILL.md) | 페이즈 10–11. 무한 스프린트 루프 (그레이드별 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 천정 자동 조정 + 멀티버스. | [docs/skills/theseus-sprint.md](docs/skills/theseus-sprint.md) |
+| [`theseus-webview`](skills/theseus-webview/SKILL.md) | 페이즈 12. bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). | [docs/skills/theseus-webview.md](docs/skills/theseus-webview.md) |
+| [`theseus-handoff`](skills/theseus-handoff/SKILL.md) | 페이즈 13. 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + 웹뷰 실행 명령 + (자율 권한 시) PR 생성. | [docs/skills/theseus-handoff.md](docs/skills/theseus-handoff.md) |
+| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. 분해 스킬 없이 단독 호출도 가능. | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
+
+스킬 간 인터페이스는 산출물 frontmatter ([`conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약. 검증 실패 시 다음 스킬이 진입을 거부 — 분해의 안전 장치.
+
+새 스킬은 `skills/<이름>/SKILL.md` 로 추가하고 [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) `skills` 배열에 등록한다.
+
+## 빠른 사용
+
+ⓐ **전체 자동 진행 (권장)** — `theseus-orchestrator` 가 14 페이즈를 자동 위임:
+
+```
+/theseus-orchestrator <요구사항>
+```
+
+ⓑ **단일 호출** — 단일 source of truth 인 `theseus-harness` 직접:
+
+```
+/theseus-harness <요구사항>
+```
+
+ⓒ **부분 호출 (재진입)** — 외부에서 받은 산출물로 *다음 단계부터*:
+
+```
+/theseus-plan       # plan/06 부터, intent 산출물이 입력
+/theseus-implement  # impl/08 부터, plan 산출물이 입력
+```
+
+frontmatter 핑거프린트가 입력 무결성을 검증해야 진입한다.
+
+## 설치
+
+상세 안내는 [`INSTALL.md`](INSTALL.md). 가장 단순한 형태:
+
+```bash
+git clone https://github.com/whyjp/shipoftheseus.git ~/src/shipoftheseus
+
+# 본인 프로젝트 루트에서 — 9 스킬 일괄 링크
+cd /path/to/your/project
+mkdir -p .claude/skills
+for s in ~/src/shipoftheseus/skills/*/; do
+  ln -s "$s" ".claude/skills/$(basename "$s")"
+done
+```
+
+또는 플러그인 매니페스트 ([`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)) 를 통해:
+
+```bash
+claude plugin install https://github.com/whyjp/shipoftheseus
+```
+
+## 산출물 위치
+
+모든 산출물은 프로젝트 루트의 `.ShipofTheseus/<프로젝트명>/` 아래에 카테고리·단계·스프린트별로 배치된다. 자세한 트리는 [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) 의 "산출물 트리" 섹션 참조.
+
+```
+.ShipofTheseus/<프로젝트명>/
+├── timing/start.json
+├── naming/00-naming.md
+├── intent/01..05*.md
+├── plan/06..07*.md
+├── impl/08-impl-log.md
+├── quality/09-quality-gate.md
+├── sprints/NN/{report.md, inputs.json, bisect.md?, unit.json, e2e.json}
+├── webview/                           # bun + hono + react
+└── handoff/13-handoff.md
+```
+
+## 자기 평가 (부트스트래핑)
+
+본 하네스는 *자기 자신* 을 같은 게이트로 평가한다 — *내가 너에게 강제하는 것은 나에게도 강제되어야 한다.* 자세한 절차는 [`BOOTSTRAP.md`](BOOTSTRAP.md).
+
+```bash
+./scripts/self-check.sh        # linux/mac
+scripts\self-check.bat         # windows
+```
+
+수행 단계: 34 self_lint 체크 → pytest (score + self_lint) → sample 채점 → 자기 점수 (임계 0.99999) → frontmatter 체인 무결성. 결과는 `.ShipofTheseus/theseus-self/` 에 누적되어 회차 간 점수 시계열로 회귀를 잡는다.
+
 ## v0.2.1 핫픽스 (Cursor Bugbot PR#1 후속)
 
 ⓐ **`fingerprint.py` timing-invariance 회귀 수정** — `TIMING_HEADER_RE` 의 `\A>` 앵커는 템플릿이 `# 제목\n\n> **프로젝트:**` 로 시작하는 패턴에 절대 매치되지 않아, *timing-invariant fingerprint* 라는 [`contracts.md`](skills/theseus-harness/conventions/contracts.md) 의 핵심 약속이 깨져 있었음. → 본문 어디에 위치하든 timing 마커(`**시작:** / **종료:** / **누적 경과:** / **현재 시각:** / **이 스프린트 소요:** / **소요:**`) 를 포함한 blockquote 블록을 식별·strip 하도록 수정. [`scoring/test_fingerprint.py`](skills/theseus-harness/scoring/test_fingerprint.py) 9 회귀 케이스로 박음 — 같은 본문 + 다른 시각 → 같은 fingerprint 보장.
 ⓑ **`Sprints.tsx` 차트 데이터 소스 회귀 수정** — `s.inputs?.score` 는 `inputs.json`(score.py 의 *입력*) 에 score 필드가 없어 항상 빈 차트였음. `score.py --out` 플래그 신규로 `sprints/NN/score.json` 산출 의무화 + `server.ts` `/api/sprints` 가 score.json 도 로드 + Sprints.tsx 가 `s.score?.score` 사용. [`phases/10-test-loop.md`](skills/theseus-harness/phases/10-test-loop.md) 의 score.py 호출 형식도 갱신.
 ⓒ **0.999 / 0.99999 SLO 의미론 오용 가드** — README 정직 박스 + [`scoring/rubric.md`](skills/theseus-harness/scoring/rubric.md) §"0.999 / 0.99999 의 의미" 섹션 신규. 외부 사용자가 "99.999% 가용성" 으로 오해하지 않도록 *6 차원 가중평균 임계 + self_lint 정합성 측정* 임을 명시.
 
-## 왜 테세우스의 배인가
-배의 모든 판자를 하나씩 갈아 끼워도 같은 배라고 부를 수 있는가 — 이 사고 실험이 이 저장소의 핵심 은유다. 코드는 페이즈마다, 스프린트마다 분해·재조립·재구현되지만, **최초 의도한 타이틀의 결과물이라고 부를 수 있는 신뢰**가 끝까지 유지되어야 한다. 하네스의 모든 게이트와 점수, 회귀 바이섹트는 그 신뢰를 담보하기 위해 존재한다.
-
-## 수록 스킬
-
-| 스킬 | 목적 |
-| ---- | ---- |
-| [`theseus-harness`](skills/theseus-harness/SKILL.md) | 의도 추출 → 명명 → 문서화 → 교차 이해 → 사용자 질의 → 비평 → 계획 → 재계획 → 구현 → 품질 게이트 → 점수 0.9 도달까지 무한 스프린트 루프 → 회귀 바이섹트 → be4fe + bun 기반 fe 웹뷰 자동 생성 → 핸드오프 |
-
-새 스킬은 `skills/<이름>/SKILL.md` 로 추가한다.
-
-## 설치
-
-상세 안내는 [`INSTALL.md`](INSTALL.md). 한 줄 요약:
-
-```bash
-git clone https://github.com/whyjp/shipoftheseus.git ~/src/shipoftheseus
-ln -s ~/src/shipoftheseus/skills/theseus-harness .claude/skills/theseus-harness
-# 세션에서: /theseus-harness <요구사항>
-```
-
-저장소 루트에 [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) 매니페스트가 포함되어, Claude Code 플러그인 매니저가 지원되는 버전에서는 `claude plugin install <repo-url>` 형태로도 설치 가능.
-
-## 산출물 위치
-
-모든 산출물은 프로젝트 루트의 `.ShipofTheseus/<프로젝트명>/` 아래에 카테고리·단계·스프린트별로 배치된다. 자세한 구조는 [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) 의 "산출물 트리" 섹션 참조.
-
 ## 더 읽을거리
 
 - [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미, Ralph 루프·OhMy 시리즈·우로보로스 합성 근거, SOLID/TDD/BDD/DDD/Hexagonal 매핑.
-- [`skills/theseus-harness/conventions/interview.md`](skills/theseus-harness/conventions/interview.md) — 사용자 질의 컨벤션(두괄식, 1회 1질의, 숫자 객관식 5개 이하 등).
+- [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차, 34 self_lint 체크 목록.
+- [`INSTALL.md`](INSTALL.md) — 설치·갱신·트러블슈팅.
+- [`docs/skills/`](docs/skills/) — 스킬별 가이드 (역할, 입출력, 단독 호출 시점, 자주 묻는 질문).
+- [`skills/theseus-harness/conventions/`](skills/theseus-harness/conventions/) — 21 컨벤션 모듈 (의도·다이어그램·계약·모델·경쟁·자율성·정체 극복·NFR·리소스·체크포인트·테스트·Da Capo·파편화·그레이드·재귀 분해·인덱싱·리줌·PRD).
 
 ## 라이선스
 
