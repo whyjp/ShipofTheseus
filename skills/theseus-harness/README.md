@@ -39,7 +39,7 @@
 
 ⓐ **의존성 역전(DIP) 이 SOLID 중 최우선** — 위반은 단독 hard fail.
 ⓑ **관심사 분리(SoC) 가 단위 테스트 기반** — 모듈 경계를 기능보다 먼저.
-ⓒ **장인의 도자기처럼** 깊은 위반은 모듈을 깨고 페이즈 06 부터 다시 빚는다 (페이즈 11 `re-architect`).
+ⓒ **장인의 도자기처럼** 깊은 품질 위반 (DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적) *어느 차원* 이라도 깊이 임계 초과면 모듈을 깨고 페이즈 06 부터 다시 빚는다 (페이즈 11 `re-architect`). 트리거 매핑은 [`conventions/lessons.md`](conventions/lessons.md) + [`conventions/checkpoints.md`](conventions/checkpoints.md) 의 11 분류.
 ⓓ **모든 산출물은 파일** — `.ShipofTheseus/<프로젝트>/` 트리에 카테고리별로 떨어진다.
 ⓔ **무한 스프린트 루프** — 임계 0.999 까지, 회귀 시에만 사용자 ack 로 정지.
 ⓕ **시간 라이브 표시** — 매 산출물 헤더에 시작·소요·누적·현재.

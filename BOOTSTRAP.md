@@ -45,7 +45,7 @@
 
 ## 자체 lint — 객관 측정 도구
 
-[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 11 개 체크로 본 저장소를 검사:
+[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **34 개 체크** 로 본 저장소를 검사 (회차마다 새 체크 추가, 부트스트래핑 회귀 누적):
 
 | # | 체크 |
 | - | --- |
@@ -60,6 +60,29 @@
 | C9 | INSTALL.md 가 플러그인 매니페스트 언급 |
 | C10 | phases 가 자기 짝 agent 를 링크 |
 | C11 | skill README 가 모든 conventions 를 노출 |
+| C12 | phase 06 시퀀스 다이어그램 동봉 의무 |
+| C13 | phase 08 sh + bat 빌드 스크립트 강제 |
+| C14 | quality-gate frontmatter 누락 자동 fail 룰 |
+| C15 | regression-analyst 가 competition 컨벤션 활용 명시 |
+| C16 | competition.md 의 트리거 주체 (critic/plan-reviewer) |
+| C17 | 산출물 작성 에이전트 모두 fingerprint.py 호출 |
+| C18 | webview-builder Mermaid 자동 렌더 |
+| C19 | autonomy convention + cross-references |
+| C20 | lessons + stagnation 가 phase10/implementer/planner 박힘 |
+| C21 | spec-catalog 가 intent-extractor/clarifier/phase09/template 박힘 |
+| C22 | resources + ceiling 가 phase04/phase10/spec-catalog 박힘 |
+| C23 | phases 05~13 본문에 사용자 인터럽트 호출 부재 (autonomy 인터뷰-only 룰) |
+| C24 | checkpoints + dacapo + Q-D7 박힘 |
+| C25 | test-invariants + dacapo (AIDE/Phase V) — dacapo 얇은 인덱스화 |
+| C26 | fragmentation policy (SKILL.md 인덱스 형태) |
+| C27 | grades 박힘 (grades.md + grade_assess.py + Q-G1) |
+| C28 | 8 분해 stub + 단일 source of truth + orchestrator 체이닝 |
+| C29 | sub-agents 재귀 분해 (sub-agents.md + dispatch + AIDE 매핑) |
+| C30 | indexing (indexing.md + index_builder + 비직렬성 메타) |
+| C31 | resume (resume.md + resume.py + state.json + Progress 탭) |
+| C32 | 룰 본문 중복 부재 (fragmentation DRY) |
+| C33 | PRD 처리 허들 (충실한 PRD 도 인터뷰 스킵 금지) |
+| C34 | 깨고 다시 빚기 트리거 다차원 일반화 (DIP 단일이 아닌 6 차원) |
 
 실행:
 ```bash
@@ -87,8 +110,8 @@ python skills/theseus-harness/scoring/self_lint.py --score
 self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ```
 
-ⓐ `lint_score` — 18 self_lint 체크 통과율 (현재 18/18 = 1.0)
-ⓑ `pytest_score` — score.py + self_lint 의 pytest 통과율 (현재 16/16 = 1.0)
+ⓐ `lint_score` — 34 self_lint 체크 통과율 (현재 34/34 = 1.0)
+ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (현재 12/12 = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
 ⓒ `sample_score` — `templates/sample-inputs.json` 채점 (현재 1.0)
 
 1차 회차 결과: **self_score = 1.000000, 임계 0.99999 통과**. 자세한 회차 보고는 [`.ShipofTheseus/theseus-self/quality/09-quality-gate.md`](.ShipofTheseus/theseus-self/quality/09-quality-gate.md).
@@ -102,7 +125,7 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ③ 페이즈 08 (보완 구현) — 실제 phase/agent/convention 본문 갱신
 ④ self_lint 재실행 → 0 fail 확인
 ⑤ `--score` 모드로 임계 0.99999 통과 확인
-⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (C19+) → ② 로 회귀
+⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (현재 C34 까지 누적, 다음 회차 C35+) → ② 로 회귀
 ⑦ 회차 산출물을 `.ShipofTheseus/theseus-self/sprints/NN/` 로 누적 (다음 회차의 reference)
 
 회차 간 비교는 `quality-gate.md` 의 `self_score` 시계열로 — 본 하네스가 매 릴리스 *더 단단해지는지* 객관 측정.
