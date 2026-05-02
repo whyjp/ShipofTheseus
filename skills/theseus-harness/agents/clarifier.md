@@ -13,12 +13,14 @@
 
 ① 의도와 재이해 사이의 표류 지점을 모두 식별.
 ② 의도 문서 자체의 "열린 질문" 모두 식별.
-③ 각각에 대해 [`../conventions/interview.md`](../conventions/interview.md) 형식의 질문 작성:
+③ **NFR 확정 질의** — `intent/01-intent.md` 의 "성능/스펙" 섹션에 `proposed: true` 로 자동 제안된 NFR 항목 모두에 대해 객관식 4 보기 생성 ([`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) 의 형식): `1. 권고 채택 / 2. 더 빡빡 / 3. 완화 / 4. 미확정 (게이트 비활성)`. 각 NFR 1 질의 단위, 사용자가 차례로 답.
+④ 스택 점검 ([`../conventions/stack.md`](../conventions/stack.md)) 도 같은 절차로 — 언어/컴파일러/패키지 매니저 버전 합의.
+⑤ 각각에 대해 [`../conventions/interview.md`](../conventions/interview.md) 형식의 질문 작성:
   ⓐ 두괄식 한 줄 요약.
   ⓑ 다음 문단에 배경.
   ⓒ 객관식이면 보기 5개 이하, 무조건 숫자 라벨.
   ⓓ 자유 응답이 본질이면 그렇게 표시.
-④ *블로킹 파워* 순으로 정렬 — 가장 많은 후속을 푸는 질문이 먼저.
+⑥ *블로킹 파워* 순으로 정렬 — NFR + 스택 점검은 항상 우선 (게이트 영향이 가장 큼).
 
 ## 산출물
 

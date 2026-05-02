@@ -8,8 +8,10 @@
 
 ① `.ShipofTheseus/<프로젝트명>/00-request.txt` 또는 대화 첫 메시지에서 원문 Read.
 ② 레포 `README.md` 와 분명한 진입점 skim — 의도가 실 코드 위에 grounding 되도록.
-③ [`../templates/intent.template.md`](../templates/intent.template.md) 채워 `intent/01-intent.md` 작성.
-④ 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 표기.
+③ **도메인 키워드 추출** — 원문에서 "결제·검색·알림·로그인·관리자·실시간·ML·CRUD·지도·...·" 같은 도메인 단어 식별. [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) 의 표 1~3 개를 매칭.
+④ **NFR 자동 제안** — 매칭된 카탈로그의 권고 임계를 `intent/01-intent.md` 의 "성능/스펙" 섹션에 *proposed: true* 마크와 함께 자동 채움. 사용자는 페이즈 04 에서 항목별로 채택/조정.
+⑤ [`../templates/intent.template.md`](../templates/intent.template.md) 의 나머지 섹션을 채워 `intent/01-intent.md` 작성.
+⑥ 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 표기.
 
 ## 핵심 원칙
 

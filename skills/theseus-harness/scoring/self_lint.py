@@ -271,6 +271,27 @@ def check_autonomy_convention_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_spec_catalog_wired(skill_root: Path) -> list[str]:
+    """C21 — spec-catalog.md 가 존재 + intent-extractor / clarifier / phase 09 / template 에 박힘."""
+    issues: list[str] = []
+    cat = skill_root / "conventions" / "spec-catalog.md"
+    if not cat.exists():
+        return ["conventions/spec-catalog.md 누락 — NFR 자동 제안 카탈로그 필요"]
+    ie = _read(skill_root / "agents" / "intent-extractor.md")
+    if "spec-catalog" not in ie and "NFR" not in ie:
+        issues.append("agents/intent-extractor.md 가 spec-catalog 또는 NFR 자동 제안 명시 누락")
+    cl = _read(skill_root / "agents" / "clarifier.md")
+    if "spec-catalog" not in cl and "NFR" not in cl:
+        issues.append("agents/clarifier.md 가 NFR 확정 질의 명시 누락")
+    p9 = _read(skill_root / "phases" / "09-quality-gates.md")
+    if "NFR" not in p9 and "spec-catalog" not in p9:
+        issues.append("phases/09-quality-gates.md 가 NFR 게이트(6) 누락")
+    tmpl = _read(skill_root / "templates" / "intent.template.md")
+    if "성능" not in tmpl and "NFR" not in tmpl:
+        issues.append("templates/intent.template.md 가 성능/NFR 섹션 누락")
+    return issues
+
+
 def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
     """C20 — lessons.md 와 stagnation.py 가 phase 10, implementer, planner 에 박힘."""
     issues: list[str] = []
@@ -313,6 +334,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C18", "webview-builder mermaid render", check_webview_mermaid),
     ("C19", "autonomy convention present + cross-referenced", check_autonomy_convention_present),
     ("C20", "lessons + stagnation wired into phase10/implementer/planner", check_lessons_stagnation_wired),
+    ("C21", "spec-catalog wired into intent-extractor/clarifier/phase09/template", check_spec_catalog_wired),
 ]
 
 

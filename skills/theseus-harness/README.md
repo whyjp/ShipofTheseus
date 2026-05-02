@@ -19,6 +19,7 @@
   ⓓ-8 [`competition.md`](conventions/competition.md) — **2~3 후보 격리 병렬 경쟁** + **자동 resolve 알고리즘** → 사용자 ack 없이 자율 결정.
   ⓓ-9 [`autonomy.md`](conventions/autonomy.md) — **자율성 우선** — 페이즈 04 외 결정은 자율, 산출물 모두 기록되어 사후 리뷰 가능, 사용자 위임 4 단계.
   ⓓ-10 [`lessons.md`](conventions/lessons.md) — **무한 재귀 정체 극복** — 점수 시계열 정체 감지 + 레슨팩(forbidden_strategies, rewrite_rule) 다음 루프 전달 + 부분 수정 금지·통째 재작성 강제.
+  ⓓ-11 [`spec-catalog.md`](conventions/spec-catalog.md) — **도메인별 NFR 자동 제안** — 결제/CRUD/검색/실시간/ML/FE/모바일/운영/보안 카탈로그, 페이즈 01 자동 채움 + 페이즈 04 객관식 확정 + 페이즈 09 게이트 6.
 ⓔ [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 ⓕ [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 ⓖ [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 19 체크 + `--score` 모드, 임계 **0.99999** (자기 표준).
