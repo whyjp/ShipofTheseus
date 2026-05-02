@@ -1007,6 +1007,15 @@ def check_description_length_and_anti_pattern(repo_root: Path, skill_root: Path)
     return issues
 
 
+def check_hard_rule_markup(repo_root: Path, skill_root: Path) -> list[str]:
+    """C43 — theseus-harness SKILL.md 의 하드 룰 절이 HARD-RULE 마크업 보유."""
+    issues: list[str] = []
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    if "## 하드 룰" in skill and "<!-- HARD-RULE:" not in skill:
+        issues.append("SKILL.md: 하드 룰 절은 있으나 HARD-RULE 마크업 누락 (PR-10)")
+    return issues
+
+
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
     """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
     issues: list[str] = []
@@ -1074,6 +1083,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C40", "anti-patterns consolidation catalog (PR-11, v0.4.0)", check_anti_patterns_consolidation),
     ("C41", "description compressed (≤200) + anti-pattern preserved (PR-12, v0.4.0)", check_description_length_and_anti_pattern),
     ("C42", "interview ← prd-handling consolidation + no dead links (PR-13, v0.4.0)", check_convention_consolidation_prd),
+    ("C43", "SKILL.md hard-rule markup (PR-10, v0.4.0)", check_hard_rule_markup),
 ]
 
 

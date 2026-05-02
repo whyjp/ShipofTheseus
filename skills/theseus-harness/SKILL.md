@@ -123,6 +123,8 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 각 스킬이 [`conventions/contracts.md`](conventions/contracts.md) 의 frontmatter 계약만 지키면 독립 호출·교체 가능. 본 PR 은 분해 *가능성을 만든* 단계 — 실제 분해는 후속.
 
+<!-- HARD-RULE: 본 절의 ⓐ~ⓛ 항목은 본 하네스 호출 시 *예외 없이* 적용. 위반은 즉시 게이트 fail. -->
+
 ## 하드 룰 (요약)
 
 ⓐ 페이즈 생략 불가. 불필요해 보여도 실행하고 "발견 없음" 으로 기록.
