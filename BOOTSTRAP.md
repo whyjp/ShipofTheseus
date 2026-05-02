@@ -138,6 +138,18 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ⓒ 각 sprint 에 최소 `quality-gate.md` 와 `inputs.json` (점수 산출 입력) 보존.
 ⓓ 점수 시계열 시각화는 향후 `webview/tabs/SelfEval.tsx` 후보 — sprint 점수 라인 차트.
 
+### v0.4.0 자동 시계열 (PR-9 신규)
+
+`scripts/self-check.{sh,bat}` 가 실행 후 자동으로 *최신 sprint 디렉터리* 의 `report.md` 끝에 sprint run 한 줄 (self_score + 임계 + 회귀 여부) 추가. 회차 간 self_score 비교가 *수동 기록 없이* 누적.
+
+```bash
+# 한 줄 자동 추가:
+## Sprint Run — 2026-05-03T...
+- self_score: `1.000000`
+- 임계 (theseus-self): `0.99999`
+- 회귀: 0 (통과)
+```
+
 ## 부트스트래핑의 5 단계
 
 ① **점화** — 1차 자체 평가 산출물을 사람 손으로 박는다 (이번 PR).

@@ -1,0 +1,16 @@
+{
+  "sprint": "01",
+  "project_id": "theseus-self",
+  "purpose": "standalone-runnability + ralph-borrow review",
+  "started_at": "2026-05-03",
+  "previous_round": "1차 (수기 부트스트래핑, .ShipofTheseus/theseus-self/intent/01,05 + quality/09)",
+  "previous_self_score": 1.000000,
+  "target_self_score": 0.99999,
+  "decisions_locked": {
+    "Q1_deliverable": "report + commit-ready PRs",
+    "Q2_pr_completeness": "all commit-ready",
+    "Q3_standalone_audit": "static + empirical hybrid",
+    "Q4_artifact_location": "hybrid (design in bootstrap tree, code in normal git branch)",
+    "Q5_comparison_breadth": "ralph primary + 5-pattern appendix"
+  }
+}

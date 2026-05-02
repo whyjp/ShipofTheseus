@@ -37,3 +37,24 @@ python skills\theseus-harness\scoring\fingerprint.py chain --dir .ShipofTheseus\
 
 echo.
 echo ==^> 모두 통과
+
+REM v0.4.0 PR-9 — sprint 시계열 자동 기록
+set SPRINT_DIR=.ShipofTheseus\theseus-self\sprints
+if exist "%SPRINT_DIR%" (
+  set LATEST_SPRINT=
+  for /f "delims=" %%d in ('dir /b /ad /o-n "%SPRINT_DIR%" 2^>nul ^| findstr "^[0-9]"') do (
+    if not defined LATEST_SPRINT set LATEST_SPRINT=%SPRINT_DIR%\%%d
+  )
+  if defined LATEST_SPRINT (
+    set REPORT_FILE=%LATEST_SPRINT%\report.md
+    for /f "delims=" %%s in ('python skills\theseus-harness\scoring\self_lint.py --score 2^>nul ^| python -c "import sys, json; d=json.load(sys.stdin); print(d.get('self_score', 'N/A'))" 2^>nul') do (
+      set SELF_SCORE=%%s
+    )
+    if not defined SELF_SCORE set SELF_SCORE=N/A
+    echo. >> "%REPORT_FILE%"
+    echo ## Sprint Run -- %date% %time% >> "%REPORT_FILE%"
+    echo - self_score: `%SELF_SCORE%` >> "%REPORT_FILE%"
+    echo - 임계: `0.99999` >> "%REPORT_FILE%"
+    echo [sprint-timeline] %REPORT_FILE% 갱신 완료 ^(self_score=%SELF_SCORE%^)
+  )
+)
