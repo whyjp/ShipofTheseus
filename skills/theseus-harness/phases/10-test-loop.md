@@ -1,7 +1,7 @@
 # Phase 10 — 무한 스프린트 루프
 
 ## 한 줄 요약
-**점수 ≥ 0.9 가 나올 때까지 무한 반복한다.** 회수 캡 없음. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) 로, 사용자 ack 없이는 추가 구현 금지.
+**점수 ≥ 0.999 가 나올 때까지 무한 반복한다.** 회수 캡 없음. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
 
 ## 매 스프린트 테스트 매트릭스
 
@@ -47,7 +47,9 @@ while True:
     # ① 회귀 우선 — 페이즈 11 (lessons.md 의 정체와 별 트리거)
     if len(prev_scores) >= 2 and score < prev_scores[-2] - 0.05:
         run_phase_11 → `sprints/{sprint:02d}/bisect.md`
-        ack_per_autonomy_level()
+        # autonomy.md Q-D1 사전 위임 답 자동 적용 — 인터럽트 없음
+        apply_q_d1_policy(bisect_recommendation, autonomy_policy["Q-D1"])
+        report_live("회귀 권고 자동 적용 (Q-D1.<답>)")
 
     # ② 정체 감지 — lessons.md / scoring/stagnation.py
     history_json = build_history(prev_scores, dim_history)
@@ -83,13 +85,14 @@ while True:
                     metric=dim,
                 )
                 if ceiling["near_ceiling"]:
-                    # 자동 조정 권고 — 사용자 ack 필수 (autonomy.md 의 임계 변경)
-                    ack = AskUserQuestion(
-                        f"리소스 천정 도달: 측정 {ceiling['avg']} 이 추정 천정의 "
-                        f"{ceiling['ceiling_pct_actual']*100:.0f}%. 임계 조정?",
-                        options=ceiling["user_options"],
+                    # autonomy.md Q-D3 사전 위임 답 자동 적용 — 인터럽트 없음
+                    policy_action = ceiling["policy_actions"][autonomy_policy["Q-D3"]]
+                    apply_policy_action(policy_action, dim)
+                    report_live(
+                        f"천정 도달 ({ceiling['avg']:.1f}, 천정 "
+                        f"{ceiling['ceiling_pct_actual']*100:.0f}%) → "
+                        f"Q-D3.{autonomy_policy['Q-D3']} 자동 적용"
                     )
-                    apply_user_choice(ack, dim)
                     continue   # 다음 차원으로
 
         # ②-2 천정 아닌 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
@@ -105,9 +108,10 @@ while True:
             "rewrites": stag["stagnant_dims"],
         })
 
-        # 같은 차원 3 회 연속 rewrite 도 정체면 사용자 ack 강제
+        # 같은 차원 3 회 연속 rewrite 도 정체면 autonomy.md Q-D4 자동 적용 — 인터럽트 없음
         if rewrite_streak(stag["stagnant_dims"], prior_attempts) >= 3:
-            ask_user_per_lessons_md_section_3회_초과()
+            apply_q_d4_policy(autonomy_policy["Q-D4"])  # 1=06재시작 / 2=임계완화 / 3=정체수용
+            report_live("3회 rewrite 정체 → Q-D4.<답> 자동 적용")
 
     else:
         # 일반 다음 스프린트 — extend (기존 코드 보강)
@@ -119,7 +123,7 @@ while True:
         )
 
     sprint += 1
-    # 캡 없음 — 단 정체 누적은 사용자 ack 로 차단
+    # 캡 없음 — 정체 누적은 Q-D4 사전 위임 답으로 자동 매핑 (인터럽트 없음)
 ```
 
 핵심:
@@ -127,7 +131,7 @@ while True:
 ⓐ **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/lessons.md`](../conventions/lessons.md) 의 형식.
 ⓑ **정체 감지 자동** — `scoring/stagnation.py` 가 매 스프린트 종료 후 시계열 분석. 종합 정체 → 페이즈 06 재시작, 차원 정체 → 해당 모듈 통째 재작성.
 ⓒ **부분 수정 금지 강제** — 정체로 트리거된 rewrite 는 `preserve=false` 명시. 구현자가 기존 코드를 *보강* 하면 정체 지속.
-ⓓ **3 회 누적 rewrite 도 정체면 사용자 ack** — 자율 무한 시도 차단.
+ⓓ **3 회 누적 rewrite 도 정체면 Q-D4 사전 위임 답** 자동 매핑 (인터럽트 없음, 자동 적용) — 무한 자율의 합리적 한계.
 
 ## 사용자 보고 (매 스프린트)
 
@@ -141,7 +145,7 @@ while True:
 
 ⓐ 점수 ≥ 0.9 도달 — 테스트 비활성화·임계값 낮추기·rubric 편집 없이.
 ⓑ 모든 스프린트 보고서 존재.
-ⓒ 회귀 트리거가 있었던 스프린트는 `bisect.md` 가 동행, 사용자 ack 기록.
+ⓒ 회귀 트리거가 있었던 스프린트는 `bisect.md` 가 동행, 자동 적용된 Q-D1 매핑 결과 기록 (인터럽트 없음).
 
 ## 금지된 안티 패턴 (테스터)
 

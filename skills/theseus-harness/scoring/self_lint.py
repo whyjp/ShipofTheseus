@@ -292,6 +292,40 @@ def check_spec_catalog_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_no_user_interrupt_post_phase04(skill_root: Path) -> list[str]:
+    """
+    C23 — 페이즈 05~13 본문에 사용자 인터럽트 호출 패턴이 *있으면* fail.
+
+    autonomy.md 의 핵심 룰: 페이즈 04 가 유일한 인터럽트 지점. 페이즈 05~13 은
+    모든 ack 가 사전 위임 답 자동 매핑이어야 함.
+
+    예외: "인터럽트 없음", "사전 위임", "Q-D[0-9]" 같은 *부재 명시* 단어가
+    같은 줄에 있으면 통과 (룰 명시지 호출 아님).
+    """
+    issues: list[str] = []
+    forbidden_patterns = ["AskUserQuestion", "사용자 ack", "ask_user", "ack_per_autonomy"]
+    allow_markers = ["인터럽트 없음", "사전 위임", "Q-D", "ack 호출 절대 없음", "자동 매핑", "자동 적용"]
+
+    for phase_file in _files(skill_root / "phases", "*.md"):
+        # 04 는 인터럽트 정상
+        if phase_file.name.startswith("04-"):
+            continue
+        # 00–03 은 명령형 인터럽트 가능 (의도 추출/리뷰 단계)
+        if phase_file.name[:2] in {"00", "01", "02", "03"}:
+            continue
+        text = _read(phase_file)
+        for line in text.splitlines():
+            for pat in forbidden_patterns:
+                if pat in line:
+                    if any(m in line for m in allow_markers):
+                        continue   # 룰 명시 (사전 위임/없음 등) — 통과
+                    issues.append(
+                        f"{phase_file.name}: 인터럽트 패턴 '{pat}' 발견 — "
+                        f"페이즈 05~13 은 사전 위임 자동 매핑이어야 함 (라인: {line.strip()[:80]})"
+                    )
+    return issues
+
+
 def check_resources_ceiling_wired(skill_root: Path) -> list[str]:
     """C22 — resources.md + resource_ceiling.py 가 phase 04, phase 10, spec-catalog 에 박힘."""
     issues: list[str] = []
@@ -357,6 +391,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C20", "lessons + stagnation wired into phase10/implementer/planner", check_lessons_stagnation_wired),
     ("C21", "spec-catalog wired into intent-extractor/clarifier/phase09/template", check_spec_catalog_wired),
     ("C22", "resources + ceiling wired into phase04/phase10/spec-catalog", check_resources_ceiling_wired),
+    ("C23", "no user interrupt in phases 05-13 (autonomy.md interview-only rule)", check_no_user_interrupt_post_phase04),
 ]
 
 

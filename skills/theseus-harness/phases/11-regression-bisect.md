@@ -28,23 +28,19 @@
   ② `re-architect <module>` — 더 깊은 SOLID 위반의 증상 → 그 모듈에 대해 페이즈 06 부터 재실행.
   ③ `accept` — 회귀가 실은 의도된 변화 (제약이 중간에 바뀜) — 사용자가 명시 확인.
 
-## 지휘자 후속
+## 지휘자 후속 — 사전 위임 자동 적용 (인터럽트 없음)
 
-[`../conventions/interview.md`](../conventions/interview.md) 규칙으로 사용자에게:
+페이즈 04 의 [`../conventions/autonomy.md`](../conventions/autonomy.md) Q-D1 답에 따라 회귀 권고를 *자동 적용*. 인터뷰 종료 후 사용자에게 추가 ack 호출 절대 없음:
+
+ⓐ Q-D1 답 = `1` (모든 권고 자동) → bisect 의 `recommendation` (revert / re-architect / accept) 그대로 자동 적용.
+ⓑ Q-D1 답 = `2` (revert 만 자동) → recommendation 이 revert 면 자동, 그 외는 lessons.md 의 정체로 판정해 Q-D4 매핑.
+ⓒ Q-D1 답 = `3` (모두 정지) → 본 스킬 의도 위반 — 페이즈 04 에서 비권장으로 표시, 그래도 사용자가 선택했다면 정지.
+
+[`../conventions/timing.md`](../conventions/timing.md) 의 라이브 보고에 한 줄:
 
 ```
-회귀 바이섹트 결과를 어떻게 처리할까요?
-
-스프린트 N 에서 점수가 0.92 → 0.78 로 떨어졌습니다. 분석가는 `path/a.go:42` 의 토큰 만료 검사 제거가 원인으로 봅니다.
-
-선택지:
-1. revert: `path/a.go` 의 해당 블록만 되돌리기
-2. re-architect: 인증 모듈 자체를 계획부터 재실행
-3. accept: 회귀가 의도된 변화 (제약 변경)
-4. 정지: 사람이 직접 살펴보기
+스프린트 NN 회귀 (점수 0.92 → 0.78) → bisect 권고 revert (path/a.go:42) → Q-D1.1 자동 적용. 누적 1시간 12분.
 ```
-
-**사용자 ack 없이 추가 구현 금지.**
 
 ## 왜 필요한가
 
@@ -53,4 +49,4 @@
 ## 성공 기준
 
 ⓐ `bisect.md` 가 특정 commit/파일/함수를 명시.
-ⓑ 사용자가 명시적으로 세 권고 중 하나를 ack — 없으면 다음 스프린트 진행 불가.
+ⓑ 사전 위임 Q-D1 답이 자동 적용되어 다음 스프린트 진행 — 인터럽트 없음 ([`../conventions/autonomy.md`](../conventions/autonomy.md) 의 인터뷰 후 인터럽트 0 룰).

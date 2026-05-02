@@ -143,19 +143,24 @@ while True:
             estimated_ceiling=resource_profile_ceiling[dim],
         )
         if ceiling.near_ceiling:
-            # 자동 조정 권고 — 사용자 ack 필수 (autonomy.md 의 임계 변경은 자율 아님)
-            ack = ask_user_per_interview_md(
-                "리소스 천정 도달. 임계 조정?",
-                options=[
-                    f"1. 권고 임계 {ceiling.recommended_threshold} 채택",
-                    f"2. 리소스 업그레이드 (예: t3.medium → c5.xlarge, 비용 ~4배)",
-                    f"3. 도메인 단순화 (DB 캐시 / 인덱스 / 비동기화)",
-                    f"4. 임계 유지 + 정체 수용 (게이트 영구 fail, 사람 검토)",
-                ],
-            )
-            apply_user_choice(ack)
+            # 자동 적용 — autonomy.md 의 Q-D3 사전 위임 답 매핑
+            policy = autonomy_policy["Q-D3"]   # intent/04-autonomy.md 의 답
+            if policy == "1":
+                # 권고 임계로 자동 조정 (default)
+                set_threshold(ceiling.recommended_threshold)
+                report_live("천정 도달 → 임계 자동 조정")
+            elif policy == "2":
+                # 리소스 업그레이드 자동 (사용자 결제 사전 동의 시)
+                upgrade_resource_profile()
+            elif policy == "3":
+                # 도메인 단순화 자동 시도
+                spawn_implementer_with_simplification_directive()
+            elif policy == "4":
+                # 정체 수용 — 게이트 영구 fail, 다음 페이즈 진행
+                disable_gate(dim)
+            # 모든 경우 인터럽트 없음 — 사전 위임 답이 곧 답
         else:
-            # 천정 아님 → 정체 lessons.md 의 rewrite 트리거
+            # 천정 아님 → lessons.md 의 rewrite 트리거 (Q-D4 매핑)
             spawn_implementer_with_rewrite_rule()
 ```
 
@@ -220,5 +225,5 @@ while True:
 ⓐ 리소스 명시 없이 임계 약속 — 측정 시점에 의미 없음.
 ⓑ 성능 지향 임계인데 *천정의 95% 이상* 으로 잡음 — 변동에 즉시 fail, 빡빡함이 고통이 됨. 권고는 80%.
 ⓒ 천정 도달 후 *임계 조정 없이* 무한 시도 — 본 컨벤션 위반, [`lessons.md`](lessons.md) 의 정체와 같이 자동 조정 권고로 빠져나가야.
-ⓓ 사용자 ack 없이 임계 자동 변경 — 임계 변경은 [`autonomy.md`](autonomy.md) 의 사용자 ack 필요 케이스. 자율 진행 금지.
+ⓓ 인터뷰 종료 후 임계 변경에 사용자 ack 호출 — [`autonomy.md`](autonomy.md) 의 핵심 룰 위반 (인터뷰 후 인터럽트 0). 임계 변경은 페이즈 04 의 Q-D3 사전 위임 답에 따라 자율 적용.
 ⓔ 도메인 보정 무시 — ML inference 에 단순 CRUD 천정 적용하면 너무 빡빡.

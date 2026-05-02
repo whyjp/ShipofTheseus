@@ -123,15 +123,20 @@ def detect(
         "reason": (
             f"{window} 스프린트 평균 {avg:.2f} 이 추정 천정 {estimated_ceiling} 의 "
             f"{pct_actual*100:.1f}% — 변동 안정 ({rel_spread*100:.1f}%) → 개선 불가능 신호. "
-            f"임계 → {recommended} ({'안전 여유' if is_latency else '하향 여유'} {safety_margin*100:.0f}%) 권고. "
-            f"사용자 ack 필요 (autonomy.md 의 임계 변경은 자율 아님)."
+            f"임계 → {recommended} ({'안전 여유' if is_latency else '하향 여유'} {safety_margin*100:.0f}%). "
+            f"autonomy.md 의 Q-D3 사전 위임 답에 매핑해 자율 적용 (인터뷰 후 인터럽트 0)."
         ),
-        "user_options": [
-            f"1. 권고 임계 {recommended} 채택",
-            "2. 리소스 업그레이드 (다음 단계 인스턴스 — 비용 ~2~4배)",
-            "3. 도메인 단순화 (DB 캐시 / 인덱스 / 비동기화)",
-            "4. 임계 유지 + 정체 수용 (게이트 영구 fail, 사람 검토)",
-        ],
+        # 사전 위임 정책 매핑 (autonomy.md Q-D3) — 인터뷰 후 ack 호출 없음
+        "policy_actions": {
+            "1": {"action": "set_threshold", "value": recommended,
+                  "desc": "권고 임계로 자동 조정 (default)"},
+            "2": {"action": "upgrade_resource", "value": "next_tier",
+                  "desc": "리소스 프로파일 한 단계 상향 (비용 사전 동의 시)"},
+            "3": {"action": "domain_simplify", "value": None,
+                  "desc": "도메인 단순화 자동 시도 (캐시/인덱스/비동기)"},
+            "4": {"action": "accept_stagnation", "value": None,
+                  "desc": "정체 수용 — 해당 차원 게이트 비활성"},
+        },
     }
 
 

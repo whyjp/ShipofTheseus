@@ -72,9 +72,14 @@ def test_throughput_metric_supported():
     assert 600 <= out["recommended_threshold"] <= 640
 
 
-def test_user_options_included_when_ceiling():
+def test_policy_actions_mapped_when_ceiling():
+    """천정 도달 시 user_options(인터럽트) 대신 policy_actions(autonomy.md Q-D3 매핑) 반환."""
     rc, out = _run([340, 342, 341], threshold=200, ceiling=350, metric="p99_ms")
     assert rc == 1
-    assert "user_options" in out
-    assert len(out["user_options"]) == 4
-    assert any("리소스 업그레이드" in o for o in out["user_options"])
+    assert "policy_actions" in out
+    # 4 정책 모두 포함 (default 1, 업그레이드 2, 단순화 3, 정체 수용 4)
+    assert set(out["policy_actions"].keys()) == {"1", "2", "3", "4"}
+    assert out["policy_actions"]["1"]["action"] == "set_threshold"
+    assert out["policy_actions"]["1"]["value"] == out["recommended_threshold"]
+    # 인터럽트 없음 — user_options 키는 없어야 함 (인터뷰 후 ack 금지)
+    assert "user_options" not in out
