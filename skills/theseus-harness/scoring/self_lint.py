@@ -365,12 +365,17 @@ def check_prd_handling_wired(skill_root: Path) -> list[str]:
         return ["conventions/prd-handling.md 누락 — PRD 충실해도 인터뷰 스킵 금지 허들 부재"]
 
     text = _read(prd)
+    # 핵심 키워드 — passive default 채택 차단을 위한 active critique 룰 명시 검증
     for must_have in [
         "user_explicit_confirmation",
-        "1 클릭",
-        "인터뷰 스킵",
+        "prd_evidence_cited",
+        "alternative_proposals_offered",
+        "default 강조 금지",
+        "drift_reason",
+        "비평가",
         "Q-D1",
         "확증 회귀",
+        "인터뷰 스킵",
     ]:
         if must_have not in text:
             issues.append(f"prd-handling.md 가 '{must_have}' 명시 누락")

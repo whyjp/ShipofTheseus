@@ -45,7 +45,11 @@
 ⓒ 사용자가 답하기 어려운 기술 선호 (예: "라이브러리 X vs Y") 는 비평가 페이즈로 위임.
 ⓓ 객관식 보기 알파벳/기호 금지 — 무조건 숫자.
 ⓔ 한 질문에 두 차원 묶지 않음 — 차원 분리해 별 질문으로.
-ⓕ **PRD 입력이 있어도 모든 인터뷰 항목 생략 금지** ([`../conventions/prd-handling.md`](../conventions/prd-handling.md)). PRD 추출값은 *객관식 1번 보기* 로 표시 — 사용자 빠른 1 클릭 확정. 각 답에 `user_explicit_confirmation: true` + `confirmed_at` timestamp 강제 기록. PRD 가 충실해도 *명시 확정 의식* 은 의무.
+ⓕ **PRD 입력이 있어도 모든 인터뷰 항목 생략 금지** ([`../conventions/prd-handling.md`](../conventions/prd-handling.md)). 매 질의는 *세 부분* 으로 구성:
+  ⓕ-1 **PRD 근거 인용** — `§<section>` + 발췌 인용 + 매핑되는 옵션 번호 명시 (`prd_evidence_cited: true`).
+  ⓕ-2 **본 하네스 비평가 대안** — critic.md 의 분석을 다른 옵션으로 추가 제시 (`alternative_proposals_offered: true`). PRD 가 명백히 정답으로 보여도 *비평 의무* 면제 안 됨.
+  ⓕ-3 **객관식 — default 강조 금지** — 어느 옵션도 "(default)" / "(권장)" / 위치 우선 등 심리 가중 표시 금지. 사용자가 근거 텍스트 만 보고 비교 선택.
+  ⓕ-4 답에 `user_explicit_confirmation` + `confirmed_at` + `prd_evidence` + `alternatives` + `matches_prd_proposal` (선택 시 PRD 일치 여부) + `drift_reason` (PRD 와 다를 시 사유) 강제 기록.
 
 
 ## 산출물 frontmatter / 핑거프린트 강제
