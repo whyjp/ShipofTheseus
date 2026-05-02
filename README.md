@@ -1,5 +1,7 @@
 # Ship of Theseus — 재귀 멀티 에이전트 코딩 하네스
 
+> **English readers**: see [`README.en.md`](README.en.md) — single-page summary in English.
+
 ## 한 줄 요약
 
 **조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 8 분해 스킬 + 1 인덱스 스킬 + 1 플래그십(단일 source of truth)으로 파편화해 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (전체 자동 진행) 또는 [`theseus-harness`](skills/theseus-harness/SKILL.md) (단일 호출).
