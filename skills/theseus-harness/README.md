@@ -16,10 +16,12 @@
   ⓓ-5 [`build-and-config.md`](conventions/build-and-config.md) — sh+bat 빌드 스크립·TOML·docs/·폐기 우선·중간 데이터·.gitattributes·병렬·메모리 가드.
   ⓓ-6 [`contracts.md`](conventions/contracts.md) — 산출물 frontmatter — **단계 재진입 가능성**.
   ⓓ-7 [`models.md`](conventions/models.md) — 에이전트 역할별 Opus/Sonnet/Haiku 매핑.
-  ⓓ-8 [`competition.md`](conventions/competition.md) — **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자/머지. LLM 비결정성 극복.
+  ⓓ-8 [`competition.md`](conventions/competition.md) — **2~3 후보 격리 병렬 경쟁** + **자동 resolve 알고리즘** → 사용자 ack 없이 자율 결정.
+  ⓓ-9 [`autonomy.md`](conventions/autonomy.md) — **자율성 우선** — 페이즈 04 외 결정은 자율, 산출물 모두 기록되어 사후 리뷰 가능, 사용자 위임 4 단계.
 ⓔ [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 ⓕ [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
-ⓖ [`templates/`](templates/) — intent / plan / sprint-report / naming 템플릿 + bun 기반 webview 스캐폴드.
+ⓖ [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 19 체크 + `--score` 모드, 임계 **0.99999** (자기 표준).
+ⓗ [`templates/`](templates/) — intent / plan / sprint-report / naming 템플릿 + bun 기반 webview 스캐폴드.
 
 ## 주요 원칙
 

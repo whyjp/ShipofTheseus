@@ -70,6 +70,25 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 자세한 frontmatter 스키마와 핑거프린트 계산은 [`conventions/contracts.md`](conventions/contracts.md).
 
+## 자기 평가 (부트스트래핑)
+
+본 하네스는 자기 자신에게 자기의 평가 절차를 적용한다 — 우로보로스의 진짜 발현. 자세한 절차는 [`../../BOOTSTRAP.md`](../../BOOTSTRAP.md). 핵심:
+
+ⓐ **임계 0.99999** — 자기 표준은 사용자 프로젝트 임계 0.999 보다 한 단계 빡빡.
+ⓑ **`scoring/self_lint.py`** — 18 체크로 컨벤션·교차 링크·버전·frontmatter·경쟁 룰 객관 측정. `--score` 모드.
+ⓒ **`scripts/self-check.{sh,bat}`** — lint + 16 pytest + sample + self_score + 핑거프린트 체인 일괄.
+ⓓ **회차 누적** — `.ShipofTheseus/theseus-self/sprints/NN/` 점수 시계열로 본 하네스가 더 단단해지는지 객관 측정.
+
+## 자율성 우선 (초기 인터뷰 후 사용자 액션 최소화)
+
+[`conventions/autonomy.md`](conventions/autonomy.md) 에 따라 **페이즈 04 (초기 사용자 질의) 이후에는 가능한 모든 결정을 에이전트가 자율 진행**. 사용자 액션이 *반드시* 필요한 곳은 다음 셋만:
+
+ⓐ 페이즈 04 의 객관식 답 (필수, 침묵 = 정지).
+ⓑ 회귀 바이섹트의 권고 ack (사용자가 사전 위임 시 자율).
+ⓒ 자율 시스템 업데이트 (스택 점검) — 사전 동의 시 자율.
+
+그 외는 모두 자율, 모든 결정이 산출물에 frontmatter + 본문으로 기록되어 사후 리뷰 가능. 경쟁(competition) 의 머지/우승자 결정도 [`conventions/competition.md`](conventions/competition.md) 의 자동 resolve 알고리즘으로 점수 차 + 차원별 sub-score 비교로 자율 결정.
+
 ## 모듈 분해 권고 (향후 PR 후보)
 
 본 하네스의 SoC/DIP 철학을 본 하네스 자신에게 적용하면:
@@ -97,7 +116,8 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓖ 모든 모듈은 sh + bat 스크립트, TOML 설정 + `.example` 동행, `docs/` 폴더.
 ⓗ 수정·리팩터링 시 기존 코드 폐기 우선. 라이브 전 중간 산출물 보존.
 ⓘ 병렬 서브에이전트 환영 — RAM 50% / 동시 E2E 2개 / 같은 파일 직렬 가드.
-ⓘ-1 페이즈 06/08/11 에서 명확한 단일안이 보이지 않으면 **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자 또는 머지 ([`conventions/competition.md`](conventions/competition.md)). LLM 비결정성을 분기·경쟁·합병으로 정공법 극복.
+ⓘ-1 페이즈 06/08/11 에서 명확한 단일안이 보이지 않으면 **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자 또는 머지 ([`conventions/competition.md`](conventions/competition.md)). LLM 비결정성을 분기·경쟁·합병으로 정공법 극복. **resolve 는 점수 차/차원별 분석으로 자율 결정** — 사용자 ack 는 비즈니스 함의가 명시된 경쟁만.
+ⓘ-2 **자율성 우선** — 페이즈 04 (초기 사용자 질의) 이외의 모든 결정은 자율 진행 ([`conventions/autonomy.md`](conventions/autonomy.md)). 모든 자율 결정은 산출물 frontmatter + 본문 기록 → 사후 리뷰 가능.
 ⓙ 사용자 진행 보고에 누적 경과 시간 1줄 항상 포함.
 ⓚ **모든 산출물에 frontmatter (skill_name, skill_version, phase, project_id, fingerprint, prev_fingerprint, produced_at) 필수.**
 ⓛ 페이즈 산출 파일을 지휘자가 손대지 않는다 — 잘못되면 페이즈 재실행.

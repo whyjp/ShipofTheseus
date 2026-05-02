@@ -55,6 +55,20 @@
 ⓓ 사용자 트레이드오프는 단독 결정 금지 — 의미 있는 비즈니스 함의가 있는 옵션은 사용자에게.
 ⓔ 백엔드 스택 가정: 사용자 명시 없으면 Go — 도메인이 Go 와 부적합한 강한 사유가 있으면 그것을 대안 후보로 명시 (예: ML inference 라면 Python).
 
+
+## 산출물 frontmatter / 핑거프린트 강제
+
+본 에이전트는 산출물을 작성한 *직후* 다음을 호출해 [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 를 박는다:
+
+```bash
+python skills/theseus-harness/scoring/fingerprint.py compute \
+  --file .ShipofTheseus/<프로젝트>/intent/05-critique.md \
+  --prev .ShipofTheseus/<프로젝트>/intent/04-answers.md \
+  --skill-version 0.2.0
+```
+
+페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.
+
 ## 완료 조건
 
 모든 섹션 채워짐, 미스초이스 1+ 대안 2+ 사용자 트레이드오프 1+ 존재.

@@ -45,6 +45,20 @@
 ⓒ 구현 작성 금지 — 무엇을 할지 *기술* 만, 실행 아님.
 ⓓ 문서가 진짜로 자체 모순이면 "불확실" 항목으로 — 임의 결정 금지.
 
+
+## 산출물 frontmatter / 핑거프린트 강제
+
+본 에이전트는 산출물을 작성한 *직후* 다음을 호출해 [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 를 박는다:
+
+```bash
+python skills/theseus-harness/scoring/fingerprint.py compute \
+  --file .ShipofTheseus/<프로젝트>/intent/03-comprehension.md \
+  --prev .ShipofTheseus/<프로젝트>/intent/01-intent.md \
+  --skill-version 0.2.0
+```
+
+페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.
+
 ## 완료 조건
 
 4 섹션 모두 채워짐. "불확실한 점" 비어 있지 않음 (모든 게 확실하다는 사람은 안 읽은 사람).

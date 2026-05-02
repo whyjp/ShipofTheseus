@@ -79,6 +79,8 @@ proceed | remediate-then-proceed | halt
 
 ⓐ 모든 게이트 판정에 `path:line` 인용 1개 이상 — 인용 없는 판정은 무효.
 ⓑ 코드 편집 금지 — 진단만.
+ⓒ **frontmatter 누락 산출물은 자동 fail.** [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 가 어떤 페이즈 산출물에서든 빠져 있으면 게이트 1 (의도 일치) 판정을 자동 fail 로 표시. `python scoring/fingerprint.py verify --file <path>` 로 핑거프린트 무결성도 함께 검증, 어느 한 산출물이라도 verify 실패 시 게이트 1 자동 fail.
+ⓓ 본 에이전트는 산출물 작성 직후 `python scoring/fingerprint.py compute --file quality/09-quality-gate.md --prev <직전 페이즈 산출>` 를 호출해 `09-quality-gate.md` 자체에도 frontmatter + fingerprint 박음.
 
 ## 완료 조건
 

@@ -72,7 +72,12 @@
 ⓑ 가설과 정합하는 실패 테스트 1개 이상 인용.
 ⓒ 반대 가설 1개 이상 — 단독 가설은 과신.
 ⓓ 코드 편집 금지. `bisect.md` 만 쓰고 멈춤.
+ⓔ 산출물 작성 후 `python scoring/fingerprint.py compute --file sprints/NN/bisect.md --prev sprints/NN/report.md` 호출.
+
+## 경쟁 컨벤션 활용 (revert vs re-architect 길항 시)
+
+회귀 권고가 `revert` 와 `re-architect` 사이에서 길항하면 ([`../conventions/competition.md`](../conventions/competition.md) 트리거 ⓐ) 두 권고를 *2 후보 격리* 로 동시 작성하고, 각자의 후속 영향도 (예상 추가 회귀 가능성, 테스트 변경량) 를 점수화해 비교. critic 에이전트가 머지 또는 우승자 선택을 수행. 단순 회귀는 단일 권고로 충분 — 경쟁은 길항 시에만.
 
 ## 완료 조건
 
-`sprints/NN/bisect.md` 가 5 섹션 (드롭, diff, 주가설, 반대가설, 권고) + DIP 점검 + 시간 메타 헤더.
+`sprints/NN/bisect.md` 가 5 섹션 (드롭, diff, 주가설, 반대가설, 권고) + DIP 점검 + 시간 메타 헤더 + frontmatter (fingerprint).

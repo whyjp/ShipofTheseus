@@ -46,6 +46,20 @@ accept | revise | reject
 ⓑ `accept` 판정은 4 답이 모두 깨끗할 때.
 ⓒ `revise` 는 TODO 마다 구체적 제안 동반.
 
+
+## 산출물 frontmatter / 핑거프린트 강제
+
+본 에이전트는 산출물을 작성한 *직후* 다음을 호출해 [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 를 박는다:
+
+```bash
+python skills/theseus-harness/scoring/fingerprint.py compute \
+  --file .ShipofTheseus/<프로젝트>/plan/07-plan-review.md \
+  --prev .ShipofTheseus/<프로젝트>/plan/06-plan.md \
+  --skill-version 0.2.0
+```
+
+페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.
+
 ## 완료 조건
 
 `07-plan-review.md` 존재, 4 답 + 판정 명시.

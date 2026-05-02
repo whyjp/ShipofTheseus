@@ -35,3 +35,16 @@
 ## 성공 기준
 
 후보 표가 [`../templates/naming.template.md`](../templates/naming.template.md) 의 모든 칸을 채움. 사용자가 "선택지 N" 으로만 답해도 진행 가능한 상태.
+
+## 산출물 frontmatter / 핑거프린트 강제
+
+본 에이전트는 산출물을 작성한 *직후* 다음을 호출해 [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 를 박는다:
+
+```bash
+python skills/theseus-harness/scoring/fingerprint.py compute \
+  --file .ShipofTheseus/<프로젝트>/naming/00-naming.md \
+  --prev .ShipofTheseus/<프로젝트>/(none — 시작 페이즈) \
+  --skill-version 0.2.0
+```
+
+페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.

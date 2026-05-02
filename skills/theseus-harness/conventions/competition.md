@@ -87,6 +87,70 @@ b 의 어댑터 다양성을 a 의 모듈 분할 위에 얹는다.
 
 이 두 케이스를 **자동 구분하는 것** 이 경쟁 프로토콜의 가치.
 
+## 자동 resolve 알고리즘 (자율 결정의 핵심)
+
+```python
+def resolve_competition(candidates):
+    """경쟁 후보를 받아 우승자/머지 안을 자율 결정. autonomy.md 위임 수준 1·2 면 ack 없이 적용."""
+    # 1. DIP 위반 후보는 즉시 탈락
+    candidates = [c for c in candidates if not c.score.dip_violation]
+    if not candidates:
+        return Resolution.HALT_AND_ASK_USER
+
+    # 2. 점수 내림차순
+    candidates.sort(key=lambda c: c.score.overall, reverse=True)
+    top, runner = candidates[0], candidates[1] if len(candidates) > 1 else None
+    delta = (top.score.overall - runner.score.overall) if runner else 1.0
+
+    # 3. 단일 또는 압도적 우위 — SELECT
+    if runner is None or delta >= 0.05:
+        return Resolution.SELECT(winner=top, losers=candidates[1:])
+
+    # 4. 사실상 동등 (< 0.02) — AUTO_MERGE 코드 단순성 우선
+    if delta < 0.02:
+        return Resolution.AUTO_MERGE(base=top, merge_from=runner,
+                                      strategy=_choose_simpler(top, runner))
+
+    # 5. 중간 영역 (0.02 ≤ Δ < 0.05) — 차원별 분석
+    dim_winners = {d: max(candidates, key=lambda c: c.score.sub[d])
+                   for d in ("correctness", "solid", "coverage", "e2e_pass")}
+    if all(w is top for w in dim_winners.values()):
+        return Resolution.SELECT(winner=top, losers=[runner])
+    return Resolution.MERGE_BY_DIMENSION(winners_per_dim=dim_winners, base=top)
+```
+
+자율 결정 룰 (ack 없이 적용 — `autonomy.md` 위임 수준 1·2):
+
+ⓐ **Δ ≥ 0.05** → SELECT (top 채택, 패자는 `losers/`).
+ⓑ **0.02 ≤ Δ < 0.05** → 차원별 분석. 한쪽이 모든 차원 우위면 SELECT, 분점이면 MERGE_BY_DIMENSION.
+ⓒ **Δ < 0.02** → AUTO_MERGE (코드 단순성 — LOC 적음, 모듈 적음 우선).
+ⓓ **모두 DIP 위반** → HALT_AND_ASK_USER (설계 자체 문제).
+
+### 차원별 분석 가중치 (resolve 전용)
+
+| 차원 | 머지 가중 | 사유 |
+| --- | -------: | ---- |
+| `correctness` | 0.30 | 테스트 통과는 절대 |
+| `solid` | 0.25 | DIP 외 SOLID 도 핵심 |
+| `e2e_pass` | 0.20 | 사용자 시나리오 직접 |
+| `coverage` | 0.15 | 적당 |
+| `fe_be_parity` | 0.05 | 보조 |
+| `scope_fit` | 0.05 | 보조 |
+
+(rubric 의 *전체 점수* 가중과 다름 — 본 표는 *차원별 우열 비교* 용.)
+
+### 자율 결정 산출물
+
+`competitions/<phase>-<topic>/result.md` 에 다음 모두 기록 ([`autonomy.md`](autonomy.md) 의 사후 리뷰 가능성):
+
+ⓐ 점수 표 (후보별 종합 + 차원별)
+ⓑ 적용된 룰 (Δ ≥ 0.05 SELECT / Δ 중간 차원 분석 / Δ < 0.02 AUTO_MERGE)
+ⓒ 머지 전략 (코드 단순성 비교 결과 — LOC/모듈 수)
+ⓓ 패자 후보 디렉터리 위치 (`losers/`)
+ⓔ frontmatter (스킬 버전 / 페이즈 / 핑거프린트)
+
+→ 사용자가 사후에 "이 결정이 왜 그렇게 났지" 확인 시 result.md 한 파일로 답.
+
 ## 사용자 ack 시점
 
 ⓐ 점수 차 < 0.02 의 머지 결정은 자동.

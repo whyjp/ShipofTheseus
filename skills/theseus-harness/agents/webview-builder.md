@@ -50,6 +50,17 @@
 ⓑ 점수 차트: `recharts` 또는 `victory` 라인.
 ⓒ 마크다운 렌더: `react-markdown` + `remark-gfm`.
 
+## Mermaid 자동 렌더 (필수)
+
+[`../conventions/diagrams.md`](../conventions/diagrams.md) 가 마인드맵·유즈케이스·시퀀스를 모두 Mermaid 코드 펜스로 산출하므로, fe 가 마크다운 렌더 시 ` ```mermaid ` 펜스를 자동 감지해 SVG 로 그려야 한다:
+
+ⓐ `mermaid` npm 패키지 (5.x+) 를 dependencies 에 추가.
+ⓑ `react-markdown` 의 `code` 컴포넌트를 오버라이드 — `language-mermaid` 클래스 감지 시 `mermaid.render()` 호출 후 결과 SVG 를 dangerouslySetInnerHTML 로 표시.
+ⓒ 다크 모드 호환을 위해 `mermaid.initialize({ theme: 'base' })` 후 본문 색상은 CSS 변수로.
+ⓓ ImplIntent / DesignIntent / ModuleMap / Sprints 4 탭 모두에서 Mermaid 펜스가 동작.
+
+오프라인 동작 강제 — CDN 링크 금지 (build-and-config.md §6 의 .gitattributes 와 함께 이식성 보장).
+
 ## 하드 룰
 
 ⓐ 정적 HTML 만 생성 = fail (인터랙션 요구 미충족).

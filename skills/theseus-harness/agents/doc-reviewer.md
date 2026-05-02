@@ -47,6 +47,20 @@
 ⓑ 가장 나쁜 셋에는 재작성 제안 필수 (전체 reject 인 경우에도).
 ⓒ 구현 제안 금지 — 문서 리뷰지 시스템 리뷰 아님.
 
+
+## 산출물 frontmatter / 핑거프린트 강제
+
+본 에이전트는 산출물을 작성한 *직후* 다음을 호출해 [`../conventions/contracts.md`](../conventions/contracts.md) 의 frontmatter (skill_name/version/phase/project_id/fingerprint/prev_fingerprint/produced_at) 를 박는다:
+
+```bash
+python skills/theseus-harness/scoring/fingerprint.py compute \
+  --file .ShipofTheseus/<프로젝트>/intent/02-intent-review.md \
+  --prev .ShipofTheseus/<프로젝트>/intent/01-intent.md \
+  --skill-version 0.2.0
+```
+
+페이즈 09 (품질 게이트) 가 frontmatter 누락을 자동 fail 처리하므로 본 호출은 출하 의무.
+
 ## 완료 조건
 
 `02-intent-review.md` 존재, 판정 명시, 최소 한 발견에 행-수준 인용 존재.
