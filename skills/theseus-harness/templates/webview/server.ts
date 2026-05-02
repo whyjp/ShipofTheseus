@@ -21,6 +21,32 @@ app.use("*", cors());
 
 const startedAt = await readJsonOptional(join(PROJECT_ROOT, "timing/start.json"));
 
+app.get("/api/state", async (c) => {
+  // resume.md §"FE 라이브 진행 추적" — 진행 중 상태 라이브 폴링.
+  const state = await readJsonOptional(join(PROJECT_ROOT, "state.json"));
+  return c.json(state ?? { ok: false, reason: "state.json 없음" });
+});
+
+app.get("/api/resume", async (c) => {
+  // resume.py next 결과 — 중단된 작업의 재개 진입점 추천.
+  const { spawn } = await import("node:child_process");
+  return new Promise((resolve) => {
+    const proc = spawn("python", [
+      "../../skills/theseus-harness/scoring/resume.py",
+      "next", "--root", PROJECT_ROOT,
+    ]);
+    let stdout = "";
+    proc.stdout.on("data", (d) => (stdout += d));
+    proc.on("close", () => {
+      try {
+        resolve(c.json(JSON.parse(stdout)));
+      } catch {
+        resolve(c.json({ ok: false, reason: "resume.py 출력 파싱 실패" }));
+      }
+    });
+  });
+});
+
 app.get("/api/timing", async (c) => {
   const now = Date.now();
   const startedAtUnix = startedAt?.started_at_unix ?? null;

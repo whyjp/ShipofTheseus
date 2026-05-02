@@ -30,6 +30,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓠ **그레이드 시스템 — 작업 복잡도별 허들 (G1 호출 거부 ~ G5 빡빡 모드)**: [`conventions/grades.md`](conventions/grades.md)
 ⓡ **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
 ⓢ **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: [`conventions/indexing.md`](conventions/indexing.md)
+ⓣ **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
 
 ## 산출물 트리
 

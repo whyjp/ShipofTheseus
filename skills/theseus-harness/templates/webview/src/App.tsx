@@ -6,8 +6,10 @@ import { ImplIntent } from "./tabs/ImplIntent";
 import { UnitTests } from "./tabs/UnitTests";
 import { E2ETests } from "./tabs/E2ETests";
 import { Sprints } from "./tabs/Sprints";
+import { Progress } from "./tabs/Progress";
 
 const TABS = [
+  { id: "progress", label: "진행 상태 (라이브)", Component: Progress },
   { id: "modules", label: "모듈 구성도", Component: ModuleMap },
   { id: "design", label: "설계 의도", Component: DesignIntent },
   { id: "impl", label: "구현 의도", Component: ImplIntent },
@@ -17,7 +19,7 @@ const TABS = [
 ] as const;
 
 export function App() {
-  const [active, setActive] = useState<(typeof TABS)[number]["id"]>("modules");
+  const [active, setActive] = useState<(typeof TABS)[number]["id"]>("progress");
   const Active = TABS.find((t) => t.id === active)!.Component;
   return (
     <div className="app">

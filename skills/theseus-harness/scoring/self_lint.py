@@ -325,6 +325,38 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_resume_wired(skill_root: Path) -> list[str]:
+    """C31 — resume.md + resume.py + state.json 표준 + Progress 탭 + SKILL/README 노출."""
+    issues: list[str] = []
+    rm = skill_root / "conventions" / "resume.md"
+    if not rm.exists():
+        return ["conventions/resume.md 누락 — 리줌 룰 정의 필요"]
+    text = _read(rm)
+    # 핵심 키워드 검증
+    for k in ["state.json", "interrupt_reason", "resume_hint", "fingerprint", "Progress"]:
+        if k not in text:
+            issues.append(f"resume.md 가 '{k}' 명시 누락")
+    # 도구
+    if not (skill_root / "scoring" / "resume.py").exists():
+        issues.append("scoring/resume.py 누락")
+    # webview Progress 탭
+    progress_tab = skill_root / "templates" / "webview" / "src" / "tabs" / "Progress.tsx"
+    if not progress_tab.exists():
+        issues.append("templates/webview/src/tabs/Progress.tsx 누락 — FE 라이브 진행 추적 부재")
+    # server.ts /api/state
+    server = _read(skill_root / "templates" / "webview" / "server.ts")
+    if "/api/state" not in server or "/api/resume" not in server:
+        issues.append("server.ts 가 /api/state 또는 /api/resume 엔드포인트 누락")
+    # SKILL/README 노출
+    skill = _read(skill_root / "SKILL.md")
+    if "resume.md" not in skill:
+        issues.append("SKILL.md 가 resume.md 노출 누락")
+    readme = _read(skill_root / "README.md")
+    if "resume.md" not in readme:
+        issues.append("skill README 가 resume.md 노출 누락")
+    return issues
+
+
 def check_indexing_wired(skill_root: Path) -> list[str]:
     """C30 — indexing.md + index_builder.py + frontmatter 비직렬성 메타 + INDEX.md 자동 갱신 룰."""
     issues: list[str] = []
@@ -562,6 +594,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C28", "8 decomposition stubs + single source of truth + orchestrator chains all", check_decomposition_stubs),
     ("C29", "sub-agents recursion (sub-agents.md + dispatch + input contract matrix + AIDE ops)", check_sub_agents_wired),
     ("C30", "indexing wired (indexing.md + index_builder + non-serial frontmatter meta)", check_indexing_wired),
+    ("C31", "resume wired (resume.md + resume.py + state.json + Progress tab + /api/state)", check_resume_wired),
 ]
 
 
