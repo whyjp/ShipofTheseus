@@ -18,7 +18,7 @@
 ⑤ 각각에 대해 [`../conventions/interview.md`](../conventions/interview.md) 형식의 질문 작성:
   ⓐ 두괄식 한 줄 요약.
   ⓑ 다음 문단에 배경.
-  ⓒ 객관식이면 보기 5개 이하, 무조건 숫자 라벨.
+  ⓒ 객관식이면 *보기* 4개 이하 (`AskUserQuestion` 도구 한도), 무조건 숫자 라벨. **질문 *수* 와 무관** — 의도 모호 / NFR 다항목 / 회귀 짝이면 *질문 갯수* 자유롭게 늘려라 ([`../conventions/interview.md`](../conventions/interview.md) §3 — 옵션 한도 ≠ 질문 한도).
   ⓓ 자유 응답이 본질이면 그렇게 표시.
 ⑥ *블로킹 파워* 순으로 정렬 — NFR + 스택 점검은 항상 우선 (게이트 영향이 가장 큼).
 ⑦ **Q-D8 Verification Commands 처리 (oh-my-ralph 차용, v0.3.0)** — [`../conventions/autonomy.md`](../conventions/autonomy.md) §Q-D8. 사용자 답 1/2 시 사용자가 입력한 bash 명령들을 `intent/04-verification.md` 의 ``` ```bash``` 블록에 그대로 paste + acceptance criteria `[SC-1]..[SC-N]` 매핑 표 작성. 답 3 시 같은 파일의 `Manual Verification` 섹션에 수기 절차 + frontmatter 의 `manual_only: true` 박음. **답 누락 또는 답 1/2 인데 Verification Commands 블록 비었으면 본 산출물에 `commands_count: 0` + `entry_blocked: true` frontmatter 박고 페이즈 05 진입 차단** ([`../phases/05-critique.md`](../phases/05-critique.md) 가 본 frontmatter 검사 후 진입 거부).
