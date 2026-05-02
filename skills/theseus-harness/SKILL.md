@@ -97,9 +97,17 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 그 외는 모두 자율, 모든 결정이 산출물에 frontmatter + 본문으로 기록되어 사후 리뷰 가능. 경쟁(competition) 의 머지/우승자 결정도 [`conventions/competition.md`](conventions/competition.md) 의 자동 resolve 알고리즘으로 점수 차 + 차원별 sub-score 비교로 자율 결정.
 
-## 모듈 분해 권고 (향후 PR 후보)
+## 모듈 분해 — 진행 완료 (v0.2.0)
 
-본 하네스의 SoC/DIP 철학을 본 하네스 자신에게 적용하면:
+✅ 8 분해 stub 신규 (`skills/theseus-{orchestrator,intent,plan,implement,quality,sprint,webview,handoff}/SKILL.md`).
+✅ 단일 source of truth 유지 — 콘텐츠는 본 디렉터리에. stub 은 형태와 인터페이스만.
+✅ [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) — **공식 메인 체이닝 진입점**. 8 분해 스킬을 frontmatter 자동 핸드오프로 순차 호출.
+✅ 연동 테스트 — [`scoring/test_skill_handoff.py`](scoring/test_skill_handoff.py) 10 케이스 (stub 존재 / source 참조 / 룰 본문 비복제 / fingerprint 체인 / tamper 거부 / 두 진입점 관계).
+✅ self_lint C28 — 분해 무결성 매 PR 검증.
+
+본 단계에서는 *형태와 인터페이스* 정착. 실제 콘텐츠 이동(각 stub 안에 자기 페이즈/에이전트 파일 두기) 은 v0.4.0 후보.
+
+본 하네스의 SoC/DIP 철학을 본 하네스 자신에게 적용한 결과:
 
 ⓐ `skills/theseus-orchestrator/` — 인덱스 + 14 페이즈 진행 제어만.
 ⓑ `skills/theseus-intent/` — 페이즈 00–05 (명명, 의도, 리뷰, 재이해, 질의, 비평).

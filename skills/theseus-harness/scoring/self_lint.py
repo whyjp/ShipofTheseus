@@ -325,6 +325,40 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_decomposition_stubs(repo_root: Path, skill_root: Path) -> list[str]:
+    """C28 — 8 분해 stub 존재 + 단일 source of truth 룰 검증."""
+    skills_root = repo_root / "skills"
+    expected = [
+        "theseus-orchestrator",
+        "theseus-intent",
+        "theseus-plan",
+        "theseus-implement",
+        "theseus-quality",
+        "theseus-sprint",
+        "theseus-webview",
+        "theseus-handoff",
+    ]
+    issues: list[str] = []
+    for stub in expected:
+        skill_md = skills_root / stub / "SKILL.md"
+        if not skill_md.exists():
+            issues.append(f"{stub}/SKILL.md 누락 (분해 stub)")
+            continue
+        text = skill_md.read_text(encoding="utf-8")
+        if stub != "theseus-orchestrator" and "../theseus-harness/" not in text:
+            issues.append(f"{stub} 가 ../theseus-harness/ source 참조 누락 (단일 source of truth 위반)")
+    # orchestrator 가 7 stub 모두 링크
+    orch = skills_root / "theseus-orchestrator" / "SKILL.md"
+    if orch.exists():
+        orch_text = orch.read_text(encoding="utf-8")
+        for stub in expected:
+            if stub == "theseus-orchestrator":
+                continue
+            if stub not in orch_text:
+                issues.append(f"theseus-orchestrator 가 {stub} 링크 누락")
+    return issues
+
+
 def check_grades_wired(skill_root: Path) -> list[str]:
     """C27 — grades.md + grade_assess.py + SKILL.md 호출 표 + phase 04 Q-G1."""
     issues: list[str] = []
@@ -462,6 +496,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C25", "test-invariants + dacapo present (AIDE/Phase V)", check_test_invariants_present),
     ("C26", "fragmentation policy enforced (SKILL.md is index, not heavy)", check_fragmentation_policy),
     ("C27", "grades wired (grades.md + grade_assess.py + SKILL call table + phase04 Q-G1)", check_grades_wired),
+    ("C28", "8 decomposition stubs + single source of truth + orchestrator chains all", check_decomposition_stubs),
 ]
 
 
