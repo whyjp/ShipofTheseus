@@ -938,6 +938,19 @@ def check_resources_supplementary_ceiling(repo_root: Path, skill_root: Path) -> 
     return issues
 
 
+def check_anti_patterns_consolidation(repo_root: Path, skill_root: Path) -> list[str]:
+    """C40 — SKILL.md 의 안티 패턴 통합 카탈로그 + 페이즈별 본문이 통합 카탈로그 링크."""
+    issues: list[str] = []
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    if "안티 패턴 통합 카탈로그" not in skill:
+        issues.append("SKILL.md: 안티 패턴 통합 카탈로그 절 누락 (PR-11)")
+    for p in sorted((skill_root / "phases").glob("*.md")):
+        text = p.read_text(encoding="utf-8")
+        if "흔한 실패" in text and "안티 패턴 통합 카탈로그" not in text:
+            issues.append(f"{p.name}: 흔한 실패 절은 있으나 통합 카탈로그 링크 누락 (PR-11)")
+    return issues
+
+
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
     """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
     issues: list[str] = []
@@ -1002,6 +1015,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C37", "decomposed stub standalone honesty (동반 필요 명시, v0.4.0)", check_decomposed_standalone_honesty),
     ("C38", "INSTALL.md fresh-user prep + self-check stack-only mode (PR-2, v0.4.0)", check_install_fresh_user_section),
     ("C39", "resources opt-in supplementary ceiling + Q-D3 sub-option (PR-3, v0.4.0)", check_resources_supplementary_ceiling),
+    ("C40", "anti-patterns consolidation catalog (PR-11, v0.4.0)", check_anti_patterns_consolidation),
 ]
 
 
