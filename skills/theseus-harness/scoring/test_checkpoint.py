@@ -31,18 +31,19 @@ def _run_find(root: Path, failure_kind: str, module: str | None = None, sprint: 
         args += ["--module", module]
     if sprint is not None:
         args += ["--sprint", str(sprint)]
-    proc = subprocess.run(args, capture_output=True, text=True)
+    proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
     return proc.returncode, json.loads(proc.stdout)
 
 
 def _run_select(universes: list[dict]) -> tuple[int, dict]:
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(universes, f)
         path = Path(f.name)
     proc = subprocess.run(
         [sys.executable, str(CHK), "select-universe", "--universes-json", str(path)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 
@@ -90,6 +91,7 @@ def test_unknown_failure_kind_rejected():
         [sys.executable, str(CHK), "find-target", "--root", "/tmp", "--failure-kind", "alien"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     assert proc.returncode != 0
 

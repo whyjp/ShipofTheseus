@@ -45,7 +45,7 @@ def _write_state(root: Path, **fields) -> None:
 def _run(cmd: str, root: Path) -> tuple[int, dict]:
     proc = subprocess.run(
         [sys.executable, str(RESUME), cmd, "--root", str(root)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 

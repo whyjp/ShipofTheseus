@@ -15,6 +15,7 @@ def _run(request: str) -> tuple[int, dict]:
         [sys.executable, str(GRADE), "--request", request],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 

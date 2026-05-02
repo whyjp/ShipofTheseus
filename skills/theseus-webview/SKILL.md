@@ -1,6 +1,6 @@
 ---
 name: theseus-webview
-version: 0.2.1
+version: 0.2.2
 description: bun + hono + react 기반 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
 ---
 

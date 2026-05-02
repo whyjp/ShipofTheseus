@@ -60,7 +60,7 @@ orchestrator 와의 차이는 [`theseus-orchestrator.md`](theseus-orchestrator.m
 | ---- | --- |
 | [`score.py`](../../skills/theseus-harness/scoring/score.py) | 6 차원 가중평균 채점, 임계 0.999, DIP hard cap 0.6, 5 hard cap |
 | [`fingerprint.py`](../../skills/theseus-harness/scoring/fingerprint.py) | frontmatter 핑거프린트 계산·검증·체인 무결성 |
-| [`self_lint.py`](../../skills/theseus-harness/scoring/self_lint.py) | 본 저장소 34 체크 + `--score` 모드 (임계 0.99999) |
+| [`self_lint.py`](../../skills/theseus-harness/scoring/self_lint.py) | 본 저장소 35 체크 + `--score` 모드 (임계 0.99999) |
 | [`rubric.md`](../../skills/theseus-harness/scoring/rubric.md) | 6 차원 채점 룰 + 0.999 / 0.99999 의미론 |
 
 ## 입출력

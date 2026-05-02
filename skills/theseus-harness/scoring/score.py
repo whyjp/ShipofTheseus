@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = p.parse_args(argv)
 
-    with open(args.inputs) as f:
+    with open(args.inputs, encoding="utf-8") as f:
         inputs = json.load(f)
 
     sub = compute_sub_scores(inputs)
@@ -155,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
     prior_score = None
     regression = False
     if args.prior:
-        with open(args.prior) as f:
+        with open(args.prior, encoding="utf-8") as f:
             prior_score = json.load(f).get("score")
         if prior_score is not None and score < prior_score - args.regression_threshold:
             regression = True

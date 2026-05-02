@@ -18,13 +18,14 @@ def _run(meas: list[float], threshold: float, ceiling: float, metric: str = "p99
         "estimated_ceiling": ceiling,
         "metric": metric,
     }
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
         json.dump(payload, f)
         path = Path(f.name)
     proc = subprocess.run(
         [sys.executable, str(CEILING), "--measurements", str(path)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 

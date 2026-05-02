@@ -32,7 +32,7 @@ def _make_artifact(root: Path, rel: str, fp: str, prev: str | None, **extra) -> 
 def _run(cmd: str, root: Path) -> tuple[int, dict]:
     proc = subprocess.run(
         [sys.executable, str(BUILDER), cmd, "--root", str(root)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     return proc.returncode, json.loads(proc.stdout)
 
@@ -50,7 +50,7 @@ def test_linear_chain_builds_index():
     assert (root / "INDEX.md").exists()
     assert (root / "index.json").exists()
     # 무결성 ok
-    integrity = json.loads((root / "index.json").read_text())["integrity"]
+    integrity = json.loads((root / "index.json").read_text(encoding="utf-8"))["integrity"]
     assert integrity["fingerprint_chain"] == "ok"
 
 
@@ -71,7 +71,7 @@ def test_multiverse_branch_with_winner_loser():
 
     rc, out = _run("rebuild", root)
     assert rc == 0
-    js = json.loads((root / "index.json").read_text())
+    js = json.loads((root / "index.json").read_text(encoding="utf-8"))
     assert len(js["multiverses"]) == 1
     mv = js["multiverses"][0]
     assert mv["winner"] == "a"
@@ -92,7 +92,7 @@ def test_subdivision_tree_recorded():
 
     rc, out = _run("rebuild", root)
     assert rc == 0
-    js = json.loads((root / "index.json").read_text())
+    js = json.loads((root / "index.json").read_text(encoding="utf-8"))
     assert len(js["subdivisions"]) == 1
     sd = js["subdivisions"][0]
     assert sd["parent_module"] == "T-020"
@@ -108,7 +108,7 @@ def test_depth_over_limit_warns():
                    parent_module="T-020", depth=3, branch_kind="sub_parallel")
 
     rc, out = _run("rebuild", root)
-    js = json.loads((root / "index.json").read_text())
+    js = json.loads((root / "index.json").read_text(encoding="utf-8"))
     assert "warn" in js["integrity"]["depth_within_limit"]
 
 
@@ -119,7 +119,7 @@ def test_chain_break_detected():
     _make_artifact(root, "plan/06-plan.md", "sha256:c1", "sha256:MISSING", phase="06-plan")
 
     rc, out = _run("rebuild", root)
-    js = json.loads((root / "index.json").read_text())
+    js = json.loads((root / "index.json").read_text(encoding="utf-8"))
     assert js["integrity"]["fingerprint_chain"].startswith("break")
 
 

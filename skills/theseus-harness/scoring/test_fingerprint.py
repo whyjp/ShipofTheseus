@@ -198,6 +198,7 @@ def test_cli_compute_then_verify_roundtrip():
             [sys.executable, str(FP), "compute", "--file", str(md), "--prev", "none"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         assert rc.returncode == 0, rc.stderr
         out = json.loads(rc.stdout)
@@ -207,6 +208,7 @@ def test_cli_compute_then_verify_roundtrip():
             [sys.executable, str(FP), "verify", "--file", str(md)],
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         assert rc_v.returncode == 0, rc_v.stdout
         assert json.loads(rc_v.stdout)["ok"] is True
@@ -252,6 +254,7 @@ def test_cli_compute_is_timing_invariant_end_to_end():
                 [sys.executable, str(FP), "compute", "--file", str(md), "--prev", "none"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
             )
             assert rc.returncode == 0, rc.stderr
 

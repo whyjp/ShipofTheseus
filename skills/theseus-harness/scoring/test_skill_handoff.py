@@ -110,6 +110,7 @@ def test_fingerprint_chain_for_synthetic_handoff():
             [sys.executable, str(FINGERPRINT), "verify", "--file", str(art)],
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         assert proc.returncode == 0, f"{art} fingerprint verify 실패: {proc.stdout}"
 
@@ -119,7 +120,7 @@ def test_handoff_breaks_when_fingerprint_tampered():
     # 임시로 자기 평가 산출물 복사 + tamper
     src = REPO_ROOT / ".ShipofTheseus" / "theseus-self" / "naming" / "00-naming.md"
     text = src.read_text(encoding="utf-8")
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
         # tamper — 본문 한 줄 추가
         tampered = text + "\n\n# TAMPERED BY TEST\n"
         f.write(tampered)
@@ -129,6 +130,7 @@ def test_handoff_breaks_when_fingerprint_tampered():
             [sys.executable, str(FINGERPRINT), "verify", "--file", str(tampered_path)],
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         assert proc.returncode != 0, "tamper 된 산출물의 verify 가 통과 — 핸드오프 안전 장치 깨짐"
         out = json.loads(proc.stdout)

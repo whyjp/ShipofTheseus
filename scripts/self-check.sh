@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "==> self_lint (컨벤션 / 교차 링크 / 버전 / 컴파일 — 18 체크)"
+echo "==> self_lint (컨벤션 / 교차 링크 / 버전 / 컴파일 / 인코딩 가드 — 35 체크)"
 python skills/theseus-harness/scoring/self_lint.py
 
 echo

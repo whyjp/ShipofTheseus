@@ -4,14 +4,15 @@
 
 **조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 8 분해 스킬 + 1 인덱스 스킬 + 1 플래그십(단일 source of truth)으로 파편화해 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (전체 자동 진행) 또는 [`theseus-harness`](skills/theseus-harness/SKILL.md) (단일 호출).
 
-## 현재 성숙도 — 정직 박스 (v0.2.1)
+## 현재 성숙도 — 정직 박스 (v0.2.2)
 
 > **v0.2.x 는 자기 평가만 통과한 스캐폴드입니다. 외부 실 프로젝트 적용 0 건.**
 >
-> ⓐ `self_lint 34/34 pass`, `sample_score 1.0`, `임계 0.99999 통과` 같은 수치는 **본 저장소의 마크다운·코드 인덱스 정합성·예시 입력 채점 통과** 를 의미합니다 — *LLM 에이전트가 프롬프트를 행동으로 따르는지* 의 외부 실증과 다릅니다.
+> ⓐ `self_lint 35/35 pass`, `sample_score 1.0`, `임계 0.99999 통과` 같은 수치는 **본 저장소의 마크다운·코드 인덱스 정합성·예시 입력 채점 통과** 를 의미합니다 — *LLM 에이전트가 프롬프트를 행동으로 따르는지* 의 외부 실증과 다릅니다.
 > ⓑ self_lint 는 *마크다운 텍스트 패턴* 만 검사합니다. "phase 10 본문에 lessons + stagnation 단어가 박혀 있는가" 는 검증되지만, "implementer 에이전트가 *실제로* lesson_pack 을 받아 forbidden 전략을 회피하는가" 는 검증 불가.
 > ⓒ **임계 0.999 / 자기 임계 0.99999 는 SLO 가용성이 아닙니다** — 6 차원 rubric 가중평균 + DIP 단독 hard cap 0.6 + 5 hard cap 의 *명명 규칙* 입니다. 외부 사용자에게 "99.999% 신뢰 가능" 으로 오해되지 않도록 본 README 에서 명시.
 > ⓓ **v0.3.0 의 유일 시급 목표**: 첫 외부 실 프로젝트 적용 1 건 + 4 메트릭(인터럽트 0 / 14 페이즈 시간 / 의도 일치 / 채택 가능) post-mortem. 그때까지 새 컨벤션·새 도구 추가 동결.
+> ⓔ **자기 평가 통과 수치는 OS 무관** — Linux / Mac / Windows 모두에서 `bash scripts/self-check.sh` 또는 `scripts\self-check.bat` 으로 같은 결과 재현. v0.2.1 까지는 한국어 로케일 Windows 에서 cp949 디코딩 비호환으로 재현이 깨져 있었으며 v0.2.2 의 `scoring/conftest.py` + 명시 `encoding="utf-8"` + self_lint C35 가드로 해소.
 
 ## 왜 "테세우스의 배" 인가
 
@@ -128,18 +129,12 @@ claude plugin install https://github.com/whyjp/shipoftheseus
 scripts\self-check.bat         # windows
 ```
 
-수행 단계: 34 self_lint 체크 → pytest (score + self_lint) → sample 채점 → 자기 점수 (임계 0.99999) → frontmatter 체인 무결성. 결과는 `.ShipofTheseus/theseus-self/` 에 누적되어 회차 간 점수 시계열로 회귀를 잡는다.
-
-## v0.2.1 핫픽스 (Cursor Bugbot PR#1 후속)
-
-ⓐ **`fingerprint.py` timing-invariance 회귀 수정** — `TIMING_HEADER_RE` 의 `\A>` 앵커는 템플릿이 `# 제목\n\n> **프로젝트:**` 로 시작하는 패턴에 절대 매치되지 않아, *timing-invariant fingerprint* 라는 [`contracts.md`](skills/theseus-harness/conventions/contracts.md) 의 핵심 약속이 깨져 있었음. → 본문 어디에 위치하든 timing 마커(`**시작:** / **종료:** / **누적 경과:** / **현재 시각:** / **이 스프린트 소요:** / **소요:**`) 를 포함한 blockquote 블록을 식별·strip 하도록 수정. [`scoring/test_fingerprint.py`](skills/theseus-harness/scoring/test_fingerprint.py) 9 회귀 케이스로 박음 — 같은 본문 + 다른 시각 → 같은 fingerprint 보장.
-ⓑ **`Sprints.tsx` 차트 데이터 소스 회귀 수정** — `s.inputs?.score` 는 `inputs.json`(score.py 의 *입력*) 에 score 필드가 없어 항상 빈 차트였음. `score.py --out` 플래그 신규로 `sprints/NN/score.json` 산출 의무화 + `server.ts` `/api/sprints` 가 score.json 도 로드 + Sprints.tsx 가 `s.score?.score` 사용. [`phases/10-test-loop.md`](skills/theseus-harness/phases/10-test-loop.md) 의 score.py 호출 형식도 갱신.
-ⓒ **0.999 / 0.99999 SLO 의미론 오용 가드** — README 정직 박스 + [`scoring/rubric.md`](skills/theseus-harness/scoring/rubric.md) §"0.999 / 0.99999 의 의미" 섹션 신규. 외부 사용자가 "99.999% 가용성" 으로 오해하지 않도록 *6 차원 가중평균 임계 + self_lint 정합성 측정* 임을 명시.
+수행 단계: 35 self_lint 체크 → pytest (score + self_lint) → sample 채점 → 자기 점수 (임계 0.99999) → frontmatter 체인 무결성. 결과는 `.ShipofTheseus/theseus-self/` 에 누적되어 회차 간 점수 시계열로 회귀를 잡는다.
 
 ## 더 읽을거리
 
 - [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미, Ralph 루프·OhMy 시리즈·우로보로스 합성 근거, SOLID/TDD/BDD/DDD/Hexagonal 매핑.
-- [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차, 34 self_lint 체크 목록.
+- [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차, 35 self_lint 체크 목록.
 - [`INSTALL.md`](INSTALL.md) — 설치·갱신·트러블슈팅.
 - [`docs/skills/`](docs/skills/) — 스킬별 가이드 (역할, 입출력, 단독 호출 시점, 자주 묻는 질문).
 - [`skills/theseus-harness/conventions/`](skills/theseus-harness/conventions/) — 21 컨벤션 모듈 (의도·다이어그램·계약·모델·경쟁·자율성·정체 극복·NFR·리소스·체크포인트·테스트·Da Capo·파편화·그레이드·재귀 분해·인덱싱·리줌·PRD).
