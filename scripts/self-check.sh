@@ -4,6 +4,20 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# v0.4.0 PR-2 — fresh-user stack 점검 모드
+if [[ "${1:-}" == "--check-stack-only" ]]; then
+  echo "==> stack-check (fresh-user 환경 진단)"
+  for cmd in python3 go bun node pytest; do
+    if command -v "$cmd" >/dev/null 2>&1; then
+      ver="$($cmd --version 2>&1 | head -1)"
+      echo "[stack-check] $cmd: ✓ ($ver)"
+    else
+      echo "[stack-check] $cmd: ✗ — install via stack.md or asdf/nvm/goenv"
+    fi
+  done
+  exit 0
+fi
+
 echo "==> self_lint (컨벤션 / 교차 링크 / 버전 / 컴파일 / 인코딩 가드 — 35 체크)"
 python skills/theseus-harness/scoring/self_lint.py
 

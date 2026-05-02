@@ -23,6 +23,30 @@ skills/
 
 스킬 간 인터페이스는 산출물 frontmatter ([`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md))가 계약 — 검증 실패 시 다음 스킬이 진입을 거부.
 
+## Fresh User 환경 점검 (v0.4.0 — ralph bootstrap 거울)
+
+본 하네스를 처음 사용하는 환경은 페이즈별 다른 도구가 필요하다 — Phase 08 (구현) 은 Go + bun, Phase 12 (웹뷰) 는 bun + node, Phase 09/10 (게이트/스프린트) 은 Python 3 + pytest. 사용자가 호출 직후 페이즈 04 (스택 점검) 에서 자동 진단되지만, *호출 전* 에 fresh-user 환경이 정합한지 빠르게 자가 점검하려면:
+
+```bash
+# Linux/Mac
+bash scripts/self-check.sh --check-stack-only
+
+# Windows
+scripts\self-check.bat --check-stack-only
+```
+
+위 명령은 다음을 출력:
+
+```
+[stack-check] python3: ✓ (3.11.5)
+[stack-check] go:      ✓ (1.21.0)
+[stack-check] bun:     ✗ — install via 'curl -fsSL https://bun.sh/install | bash'
+[stack-check] node:    ✓ (20.10.0)
+[stack-check] pytest:  ✓ (7.4.0)
+```
+
+`✗` 항목은 호출 직전 직접 설치 권장. 그렇지 않으면 페이즈 04 의 [`conventions/stack.md`](skills/theseus-harness/conventions/stack.md) Q-D5 답에 따라 자율 업데이트 (`asdf/nvm/goenv` 안에서) 시도. **본 절은 ralph 의 `.ralph/bootstrap.sh` 의 직교 차원 차용** — *기존 stack.md + Q-D5 의 정책 답안* + *실행 직전 진단* 추가 (거울 원칙: 새 파일 X, 기존 한 절 증강).
+
 ## 1. 프로젝트 단위 설치 (가장 권장)
 
 특정 프로젝트에서만 본 묶음을 쓰고 싶을 때.

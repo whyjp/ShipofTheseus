@@ -904,6 +904,19 @@ def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_install_fresh_user_section(repo_root: Path, skill_root: Path) -> list[str]:
+    """C38 — INSTALL.md 가 fresh-user 환경 prep 절 + self-check.{sh,bat} 가 --check-stack-only 모드 보유."""
+    issues: list[str] = []
+    install = (repo_root / "INSTALL.md").read_text(encoding="utf-8")
+    if "Fresh User 환경 점검" not in install:
+        issues.append("INSTALL.md: Fresh User 환경 점검 절 누락 (PR-2)")
+    for script in ("scripts/self-check.sh", "scripts/self-check.bat"):
+        text = (repo_root / script).read_text(encoding="utf-8")
+        if "--check-stack-only" not in text:
+            issues.append(f"{script}: --check-stack-only 모드 누락 (PR-2)")
+    return issues
+
+
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
     """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
     issues: list[str] = []
@@ -966,6 +979,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C35", "subprocess/tempfile encoding explicit (Windows cp949 latent-bug guard, v0.2.2)", check_subprocess_encoding_explicit),
     ("C36", "Q-D8 Verification Commands wired (oh-my-ralph latch, v0.3.0)", check_qd8_verification_commands_wired),
     ("C37", "decomposed stub standalone honesty (동반 필요 명시, v0.4.0)", check_decomposed_standalone_honesty),
+    ("C38", "INSTALL.md fresh-user prep + self-check stack-only mode (PR-2, v0.4.0)", check_install_fresh_user_section),
 ]
 
 
