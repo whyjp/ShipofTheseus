@@ -271,6 +271,27 @@ def check_autonomy_convention_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
+    """C20 — lessons.md 와 stagnation.py 가 phase 10, implementer, planner 에 박힘."""
+    issues: list[str] = []
+    lessons = skill_root / "conventions" / "lessons.md"
+    if not lessons.exists():
+        return ["conventions/lessons.md 누락 — 정체 극복 룰 정의 필요"]
+    stag = skill_root / "scoring" / "stagnation.py"
+    if not stag.exists():
+        issues.append("scoring/stagnation.py 누락 — 정체 감지 도구 필요")
+    phase10 = _read(skill_root / "phases" / "10-test-loop.md")
+    if "lesson_pack" not in phase10 or "stagnation" not in phase10.lower():
+        issues.append("phases/10-test-loop.md 가 lesson_pack 또는 stagnation 을 본문에 박지 않음")
+    impl = _read(skill_root / "agents" / "implementer.md")
+    if "lesson_pack" not in impl or "preserve" not in impl.lower():
+        issues.append("agents/implementer.md 가 lesson_pack 입력 + preserve 룰 누락")
+    plan = _read(skill_root / "agents" / "planner.md")
+    if "lesson_pack" not in plan:
+        issues.append("agents/planner.md 가 lesson_pack 입력 가능성 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -291,6 +312,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C17", "writer agents call fingerprint", check_writer_agents_fingerprint),
     ("C18", "webview-builder mermaid render", check_webview_mermaid),
     ("C19", "autonomy convention present + cross-referenced", check_autonomy_convention_present),
+    ("C20", "lessons + stagnation wired into phase10/implementer/planner", check_lessons_stagnation_wired),
 ]
 
 

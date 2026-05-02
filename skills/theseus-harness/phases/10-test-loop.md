@@ -26,29 +26,88 @@
 
 ```
 sprint = 1
-prev_score = None
+prev_scores = []
+dim_history = defaultdict(list)
+prior_attempts = []
+forbidden_strategies = []
+
 while True:
     suite = run_test_matrix()
     inputs = build_score_inputs(suite, gate_results)
-    score, sub = score.py(inputs, prior=prev_score)
+    score, sub = score.py(inputs, prior=prev_scores[-1] if prev_scores else None)
     write `sprints/{sprint:02d}/report.md` (timing header 포함)
     write `sprints/{sprint:02d}/inputs.json`
-    report_to_user_with_timing(sprint, score, prev_score)
+    prev_scores.append(score)
+    for d, v in sub.items(): dim_history[d].append(v)
+    report_to_user_with_timing(sprint, score, prev_scores)
 
-    if score >= 0.9:
+    if score >= 0.999:
         return "pass"
 
-    if prev_score is not None and score < prev_score - 0.05:
+    # ① 회귀 우선 — 페이즈 11 (lessons.md 의 정체와 별 트리거)
+    if len(prev_scores) >= 2 and score < prev_scores[-2] - 0.05:
         run_phase_11 → `sprints/{sprint:02d}/bisect.md`
-        ack = AskUserQuestion(권고: revert | re-architect | accept | 정지)
-        if ack == 정지: halt
+        ack_per_autonomy_level()
 
-    failing_dims = [d for d, s in sub.items() if s < 0.9]
-    spawn_implementer(failing_dims, suite.failing_tests)
-    prev_score = score
+    # ② 정체 감지 — lessons.md / scoring/stagnation.py
+    history_json = build_history(prev_scores, dim_history)
+    stag = stagnation.detect(prev_scores, dim_history, threshold=0.999)
+    lesson_pack = stagnation.build_lesson_pack(
+        sprint=sprint,
+        history=history_records,
+        stagnation_report=stag,
+        prior_attempts=prior_attempts,
+        forbidden=forbidden_strategies,
+        autonomy_level=user_autonomy_level,  # autonomy.md 페이즈 04 답
+    )
+    write `sprints/{sprint:02d}/lesson_pack.json`
+
+    if stag["stagnation_overall"]:
+        # 종합 정체 — 페이즈 06 부터 재시작
+        snapshot_current_impl_to(`sprints/{sprint:02d}/snapshot/`)
+        spawn_planner(force_replan=True, lesson_pack=lesson_pack)
+        prev_scores = []          # 시계열 분기, 새 회차 시작
+        dim_history = defaultdict(list)
+        sprint = 1
+        continue
+
+    if stag["stagnant_dims"]:
+        # 차원 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
+        snapshot_current_impl_to(`sprints/{sprint:02d}/snapshot/`)
+        for module in identify_modules_for_dims(stag["stagnant_dims"]):
+            spawn_implementer(
+                rewrite=True,            # preserve=false, fresh-impl
+                target=module,
+                lesson_pack=lesson_pack,
+            )
+        prior_attempts.append({
+            "sprint": sprint,
+            "rewrites": stag["stagnant_dims"],
+        })
+
+        # 같은 차원 3 회 연속 rewrite 도 정체면 사용자 ack 강제
+        if rewrite_streak(stag["stagnant_dims"], prior_attempts) >= 3:
+            ask_user_per_lessons_md_section_3회_초과()
+
+    else:
+        # 일반 다음 스프린트 — extend (기존 코드 보강)
+        failing_dims = [d for d, s in sub.items() if s < 0.95]
+        spawn_implementer(
+            failing=suite.failing_tests,
+            failing_dims=failing_dims,
+            lesson_pack=lesson_pack,    # 정체 아니어도 레슨 첨부
+        )
+
     sprint += 1
-    # 캡 없음 — 무한 루프
+    # 캡 없음 — 단 정체 누적은 사용자 ack 로 차단
 ```
+
+핵심:
+
+ⓐ **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/lessons.md`](../conventions/lessons.md) 의 형식.
+ⓑ **정체 감지 자동** — `scoring/stagnation.py` 가 매 스프린트 종료 후 시계열 분석. 종합 정체 → 페이즈 06 재시작, 차원 정체 → 해당 모듈 통째 재작성.
+ⓒ **부분 수정 금지 강제** — 정체로 트리거된 rewrite 는 `preserve=false` 명시. 구현자가 기존 코드를 *보강* 하면 정체 지속.
+ⓓ **3 회 누적 rewrite 도 정체면 사용자 ack** — 자율 무한 시도 차단.
 
 ## 사용자 보고 (매 스프린트)
 
