@@ -28,6 +28,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓞ **Da Capo 루프 (AIDE × LLM Wiki 결합 — 자기 강화 회귀)**: [`conventions/dacapo.md`](conventions/dacapo.md)
 ⓟ **파편화 우선 설계 (단일 헤비 스킬 금지)**: [`conventions/fragmentation.md`](conventions/fragmentation.md)
 ⓠ **그레이드 시스템 — 작업 복잡도별 허들 (G1 호출 거부 ~ G5 빡빡 모드)**: [`conventions/grades.md`](conventions/grades.md)
+ⓡ **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
 
 ## 산출물 트리
 

@@ -325,6 +325,41 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_sub_agents_wired(skill_root: Path) -> list[str]:
+    """C29 — sub-agents.md + sub_agent_dispatch.py + 단독 호출 input 매트릭스 + SKILL/README 노출."""
+    issues: list[str] = []
+    sa = skill_root / "conventions" / "sub-agents.md"
+    if not sa.exists():
+        return ["conventions/sub-agents.md 누락 — 서브에이전트 재귀 분해 정의 필요"]
+    text = _read(sa)
+    # 단독 호출 input 매트릭스 검증 — 7 분해 스킬 모두 이름 등장
+    expected_skills = [
+        "theseus-intent", "theseus-plan", "theseus-implement",
+        "theseus-quality", "theseus-sprint", "theseus-webview", "theseus-handoff",
+    ]
+    for name in expected_skills:
+        if name not in text:
+            issues.append(f"sub-agents.md 의 단독 호출 input 매트릭스에 {name} 누락")
+    # AIDE 4 오퍼레이터 매핑 검증
+    for op in ["Draft", "Improve", "Debug", "Memory"]:
+        if op not in text:
+            issues.append(f"sub-agents.md 가 AIDE 오퍼레이터 {op} 매핑 누락")
+    # 깊이 한도
+    if "깊이 2" not in text and "DEPTH_LIMIT" not in text:
+        issues.append("sub-agents.md 가 재귀 깊이 한도 명시 누락")
+    # 도구 존재
+    if not (skill_root / "scoring" / "sub_agent_dispatch.py").exists():
+        issues.append("scoring/sub_agent_dispatch.py 누락")
+    # SKILL/README 노출
+    skill = _read(skill_root / "SKILL.md")
+    if "sub-agents.md" not in skill:
+        issues.append("SKILL.md 가 sub-agents.md 노출 누락")
+    readme = _read(skill_root / "README.md")
+    if "sub-agents.md" not in readme:
+        issues.append("skill README 가 sub-agents.md 노출 누락")
+    return issues
+
+
 def check_decomposition_stubs(repo_root: Path, skill_root: Path) -> list[str]:
     """C28 — 8 분해 stub 존재 + 단일 source of truth 룰 검증."""
     skills_root = repo_root / "skills"
@@ -497,6 +532,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C26", "fragmentation policy enforced (SKILL.md is index, not heavy)", check_fragmentation_policy),
     ("C27", "grades wired (grades.md + grade_assess.py + SKILL call table + phase04 Q-G1)", check_grades_wired),
     ("C28", "8 decomposition stubs + single source of truth + orchestrator chains all", check_decomposition_stubs),
+    ("C29", "sub-agents recursion (sub-agents.md + dispatch + input contract matrix + AIDE ops)", check_sub_agents_wired),
 ]
 
 
