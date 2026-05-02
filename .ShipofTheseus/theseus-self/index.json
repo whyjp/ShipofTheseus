@@ -1,0 +1,109 @@
+{
+  "rebuilt_at": "2026-05-02T07:13:42+00:00",
+  "total_artifacts": 6,
+  "active_universes": [],
+  "tree": [
+    {
+      "path": "intent/01-intent.md",
+      "fingerprint": "sha256:db8710ef8f7b07e9b8601af3c660fb53745bd3bf74b695faa1edb6d97cfa4a16",
+      "prev_fingerprint": "sha256:b161cf4966a37f64d4934f9de599471abb623b8401637f6102f72ac5537db565",
+      "phase": "01-intent",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-01T18:49:46Z",
+      "producer_agent": "human-bootstrap",
+      "children": [
+        "intent/05-critique.md"
+      ]
+    },
+    {
+      "path": "intent/05-critique.md",
+      "fingerprint": "sha256:8b28c3d8165f5bc6276500fbe62a01fa53c3cb82f52a3465bc447deb42364dfe",
+      "prev_fingerprint": "sha256:db8710ef8f7b07e9b8601af3c660fb53745bd3bf74b695faa1edb6d97cfa4a16",
+      "phase": "05-critique",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-01T18:49:46Z",
+      "producer_agent": "human-bootstrap",
+      "children": [
+        "plan/06-plan.md"
+      ]
+    },
+    {
+      "path": "naming/00-naming.md",
+      "fingerprint": "sha256:b161cf4966a37f64d4934f9de599471abb623b8401637f6102f72ac5537db565",
+      "prev_fingerprint": null,
+      "phase": "00-naming",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-01T18:49:46Z",
+      "producer_agent": "human-bootstrap",
+      "children": [
+        "intent/01-intent.md"
+      ]
+    },
+    {
+      "path": "plan/06-plan.md",
+      "fingerprint": "sha256:c21dd8c126cf1ce98be5c15123a83e19be8e4e2cf6b89abd5ed7ee690208bc64",
+      "prev_fingerprint": "sha256:8b28c3d8165f5bc6276500fbe62a01fa53c3cb82f52a3465bc447deb42364dfe",
+      "phase": "06-plan",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-01T18:49:46Z",
+      "producer_agent": "human-bootstrap",
+      "children": [
+        "quality/09-quality-gate.md"
+      ]
+    },
+    {
+      "path": "quality/09-quality-gate.md",
+      "fingerprint": "sha256:7a8106f3498f9b8884e275d6bb1946af56f4ae53e8b24ea23d5101d8d737cd0e",
+      "prev_fingerprint": "sha256:c21dd8c126cf1ce98be5c15123a83e19be8e4e2cf6b89abd5ed7ee690208bc64",
+      "phase": "09-quality-gate",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-01T19:01:00Z",
+      "producer_agent": "human-bootstrap",
+      "children": [
+        "review/02-self-review.md"
+      ]
+    },
+    {
+      "path": "review/02-self-review.md",
+      "fingerprint": "sha256:5a6e4c5f0a98ea2c85097b99be141fd3966279a545236d27d116434fc53c163d",
+      "prev_fingerprint": "sha256:7a8106f3498f9b8884e275d6bb1946af56f4ae53e8b24ea23d5101d8d737cd0e",
+      "phase": "review",
+      "universe": null,
+      "parent_branch": null,
+      "parent_module": null,
+      "depth": 0,
+      "branch_kind": null,
+      "produced_at": "2026-05-02T03:24:03Z",
+      "producer_agent": "human-self-review",
+      "children": []
+    }
+  ],
+  "multiverses": [],
+  "subdivisions": [],
+  "integrity": {
+    "fingerprint_chain": "ok",
+    "multiverse_single_winner": "ok",
+    "parent_module_chain": "ok",
+    "depth_within_limit": "ok"
+  }
+}

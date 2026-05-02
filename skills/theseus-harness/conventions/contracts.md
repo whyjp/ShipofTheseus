@@ -32,6 +32,21 @@ producer_agent: planner              # agents/<name>.md 의 name
 
 frontmatter 다음 줄 부터는 [`timing.md`](timing.md) 의 시간 메타 헤더, 그 다음이 본문.
 
+## 비직렬성 메타 확장 ([`indexing.md`](indexing.md))
+
+본 하네스의 산출물이 *멀티버스 분기 + 서브에이전트 재귀* 로 비선형 트리를 가지므로, [`indexing.md`](indexing.md) 가 정의한 추가 필드를 frontmatter 에 박는다 — 일반 선형 산출물은 모두 null:
+
+```yaml
+universe: a | b | c | null            # 멀티버스 우주 식별
+parent_branch: 06-plan | null         # 분기 페이즈 ID (멀티버스 트리거된 페이즈)
+parent_module: T-020 | null           # 서브에이전트 분해의 부모 TODO ID
+depth: 0 | 1 | 2                      # 재귀 깊이 (서브에이전트). 한도 2.
+branch_kind: sequential | multiverse_winner | multiverse_loser
+           | sub_parallel | sub_sequential | sub_competition | null
+```
+
+이 필드들이 [`../scoring/index_builder.py`](../scoring/index_builder.py) 의 입력 — INDEX.md / index.json 자동 생성.
+
 ## 핑거프린트 계산
 
 ```

@@ -325,6 +325,34 @@ def check_test_invariants_present(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_indexing_wired(skill_root: Path) -> list[str]:
+    """C30 — indexing.md + index_builder.py + frontmatter 비직렬성 메타 + INDEX.md 자동 갱신 룰."""
+    issues: list[str] = []
+    idx = skill_root / "conventions" / "indexing.md"
+    if not idx.exists():
+        return ["conventions/indexing.md 누락 — 산출물 인덱싱 룰 정의 필요"]
+    text = _read(idx)
+    # 비직렬성 메타 5종 명시
+    for field in ["universe", "parent_branch", "parent_module", "depth", "branch_kind"]:
+        if field not in text:
+            issues.append(f"indexing.md 가 비직렬성 메타 '{field}' 명시 누락")
+    # 도구 존재
+    if not (skill_root / "scoring" / "index_builder.py").exists():
+        issues.append("scoring/index_builder.py 누락")
+    # contracts.md 도 비직렬성 메타 인지
+    contracts = _read(skill_root / "conventions" / "contracts.md")
+    if "indexing.md" not in contracts and "INDEX.md" not in contracts and "비직렬성" not in contracts:
+        issues.append("contracts.md 가 indexing.md (비직렬성 메타 확장) 참조 누락")
+    # SKILL/README 노출
+    skill = _read(skill_root / "SKILL.md")
+    if "indexing.md" not in skill:
+        issues.append("SKILL.md 가 indexing.md 노출 누락")
+    readme = _read(skill_root / "README.md")
+    if "indexing.md" not in readme:
+        issues.append("skill README 가 indexing.md 노출 누락")
+    return issues
+
+
 def check_sub_agents_wired(skill_root: Path) -> list[str]:
     """C29 — sub-agents.md + sub_agent_dispatch.py + 단독 호출 input 매트릭스 + SKILL/README 노출."""
     issues: list[str] = []
@@ -533,6 +561,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C27", "grades wired (grades.md + grade_assess.py + SKILL call table + phase04 Q-G1)", check_grades_wired),
     ("C28", "8 decomposition stubs + single source of truth + orchestrator chains all", check_decomposition_stubs),
     ("C29", "sub-agents recursion (sub-agents.md + dispatch + input contract matrix + AIDE ops)", check_sub_agents_wired),
+    ("C30", "indexing wired (indexing.md + index_builder + non-serial frontmatter meta)", check_indexing_wired),
 ]
 
 
