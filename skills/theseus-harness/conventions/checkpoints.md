@@ -43,7 +43,9 @@
 
 ## 회귀 알고리즘 — 실패 원인 → 회귀 위치 매핑
 
-실패 (테스트 fail / 게이트 fail / 정체 / 천정) 발생 시:
+**모든 깊은 품질 위반이 회귀·재빚기 트리거**: DIP/SOLID 위반만이 아니라 ① 코드 오류 누적 ② 기획-구현 갭 (스펙 누락) ③ 성능/NFR 미달 ④ 의도 표류 ⑤ 정체/회귀 누적 ⑥ 테스트 회귀 ⑦ 천정 도달 ⑧ scope creep 모두 동등한 트리거 — 차원만 달라질 뿐 어느 차원이라도 깊이가 임계를 넘으면 부분 수정 금지·해당 모듈 통째 재작성 (`re-architect`).
+
+실패 (테스트 fail / 게이트 fail / 정체 / 천정 / 코드 오류 / 스펙 누락 / 성능 미달 / 의도 표류) 발생 시:
 
 ```python
 def find_regression_target(
@@ -76,6 +78,30 @@ def find_regression_target(
     # 분류 6: 정체 누적 (lessons.md)
     if failure.kind == "stagnation":
         # 정체 차원에 책임 있는 모듈의 체크포인트 (08.NNN) 로
+        return find_module_checkpoint(checkpoint_chain, "08", failure.module)
+
+    # 분류 7: DIP / SOLID 깊은 위반 (rubric.md hard cap)
+    if failure.kind == "dip_violation":
+        # DIP 경계가 깨진 모듈 → 페이즈 06 (계획) 부터 모듈 경계 재정의 + rewrite
+        return find_checkpoint_at_phase(checkpoint_chain, "06")
+
+    # 분류 8: scope creep (의도 표류 — 페이즈 04 사전 위임 답과 모순 누적)
+    if failure.kind == "scope_creep":
+        return find_checkpoint_at_phase(checkpoint_chain, "04")
+
+    # 분류 9: 코드 오류 누적 (동일 사상 버그 ≥ 3 모듈 또는 예외 흐름 비일관)
+    if failure.kind == "code_error_cascade":
+        # 사상의 책임 모듈을 통째 재작성 (lessons.md rewrite_rule.preserve=false)
+        return find_module_checkpoint(checkpoint_chain, "08", failure.module)
+
+    # 분류 10: 기획-구현 갭 (스펙 누락 — 의도/계획에 있던 항목이 구현에서 사라짐)
+    if failure.kind == "spec_omission":
+        # 페이즈 06 계획 부분 재정렬 + 해당 모듈 재작성
+        return find_checkpoint_at_phase(checkpoint_chain, "06")
+
+    # 분류 11: 성능 / NFR 미달 (게이트 6 깊은 미달, resources.md 천정 깊은 초과)
+    if failure.kind == "nfr_violation":
+        # 자료구조·알고리즘 재선정 필요 → 모듈 통째 재작성
         return find_module_checkpoint(checkpoint_chain, "08", failure.module)
 
     # 분류되지 않은 실패 — 가장 가까운 안정 체크포인트 (last_known_good)
@@ -191,3 +217,4 @@ def select_universe(universes: list[Universe]) -> Universe:
 ⓓ **패자 우주 즉시 삭제** — 학습 자산 손실. 항상 `losers/` 로 보존.
 ⓔ **같은 위치 3 회 회귀해도 단일 우주 고집** — 정체 신호 무시. 멀티버스 자동 분기 룰.
 ⓕ **체크포인트 fingerprint 체인 무시** — `contracts.md` 의 무결성 위반, 페이즈 09 게이트 자동 fail.
+ⓖ **DIP 위반에만 rewrite 트리거 한정** — 코드 오류 누적·스펙 누락·NFR 미달·의도 표류 같은 *다른 깊은 위반* 도 동등한 통째 재작성 트리거 ([`lessons.md`](lessons.md) "부분 수정 vs 깨고 다시 작성" 표). 본 컨벤션 11 분류 (`code_error_cascade`/`spec_omission`/`nfr_violation`/`scope_creep`/...) 가 그 일반화.

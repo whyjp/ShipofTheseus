@@ -393,6 +393,100 @@ def check_prd_handling_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_rewrite_trigger_multidimensional(repo_root: Path, skill_root: Path) -> list[str]:
+    """
+    C34 — *깨고 다시 빚기* 트리거가 SOLID/DIP 단일 차원에 묶여 있지 않고
+    모든 깊은 품질 위반 차원으로 일반화되어 있는지 검증.
+
+    배경: 사용자 지시 — "깨고 다시 진행하는 건 깊은 SOLID/DIP 위반 뿐 아니라
+    코드 오류·기획-구현 갭·성능 이슈 모든 면에서 요구된다." 본 룰을 *문서* 와
+    *실제 스킬 흐름* 양쪽에서 검증해, SKILL.md / PHILOSOPHY.md / lessons.md /
+    checkpoints.md / regression-analyst.md / phase 11 모두 다차원 트리거 표현
+    누락 없이 일관 체이닝되었는지 자동 점검.
+
+    검증 항목:
+      ⓐ 각 문서에 6 차원 (DIP·코드 오류·스펙 누락·NFR·의도 표류·정체) 이 모두 등장.
+      ⓑ checkpoints.md `find_regression_target` 가 11 분류 (intent_mismatch /
+         plan_misfit / module_impl_violation / test_regression / resource_ceiling /
+         stagnation / dip_violation / scope_creep / code_error_cascade /
+         spec_omission / nfr_violation) 를 포함.
+      ⓒ regression-analyst.md 가 "깊은 품질 위반 점검 (6 차원)" 또는 동등 섹션 보유.
+      ⓓ phase 11 권고 ②(`re-architect`) 가 SOLID 단일 한정이 아닌 *깊은 품질 위반*
+         으로 표현됨.
+    """
+    issues: list[str] = []
+
+    # 6 차원 키워드 — 의미가 같은 동의어를 OR 묶음으로
+    dim_keywords = [
+        ("DIP/SOLID",       ["DIP", "SOLID"]),
+        ("코드 오류 누적",   ["코드 오류", "code_error", "버그 누적"]),
+        ("기획-구현 갭",     ["기획-구현 갭", "스펙 누락", "spec_omission"]),
+        ("성능/NFR 미달",    ["NFR 미달", "성능", "nfr_violation", "천정"]),
+        ("의도 표류",        ["의도 표류", "scope_creep"]),
+        ("정체/회귀 누적",   ["정체", "stagnation", "회귀 누적"]),
+    ]
+
+    targets = [
+        ("PHILOSOPHY.md",                      repo_root / "PHILOSOPHY.md"),
+        ("SKILL.md",                           skill_root / "SKILL.md"),
+        ("conventions/lessons.md",             skill_root / "conventions" / "lessons.md"),
+        ("conventions/checkpoints.md",         skill_root / "conventions" / "checkpoints.md"),
+        ("agents/regression-analyst.md",       skill_root / "agents" / "regression-analyst.md"),
+        ("phases/11-regression-bisect.md",     skill_root / "phases" / "11-regression-bisect.md"),
+    ]
+
+    for label, path in targets:
+        if not path.exists():
+            issues.append(f"{label} 누락 — 깨고 다시 빚기 트리거 다차원 검증 불가")
+            continue
+        text = _read(path)
+        for dim_label, syns in dim_keywords:
+            if not any(syn in text for syn in syns):
+                issues.append(
+                    f"{label} 가 깨고 다시 빚기 트리거 차원 '{dim_label}' 표현 누락 — "
+                    f"동의어 후보: {syns}"
+                )
+
+    # checkpoints.md 의 11 분류 검증
+    cp_text = _read(skill_root / "conventions" / "checkpoints.md")
+    expected_kinds = [
+        "intent_mismatch",
+        "plan_misfit",
+        "module_impl_violation",
+        "test_regression",
+        "resource_ceiling",
+        "stagnation",
+        "dip_violation",
+        "scope_creep",
+        "code_error_cascade",
+        "spec_omission",
+        "nfr_violation",
+    ]
+    for kind in expected_kinds:
+        if kind not in cp_text:
+            issues.append(
+                f"conventions/checkpoints.md 의 find_regression_target 에 failure.kind '{kind}' 분류 누락"
+            )
+
+    # regression-analyst.md 의 "깊은 품질 위반" 6 차원 점검 섹션
+    ra_text = _read(skill_root / "agents" / "regression-analyst.md")
+    if "깊은 품질 위반 점검" not in ra_text:
+        issues.append(
+            "agents/regression-analyst.md 가 '깊은 품질 위반 점검' 6 차원 섹션 누락 — "
+            "DIP 단일 점검만 있으면 다른 깊은 위반이 부분 수정으로 흘려보내짐"
+        )
+
+    # phase 11 권고 ② 가 "SOLID 위반" 단일 한정이 아닌 "깊은 품질 위반" 으로 일반화
+    p11_text = _read(skill_root / "phases" / "11-regression-bisect.md")
+    if "깊은 품질 위반" not in p11_text and "다차원" not in p11_text:
+        issues.append(
+            "phases/11-regression-bisect.md 의 re-architect 권고가 SOLID 단일 한정 — "
+            "깊은 품질 위반 (DIP·코드 오류·스펙 누락·NFR·의도 표류·정체) 다차원으로 일반화되어야 함"
+        )
+
+    return issues
+
+
 def check_no_rule_duplication(skill_root: Path) -> list[str]:
     """
     C32 — 룰 본문 중복 검출 휴리스틱.
@@ -703,6 +797,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C31", "resume wired (resume.md + resume.py + state.json + Progress tab + /api/state)", check_resume_wired),
     ("C32", "no rule duplication across conventions (fragmentation DRY)", check_no_rule_duplication),
     ("C33", "PRD handling hurdle (no interview skip even with full PRD)", check_prd_handling_wired),
+    ("C34", "rewrite trigger generalized to all deep quality violations (multi-dimensional, not DIP-only)", check_rewrite_trigger_multidimensional),
 ]
 
 

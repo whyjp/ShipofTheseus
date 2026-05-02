@@ -132,6 +132,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ⓒ 페이즈 04 는 *유일한* 사용자 인터럽트 지점. 사전 위임 카탈로그(Q-D1~D6) 답 누락 시 페이즈 05 진입 불가. **페이즈 05~13 동안 사용자 인터럽트 절대 없음** — 모든 ack 는 페이즈 04 답 자동 매핑 ([`conventions/autonomy.md`](conventions/autonomy.md)).
 ⓓ **임계 점수 0.999** — 임계 미달 시 무한 스프린트, 캡 없음. 회귀 시에만 사용자 ack.
 ⓔ **DIP 가 SOLID 중 최우선** — 위반 단독 hard cap 0.6.
+ⓔ-1 **깨고 다시 빚기 트리거 = 모든 깊은 품질 위반** — DIP 위반만이 아니라 ① 코드 오류 누적 ② 기획-구현 갭 (스펙 누락) ③ 성능/NFR 미달 ④ 의도 표류 ⑤ 정체/회귀 누적 중 *어느 차원* 이라도 깊이가 임계를 넘으면 부분 수정 금지 → 페이즈 06 부터 통째 재빚기 (`re-architect`). 차원별 트리거·매핑은 [`conventions/lessons.md`](conventions/lessons.md) + [`conventions/checkpoints.md`](conventions/checkpoints.md).
 ⓕ 백엔드 기본 Go, FE 기본 bun + React + TS.
 ⓖ 모든 모듈은 sh + bat 스크립트, TOML 설정 + `.example` 동행, `docs/` 폴더.
 ⓗ 수정·리팩터링 시 기존 코드 폐기 우선. 라이브 전 중간 산출물 보존.
