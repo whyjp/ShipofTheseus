@@ -889,10 +889,12 @@ def check_fragmentation_policy(skill_root: Path) -> list[str]:
     if not frag.exists():
         return ["conventions/fragmentation.md 누락 — 파편화 우선 룰 정의 필요"]
     skill = _read(skill_root / "SKILL.md")
-    # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심 — 임계 12000 자
-    if len(skill) > 12000:
+    # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심.
+    # 임계: 14000 자 (v0.8.0 sprint-03-a — 22 컨벤션 + HARD-RULE 추가 후 자연스러운 한도).
+    # 이전 임계 12000 은 21 컨벤션 시점, plan-tree + runtime-prereq + HARD-RULE 추가 후 13000~ 정상.
+    if len(skill) > 14000:
         issues.append(
-            f"SKILL.md 길이 {len(skill)} 자 — 임계 12000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
+            f"SKILL.md 길이 {len(skill)} 자 — 임계 14000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
         )
     if "fragmentation.md" not in skill:
         issues.append("SKILL.md 가 fragmentation.md 를 노출하지 않음")
@@ -1222,6 +1224,41 @@ def check_runtime_prereq_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_orchestrator_driver_hardrule(skill_root: Path) -> list[str]:
+    """C-OD — orchestrator 강제 driver HARD-RULE 명시 검증 (sprint-03-a, v0.8.0).
+
+    livetest 시나리오 #1 fail (sub-claude 가 직접 코드 작성 + retroactive
+    metadata generator 작성으로 우회) 정정. 본 룰은 다음을 검증:
+      a- harness/SKILL.md + orchestrator/SKILL.md 모두 'HARD-RULE' 헤더 + 첫 동작
+         (timing/start.json + intent/01-intent.md or naming/00-naming.md) 명시.
+      b- 위반 안티패턴 (retroactive metadata generator / build_artifacts.py /
+         out-of-sandbox / 페이즈 04 생략) 모두 명시.
+    """
+    issues: list[str] = []
+    targets = [
+        skill_root / "SKILL.md",
+        skill_root.parent / "theseus-orchestrator" / "SKILL.md",
+    ]
+    must_haves = [
+        "HARD-RULE",
+        "timing/start.json",
+        "intent/01-intent.md",
+        "build_artifacts.py",     # retroactive 안티패턴 명시
+        "out-of-sandbox",         # 우회 사유 안티패턴 명시
+        "00-violation.md",        # 위반 시 처리 산출물
+    ]
+    for tgt in targets:
+        if not tgt.exists():
+            issues.append(f"{tgt.name} 누락 — orchestrator driver HARD-RULE 적용 대상")
+            continue
+        text = _read(tgt)
+        for must in must_haves:
+            if must not in text:
+                rel = tgt.relative_to(skill_root.parent)
+                issues.append(f"{rel}: HARD-RULE 키워드 '{must}' 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1269,6 +1306,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C43", "SKILL.md hard-rule markup (PR-10, v0.4.0)", check_hard_rule_markup),
     ("C-PT", "plan-tree wiring (5 seeds + G3+ default + grades matrix + outputs, v0.6.0)", check_plan_tree_wired),
     ("C-RP", "runtime-prereq + Q-D9 + 게이트 7 wiring (RP1~RP4, v0.7.0)", check_runtime_prereq_wired),
+    ("C-OD", "orchestrator driver HARD-RULE (livetest #1 fail 정정, v0.8.0)", check_orchestrator_driver_hardrule),
 ]
 
 

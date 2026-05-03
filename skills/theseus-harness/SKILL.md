@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.7.7
+version: 0.8.0
 description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
@@ -8,6 +8,10 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 ## 한 줄 요약
 **한 요구를 처음 의도한 타이틀로 끝까지 부를 자격을 만들기 위한 재귀 코딩 하네스.** 당신(메인 에이전트)은 *지휘자* — 직접 작업하지 않고, 페이즈마다 정해진 서브 에이전트를 띄워 산출물을 받아 다음 페이즈로 넘긴다. 본 SKILL.md 는 *인덱스* 다 — 상세는 컨벤션·페이즈·에이전트 문서로 위임.
+
+## HARD-RULE — 첫 동작 강제 (sprint-03-a, v0.8.0)
+
+본 스킬 호출 직후 *첫 동작* = `timing/start.json` + 페이즈 00 (G3+) 또는 01 (G2) 산출물 작성. 직접 코드 작성 / `_tools/build_artifacts.py` 등 retroactive frontmatter generator / out-of-sandbox harness emulator / 페이즈 04 생략은 모두 위반 → `intent/00-violation.md` 기록 + 정상 재시작. 발견: livetest 시나리오 #1 (2026-05-03), `.tests/results/01-url-shortener-g2/finding.md`. 풀 룰: [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) §HARD-RULE.
 
 ## 가장 먼저 읽을 것 (모두 라이트하게 분리됨)
 

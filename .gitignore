@@ -14,4 +14,6 @@ dist/
 bun.lockb
 .omc/
 .claude/settings.local.json
+# livetest 산출물 (.tests/) — 시나리오 출하 결과는 git 추적 안 함
+.tests/
 
