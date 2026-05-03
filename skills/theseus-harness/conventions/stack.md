@@ -18,10 +18,10 @@
 
 ## 동작 (페이즈 04 의 일부)
 
-① clarifier 가 위 표를 토대로 점검 질의를 생성.
-② 지휘자가 각 항목을 [`interview.md`](interview.md) 컨벤션으로 사용자에게 묻는다 — 1회 1질의, 객관식 5개 이하.
-③ 사용자 답을 받으면 *로컬* 에서 `go version`, `bun --version` 등을 실행해 실제 설치 상태 확인.
-④ 권고 버전 미만이면 사용자에게 업데이트 권고 — 자율 권한이 사전 부여됐으면 업데이트 명령 실행, 아니면 사용자 ack.
+1- clarifier 가 위 표를 토대로 점검 질의를 생성.
+2- 지휘자가 각 항목을 [`interview.md`](interview.md) 컨벤션으로 사용자에게 묻는다 — 1회 1질의, 객관식 5개 이하.
+3- 사용자 답을 받으면 *로컬* 에서 `go version`, `bun --version` 등을 실행해 실제 설치 상태 확인.
+4- 권고 버전 미만이면 사용자에게 업데이트 권고 — 자율 권한이 사전 부여됐으면 업데이트 명령 실행, 아니면 사용자 ack.
 
 ## 사용자 질의 형식 예
 
@@ -70,24 +70,24 @@
 
 ## 자율 업데이트 가드
 
-ⓐ **사용자 사전 동의 필요** — `intent/05-decisions.md` 또는 명시 응답.
-ⓑ **시스템-와이드 변경 금지** — 가능하면 사용자 홈 디렉터리(asdf/nvm/goenv) 안에서.
-ⓒ **롤백 명령 표기** — 업데이트 직후 어떻게 되돌릴지 한 줄로.
-ⓓ **운영 시스템에서는 절대 자율 업데이트 안 함** — 개발 환경 한정.
+a- **사용자 사전 동의 필요** — `intent/05-decisions.md` 또는 명시 응답.
+b- **시스템-와이드 변경 금지** — 가능하면 사용자 홈 디렉터리(asdf/nvm/goenv) 안에서.
+c- **롤백 명령 표기** — 업데이트 직후 어떻게 되돌릴지 한 줄로.
+d- **운영 시스템에서는 절대 자율 업데이트 안 함** — 개발 환경 한정.
 
 ## 빌드/실행 스크립트 (생성 시점)
 
 페이즈 08 (구현) 의 implementer 가 다음을 모듈마다 + 루트에 생성:
 
-ⓐ `scripts/build.sh` (linux/mac) + `scripts/build.bat` (windows) — 빌드 명령.
-ⓑ `scripts/test.sh` + `scripts/test.bat` — 테스트 매트릭스 실행.
-ⓒ `scripts/dev.sh` + `scripts/dev.bat` — 로컬 개발 모드.
-ⓓ `scripts/setup.sh` + `scripts/setup.bat` — 의존 설치 + 환경 점검.
-ⓔ 모든 스크립트 첫 줄에 `set -euo pipefail` (sh) 또는 `setlocal enabledelayedexpansion` (bat).
+a- `scripts/build.sh` (linux/mac) + `scripts/build.bat` (windows) — 빌드 명령.
+b- `scripts/test.sh` + `scripts/test.bat` — 테스트 매트릭스 실행.
+c- `scripts/dev.sh` + `scripts/dev.bat` — 로컬 개발 모드.
+d- `scripts/setup.sh` + `scripts/setup.bat` — 의존 설치 + 환경 점검.
+e- 모든 스크립트 첫 줄에 `set -euo pipefail` (sh) 또는 `setlocal enabledelayedexpansion` (bat).
 
 ## 설정 파일 정책
 
-ⓐ **TOML 기본** — `config.toml` (실값), `config.toml.example` (예시).
-ⓑ **`.env`** 는 비밀값. `.env.example` 항상 동반.
-ⓒ `.gitignore` 에 `config.toml`, `.env` 추가.
-ⓓ `config.toml.example`, `.env.example` 은 커밋 — 누락 시 페이즈 09 fail.
+a- **TOML 기본** — `config.toml` (실값), `config.toml.example` (예시).
+b- **`.env`** 는 비밀값. `.env.example` 항상 동반.
+c- `.gitignore` 에 `config.toml`, `.env` 추가.
+d- `config.toml.example`, `.env.example` 은 커밋 — 누락 시 페이즈 09 fail.

@@ -112,19 +112,19 @@ def determine_resume_point(state: dict, artifacts: list[Artifact]) -> ResumePlan
 
 페이즈 진행 중 *완료 전 중단* 으로 인한 미완성 파일 처리:
 
-ⓐ **frontmatter 없음** = 부분 산출물 — 자동 폐기 (다음 시도가 새로 작성).
-ⓑ **frontmatter 있으나 fingerprint null** = compute 실패 — 자동 폐기 + 재생성.
-ⓒ **frontmatter + fingerprint 정상** = 완전 산출물 — 보존, 다음 페이즈 진입.
-ⓓ **state.json 의 pending_artifacts 와 디스크 불일치** = 신뢰성 의심 — `repair_required`, 사용자 ack 필요 (인터뷰 후 인터럽트 0 의 *유일한 추가 예외*).
+a- **frontmatter 없음** = 부분 산출물 — 자동 폐기 (다음 시도가 새로 작성).
+b- **frontmatter 있으나 fingerprint null** = compute 실패 — 자동 폐기 + 재생성.
+c- **frontmatter + fingerprint 정상** = 완전 산출물 — 보존, 다음 페이즈 진입.
+d- **state.json 의 pending_artifacts 와 디스크 불일치** = 신뢰성 의심 — `repair_required`, 사용자 ack 필요 (인터뷰 후 인터럽트 0 의 *유일한 추가 예외*).
 
 폐기 전 *백업* — `discarded/<timestamp>/<원경로>` 로 이동 (학습 자산 보존, [`checkpoints.md`](checkpoints.md) 의 손녀 패턴과 동일).
 
 ## resume 가능 시점
 
-ⓐ **페이즈 경계** — 가장 안전. 마지막 페이즈가 완료된 직후의 frontmatter 가 기준.
-ⓑ **체크포인트 경계** — 페이즈 내부의 안정 시점 (`checkpoints/<phase>/<sequence>/state.json`).
-ⓒ **서브에이전트 머지 후** — `impl/T-020/sub/.../merge.md` 작성 직후 (한 부모 모듈의 모든 자식 머지 완료).
-ⓓ **멀티버스 verdict 후** — `multiverse/<branch>/verdict.md` 작성 직후.
+a- **페이즈 경계** — 가장 안전. 마지막 페이즈가 완료된 직후의 frontmatter 가 기준.
+b- **체크포인트 경계** — 페이즈 내부의 안정 시점 (`checkpoints/<phase>/<sequence>/state.json`).
+c- **서브에이전트 머지 후** — `impl/T-020/sub/.../merge.md` 작성 직후 (한 부모 모듈의 모든 자식 머지 완료).
+d- **멀티버스 verdict 후** — `multiverse/<branch>/verdict.md` 작성 직후.
 
 ## 페이즈 *진행 중* resume 의 한계
 
@@ -134,7 +134,7 @@ def determine_resume_point(state: dict, artifacts: list[Artifact]) -> ResumePlan
 
 [`../templates/webview/`](../templates/webview/) 의 webview 가 다음 추가:
 
-ⓐ **신규 탭 `Progress`** — state.json 라이브 폴링 (5초 간격) + SSE 업데이트:
+a- **신규 탭 `Progress`** — state.json 라이브 폴링 (5초 간격) + SSE 업데이트:
    - 현재 페이즈 / 우주 / 모듈 / 깊이
    - 경과 시간 (timing 헤더)
    - 완료 vs 예상 (14 / 47 같은 진행률)
@@ -142,12 +142,12 @@ def determine_resume_point(state: dict, artifacts: list[Artifact]) -> ResumePlan
    - pending artifacts 리스트
    - 자율 결정 라이브 보고 ([`autonomy.md`](autonomy.md) Q-D6 매핑)
 
-ⓑ **신규 컴포넌트 `InterruptControl`** — 사용자가 *외부에서* 정지하고 싶을 때:
+b- **신규 컴포넌트 `InterruptControl`** — 사용자가 *외부에서* 정지하고 싶을 때:
    - "안전 정지" 버튼 — 현재 페이즈 종료 후 state.json 에 `status: "user_paused"` 박고 종료
    - "긴급 정지" 버튼 — 즉시 SIGTERM, 부분 산출물 가능
    - 정지 후 "재개" 버튼 — `resume.py determine` 결과 표시 + 사용자 확인
 
-ⓒ **신규 탭 `Resume`** — 중단된 작업의 재개:
+c- **신규 탭 `Resume`** — 중단된 작업의 재개:
    - 마지막 state.json 표시
    - resume_hint 명령 (복사 가능)
    - 무결성 체크 결과 (`index_builder.py verify` 결과)
@@ -157,11 +157,11 @@ def determine_resume_point(state: dict, artifacts: list[Artifact]) -> ResumePlan
 
 본 하네스가 14 페이즈 + 무한 스프린트 루프 + 멀티버스 + 서브에이전트로 *몇 시간~며칠* 걸리는 시나리오에서:
 
-ⓐ **초기 인터뷰** (~10 분) — 사용자가 페이즈 04 의 Q-G1/Q-D1~D7 + NFR + 스택 답.
-ⓑ **자율 진행** — 사용자는 자기 일을 함. webview 를 *언제든* 열어 진행 상태 관찰 가능.
-ⓒ **장시간 후 확인** — 몇 시간 뒤 webview 열기 → Progress 탭에서 "지금 페이즈 10 sprint 5 / 점수 0.987" 한눈에.
-ⓓ **중단 필요 시** — InterruptControl 의 "안전 정지" → state.json 에 정지 사유 기록 → 다음에 `resume.py next` 로 재개.
-ⓔ **장기 미관찰 후** — 1 일 뒤 webview 확인 → 핸드오프 완료 또는 자율 한계 도달로 정지 (interrupt_reason: `autonomy_threshold_reached`).
+a- **초기 인터뷰** (~10 분) — 사용자가 페이즈 04 의 Q-G1/Q-D1~D7 + NFR + 스택 답.
+b- **자율 진행** — 사용자는 자기 일을 함. webview 를 *언제든* 열어 진행 상태 관찰 가능.
+c- **장시간 후 확인** — 몇 시간 뒤 webview 열기 → Progress 탭에서 "지금 페이즈 10 sprint 5 / 점수 0.987" 한눈에.
+d- **중단 필요 시** — InterruptControl 의 "안전 정지" → state.json 에 정지 사유 기록 → 다음에 `resume.py next` 로 재개.
+e- **장기 미관찰 후** — 1 일 뒤 webview 확인 → 핸드오프 완료 또는 자율 한계 도달로 정지 (interrupt_reason: `autonomy_threshold_reached`).
 
 ## resume 검증 절차
 
@@ -187,25 +187,25 @@ python scoring/resume.py validate --root .ShipofTheseus/<프로젝트>/
 
 ## state.json 자동 갱신 의무
 
-ⓐ **페이즈 시작/종료 시** — 모든 분해 스킬의 진입/종료 hook.
-ⓑ **체크포인트 작성 시** — checkpoint.py 가 state.json 도 함께 갱신.
-ⓒ **멀티버스 분기/머지 시** — current_universe 갱신.
-ⓓ **서브에이전트 디스패치/머지 시** — current_module / current_sub_depth.
-ⓔ **자율 결정 시** — 라이브 보고와 함께 state.json `autonomy_decisions` 누적 (Q-D6 답 따라).
+a- **페이즈 시작/종료 시** — 모든 분해 스킬의 진입/종료 hook.
+b- **체크포인트 작성 시** — checkpoint.py 가 state.json 도 함께 갱신.
+c- **멀티버스 분기/머지 시** — current_universe 갱신.
+d- **서브에이전트 디스패치/머지 시** — current_module / current_sub_depth.
+e- **자율 결정 시** — 라이브 보고와 함께 state.json `autonomy_decisions` 누적 (Q-D6 답 따라).
 
 자동 갱신 누락은 `self_lint C31` 가 검출 — 마지막 산출물 timestamp ≤ state.json `last_updated_at`.
 
 ## resume 가 안 되는 케이스 (정직)
 
-ⓐ **`.ShipofTheseus/` 디렉터리 자체가 삭제됨** — 데이터가 곧 자산. 데이터 손실 = resume 불가.
-ⓑ **frontmatter 체인이 여러 곳에서 깨짐** — 부분 회복 가능하나 사용자 결정 필요.
-ⓒ **외부 코드 (resume 시점의 git HEAD) 가 stale** — `git status` 검증 + 사용자 ack.
-ⓓ **임계 미달 종료된 작업** — resume 가능하나 *왜 임계 미달이었는지* 의 lesson_pack 이 누적되어 같은 정체 반복 위험. 사용자가 의도/스택을 변경한 뒤 재개하는 게 합리.
+a- **`.ShipofTheseus/` 디렉터리 자체가 삭제됨** — 데이터가 곧 자산. 데이터 손실 = resume 불가.
+b- **frontmatter 체인이 여러 곳에서 깨짐** — 부분 회복 가능하나 사용자 결정 필요.
+c- **외부 코드 (resume 시점의 git HEAD) 가 stale** — `git status` 검증 + 사용자 ack.
+d- **임계 미달 종료된 작업** — resume 가능하나 *왜 임계 미달이었는지* 의 lesson_pack 이 누적되어 같은 정체 반복 위험. 사용자가 의도/스택을 변경한 뒤 재개하는 게 합리.
 
 ## 안티 패턴
 
-ⓐ **state.json 수동 편집** — `resume.py` 의 input. 손으로 고치면 무결성 깨짐.
-ⓑ **부분 산출물 보존** — frontmatter 없는 미완성 파일을 그대로 두면 다음 시도가 valid 하다고 착각. 자동 폐기 default.
-ⓒ **resume 없이 처음부터 재실행** — 본 하네스 비용 폭발. 항상 `resume.py next` 먼저.
-ⓓ **무결성 깨짐 무시 강제 resume** — `validate` 실패는 *수리 필요* 신호. 무시하면 데이터 corruption 누적.
-ⓔ **FE Progress 탭 없는 webview** — 사용자가 진행 중 상태 못 봄. *완료 산출물만* 보여주는 webview 는 본 컨벤션 위반.
+a- **state.json 수동 편집** — `resume.py` 의 input. 손으로 고치면 무결성 깨짐.
+b- **부분 산출물 보존** — frontmatter 없는 미완성 파일을 그대로 두면 다음 시도가 valid 하다고 착각. 자동 폐기 default.
+c- **resume 없이 처음부터 재실행** — 본 하네스 비용 폭발. 항상 `resume.py next` 먼저.
+d- **무결성 깨짐 무시 강제 resume** — `validate` 실패는 *수리 필요* 신호. 무시하면 데이터 corruption 누적.
+e- **FE Progress 탭 없는 webview** — 사용자가 진행 중 상태 못 봄. *완료 산출물만* 보여주는 webview 는 본 컨벤션 위반.

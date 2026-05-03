@@ -19,22 +19,22 @@
 ## 산출물
 `sprints/NN/bisect.md` — [`../conventions/timing.md`](../conventions/timing.md) 헤더 + 다음:
 
-ⓐ **무엇이 떨어졌나** — 어떤 sub-score 가 얼마만큼.
-ⓑ **무엇이 변했나** — diff 요약 (파일·함수·라인).
-ⓒ **주 가설** — 함수/라인 수준에서 단일 후보. 실패 테스트 1개 이상이 이 가설과 정합.
-ⓓ **반대 가설** — 최소 1개, 왜 덜 가능성 있는지.
-ⓔ **권고** — 다음 셋 중 하나:
-  ① `revert <commit-or-file>` — 외과적 되돌림.
-  ② `re-architect <module>` — *깊은 품질 위반* 의 증상 → 그 모듈에 대해 페이즈 06 부터 재실행. 트리거 차원: DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적 6 종 중 *어느 하나라도* 깊이 임계 초과면 충분.
-  ③ `accept` — 회귀가 실은 의도된 변화 (제약이 중간에 바뀜) — 사용자가 명시 확인.
+a- **무엇이 떨어졌나** — 어떤 sub-score 가 얼마만큼.
+b- **무엇이 변했나** — diff 요약 (파일·함수·라인).
+c- **주 가설** — 함수/라인 수준에서 단일 후보. 실패 테스트 1개 이상이 이 가설과 정합.
+d- **반대 가설** — 최소 1개, 왜 덜 가능성 있는지.
+e- **권고** — 다음 셋 중 하나:
+  1- `revert <commit-or-file>` — 외과적 되돌림.
+  2- `re-architect <module>` — *깊은 품질 위반* 의 증상 → 그 모듈에 대해 페이즈 06 부터 재실행. 트리거 차원: DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적 6 종 중 *어느 하나라도* 깊이 임계 초과면 충분.
+  3- `accept` — 회귀가 실은 의도된 변화 (제약이 중간에 바뀜) — 사용자가 명시 확인.
 
 ## 지휘자 후속 — 사전 위임 자동 적용 (인터럽트 없음)
 
 페이즈 04 의 [`../conventions/autonomy.md`](../conventions/autonomy.md) Q-D1 답에 따라 회귀 권고를 *자동 적용*. 인터뷰 종료 후 사용자에게 추가 ack 호출 절대 없음:
 
-ⓐ Q-D1 답 = `1` (모든 권고 자동) → bisect 의 `recommendation` (revert / re-architect / accept) 그대로 자동 적용.
-ⓑ Q-D1 답 = `2` (revert 만 자동) → recommendation 이 revert 면 자동, 그 외는 lessons.md 의 정체로 판정해 Q-D4 매핑.
-ⓒ Q-D1 답 = `3` (모두 정지) → 본 스킬 의도 위반 — 페이즈 04 에서 비권장으로 표시, 그래도 사용자가 선택했다면 정지.
+a- Q-D1 답 = `1` (모든 권고 자동) → bisect 의 `recommendation` (revert / re-architect / accept) 그대로 자동 적용.
+b- Q-D1 답 = `2` (revert 만 자동) → recommendation 이 revert 면 자동, 그 외는 lessons.md 의 정체로 판정해 Q-D4 매핑.
+c- Q-D1 답 = `3` (모두 정지) → 본 스킬 의도 위반 — 페이즈 04 에서 비권장으로 표시, 그래도 사용자가 선택했다면 정지.
 
 [`../conventions/timing.md`](../conventions/timing.md) 의 라이브 보고에 한 줄:
 
@@ -48,9 +48,9 @@
 
 ## 성공 기준
 
-ⓐ `bisect.md` 가 특정 commit/파일/함수를 명시.
-ⓑ 사전 위임 Q-D1 답이 자동 적용되어 다음 스프린트 진행 — 인터럽트 없음 ([`../conventions/autonomy.md`](../conventions/autonomy.md) 의 인터뷰 후 인터럽트 0 룰).
-ⓒ **깊은 품질 위반 점검 6 차원** (DIP/코드 오류 누적/스펙 누락/NFR 미달/의도 표류/정체) 모두 명시 (발견 없음도 명시). 어느 차원이라도 임계 초과면 `re-architect` 가 권고.
+a- `bisect.md` 가 특정 commit/파일/함수를 명시.
+b- 사전 위임 Q-D1 답이 자동 적용되어 다음 스프린트 진행 — 인터럽트 없음 ([`../conventions/autonomy.md`](../conventions/autonomy.md) 의 인터뷰 후 인터럽트 0 룰).
+c- **깊은 품질 위반 점검 6 차원** (DIP/코드 오류 누적/스펙 누락/NFR 미달/의도 표류/정체) 모두 명시 (발견 없음도 명시). 어느 차원이라도 임계 초과면 `re-architect` 가 권고.
 
 ## 흔한 실패
 

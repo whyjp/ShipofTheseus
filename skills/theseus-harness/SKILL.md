@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
 version: 0.2.2
-description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지 (G1 자동 거부).
+description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
 # 테세우스 하네스
@@ -11,26 +11,26 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 ## 가장 먼저 읽을 것 (모두 라이트하게 분리됨)
 
-ⓐ 설계 철학과 도자기 장인 비유: [`../../PHILOSOPHY.md`](../../PHILOSOPHY.md)
-ⓑ 사용자 질의 형식: [`conventions/interview.md`](conventions/interview.md)
-ⓒ 산출물 헤더 시간 표기: [`conventions/timing.md`](conventions/timing.md)
-ⓓ 마인드맵 → 유즈케이스 → 시퀀스 진화: [`conventions/diagrams.md`](conventions/diagrams.md)
-ⓔ 언어/컴파일러/패키지 매니저 점검: [`conventions/stack.md`](conventions/stack.md)
-ⓕ 빌드 스크립트 / TOML / docs/ / 폐기 / 병렬·메모리: [`conventions/build-and-config.md`](conventions/build-and-config.md)
-ⓖ **단계별 의존성 분리·핑거프린트·재진입**: [`conventions/contracts.md`](conventions/contracts.md)
-ⓗ **에이전트 역할별 모델(Opus/Sonnet/Haiku) 매핑**: [`conventions/models.md`](conventions/models.md)
-ⓘ **2버전 이상 격리 병렬 경쟁 + 머지 (LLM 비결정성 극복)**: [`conventions/competition.md`](conventions/competition.md)
-ⓙ **무한 재귀 정체 극복 — 레슨 전달 + 강제 재작성**: [`conventions/lessons.md`](conventions/lessons.md)
-ⓚ **도메인별 NFR 자동 제안 카탈로그 (성능·가용성·보안·운영·FE)**: [`conventions/spec-catalog.md`](conventions/spec-catalog.md)
-ⓛ **리소스 기반 임계 + 천정 자동 조정 (로컬/K8s/EC2 프로파일)**: [`conventions/resources.md`](conventions/resources.md)
-ⓜ **체크포인트 + 멀티버스 (닥터 스트레인지 메타포)**: [`conventions/checkpoints.md`](conventions/checkpoints.md)
-ⓝ **테스트 목적 보호 — 불변 조건 + Phase V 측정 유효성**: [`conventions/test-invariants.md`](conventions/test-invariants.md)
-ⓞ **Da Capo 루프 (AIDE × LLM Wiki 결합 — 자기 강화 회귀)**: [`conventions/dacapo.md`](conventions/dacapo.md)
-ⓟ **파편화 우선 설계 (단일 헤비 스킬 금지)**: [`conventions/fragmentation.md`](conventions/fragmentation.md)
-ⓠ **그레이드 시스템 — 작업 복잡도별 허들 (G1 호출 거부 ~ G5 빡빡 모드)**: [`conventions/grades.md`](conventions/grades.md)
-ⓡ **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
-ⓢ **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: [`conventions/indexing.md`](conventions/indexing.md)
-ⓣ **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
+a- 설계 철학과 도자기 장인 비유: [`../../PHILOSOPHY.md`](../../PHILOSOPHY.md)
+b- 사용자 질의 형식: [`conventions/interview.md`](conventions/interview.md)
+c- 산출물 헤더 시간 표기: [`conventions/timing.md`](conventions/timing.md)
+d- 마인드맵 → 유즈케이스 → 시퀀스 진화: [`conventions/diagrams.md`](conventions/diagrams.md)
+e- 언어/컴파일러/패키지 매니저 점검: [`conventions/stack.md`](conventions/stack.md)
+f- 빌드 스크립트 / TOML / docs/ / 폐기 / 병렬·메모리: [`conventions/build-and-config.md`](conventions/build-and-config.md)
+g- **단계별 의존성 분리·핑거프린트·재진입**: [`conventions/contracts.md`](conventions/contracts.md)
+h- **에이전트 역할별 모델(Opus/Sonnet/Haiku) 매핑**: [`conventions/models.md`](conventions/models.md)
+i- **2버전 이상 격리 병렬 경쟁 + 머지 (LLM 비결정성 극복)**: [`conventions/competition.md`](conventions/competition.md)
+j- **무한 재귀 정체 극복 — 레슨 전달 + 강제 재작성**: [`conventions/lessons.md`](conventions/lessons.md)
+k- **도메인별 NFR 자동 제안 카탈로그 (성능·가용성·보안·운영·FE)**: [`conventions/spec-catalog.md`](conventions/spec-catalog.md)
+l- **리소스 기반 임계 + 천정 자동 조정 (로컬/K8s/EC2 프로파일)**: [`conventions/resources.md`](conventions/resources.md)
+m- **체크포인트 + 멀티버스 (닥터 스트레인지 메타포)**: [`conventions/checkpoints.md`](conventions/checkpoints.md)
+n- **테스트 목적 보호 — 불변 조건 + Phase V 측정 유효성**: [`conventions/test-invariants.md`](conventions/test-invariants.md)
+o- **Da Capo 루프 (AIDE × LLM Wiki 결합 — 자기 강화 회귀)**: [`conventions/dacapo.md`](conventions/dacapo.md)
+p- **파편화 우선 설계 (단일 헤비 스킬 금지)**: [`conventions/fragmentation.md`](conventions/fragmentation.md)
+q- **그레이드 시스템 — 작업 복잡도별 내부 모듈레이션 (G1 TBD ~ G5 빡빡 모드)**: [`conventions/grades.md`](conventions/grades.md)
+r- **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
+s- **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: [`conventions/indexing.md`](conventions/indexing.md)
+t- **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
 ## 산출물 트리
 
 ```
@@ -73,10 +73,10 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 진입 규칙:
 
-ⓐ 호출 시 사용자가 `.ShipofTheseus/<프로젝트>/` 디렉터리(또는 그 일부 산출물 묶음) 를 가리키면, 지휘자는 그 산출물들의 frontmatter 를 검사한다.
-ⓑ 각 산출물은 `skill_name == "theseus-harness"`, `skill_version` 호환 (semver: 같은 major), `fingerprint` 일관성을 가져야 한다.
-ⓒ 가장 늦은 페이즈 N 의 산출물이 valid 면, 페이즈 N+1 부터 진입.
-ⓓ 호환되지 않는 버전이거나 핑거프린트가 깨진 산출물은 거부 — 사용자에게 객관식 질의 (재실행 / 무시 / 디버깅).
+a- 호출 시 사용자가 `.ShipofTheseus/<프로젝트>/` 디렉터리(또는 그 일부 산출물 묶음) 를 가리키면, 지휘자는 그 산출물들의 frontmatter 를 검사한다.
+b- 각 산출물은 `skill_name == "theseus-harness"`, `skill_version` 호환 (semver: 같은 major), `fingerprint` 일관성을 가져야 한다.
+c- 가장 늦은 페이즈 N 의 산출물이 valid 면, 페이즈 N+1 부터 진입.
+d- 호환되지 않는 버전이거나 핑거프린트가 깨진 산출물은 거부 — 사용자에게 객관식 질의 (재실행 / 무시 / 디버깅).
 
 자세한 frontmatter 스키마와 핑거프린트 계산은 [`conventions/contracts.md`](conventions/contracts.md).
 
@@ -84,18 +84,18 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 본 하네스는 자기 자신에게 자기의 평가 절차를 적용한다 — 우로보로스의 진짜 발현. 자세한 절차는 [`../../BOOTSTRAP.md`](../../BOOTSTRAP.md). 핵심:
 
-ⓐ **임계 0.99999** — 자기 표준은 사용자 프로젝트 임계 0.999 보다 한 단계 빡빡.
-ⓑ **`scoring/self_lint.py`** — 35 체크로 컨벤션·교차 링크·버전·frontmatter·경쟁 룰·인코딩 비호환 가드 객관 측정. `--score` 모드.
-ⓒ **`scripts/self-check.{sh,bat}`** — lint + 16 pytest + sample + self_score + 핑거프린트 체인 일괄.
-ⓓ **회차 누적** — `.ShipofTheseus/theseus-self/sprints/NN/` 점수 시계열로 본 하네스가 더 단단해지는지 객관 측정.
+a- **임계 0.99999** — 자기 표준은 사용자 프로젝트 임계 0.999 보다 한 단계 빡빡.
+b- **`scoring/self_lint.py`** — 35 체크로 컨벤션·교차 링크·버전·frontmatter·경쟁 룰·인코딩 비호환 가드 객관 측정. `--score` 모드.
+c- **`scripts/self-check.{sh,bat}`** — lint + 16 pytest + sample + self_score + 핑거프린트 체인 일괄.
+d- **회차 누적** — `.ShipofTheseus/theseus-self/sprints/NN/` 점수 시계열로 본 하네스가 더 단단해지는지 객관 측정.
 
 ## 자율성 우선 (초기 인터뷰 후 사용자 액션 최소화)
 
 [`conventions/autonomy.md`](conventions/autonomy.md) 에 따라 **페이즈 04 (초기 사용자 질의) 이후에는 가능한 모든 결정을 에이전트가 자율 진행**. 사용자 액션이 *반드시* 필요한 곳은 다음 셋만:
 
-ⓐ 페이즈 04 의 객관식 답 (필수, 침묵 = 정지).
-ⓑ 회귀 바이섹트의 권고 ack (사용자가 사전 위임 시 자율).
-ⓒ 자율 시스템 업데이트 (스택 점검) — 사전 동의 시 자율.
+a- 페이즈 04 의 객관식 답 (필수, 침묵 = 정지).
+b- 회귀 바이섹트의 권고 ack (사용자가 사전 위임 시 자율).
+c- 자율 시스템 업데이트 (스택 점검) — 사전 동의 시 자율.
 
 그 외는 모두 자율, 모든 결정이 산출물에 frontmatter + 본문으로 기록되어 사후 리뷰 가능. 경쟁(competition) 의 머지/우승자 결정도 [`conventions/competition.md`](conventions/competition.md) 의 자동 resolve 알고리즘으로 점수 차 + 차원별 sub-score 비교로 자율 결정.
 
@@ -111,37 +111,37 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 본 하네스의 SoC/DIP 철학을 본 하네스 자신에게 적용한 결과:
 
-ⓐ `skills/theseus-orchestrator/` — 인덱스 + 14 페이즈 진행 제어만.
-ⓑ `skills/theseus-intent/` — 페이즈 00–05 (명명, 의도, 리뷰, 재이해, 질의, 비평).
-ⓒ `skills/theseus-plan/` — 페이즈 06–07 (계획, 재이해).
-ⓓ `skills/theseus-implement/` — 페이즈 08 (구현).
-ⓔ `skills/theseus-quality/` — 페이즈 09 + 채점 rubric.
-ⓕ `skills/theseus-sprint/` — 페이즈 10–11 (스프린트 루프, 회귀 바이섹트).
-ⓖ `skills/theseus-webview/` — 페이즈 12.
-ⓗ `skills/theseus-handoff/` — 페이즈 13.
-ⓘ 공유 자원: 저장소 루트의 `core/{conventions,scoring,templates,agents}` — 모든 스킬이 상대 경로 참조.
+a- `skills/theseus-orchestrator/` — 인덱스 + 14 페이즈 진행 제어만.
+b- `skills/theseus-intent/` — 페이즈 00–05 (명명, 의도, 리뷰, 재이해, 질의, 비평).
+c- `skills/theseus-plan/` — 페이즈 06–07 (계획, 재이해).
+d- `skills/theseus-implement/` — 페이즈 08 (구현).
+e- `skills/theseus-quality/` — 페이즈 09 + 채점 rubric.
+f- `skills/theseus-sprint/` — 페이즈 10–11 (스프린트 루프, 회귀 바이섹트).
+g- `skills/theseus-webview/` — 페이즈 12.
+h- `skills/theseus-handoff/` — 페이즈 13.
+i- 공유 자원: 저장소 루트의 `core/{conventions,scoring,templates,agents}` — 모든 스킬이 상대 경로 참조.
 
 각 스킬이 [`conventions/contracts.md`](conventions/contracts.md) 의 frontmatter 계약만 지키면 독립 호출·교체 가능. 본 PR 은 분해 *가능성을 만든* 단계 — 실제 분해는 후속.
 
-<!-- HARD-RULE: 본 절의 ⓐ~ⓛ 항목은 본 하네스 호출 시 *예외 없이* 적용. 위반은 즉시 게이트 fail. -->
+<!-- HARD-RULE: 본 절의 a-~l- 항목은 본 하네스 호출 시 *예외 없이* 적용. 위반은 즉시 게이트 fail. -->
 
 ## 하드 룰 (요약)
 
-ⓐ 페이즈 생략 불가. 불필요해 보여도 실행하고 "발견 없음" 으로 기록.
-ⓑ 페이즈 03/07 은 *fresh* `Agent` 호출 — 컨텍스트 공유 금지.
-ⓒ 페이즈 04 는 *유일한* 사용자 인터럽트 지점. 사전 위임 카탈로그(Q-D1~D6) 답 누락 시 페이즈 05 진입 불가. **페이즈 05~13 동안 사용자 인터럽트 절대 없음** — 모든 ack 는 페이즈 04 답 자동 매핑 ([`conventions/autonomy.md`](conventions/autonomy.md)).
-ⓓ **임계 점수 0.999** — 임계 미달 시 무한 스프린트, 캡 없음. 회귀 시에만 사용자 ack.
-ⓔ **DIP 가 SOLID 중 최우선** — 위반 단독 hard cap 0.6.
-ⓔ-1 **깨고 다시 빚기 트리거 = 모든 깊은 품질 위반** — DIP 위반만이 아니라 ① 코드 오류 누적 ② 기획-구현 갭 (스펙 누락) ③ 성능/NFR 미달 ④ 의도 표류 ⑤ 정체/회귀 누적 중 *어느 차원* 이라도 깊이가 임계를 넘으면 부분 수정 금지 → 페이즈 06 부터 통째 재빚기 (`re-architect`). 차원별 트리거·매핑은 [`conventions/lessons.md`](conventions/lessons.md) + [`conventions/checkpoints.md`](conventions/checkpoints.md).
-ⓕ 백엔드 기본 Go, FE 기본 bun + React + TS.
-ⓖ 모든 모듈은 sh + bat 스크립트, TOML 설정 + `.example` 동행, `docs/` 폴더.
-ⓗ 수정·리팩터링 시 기존 코드 폐기 우선. 라이브 전 중간 산출물 보존.
-ⓘ 병렬 서브에이전트 환영 — RAM 50% / 동시 E2E 2개 / 같은 파일 직렬 가드.
-ⓘ-1 페이즈 06/08/11 에서 명확한 단일안이 보이지 않으면 **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자 또는 머지 ([`conventions/competition.md`](conventions/competition.md)). LLM 비결정성을 분기·경쟁·합병으로 정공법 극복. **resolve 는 점수 차/차원별 분석으로 자율 결정** — 사용자 ack 는 비즈니스 함의가 명시된 경쟁만.
-ⓘ-2 **자율성 우선** — 페이즈 04 (초기 사용자 질의) 이외의 모든 결정은 자율 진행 ([`conventions/autonomy.md`](conventions/autonomy.md)). 모든 자율 결정은 산출물 frontmatter + 본문 기록 → 사후 리뷰 가능.
-ⓙ 사용자 진행 보고에 누적 경과 시간 1줄 항상 포함.
-ⓚ **모든 산출물에 frontmatter (skill_name, skill_version, phase, project_id, fingerprint, prev_fingerprint, produced_at) 필수.**
-ⓛ 페이즈 산출 파일을 지휘자가 손대지 않는다 — 잘못되면 페이즈 재실행.
+a- 페이즈 생략 불가. 불필요해 보여도 실행하고 "발견 없음" 으로 기록.
+b- 페이즈 03/07 은 *fresh* `Agent` 호출 — 컨텍스트 공유 금지.
+c- 페이즈 04 는 *유일한* 사용자 인터럽트 지점. 사전 위임 카탈로그(Q-D1~D6) 답 누락 시 페이즈 05 진입 불가. **페이즈 05~13 동안 사용자 인터럽트 절대 없음** — 모든 ack 는 페이즈 04 답 자동 매핑 ([`conventions/autonomy.md`](conventions/autonomy.md)).
+d- **임계 점수 0.999** — 임계 미달 시 무한 스프린트, 캡 없음. 회귀 시에만 사용자 ack.
+e- **DIP 가 SOLID 중 최우선** — 위반 단독 hard cap 0.6.
+e-1 **깨고 다시 빚기 트리거 = 모든 깊은 품질 위반** — DIP 위반만이 아니라 1- 코드 오류 누적 2- 기획-구현 갭 (스펙 누락) 3- 성능/NFR 미달 4- 의도 표류 5- 정체/회귀 누적 중 *어느 차원* 이라도 깊이가 임계를 넘으면 부분 수정 금지 → 페이즈 06 부터 통째 재빚기 (`re-architect`). 차원별 트리거·매핑은 [`conventions/lessons.md`](conventions/lessons.md) + [`conventions/checkpoints.md`](conventions/checkpoints.md).
+f- 백엔드 기본 Go, FE 기본 bun + React + TS.
+g- 모든 모듈은 sh + bat 스크립트, TOML 설정 + `.example` 동행, `docs/` 폴더.
+h- 수정·리팩터링 시 기존 코드 폐기 우선. 라이브 전 중간 산출물 보존.
+i- 병렬 서브에이전트 환영 — RAM 50% / 동시 E2E 2개 / 같은 파일 직렬 가드.
+i-1 페이즈 06/08/11 에서 명확한 단일안이 보이지 않으면 **2~3 후보 격리 병렬 경쟁** → 점수 비교 → 우승자 또는 머지 ([`conventions/competition.md`](conventions/competition.md)). LLM 비결정성을 분기·경쟁·합병으로 정공법 극복. **resolve 는 점수 차/차원별 분석으로 자율 결정** — 사용자 ack 는 비즈니스 함의가 명시된 경쟁만.
+i-2 **자율성 우선** — 페이즈 04 (초기 사용자 질의) 이외의 모든 결정은 자율 진행 ([`conventions/autonomy.md`](conventions/autonomy.md)). 모든 자율 결정은 산출물 frontmatter + 본문 기록 → 사후 리뷰 가능.
+j- 사용자 진행 보고에 누적 경과 시간 1줄 항상 포함.
+k- **모든 산출물에 frontmatter (skill_name, skill_version, phase, project_id, fingerprint, prev_fingerprint, produced_at) 필수.**
+l- 페이즈 산출 파일을 지휘자가 손대지 않는다 — 잘못되면 페이즈 재실행.
 
 ## 호출 그레이드 — [`conventions/grades.md`](conventions/grades.md) 의 허들
 
@@ -149,7 +149,7 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 
 | Grade | 호출 시점 | 본 하네스 동작 |
 | ----- | -------- | ------------ |
-| **Grade 1** Trivial | 한 줄 수정 / 리네임 / typo / throwaway | **호출 거부, 단순 응답 권고** |
+| **Grade 1** Trivial | 한 줄 수정 / 리네임 / typo / throwaway | **TBD (v0.5.x 후속 정의)** |
 | **Grade 2** Simple | 단일 모듈 작은 기능 (~100 LOC) | 미니 (5 페이즈 / 7 컨벤션 / 임계 0.95) |
 | **Grade 3** Standard | 다중 모듈 단일 사이드 | 12 페이즈 / 12 컨벤션 / 임계 0.97 |
 | **Grade 4** Complex | FE+BE / 새 도메인 / SOLID 리팩터 (default) | 14 페이즈 풀 / 26 컨벤션 / 임계 0.999 |

@@ -9,7 +9,7 @@ grades.md 의 알고리즘을 코드로 구현. 페이즈 01 의 intent-extracto
 사용:
     grade_assess.py --request "작업 원문" [--repo-root <path>]
 
-stdout JSON, exit 0 = G2~G5 (진행 가능), 1 = G1 (호출 거부 권고).
+stdout JSON, exit 0 항상 (그레이드는 내부 모듈레이션만, 진행/거부에 관여 X).
 """
 from __future__ import annotations
 
@@ -58,7 +58,7 @@ def assess_grade(request_text: str) -> dict:
 
     if any(t in request_text or t in lower for t in TRIGGERS_G1):
         matched = [t for t in TRIGGERS_G1 if t in request_text or t in lower]
-        candidates.append((1, f"Trivial 키워드 — 호출 거부 권고: {matched[:3]}"))
+        candidates.append((1, f"Trivial 키워드 — TBD (v0.5.x 후속): {matched[:3]}"))
 
     if not candidates:
         candidates.append((3, "키워드 매칭 없음 — Standard default"))
@@ -67,17 +67,15 @@ def assess_grade(request_text: str) -> dict:
     candidates.sort(key=lambda x: -x[0])
     primary_grade, primary_reason = candidates[0]
 
-    # G1 만 단독 후보면 호출 거부 권고
-    g1_only = len(candidates) == 1 and primary_grade == 1
-    # G1 과 다른 후보가 같이 있으면 다른 후보 채택 (G2 이상)
-    if g1_only:
-        recommendation = "reject_harness_call"
-    elif primary_grade == 5:
+    # 그레이드는 내부 모듈레이션만 — 진행/거부 게이트 없음 (v0.5.0 sprint-02-a)
+    if primary_grade == 5:
         recommendation = "tight_mode"
     elif primary_grade >= 3:
         recommendation = "full_or_standard"
-    else:
+    elif primary_grade == 2:
         recommendation = "mini_harness"
+    else:  # G1 — TBD, v0.5.x 후속에서 정의. 현재는 진행 가능 placeholder.
+        recommendation = "mini_harness_tbd"
 
     return {
         "primary_grade": primary_grade,
@@ -86,7 +84,7 @@ def assess_grade(request_text: str) -> dict:
         "require_user_confirmation": True,   # 항상 페이즈 04 Q-G1 으로 확정
         "recommendation": recommendation,
         "user_question_options": [
-            "1. Grade 1 (Trivial) — 본 하네스 호출 거부",
+            "1. Grade 1 (Trivial) — TBD (v0.5.x 후속, 현재 진행 가능)",
             "2. Grade 2 (Simple) — 5 페이즈 / 7 컨벤션 / 임계 0.95",
             "3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / 임계 0.97",
             f"4. Grade 4 (Complex) — 14 페이즈 풀 / 26 컨벤션 / 임계 0.999{' (자동 추정)' if primary_grade == 4 else ''}",
@@ -96,13 +94,16 @@ def assess_grade(request_text: str) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows cp949 회피 — non-ASCII (em dash 등) 안전 출력
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     p = argparse.ArgumentParser()
     p.add_argument("--request", required=True, help="작업 원문 텍스트")
     args = p.parse_args(argv)
     out = assess_grade(args.request)
     json.dump(out, sys.stdout, indent=2, ensure_ascii=False)
     sys.stdout.write("\n")
-    return 1 if out["recommendation"] == "reject_harness_call" else 0
+    return 0  # 그레이드는 내부 모듈레이션만, 진행/거부에 관여 X
 
 
 if __name__ == "__main__":

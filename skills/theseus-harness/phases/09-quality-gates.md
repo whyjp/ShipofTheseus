@@ -25,9 +25,9 @@
 ## 산출물
 `quality/09-quality-gate.md`:
 
-ⓐ 게이트마다 `pass` | `fail` + 증거 (`경로:라인` 인용).
-ⓑ fail 마다 remediation TODO (`T-NNN-fix`) — 계획에 폴드백.
-ⓒ 종합 판정: `proceed` | `remediate-then-proceed` | `halt`.
+a- 게이트마다 `pass` | `fail` + 증거 (`경로:라인` 인용).
+b- fail 마다 remediation TODO (`T-NNN-fix`) — 계획에 폴드백.
+c- 종합 판정: `proceed` | `remediate-then-proceed` | `halt`.
 
 ## 헤더 시간 정보 검증
 
@@ -35,9 +35,9 @@
 
 ## 지휘자 후속
 
-ⓐ `proceed` → 페이즈 10.
-ⓑ `remediate-then-proceed` → 페이즈 08 을 fix-TODO 만 재실행 → 페이즈 09 재실행.
-ⓒ `halt` → 사용자 질의. 구조적 문제.
+a- `proceed` → 페이즈 10.
+b- `remediate-then-proceed` → 페이즈 08 을 fix-TODO 만 재실행 → 페이즈 09 재실행.
+c- `halt` → 사용자 질의. 구조적 문제.
 
 ## 흔한 실패
 

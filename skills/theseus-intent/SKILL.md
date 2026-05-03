@@ -68,9 +68,9 @@ G2 (질의 일부) / G3+ (전체)
 
 ## 본 stub 의 안전 보장
 
-ⓐ **콘텐츠 복제 금지** — 본 SKILL.md 는 위임 + 인터페이스만. 룰 본문은 `../theseus-harness/conventions/` 와 `../theseus-harness/phases/` 의 단일 source.
-ⓑ **연동 테스트** — `../theseus-harness/scoring/test_skill_handoff.py` 가 본 스킬 산출물의 frontmatter 가 다음 스킬 입력으로 valid 한지 검증.
-ⓒ **self_lint C28** — 본 stub 의 cross-link 무결성.
+a- **콘텐츠 복제 금지** — 본 SKILL.md 는 위임 + 인터페이스만. 룰 본문은 `../theseus-harness/conventions/` 와 `../theseus-harness/phases/` 의 단일 source.
+b- **연동 테스트** — `../theseus-harness/scoring/test_skill_handoff.py` 가 본 스킬 산출물의 frontmatter 가 다음 스킬 입력으로 valid 한지 검증.
+c- **self_lint C28** — 본 stub 의 cross-link 무결성.
 
 ## 향후 풀 분해 (v0.4.0 후보)
 

@@ -9,13 +9,13 @@
 
 ## 동작 (지휘자)
 
-① 시간 기록 시작 — `.ShipofTheseus/__pending/timing/start.json` 임시 작성 (프로젝트명 확정 후 실제 폴더로 이동).
-② `Agent(subagent_type="general-purpose")` 에 [`../agents/project-namer.md`](../agents/project-namer.md) 프롬프트로 호출 — 후보 3~5 개 생성.
-③ 후보 산출물을 받아 `.ShipofTheseus/__pending/naming/00-candidates.md` 로 기록.
-④ `AskUserQuestion` 으로 사용자에게 객관식 질의 — [`../conventions/interview.md`](../conventions/interview.md) 컨벤션 준수.
-⑤ 사용자 답을 받아 프로젝트명 확정. 폴더를 `.ShipofTheseus/<프로젝트명>/` 으로 rename, `start.json` 이동.
-⑥ 같은 절차로 1차 모듈명 (be4fe / fe / 그 외) 확정 — 단, 모듈명은 한 번에 묶어 최대 5개 제시.
-⑦ 최종 결과를 `naming/00-naming.md` 로 작성.
+1- 시간 기록 시작 — `.ShipofTheseus/__pending/timing/start.json` 임시 작성 (프로젝트명 확정 후 실제 폴더로 이동).
+2- `Agent(subagent_type="general-purpose")` 에 [`../agents/project-namer.md`](../agents/project-namer.md) 프롬프트로 호출 — 후보 3~5 개 생성.
+3- 후보 산출물을 받아 `.ShipofTheseus/__pending/naming/00-candidates.md` 로 기록.
+4- `AskUserQuestion` 으로 사용자에게 객관식 질의 — [`../conventions/interview.md`](../conventions/interview.md) 컨벤션 준수.
+5- 사용자 답을 받아 프로젝트명 확정. 폴더를 `.ShipofTheseus/<프로젝트명>/` 으로 rename, `start.json` 이동.
+6- 같은 절차로 1차 모듈명 (be4fe / fe / 그 외) 확정 — 단, 모듈명은 한 번에 묶어 최대 5개 제시.
+7- 최종 결과를 `naming/00-naming.md` 로 작성.
 
 ## 산출물
 
@@ -24,9 +24,9 @@
 
 ## 성공 기준
 
-ⓐ 프로젝트명·모듈명 모두 사용자 명시 선택.
-ⓑ 두 이름 다 폴더/패키지/도메인 식별자로 즉시 사용 가능 (소문자·하이픈/언더스코어, 영숫자).
-ⓒ 후보 검토에 "충돌 검사" 칸이 비어 있지 않다 — 빈 칸은 검토 누락.
+a- 프로젝트명·모듈명 모두 사용자 명시 선택.
+b- 두 이름 다 폴더/패키지/도메인 식별자로 즉시 사용 가능 (소문자·하이픈/언더스코어, 영숫자).
+c- 후보 검토에 "충돌 검사" 칸이 비어 있지 않다 — 빈 칸은 검토 누락.
 
 ## 사용자 질의 형식 예 (잘못 만들면 reject)
 
@@ -44,8 +44,8 @@
 
 ## 흔한 실패
 
-ⓐ 사용자 답 없이 추정으로 진행 — 이후 모든 폴더가 잘못된 이름. 절대 금지.
-ⓑ 모듈명을 페이즈 06 (계획) 까지 미루기 — 그러면 06 이전 산출물 폴더가 임시명으로 떠돈다. 여기서 끝낸다.
-ⓒ "shipoftheseus" 같이 저장소명을 그대로 차용 — 의도 명확성 부족. 새 단어로.
+a- 사용자 답 없이 추정으로 진행 — 이후 모든 폴더가 잘못된 이름. 절대 금지.
+b- 모듈명을 페이즈 06 (계획) 까지 미루기 — 그러면 06 이전 산출물 폴더가 임시명으로 떠돈다. 여기서 끝낸다.
+c- "shipoftheseus" 같이 저장소명을 그대로 차용 — 의도 명확성 부족. 새 단어로.
 
 > **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.

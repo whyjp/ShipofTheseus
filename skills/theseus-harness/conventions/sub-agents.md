@@ -5,20 +5,20 @@
 
 ## 출처
 
-ⓐ AIDE Tree Search (Weco AI, 2024) — Draft/Improve/Debug/Memory 4 오퍼레이터를 *모든 깊이* 의 노드에 적용 가능.
-ⓑ [`competition.md`](competition.md) §"멀티버스" — 페이즈 단위 N 우주 격리 병렬을 *모듈 단위* 로 일반화.
-ⓒ [`checkpoints.md`](checkpoints.md) — 체크포인트 회귀를 *하위 모듈 단위* 로도 누적.
-ⓓ 사용자 요청 (2026.05) — "모듈 단위 분해가 필요한 경우 모듈에서 하위 모듈을 개별 서브에이전트로 호출".
+a- AIDE Tree Search (Weco AI, 2024) — Draft/Improve/Debug/Memory 4 오퍼레이터를 *모든 깊이* 의 노드에 적용 가능.
+b- [`competition.md`](competition.md) §"멀티버스" — 페이즈 단위 N 우주 격리 병렬을 *모듈 단위* 로 일반화.
+c- [`checkpoints.md`](checkpoints.md) — 체크포인트 회귀를 *하위 모듈 단위* 로도 누적.
+d- 사용자 요청 (2026.05) — "모듈 단위 분해가 필요한 경우 모듈에서 하위 모듈을 개별 서브에이전트로 호출".
 
 ## 트리거 조건
 
 부모 에이전트(implementer / planner / critic 등) 가 다음 신호 중 하나를 만나면 *자동* 으로 하위 디스패치:
 
-ⓐ **LOC 임계 초과** — 한 TODO 의 추정 LOC > 200 (또는 그레이드별 임계). 한 호출에 끝낼 수 없는 단위.
-ⓑ **복합 책임 신호** — TODO 제목에 "and" / 두 동사 / 두 명사 / 콜론 후 다른 영역 ([`fragmentation.md`](fragmentation.md) §6 의 SRP 위반).
-ⓒ **다중 스택** — Go + TypeScript + SQL 처럼 한 모듈이 여러 언어 동시.
-ⓓ **명시 분해 요구** — 계획 단계에서 planner 가 `subdivide: true` 마크 박음.
-ⓔ **회귀 누적** — 같은 모듈에 회귀 3 회 누적 → checkpoints.md 의 rewrite 가 *하위 분해* 로 전환.
+a- **LOC 임계 초과** — 한 TODO 의 추정 LOC > 200 (또는 그레이드별 임계). 한 호출에 끝낼 수 없는 단위.
+b- **복합 책임 신호** — TODO 제목에 "and" / 두 동사 / 두 명사 / 콜론 후 다른 영역 ([`fragmentation.md`](fragmentation.md) §6 의 SRP 위반).
+c- **다중 스택** — Go + TypeScript + SQL 처럼 한 모듈이 여러 언어 동시.
+d- **명시 분해 요구** — 계획 단계에서 planner 가 `subdivide: true` 마크 박음.
+e- **회귀 누적** — 같은 모듈에 회귀 3 회 누적 → checkpoints.md 의 rewrite 가 *하위 분해* 로 전환.
 
 ## 분해 깊이 한도
 
@@ -102,8 +102,8 @@ def dispatch_sub_agents(
 
 ## 머지 룰
 
-ⓐ **parallel / sequential** — 모든 하위 결과 그대로 채택. 하위 모듈 간 코드 충돌 (같은 파일 수정) 발생 시 [`build-and-config.md`](build-and-config.md) §7 의 *같은 파일 직렬* 가드 위반 — 부모 fail.
-ⓑ **competition** — `checkpoint.py` 의 `select_universe` 알고리즘 적용. DIP 위반 우주 즉시 탈락 → 점수 비교 → Δ ≥ 0.05 SELECT / Δ < 0.02 AUTO_MERGE.
+a- **parallel / sequential** — 모든 하위 결과 그대로 채택. 하위 모듈 간 코드 충돌 (같은 파일 수정) 발생 시 [`build-and-config.md`](build-and-config.md) §7 의 *같은 파일 직렬* 가드 위반 — 부모 fail.
+b- **competition** — `checkpoint.py` 의 `select_universe` 알고리즘 적용. DIP 위반 우주 즉시 탈락 → 점수 비교 → Δ ≥ 0.05 SELECT / Δ < 0.02 AUTO_MERGE.
 
 ## 산출물 — 하위 모듈 체인
 
@@ -140,7 +140,7 @@ def dispatch_sub_agents(
 
 | Grade | 하위 디스패치 | 깊이 한도 | 모드 default |
 | ----- | -----------: | --------: | ----------- |
-| 1 Trivial | n/a (호출 거부) | n/a | n/a |
+| 1 Trivial | TBD (v0.5.x 후속) | TBD | TBD |
 | 2 Simple | ❌ (단순 모듈은 분해 안 함) | 0 | n/a |
 | 3 Standard | ⚠️ LOC > 300 일 때만 | 1 | sequential |
 | 4 Complex | ✅ 기본 활성화 | 2 | parallel |
@@ -148,14 +148,14 @@ def dispatch_sub_agents(
 
 ## 비용 가드
 
-ⓐ 한 부모 모듈에 동시 디스패치 하위 수 ≤ 5 (`build-and-config.md` 의 RAM 50% 가드 + 동시 LLM 호출 비용).
-ⓑ Opus 사용 모듈의 하위 디스패치는 동시 3 개까지 — 비용 상한.
-ⓒ 깊이 2 + 동시 5 = 최대 25 서브에이전트 동시 — 임계 초과 시 자동 sequential 모드 전환.
+a- 한 부모 모듈에 동시 디스패치 하위 수 ≤ 5 (`build-and-config.md` 의 RAM 50% 가드 + 동시 LLM 호출 비용).
+b- Opus 사용 모듈의 하위 디스패치는 동시 3 개까지 — 비용 상한.
+c- 깊이 2 + 동시 5 = 최대 25 서브에이전트 동시 — 임계 초과 시 자동 sequential 모드 전환.
 
 ## 안티 패턴
 
-ⓐ **모든 모듈을 무조건 분해** — 본 컨벤션은 *복합 모듈* 에만 적용. SRP 만족 단순 모듈 분해는 비용 폭발.
-ⓑ **하위 모듈 간 lesson_pack 미주입** — 형제가 같은 실수 반복. parallel 시 직전 형제 결과를, sequential 시 누적 lesson 을 *반드시* 주입.
-ⓒ **머지 사유 미기록** — `merge.md` 가 없으면 사후 회수 시 *왜 이 결과가* 채택됐는지 모름.
-ⓓ **재귀 깊이 3 시도** — 본 컨벤션 핵심 위반. 깊이 3 신호는 *의도 자체* 가 너무 큰 신호 → 페이즈 06 자동 회귀.
-ⓔ **단독 호출 시 input 계약 검증 생략** — 본 컨벤션의 *단독 호출* 매트릭스를 무시하면 valid 안 한 산출물로 진입 → 핸드오프 깨짐.
+a- **모든 모듈을 무조건 분해** — 본 컨벤션은 *복합 모듈* 에만 적용. SRP 만족 단순 모듈 분해는 비용 폭발.
+b- **하위 모듈 간 lesson_pack 미주입** — 형제가 같은 실수 반복. parallel 시 직전 형제 결과를, sequential 시 누적 lesson 을 *반드시* 주입.
+c- **머지 사유 미기록** — `merge.md` 가 없으면 사후 회수 시 *왜 이 결과가* 채택됐는지 모름.
+d- **재귀 깊이 3 시도** — 본 컨벤션 핵심 위반. 깊이 3 신호는 *의도 자체* 가 너무 큰 신호 → 페이즈 06 자동 회귀.
+e- **단독 호출 시 input 계약 검증 생략** — 본 컨벤션의 *단독 호출* 매트릭스를 무시하면 valid 안 한 산출물로 진입 → 핸드오프 깨짐.
