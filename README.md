@@ -58,6 +58,23 @@
 
 페이즈별 활성 그레이드 + 컨벤션은 [`conventions/grades.md`](skills/theseus-harness/conventions/grades.md) 의 매트릭스. 22 컨벤션 + 14 에이전트 + 채점기는 모두 `theseus-harness/` 단일 source.
 
+## 책임 범위 (Scope)
+
+| 본 하네스 책임 | 외부 프로젝트 repo 책임 |
+|---|---|
+| ✅ 의도 추출 + Q-D9 인터뷰 + Q-D 사전 위임 | — |
+| ✅ 모듈 분할 / 파일 배치 / 폴더 배치 / 모듈간 인터페이스 설계 | — |
+| ✅ TODO DAG + 7 게이트 + sprint 점수 시계열 + 회귀 바이섹트 *권고* | — |
+| ✅ AIDE 플랜 트리 + 토너먼트 + 멀티버스 | — |
+| ✅ webview 자동 생성 (페이즈 12) | — |
+| ✅ 핸드오프 산출 (one-liner + 점수 + 자율 결정 이력) | — |
+| — | ✅ 실 코드 작성 (`internal/...`, `src/...` 등) |
+| — | ✅ 실 빌드 (`go build`, `bun build`) + 테스트 실행 |
+| — | ✅ 실 부팅 + healthz 검증 (실 env / 실 DB) |
+| — | ✅ 실 회귀 검출 (commit-by-commit 바이섹트) |
+
+본 하네스의 산출물 = *설계 + 가이드 문서*. 실 코드 동작 검증은 외부 프로젝트 repo 의 CI/CD 가 담당.
+
 ## 수록 스킬 (2 개, v0.9.0)
 
 | 스킬 | 역할 | 가이드 |
