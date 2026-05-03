@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.6.1
+version: 0.7.0
 description: theseus-harness 의 14 페이즈를 8 분해 스킬로 순차 위임. frontmatter 자동 핸드오프, 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단독 단순 작업에는 사용 금지 — grade-assess 로 먼저 확인.
 ---
 
