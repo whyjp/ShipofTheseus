@@ -1,13 +1,13 @@
 # 그레이드 시스템 — 작업 복잡도별 허들 구조
 
 ## 한 줄 요약
-**14 페이즈 + 26 컨벤션 풀세트는 *복잡 작업* 의 비용을 정당화하지만, *단순 작업* 에는 over-engineering.** 본 하네스 호출 직후 그레이드를 자동 추정 + 사용자 객관식 확정해 그레이드별 페이즈/컨벤션을 활성화한다. 단순 답이 정해진 로직은 본 하네스 호출 거부 — 단순 응답 권고.
+**14 페이즈 + 26 컨벤션 풀세트는 *복잡 작업* 의 비용을 정당화하지만, *단순 작업* 에는 over-engineering.** 본 하네스 호출 직후 그레이드를 자동 추정 + 사용자 객관식 확정해 그레이드별 페이즈/컨벤션을 활성화한다. **그레이드는 본 하네스의 내부 동작 (복잡도 / 페이즈 수 / 컨벤션 / 임계 / 멀티버스 / 모델 라우팅) 만 모듈레이션. 진행/거부에는 관여하지 않는다.**
 
 ## 5 그레이드
 
 | Grade | 별칭 | 작업 예 | 페이즈 | 컨벤션 | 멀티버스 | 임계 |
 | ----- | ---- | ------ | ------ | -----: | -------- | ---: |
-| **1** | Trivial | 한 줄 수정, 리네임, 기계적 리팩터, throwaway | **호출 거부** | 0 | X | n/a |
+| **1** | Trivial | 한 줄 수정, 리네임, 기계적 리팩터, throwaway | **TBD (v0.5.x 후속)** | 0 | X | TBD |
 | **2** | Simple | 단일 모듈 작은 기능 (~100 LOC), 명확한 스펙 | 01+04+06+08+09 (5) | 7 (interview/timing/contracts/models/build-and-config/lessons/fragmentation) | X | 0.95 |
 | **3** | Standard | 다중 모듈 단일 사이드 (BE only or FE only), 도메인 정착 | 00-09 + 10(3 sprint cap) + 13 (12) | 12 (Grade 2 + diagrams/stack/spec-catalog/resources/checkpoints) | X | 0.97 |
 | **4** | Complex | FE+BE / 새 도메인 / SOLID 경계 리팩터 (현재 default) | 14 풀 | 26 (전부) | 옵션 (Q-D7=1 시) | 0.999 |
@@ -15,11 +15,11 @@
 
 ### 빡빡 모드 (Grade 5 추가 가드)
 
-ⓐ DIP cap 0.6 → 0.4 (위반 시 더 큰 패널티).
-ⓑ 회귀 임계 0.05 → 0.02 (작은 회귀도 즉시 페이즈 11 트리거).
-ⓒ Q-D 답 옵션 1 (모두 자동) → 옵션 2 (회귀만 자동) 강제.
-ⓓ 멀티버스 우주 수 2~3 → 3~5.
-ⓔ 페이즈 11 회귀 바이섹트 권고는 항상 사람 ack (이 한 케이스만 인터럽트 0 룰의 예외).
+a- DIP cap 0.6 → 0.4 (위반 시 더 큰 패널티).
+b- 회귀 임계 0.05 → 0.02 (작은 회귀도 즉시 페이즈 11 트리거).
+c- Q-D 답 옵션 1 (모두 자동) → 옵션 2 (회귀만 자동) 강제.
+d- 멀티버스 우주 수 2~3 → 3~5.
+e- 페이즈 11 회귀 바이섹트 권고는 항상 사람 ack (이 한 케이스만 인터럽트 0 룰의 예외).
 
 ## 그레이드 자동 추정 알고리즘 (`scoring/grade_assess.py`)
 
@@ -49,7 +49,7 @@ def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
     if any(t in text_lower or t in request_text for t in triggers_g2):
         candidates.append((2, "단일 모듈 작은 기능 키워드"))
     if any(t in text_lower or t in request_text for t in triggers_g1):
-        candidates.append((1, "Trivial 키워드 — 호출 거부 권고"))
+        candidates.append((1, "Trivial 키워드 — TBD (v0.5.x 후속)"))
 
     if not candidates:
         candidates.append((3, "키워드 매칭 없음 — Standard default"))
@@ -74,7 +74,7 @@ def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
 페이즈 수와 컨벤션 적용 범위가 그레이드에 따라 달라집니다.
 
 선택지:
-1. Grade 1 (Trivial) — 본 하네스 호출 거부, 단순 응답 권고
+1. Grade 1 (Trivial) — TBD (v0.5.x 후속, 현재는 진행 가능)
 2. Grade 2 (Simple) — 5 페이즈 / 7 컨벤션 / 임계 0.95
 3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / 임계 0.97
 4. Grade 4 (Complex) — 14 페이즈 풀 / 26 컨벤션 / 임계 0.999 (자동 추정)
@@ -83,23 +83,11 @@ def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
 
 답을 `intent/04-grade.md` 에 기록. 이후 모든 페이즈가 본 답을 입력으로.
 
-## 호출 거부 룰 (Grade 1 자동 처리)
+## 그레이드의 역할 — 내부 모듈레이션만
 
-ⓐ 자동 추정이 Grade 1 이고 사용자 답도 Grade 1 → 본 하네스 종료, 다음 메시지 출력:
-
-```
-이 작업은 본 하네스 호출이 over-engineering 입니다. 단순 응답 권고:
-
-[원본 작업에 대한 직접 답변 또는 다음 단계 안내]
-
-본 하네스가 가치 있을 시점:
-- 다중 모듈 변경
-- FE+BE 양쪽 작업
-- 새 도메인 / SOLID 경계 리팩터
-- 결제/금융 등 mission critical
-```
-
-ⓑ 사용자가 Grade 1 자동 추정에 *Grade 2 이상* 으로 답하면 본 하네스 진행 (사용자가 명시 선택했으니 over-engineering 책임은 사용자).
+a- 그레이드는 *내부 동작 모듈레이션* 만 한다 — 페이즈 수, 컨벤션 적용, 임계, 멀티버스 분기 수, 모델 라우팅 (haiku/sonnet/opus).
+b- **진행/거부 결정에는 관여하지 않는다.** 본 하네스는 호출되면 *항상* 진행한다. G1 (Trivial) 도 진행 (단, v0.5.x 후속 PR 에서 G1 의 모듈레이션을 가장 가볍게 정의 예정).
+c- self_lint C-GS 룰: grade 단어가 entry/blocked/reject/거부/종료 와 결합된 표현 검출 시 fail.
 
 ## 그레이드별 컨벤션 적용 매트릭스
 
@@ -170,20 +158,20 @@ def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
 
 ## 안티 패턴
 
-ⓐ **Grade 판정 없이 풀 14 페이즈 진행** — 단순 작업에 over-engineering. 본 컨벤션 핵심 위반.
-ⓑ **Grade 1 사용자 답을 무시하고 진행** — 호출 거부가 권고지만, 사용자 명시 답을 무시하면 신뢰 잃음. 그대로 종료.
-ⓒ **자동 추정만 믿고 사용자 확정 생략** — Q-G1 은 *모든 그레이드 공통* 의무 질의. 자동 추정은 *후보* 일 뿐.
-ⓓ **그레이드 중간 변경** — 페이즈 04 답이 source of truth. 페이즈 05 이후 그레이드 변경은 페이즈 04 재진입 의미.
-ⓔ **빡빡 모드 (G5) 인데 Q-D 답이 옵션 1 (최대 자율)** — G5 는 보수적 옵션 강제. 페이즈 04 에서 자동 보정 + 사용자 알림.
+a- **Grade 판정 없이 풀 14 페이즈 진행** — 단순 작업에 over-engineering. 본 컨벤션 핵심 위반.
+b- **Grade 를 진행/거부 게이트로 사용** — 그레이드는 내부 모듈레이션만. G1 답이어도 진행한다.
+c- **자동 추정만 믿고 사용자 확정 생략** — Q-G1 은 *모든 그레이드 공통* 의무 질의. 자동 추정은 *후보* 일 뿐.
+d- **그레이드 중간 변경** — 페이즈 04 답이 source of truth. 페이즈 05 이후 그레이드 변경은 페이즈 04 재진입 의미.
+e- **빡빡 모드 (G5) 인데 Q-D 답이 옵션 1 (최대 자율)** — G5 는 보수적 옵션 강제. 페이즈 04 에서 자동 보정 + 사용자 알림.
 
 ## 자기 평가에서의 적용
 
 본 저장소 (`theseus-self`) 의 자기 평가 그레이드 = **Grade 5 (Mission Critical)** — 본 하네스 자체는 *다른 모든 프로젝트의 신뢰 담보 도구* 이므로 가장 빡빡한 표준 적용.
 
-ⓐ 임계 0.99999 (G5 표준).
-ⓑ 모든 26 컨벤션 적용.
-ⓒ 멀티버스 강제 (회차마다 분기 가능).
-ⓓ DIP cap 0.4 (현재 0.6 보다 빡빡).
-ⓔ 회귀 임계 0.02 (현재 0.05 보다 빡빡).
+a- 임계 0.99999 (G5 표준).
+b- 모든 26 컨벤션 적용.
+c- 멀티버스 강제 (회차마다 분기 가능).
+d- DIP cap 0.4 (현재 0.6 보다 빡빡).
+e- 회귀 임계 0.02 (현재 0.05 보다 빡빡).
 
 위 강화는 v0.3.0 의 BOOTSTRAP.md 갱신 후보.

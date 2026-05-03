@@ -20,16 +20,16 @@ def _run(request: str) -> tuple[int, dict]:
     return proc.returncode, json.loads(proc.stdout)
 
 
-def test_oneline_typo_routes_to_g1_reject():
+def test_oneline_typo_routes_to_g1_tbd():
     rc, out = _run("typo 수정")
-    assert rc == 1
+    assert rc == 0
     assert out["primary_grade"] == 1
-    assert out["recommendation"] == "reject_harness_call"
+    assert out["recommendation"] == "mini_harness_tbd"
 
 
 def test_rename_routes_to_g1():
     rc, out = _run("이 함수 이름 rename 좀 해줘")
-    assert rc == 1
+    assert rc == 0
     assert out["primary_grade"] == 1
 
 
@@ -85,3 +85,11 @@ def test_report_includes_all_candidates():
 def test_user_confirmation_always_required():
     _, out = _run("결제")
     assert out["require_user_confirmation"] is True
+
+
+def test_g1_no_longer_rejects_harness_call():
+    """v0.5.0 sprint-02-a — G1 도 진행. reject_harness_call recommendation 자체가 사라짐."""
+    rc, out = _run("typo 한 줄 수정")
+    assert rc == 0   # exit code 1 (거부) 더 이상 없음
+    assert out["recommendation"] != "reject_harness_call"
+    assert out["recommendation"] == "mini_harness_tbd"

@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
 version: 0.2.2
-description: theseus-harness 의 14 페이즈를 8 분해 스킬로 순차 위임. frontmatter 자동 핸드오프, 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단순 호출은 G1 자동 거부.
+description: theseus-harness 의 14 페이즈를 8 분해 스킬로 순차 위임. frontmatter 자동 핸드오프, 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단독 단순 작업에는 사용 금지 — grade-assess 로 먼저 확인.
 ---
 
 # theseus-orchestrator — 분해 스킬 진행 제어
@@ -79,25 +79,25 @@ def enter_skill(input_artifacts: list[Path]):
 
 각 분해 스킬도 valid frontmatter 입력만 있으면 재진입 가능 (단, harness 동반 필수):
 
-ⓐ "이미 의도 문서 있음 → 계획부터" → `theseus-plan` 단독 호출.
-ⓑ "구현 끝났음 → 게이트만" → `theseus-quality` 단독 호출.
-ⓒ "스프린트 점수 시계열 있음 → 회귀 바이섹트만" → `theseus-sprint` 단독 호출.
+a- "이미 의도 문서 있음 → 계획부터" → `theseus-plan` 단독 호출.
+b- "구현 끝났음 → 게이트만" → `theseus-quality` 단독 호출.
+c- "스프린트 점수 시계열 있음 → 회귀 바이섹트만" → `theseus-sprint` 단독 호출.
 
 [`../theseus-harness/conventions/contracts.md`](../theseus-harness/conventions/contracts.md) 의 단계 재진입 룰이 이를 보장.
 
 ## 본 분해의 안전 보장
 
-ⓐ **연동 테스트** — [`../theseus-harness/scoring/test_skill_handoff.py`](../theseus-harness/scoring/test_skill_handoff.py) 가 각 스킬 산출물의 frontmatter 가 다음 스킬 입력으로 valid 한지 검증.
-ⓑ **self_lint C28** — 8 stub 존재 + 단일 source of truth 룰 위반 검사 (콘텐츠가 stub 에 복제되지 않았는지).
-ⓒ **fingerprint 체인** — 각 스킬 산출물이 직전 스킬 산출물의 fingerprint 를 prev_fingerprint 로 가짐. 체인 끊기면 다음 스킬이 진입 거부.
+a- **연동 테스트** — [`../theseus-harness/scoring/test_skill_handoff.py`](../theseus-harness/scoring/test_skill_handoff.py) 가 각 스킬 산출물의 frontmatter 가 다음 스킬 입력으로 valid 한지 검증.
+b- **self_lint C28** — 8 stub 존재 + 단일 source of truth 룰 위반 검사 (콘텐츠가 stub 에 복제되지 않았는지).
+c- **fingerprint 체인** — 각 스킬 산출물이 직전 스킬 산출물의 fingerprint 를 prev_fingerprint 로 가짐. 체인 끊기면 다음 스킬이 진입 거부.
 
 ## 본 분해 진행 상황
 
-ⓐ ✅ 8 stub 디렉터리 + SKILL.md 신규.
-ⓑ ✅ 단일 source of truth 유지 (콘텐츠 = `../theseus-harness/`).
-ⓒ ✅ 연동 핸드오프 테스트 — `test_skill_handoff.py`.
-ⓓ ✅ self_lint C28 — 분해 무결성 검사.
-ⓔ ⏸ 콘텐츠 실제 분해 (각 stub 에 자기 페이즈/에이전트 콘텐츠 이동) — v0.4.0 후보.
+a- ✅ 8 stub 디렉터리 + SKILL.md 신규.
+b- ✅ 단일 source of truth 유지 (콘텐츠 = `../theseus-harness/`).
+c- ✅ 연동 핸드오프 테스트 — `test_skill_handoff.py`.
+d- ✅ self_lint C28 — 분해 무결성 검사.
+e- ⏸ 콘텐츠 실제 분해 (각 stub 에 자기 페이즈/에이전트 콘텐츠 이동) — v0.4.0 후보.
 
 ## 두 진입점의 관계 — orchestrator vs harness
 
