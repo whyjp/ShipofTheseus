@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 의도 추출부터 무한 스프린트 루프, 회귀 바이섹트, bun 기반 인터랙티브 웹뷰 자동 생성, 핸드오프까지. 9 스킬(orchestrator + 7 분해 + flagship harness)로 파편화.",
   "author": {
     "name": "whyjp",

@@ -70,7 +70,7 @@ a- `TestExpiredRejected` 의 fixture 가 변했을 수 있음.
 ## 권고
 `revert internal/auth/token.go:38-50` (만료 검사 블록).
 
-## 사용자 ack 후 흐름
+## 자율 적용 흐름 (Q-D1 답 따라 자동)
 - `revert`: surgical 되돌림 → 스프린트 NN 재실행.
 - `re-architect`: 인증 모듈을 페이즈 06 부터 재실행, DIP 강화된 포트 정의 우선.
 - `accept`: 의도된 회귀, 새 임계값으로 진행.

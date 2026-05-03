@@ -115,7 +115,7 @@ def determine_resume_point(state: dict, artifacts: list[Artifact]) -> ResumePlan
 a- **frontmatter 없음** = 부분 산출물 — 자동 폐기 (다음 시도가 새로 작성).
 b- **frontmatter 있으나 fingerprint null** = compute 실패 — 자동 폐기 + 재생성.
 c- **frontmatter + fingerprint 정상** = 완전 산출물 — 보존, 다음 페이즈 진입.
-d- **state.json 의 pending_artifacts 와 디스크 불일치** = 신뢰성 의심 — `repair_required`, 사용자 ack 필요 (인터뷰 후 인터럽트 0 의 *유일한 추가 예외*).
+d- **state.json 의 pending_artifacts 와 디스크 불일치** = 신뢰성 의심 — `repair_required`. 자율 처리: 부분 산출물 자동 폐기 → 마지막 valid 페이즈 다음 진입점 자동 결정 → handoff/13 사후 보고. ack 호출 없음.
 
 폐기 전 *백업* — `discarded/<timestamp>/<원경로>` 로 이동 (학습 자산 보존, [`checkpoints.md`](checkpoints.md) 의 손녀 패턴과 동일).
 
@@ -198,8 +198,8 @@ e- **자율 결정 시** — 라이브 보고와 함께 state.json `autonomy_dec
 ## resume 가 안 되는 케이스 (정직)
 
 a- **`.ShipofTheseus/` 디렉터리 자체가 삭제됨** — 데이터가 곧 자산. 데이터 손실 = resume 불가.
-b- **frontmatter 체인이 여러 곳에서 깨짐** — 부분 회복 가능하나 사용자 결정 필요.
-c- **외부 코드 (resume 시점의 git HEAD) 가 stale** — `git status` 검증 + 사용자 ack.
+b- **frontmatter 체인이 여러 곳에서 깨짐** — 부분 회복 자율 시도, 모두 fail 시 마지막 valid 진입점부터 fresh + handoff/13 사후 보고.
+c- **외부 코드 (resume 시점의 git HEAD) 가 stale** — `git status` 자동 검증 + handoff/13 보고.
 d- **임계 미달 종료된 작업** — resume 가능하나 *왜 임계 미달이었는지* 의 lesson_pack 이 누적되어 같은 정체 반복 위험. 사용자가 의도/스택을 변경한 뒤 재개하는 게 합리.
 
 ## 안티 패턴

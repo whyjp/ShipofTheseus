@@ -151,7 +151,7 @@ export function Progress() {
               )}
               {resumePlan.action === "repair_required" && (
                 <p style={{ color: "var(--bad)" }}>
-                  ⚠️ 무결성 깨짐 — 사용자 ack 필요 (인터럽트 0 의 유일 추가 예외).
+                  ⚠️ 무결성 깨짐 — 자율 repair 시도 중 (handoff/13 에 사후 보고).
                 </p>
               )}
             </>
