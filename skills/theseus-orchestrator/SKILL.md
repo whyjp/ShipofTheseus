@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.8.3
+version: 0.8.4
 description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 모든 그레이드 진행 (G1 trivial 도 mini_harness_tbd 모드로) — 그레이드는 내부 모듈레이션만 (페이즈 수, 컨벤션, 임계, 멀티버스, 모델 라우팅).
 ---
 
@@ -10,7 +10,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 
 **본 스킬은 사용자 entry point.** 콘텐츠 source 는 [`../theseus-harness/`](../theseus-harness/) 동반 필수. 호출되면 14 페이즈를 자율 driver 로 진행 — 페이즈 04 인터뷰 1회 후 인터럽트 0.
 
-## HARD-RULE — 본 스킬 호출 직후 첫 동작 (sprint-03-a, 위반 시 즉시 정지)
+## HARD-RULE — 본 스킬 호출 직후 첫 동작 (위반 시 즉시 정지)
 
 > 본 스킬이 호출되면 당신의 *첫 동작* 은 다음이다 — 다른 어떤 작업도 우선 안 됨:
 >
@@ -27,7 +27,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 >
 > **위반 시 처리** — 실행 에이전트 가 위 a-d 중 어느 하나라도 시작하면 본 스킬은 즉시 정지 + `intent/00-violation.md` 에 위반 사유 기록 + 페이즈 01 부터 정상 진행 재시작.
 >
-> **HARD-RULE 8 — 그레이드별 의무 산출물 (sprint-03-c, 모든 페이즈 완주 강제):**
+> **HARD-RULE 8 — 그레이드별 의무 산출물 (모든 페이즈 완주 강제):**
 >
 > 본 스킬 호출 후 종료 시 다음 산출물이 *모두* `.ShipofTheseus/<프로젝트>/` 에 박혀 있어야 함. 누락 = 본 스킬 미완. budget cap 도달 시에도 *최소한 frontmatter 만이라도* 박고 `(budget-truncated)` 표시.
 >
@@ -70,7 +70,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 1. grade_assess.py 자동 추정 (사용자 원문)
 2. 페이즈 04 의 Q-G1 객관식 → 사용자 그레이드 확정
 3. 그레이드별 매트릭스 활성 페이즈만 진행 (모든 그레이드 진행 — 그레이드는 *내부 모듈레이션만*):
-   - Grade 1 (Trivial): mini_harness_tbd 모드 — 최소 페이즈 (v0.5.x 후속에서 모듈레이션 정의)
+   - Grade 1 (Trivial): mini_harness_tbd 모드 — 최소 페이즈 (모듈레이션 정의 진행 중)
    - Grade 2 (Simple):  intent + plan + implement + quality + handoff (5 페이즈)
    - Grade 3 (Standard): naming + intent + plan-tree + implement + quality + sprint(3 cap) + handoff (12 페이즈)
    - Grade 4 (Complex): 14 페이즈 풀 (default)
@@ -91,25 +91,8 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 
 페이즈 04 외 인터럽트 절대 없음. 모든 자율 결정은 산출물 frontmatter + `intent/04-autonomy.md` 의 Q-D1 ~ Q-D9 답에 기록되어 사후 회수 가능. 보안 가드 (실 secret 의 git 커밋 감지) 만 *유일한* 인터럽트 추가 예외 — [`../theseus-harness/conventions/runtime-prereq.md`](../theseus-harness/conventions/runtime-prereq.md).
 
-## 발견 배경 (livetest fail #1, 2026-05-03)
-
-본 HARD-RULE 은 livetest 시나리오 #1 (G2 url-shortener) 의 fail 분석에서 도출. 실행 에이전트 가 본 스킬을 호출 *없이* 직접 Go 구현 + retroactive `_tools/build_artifacts.py` 작성으로 우회. 페이즈 산출물 0 → verify 5 체크 중 4 fail. 본 룰이 정정 (sprint-03-a). 추가로 sprint-03-b 에서 7 phase 분해 stub 제거 — pure delegation 이라 cost > benefit.
-
-상세 finding: `.tests/results/01-url-shortener-g2/finding.md` + `finding-v0.8.0.md`.
-
-## 본 분해의 안전 보장 (v0.8.1 simplified)
+## 안전 보장
 
 a- **HARD-RULE 양쪽** — 본 SKILL.md + [`../theseus-harness/SKILL.md`](../theseus-harness/SKILL.md) 모두 HARD-RULE 명시. self_lint C-OD 가 양쪽 keyword 일치 검증.
 b- **single source of truth** — 콘텐츠는 [`../theseus-harness/`](../theseus-harness/) 한 곳. self_lint C28 검증.
 c- **fingerprint 체인** — 각 페이즈 산출물이 직전 산출물의 fingerprint 를 prev_fingerprint 로. 체인 끊기면 다음 페이즈 진입 거부. [`../theseus-harness/conventions/contracts.md`](../theseus-harness/conventions/contracts.md).
-
-## 단순화 이력 (v0.8.1 sprint-03-b)
-
-이전 v0.8.x 까지 본 저장소에 9 SKILL.md (orchestrator + harness + 7 phase 분해 stub: theseus-{intent, plan, implement, quality, sprint, webview, handoff}) 존재. 7 phase stub 은 pure delegation 이라 unique content 0, cost > benefit:
-
-- 9 파일 skill_version 동기화 누락 위험 (v0.5.0 PR #9 사건)
-- 실행 에이전트 토큰 낭비 (8 stub bounce)
-- self_lint 5x 복잡도
-- livetest #1 fail 의 *간접 원인* (어느 스킬이 source 인가 혼동)
-
-sprint-03-b 에서 7 phase stub 제거. 2 SKILL.md (orchestrator + harness) 만 남음. 사용자 entry namespace 안정 (`/shipoftheseus:theseus-orchestrator` 동일).
