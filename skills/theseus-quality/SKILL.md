@@ -1,6 +1,6 @@
 ---
 name: theseus-quality
-version: 0.7.0
+version: 0.7.1
 description: 페이즈 09 분해 — 5 게이트 (DIP 우선, 단독 hard cap 0.6) + Phase V 측정 유효성 + frontmatter 검증. 단일 source 는 ../theseus-harness/.
 ---
 
