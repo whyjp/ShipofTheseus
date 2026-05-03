@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.8.5
+version: 0.8.6
 description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 모든 그레이드 진행 (G1 trivial 도 mini_harness_tbd 모드로) — 그레이드는 내부 모듈레이션만 (페이즈 수, 컨벤션, 임계, 멀티버스, 모델 라우팅).
 ---
 
@@ -42,6 +42,25 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 > **자발적 조기 종료 금지** — 실행 에이전트 가 페이즈 06 까지만 만들고 "끝" 으로 보고하면 본 스킬 위반. 위 표의 의무 산출물을 *모두* 박아야 정상 종료.
 >
 > **부분 채움 OK** — 본문이 한 줄이라도 frontmatter (skill_name / skill_version / phase / fingerprint / prev_fingerprint / created_at) 는 박혀야 함. 본문 truncated 시 마지막 줄에 `<!-- budget-truncated -->` 명시.
+>
+> **HARD-RULE 9 — 산출물 *내용* 의무 (설계 품질, 실 코드 외부 repo 책임):**
+>
+> 본 하네스의 책임은 *설계 + 구현 가이드 문서* 까지 — 실 코드 빌드/테스트/부팅은 외부 프로젝트 repo 책임. 다만 산출물 *내용* 이 다음을 만족해야 외부 repo 가 따라 구현 가능:
+>
+> a- **`plan/06-plan.md` 의무 본문**:
+>    - 모듈 분할 + 파일 배치 + 폴더 배치 (디렉터리 트리 또는 파일 경로 ≥ 5 개 명시)
+>    - 모듈간 인터페이스 — Mermaid 시퀀스 다이어그램 ≥ 1 개 *또는* `interface` / `port` / `type ... interface` 정의 ≥ 3 개
+>    - TODO DAG (T-001, T-002, ... ID + 의존 + 완료 조건)
+>
+> b- **`impl/08-impl-log.md` 의무 본문**:
+>    - 페이즈 06 의 TODO ID 매핑 — 각 TODO 별 항목 (T-001 / T-002 / ...) ≥ 3 개
+>    - 항목별 (a) 생성/수정 파일 경로, (b) 추가 테스트 명세, (c) 노출한 인터페이스 / 포트
+>    - 모듈명 명시 (internal/X, src/Y 등)
+>
+> c- **G3+ `plan/candidates/universe-N/06-plan.md` 의무 본문**:
+>    - 우주마다 *시드별* 의미 차이 — universe-1 (domain-first) vs universe-2 (adapter-first) 의 06-plan.md 가 동일 ≠ 형식적 분기. 의미 분기 ≥ 20 diff 라인.
+>
+> 위 산출물 본문이 의무를 미달해도 frontmatter 만 박혀있으면 본 스킬은 "정상 완주" 로 종료하나, *설계 품질 부족* 시 외부 repo 의 구현이 모호해짐. verify 의 i/j/k 체크가 본 의무 검증.
 
 ## 14 페이즈 진행
 
