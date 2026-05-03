@@ -55,3 +55,46 @@ c- **깊은 품질 위반 점검 6 차원** (DIP/코드 오류 누적/스펙 누
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## 회귀 원인 분류 (sprint-05-e Q1)
+
+회귀가 검출되면 본 페이즈 = git bisect 로 commit 식별 후 *원인을 4 분류로 자동 판별* + 권고 페이즈 결정.
+
+### 4 분류
+
+| 분류 | 신호 | 권고 페이즈 |
+|----|----|----|
+| **plan defect** | 페이즈 06 plan 의 TODO 자체가 잘못 정의 (data 와 충돌, 인터페이스 불일치, 알고리즘 모순) | 페이즈 06 재실행 (re-plan) — universe 재분기 가능 |
+| **impl defect** | plan TODO 정확하나 페이즈 08 impl 이 부분 누락 / 잘못 구현 / 분포 실수 | 페이즈 08-γ 재실행 (re-impl) — 같은 plan 유지, 코드만 수정 |
+| **data defect** | 입력 데이터 자체 변경/오류 (CSV 컬럼 변동, YAML 스키마 깨짐) | 페이즈 04 Q-D8 재검증 (re-data) + 데이터 수정 |
+| **external defect** | 외부 의존 변경 (라이브러리 버전, 환경 변수, OS) | 페이즈 09 게이트 7 재실행 (re-env) |
+
+### 분류 알고리즘
+
+```
+1. git bisect 로 회귀 시작 commit C 식별
+2. C 의 변경 파일 검사 :
+   - plan/ 변경 ? → plan defect 후보
+   - code/ 또는 mine_sim/ 변경 ? → impl defect 후보
+   - data/ (CSV/YAML) 변경 ? → data defect 후보
+   - requirements.txt / pyproject.toml / .env 변경 ? → external defect 후보
+3. 페이즈 06 plan 의 TODO DAG 와 페이즈 08 impl-log 의 TODO 매핑 비교 :
+   - TODO ID 가 plan 에 있으나 impl-log 에 없음 → impl defect (누락)
+   - impl-log 의 모듈명/인터페이스가 plan 의 인터페이스 시그니처와 불일치 → impl defect (drift)
+   - plan TODO 의 완료 조건이 *현실 데이터* 와 충돌 → plan defect
+4. 분류별 권고 페이즈에 자동 진입 (인터럽트 0, 페이즈 04 외 ack 없음)
+```
+
+### 산출물 — `bisect.md` 본문 강화
+
+```markdown
+## 회귀 원인 분류
+- 분류 : plan defect | impl defect | data defect | external defect
+- 신호 : (어떤 파일/어떤 TODO 에서 검출)
+- 권고 페이즈 : 06 | 08-γ | 04 Q-D8 | 09 게이트 7
+- 자동 진입 : true (인터럽트 0)
+```
+
+### sprint-05-c 회고 — 분류 부재 영향
+
+sprint-05-c 의 페이즈 11 비활성 (G3) 이라 분류 안 함. 그러나 페이즈 08 의 sprint narrative 보강 sub-agent 실패 = *impl defect 가 아닌 sub-agent 자체 실패* — 본 분류 5번째 차원 (sub-agent defect) 후보. 후속 sprint 에서 검토.
