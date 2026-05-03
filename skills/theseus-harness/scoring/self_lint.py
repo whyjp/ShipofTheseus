@@ -1116,6 +1116,12 @@ def check_plan_tree_wired(skill_root: Path) -> list[str]:
         issues.append("SKILL.md 산출물 트리에 plan/candidates/ 명시 누락")
     if "tournament.md" not in skill:
         issues.append("SKILL.md 산출물 트리에 plan/tournament.md 명시 누락")
+
+    # planner 에이전트가 5 시드 prompt prefix 를 *문자 그대로* 명시하는지 (sprint-02-e #1)
+    planner = _read(skill_root / "agents" / "planner.md")
+    for seed in seeds:
+        if f"UNIVERSE SEED: {seed}" not in planner:
+            issues.append(f"agents/planner.md 가 시드 prefix '[UNIVERSE SEED: {seed}]' 누락")
     return issues
 
 
