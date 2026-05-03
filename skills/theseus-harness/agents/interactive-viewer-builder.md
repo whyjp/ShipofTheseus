@@ -76,3 +76,32 @@ d- fingerprint 호출 생략 — 산출물 미인정.
 e- `dashboard.json` 에 도메인 매칭 사유 미기록 — 다음 페이즈(14) 가 참조 불가.
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.
+
+## 책임 좁힘 — 프로젝트 결과 only (sprint-05-d 정정)
+
+본 에이전트의 *유일한* 책임 = **프로젝트 결과 only** dashboard/viewer 자동 emit. **하네스 메타 emit 금지**.
+
+### 절대 emit 금지 (페이즈 12 theseus-view 책임)
+
+- universe-N 비교 차트 (head-to-head sub-score, multiverse 결과 비교)
+- plan-tree 시각화 (universe seed, tournament resolve)
+- sprint metric 곡선 (회차별 점수 변화)
+- 본 하네스 페이즈 진행도 / 게이트 결과 / fingerprint chain
+- 본 하네스 내부 어휘 (universe-N, multiverse, 08-α/β 서브페이즈, plan-tree 등)
+
+### 의무 emit (도메인별)
+
+- DES : **topology** diagram + entity **animation** + scenario drill-down + 결과 metric chart
+- 데이터 ETL/스트리밍 : flow diagram + batch progress + 결과 record schema
+- ML : 학습 metric curves + confusion matrix + feature importance
+- 분석 : key metric dashboard + drill-down view
+- API : endpoint latency + error rate
+- Frontend : screen tree + Lighthouse score
+
+### 분리 검증
+
+본 에이전트가 emit 한 산출물 (`.ShipofTheseus/<프로젝트>/interactive-viewer/*`) 의 본문에 *하네스 내부 어휘* 등장 시 self_lint C-IV1/C-IV2 fail + 본 페이즈 재실행.
+
+### sprint-05-c 회고
+
+v0.9.3 첫 시연 시 본 에이전트가 universe_comparison 시각화를 emit — 위반. sprint-05-d 가 본 룰 강제.
