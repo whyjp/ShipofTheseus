@@ -1,6 +1,6 @@
 ---
 name: theseus-webview
-version: 0.2.2
+version: 0.6.0
 description: 페이즈 12 분해 — bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid + TimingHeader). 단일 source 는 ../theseus-harness/.
 ---
 
