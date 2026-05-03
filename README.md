@@ -6,21 +6,21 @@
 
 **조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 1 entry 스킬 (orchestrator) + 1 source 스킬 (harness) 의 2 SKILL.md 로 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md).
 
-## 현재 성숙도 — 정직 박스 (v0.8.x, *체감 성숙도 0.4~0.5*)
+## 현재 성숙도 — 정직 박스 (v0.9.0, *체감 성숙도 0.6*)
 
-> **v0.8.x 의 라벨은 SemVer 누적이지만 *체감 성숙도는 0.4~0.5 수준*** — 외부 실 프로젝트 적용 1 건도 아직 없음. 라벨 = 마이그레이션 추적, *실 maturity ≠ 라벨*.
+> **v0.9.0 = sandbox livetest 검증 마일스톤**. 4 그레이드 시나리오 (G2/G3/G4/G5) 모두 PASS. HARD-RULE 1~9 안정화. 외부 정합 *형식 검증* 완료. 그러나 maturity 라벨은 여전히 0.6 수준 — 실 사용자의 *실 production project* 적용은 아직 0 건.
 >
 > **진척 지표 (2026-05-03)**:
 > - ✅ 자기 평가 (self_lint 47/47, pytest 106/106, 자기 임계 0.99999 통과)
-> - ✅ livetest scenario #1 (G2 url-shortener) v0.8.0 PASS — sub-claude 가 14 페이즈 산출물 11개 정확 생성 (HARD-RULE 정정 후)
-> - ✅ livetest scenario #2 (G3 notification backend) v0.8.0 PASS — plan-tree 폭 2 + 토너먼트 + impl + sprint cap 3 + webview 8 탭
-> - ⏸ livetest scenario #3 (G4 task management, FE+BE) — 미실행
-> - ⏸ livetest scenario #4 (G5 payment webhook) — 미실행
-> - ⏸ **외부 실 프로젝트 적용 1건** (정직박스 ⓓ) — 미실행. 본 적용 후 maturity 0.6~0.7 도달 가능.
+> - ✅ **livetest 4/4 PASS** — sandbox sub-claude 가 fresh claude --print 로 본 plugin 로드 후 14 페이즈 산출물 정상 생성 (G2 12개 / G3 65개 / G4 43개 / G5 62개)
+> - ✅ HARD-RULE 1~9 안정화 — 첫 동작 강제 / 페이즈 완주 / 설계 품질 의무 모두 enforce
+> - ✅ 책임 범위 명시 — 본 하네스 = 설계 + 가이드 문서 / 외부 repo = 실 코드 + 빌드 + 테스트
+> - ✅ 인터럽트 0 강화 — 페이즈 04 외 사람 ack 호출 절대 없음 (자율 정정 인프라: multiverse + bisect + lessons)
+> - ⏸ **사용자 본인의 실 production repo 적용 1건** (정직박스 ⓓ 본의) — 미실행. 본 적용 후 maturity 0.7~0.8 도달 가능.
 >
-> v1.0 = 외부 적용 ≥ 5 건 + 사각지대 0 + maintainer 외 사용자가 prod 채택. 현재는 그 길의 절반 이전.
-
-> **이전 v0.2.x 정직 박스 본문**: 자기 평가만 통과한 스캐폴드. 외부 실 프로젝트 적용 0 건.
+> v1.0 = 사용자 외 maintainer 가 prod 채택 + 외부 적용 ≥ 5 건 + 사각지대 0. 현재는 그 길의 60% 지점.
+>
+> **livetest lessons** (sprint-03+04-a 6 PR 의 발견): [docs/lessons/2026-05-03-livetest-validated.md](docs/lessons/2026-05-03-livetest-validated.md)
 >
 > ⓐ `self_lint 35/35 pass`, `sample_score 1.0`, `임계 0.99999 통과` 같은 수치는 **본 저장소의 마크다운·코드 인덱스 정합성·예시 입력 채점 통과** 를 의미합니다 — *LLM 에이전트가 프롬프트를 행동으로 따르는지* 의 외부 실증과 다릅니다.
 > ⓑ self_lint 는 *마크다운 텍스트 패턴* 만 검사합니다. "phase 10 본문에 lessons + stagnation 단어가 박혀 있는가" 는 검증되지만, "implementer 에이전트가 *실제로* lesson_pack 을 받아 forbidden 전략을 회피하는가" 는 검증 불가.

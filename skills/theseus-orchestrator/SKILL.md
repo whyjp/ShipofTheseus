@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.8.6
+version: 0.9.0
 description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 모든 그레이드 진행 (G1 trivial 도 mini_harness_tbd 모드로) — 그레이드는 내부 모듈레이션만 (페이즈 수, 컨벤션, 임계, 멀티버스, 모델 라우팅).
 ---
 
