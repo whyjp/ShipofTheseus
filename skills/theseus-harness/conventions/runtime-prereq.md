@@ -159,6 +159,6 @@ f- **G5 에서 mock 모드 통과** — 매트릭스 위반. self_lint C-RP4 fai
 
 a- ✅ `agents/runtime-detector.md` — env / 외부 서비스 자동 추정 에이전트 (sprint-02-e #3 출하). 키워드 매칭 + dep 매칭 + 코드 grep 으로 Q-D9 자동 추정 답안 + `.env.template` 초안 + boot_command 추정 산출.
 b- ✅ `scoring/boot_check.py` — 부팅 검증 자동화 헬퍼 (sprint-02-e #4 출하). CLI: `boot_check.py run --runtime-prereq <path>` → boot_exit + healthz_status JSON. mode=none 은 skip, mock 은 `BOOT_MODE=mock` 환경변수 자동 추가.
-c- `templates/env.template` — 도메인별 (.env 권고 키 카탈로그 — 결제/인증/저장소/메시지/LLM).
+c- ✅ `templates/env.template.md` + `templates/runtime-prereq.template.md` (sprint-02-e #5 출하). 도메인별 .env 권고 키 카탈로그 (결제/인증/저장소/메시지/LLM/모니터링/이메일/검색) + Q-D9 산출물 frontmatter reference.
 d- self_lint C-RP1~C-RP4 — `.env` gitignore / Q-D9 entry_blocked / `.env.template` 보안 / G5 mock 금지.
 e- 페이즈 12 웹뷰의 새 탭 "Runtime" — `boot_exit` / `healthz` / `secrets_count` 라이브 표기.
