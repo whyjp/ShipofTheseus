@@ -1174,6 +1174,14 @@ def check_runtime_prereq_wired(skill_root: Path) -> list[str]:
     if "mock 금지" not in rp_text and "mock 금지" not in _read(skill_root / "conventions" / "grades.md"):
         issues.append("[RP4] runtime-prereq.md 또는 grades.md 가 G5 mock 금지 룰 명시 누락")
 
+    # RP5 — runtime-detector 에이전트 존재 + clarifier 가 부속 호출 (sprint-02-e #3)
+    detector = skill_root / "agents" / "runtime-detector.md"
+    if detector.exists():
+        det_text = _read(detector)
+        for must in ["Q-D9", "env_satisfied", ".env.template"]:
+            if must not in det_text:
+                issues.append(f"[RP5] agents/runtime-detector.md 가 wiring 키워드 '{must}' 누락")
+
     return issues
 
 

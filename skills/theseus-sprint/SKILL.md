@@ -1,6 +1,6 @@
 ---
 name: theseus-sprint
-version: 0.7.3
+version: 0.7.4
 description: 페이즈 10–11 분해 — 무한 스프린트 (G2~G5 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 멀티버스. 단일 source 는 ../theseus-harness/.
 ---
 
