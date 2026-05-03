@@ -1122,6 +1122,16 @@ def check_plan_tree_wired(skill_root: Path) -> list[str]:
     for seed in seeds:
         if f"UNIVERSE SEED: {seed}" not in planner:
             issues.append(f"agents/planner.md 가 시드 prefix '[UNIVERSE SEED: {seed}]' 누락")
+
+    # universe-meta 템플릿 존재 + 핵심 키 (sprint-02-e #5)
+    universe_template = skill_root / "templates" / "universe-meta.template.md"
+    if not universe_template.exists():
+        issues.append("templates/universe-meta.template.md 누락 — meta.md reference 부재")
+    else:
+        ut = _read(universe_template)
+        for key in ["universe_id", "seed", "depth", "score:", "status", "hypothesis"]:
+            if key not in ut:
+                issues.append(f"templates/universe-meta.template.md 가 frontmatter 키 '{key}' 누락")
     return issues
 
 
@@ -1181,6 +1191,20 @@ def check_runtime_prereq_wired(skill_root: Path) -> list[str]:
         for must in ["Q-D9", "env_satisfied", ".env.template"]:
             if must not in det_text:
                 issues.append(f"[RP5] agents/runtime-detector.md 가 wiring 키워드 '{must}' 누락")
+
+    # RP6 — runtime-prereq.template + env.template 존재 (sprint-02-e #5)
+    rp_template = skill_root / "templates" / "runtime-prereq.template.md"
+    if not rp_template.exists():
+        issues.append("[RP6] templates/runtime-prereq.template.md 누락 — Q-D9 산출물 reference 부재")
+    else:
+        rt = _read(rp_template)
+        for key in ["env_satisfied", "secrets_count", "mode", "boot_command", "entry_blocked"]:
+            if f"{key}:" not in rt:
+                issues.append(f"[RP6] templates/runtime-prereq.template.md frontmatter '{key}' 키 누락")
+
+    env_template = skill_root / "templates" / "env.template.md"
+    if not env_template.exists():
+        issues.append("[RP6] templates/env.template.md 누락 — 도메인별 .env 키 카탈로그 부재")
 
     return issues
 

@@ -255,5 +255,5 @@ d- 강점이 안 닿는 페이즈에서는 본 컨벤션 비활성 (G1·G2). 모
 a- `agents/planner.md` 시드별 프롬프트 prefix 추가 (별도 PR).
 b- ✅ `scoring/tournament.py` — 우주별 점수 산출 + auto_resolve 호출 헬퍼 (sprint-02-e #2 출하). CLI: `tournament.py resolve --plan-root <path>` → `plan/tournament.md` 자동 생성.
 c- `phases/06-plan.md` 본 컨벤션 흡수 + 트리거 → 디폴트 격상.
-d- `templates/universe-meta.template.md` 신규.
+d- ✅ `templates/universe-meta.template.md` 신규 (sprint-02-e #5 출하). frontmatter 키 (universe_id / seed / depth / hypothesis / score / status) + 본문 reference.
 e- self_lint C-PT 룰 — `plan/tournament.md` + `plan/candidates/` 무결성 검증.
