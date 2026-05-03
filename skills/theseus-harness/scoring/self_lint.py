@@ -859,7 +859,12 @@ def check_grade_scope_no_gate(skill_root: Path) -> list[str]:
         text = _read(tgt)
         for pattern, label in bad_combos:
             for m in re.finditer(pattern, text, re.IGNORECASE):
-                rel = tgt.relative_to(skill_root)
+                # sibling skill (theseus-orchestrator/...) 도 검사 대상이라 skill_root
+                # 의 부모 (skills/) 기준으로 relative path 계산 — relative_to 크래시 회피.
+                try:
+                    rel = tgt.relative_to(skill_root)
+                except ValueError:
+                    rel = tgt.relative_to(skill_root.parent)
                 issues.append(f"{rel}: {label} 잔존 (\"{m.group(0)[:50]}\")")
     return issues
 
@@ -1022,9 +1027,13 @@ def check_description_length_and_anti_pattern(repo_root: Path, skill_root: Path)
         desc = m.group(1).strip()
         if len(desc) > 200:
             issues.append(f"{name}: description {len(desc)}자 — 200자 초과 (PR-12 압축 후)")
-        if name in ("theseus-harness", "theseus-orchestrator"):
-            if "사용 금지" not in desc:
-                issues.append(f"{name}: description 에 anti-pattern 마커 '사용 금지' 누락")
+        # grade-scope 위반 어구 검증 (v0.8.3) — 호출 거부 의미의 표현 부재.
+        for forbidden in ["사용 금지", "호출 거부", "진입 거부", "사소한 작업"]:
+            if forbidden in desc:
+                issues.append(
+                    f"{name}: description 에 grade-as-gate 위반 어구 '{forbidden}' 잔존 "
+                    f"(그레이드는 내부 모듈레이션만, 외부 거부 의미 표현 금지)"
+                )
     return issues
 
 
