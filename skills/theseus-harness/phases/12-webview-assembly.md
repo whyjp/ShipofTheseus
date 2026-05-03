@@ -38,12 +38,14 @@ webview/
 
 | 탭 | 무엇을 보여주는가 |
 | -- | --------------- |
+| 진행 상태 (라이브) | `state.json` 폴링, 현재 페이즈 / 활성 스킬 / 우주 / 누적 경과 |
 | 모듈 구성도 | 계획의 DAG 시각화 (TODO 의존, 모듈 경계, 포트) |
 | 설계 의도 | `intent/01-intent.md` + `04-answers.md` + `05-decisions.md` 렌더 |
 | 구현 의도 | `impl/08-impl-log.md` + `quality/09-quality-gate.md` 렌더 |
 | 단위 테스트 | 모든 스프린트의 단위 결과, 클릭 시 실패 트레이스 표시 |
 | E2E 테스트 | E2E 시나리오·스크린샷·스프린트별 상태 |
 | 스프린트 | 점수 차트(차원별), 타임라인, 회귀 바이섹트 링크 |
+| **Runtime** (v0.7.6 신규) | Q-D9 사전조건 (mode / secrets_count / boot_command / env_hash) + 게이트 7 부팅 검증 라이브 (boot_exit / healthz_status / elapsed). [`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md) 의 사용자 대면 표면. |
 
 ## 시간 정보 표시
 
@@ -55,6 +57,7 @@ a- `.ShipofTheseus/<프로젝트>/**/*.md` Read 후 frontmatter/섹션 파싱해
 b- `sprints/*/inputs.json` + `report.md` 합쳐 차트용 시계열 데이터 생성.
 c- 단위/E2E 테스트 결과 (Go `go test -json`, Playwright JSON reporter) 를 정규화.
 d- 파일 변경 감시 (chokidar 등) → SSE 로 fe 에 푸시.
+e- 신규 엔드포인트 `GET /api/runtime` (v0.7.6) — `intent/04-runtime-prereq.md` frontmatter + 가장 최근 `boot_check.py` 결과 (BootResult JSON) 합쳐 노출. Runtime 탭이 5 초 간격 폴링.
 
 ## 실행
 
@@ -69,7 +72,7 @@ bun run dev          # be4fe + fe 동시 기동, http://localhost:5173
 ## 성공 기준
 
 a- `bun install && bun run dev` 가 성공.
-b- 모든 6 탭이 데이터 로드 (해당 산출물이 있는 한).
+b- 모든 8 탭이 데이터 로드 (해당 산출물이 있는 한).
 c- TimingHeader 가 모든 페이지에 보이고 라이브 업데이트.
 d- 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭으로 드릴다운.
 e- Lighthouse 같은 외부 점검까지 강제하지는 않음 — 기능 동작만 확인.
