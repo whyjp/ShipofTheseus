@@ -1,6 +1,6 @@
 ---
 name: theseus-intent
-version: 0.7.6
+version: 0.7.7
 description: 페이즈 00–05 분해 — 명명/의도/마인드맵/콜드 재이해/사용자 질의/비평. 단일 source 는 ../theseus-harness/. frontmatter 가 입출력 계약.
 ---
 

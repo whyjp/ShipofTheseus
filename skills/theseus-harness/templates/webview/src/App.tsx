@@ -7,6 +7,7 @@ import { UnitTests } from "./tabs/UnitTests";
 import { E2ETests } from "./tabs/E2ETests";
 import { Sprints } from "./tabs/Sprints";
 import { Progress } from "./tabs/Progress";
+import { Runtime } from "./tabs/Runtime";
 
 const TABS = [
   { id: "progress", label: "진행 상태 (라이브)", Component: Progress },
@@ -16,6 +17,7 @@ const TABS = [
   { id: "unit", label: "단위 테스트", Component: UnitTests },
   { id: "e2e", label: "E2E 테스트", Component: E2ETests },
   { id: "sprints", label: "스프린트", Component: Sprints },
+  { id: "runtime", label: "Runtime (Q-D9 + 게이트 7)", Component: Runtime },
 ] as const;
 
 export function App() {

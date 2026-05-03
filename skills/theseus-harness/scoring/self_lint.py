@@ -1206,6 +1206,19 @@ def check_runtime_prereq_wired(skill_root: Path) -> list[str]:
     if not env_template.exists():
         issues.append("[RP6] templates/env.template.md 누락 — 도메인별 .env 키 카탈로그 부재")
 
+    # RP7 — webview Runtime 탭 (sprint-02-e #6)
+    runtime_tab = skill_root / "templates" / "webview" / "src" / "tabs" / "Runtime.tsx"
+    if not runtime_tab.exists():
+        issues.append("[RP7] templates/webview/src/tabs/Runtime.tsx 누락 — Q-D9 / 게이트 7 사용자 대면 표면 부재")
+    app_tsx = skill_root / "templates" / "webview" / "src" / "App.tsx"
+    if app_tsx.exists():
+        app_text = _read(app_tsx)
+        if "Runtime" not in app_text or "runtime" not in app_text:
+            issues.append("[RP7] templates/webview/src/App.tsx 가 Runtime 탭 등록 누락")
+    phase12 = _read(skill_root / "phases" / "12-webview-assembly.md")
+    if "Runtime" not in phase12:
+        issues.append("[RP7] phases/12-webview-assembly.md 가 Runtime 탭 명시 누락")
+
     return issues
 
 
