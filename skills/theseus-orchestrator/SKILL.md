@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.8.2
-description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단독 단순 작업에는 사용 금지 — grade-assess 로 먼저 확인.
+version: 0.8.3
+description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 모든 그레이드 진행 (G1 trivial 도 mini_harness_tbd 모드로) — 그레이드는 내부 모듈레이션만 (페이즈 수, 컨벤션, 임계, 멀티버스, 모델 라우팅).
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -18,14 +18,14 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 > 2- 페이즈 00 (G3+) 또는 페이즈 01 (G2) 의 산출물 작성 — `.ShipofTheseus/<프로젝트>/{naming/00-naming.md | intent/01-intent.md}`.
 > 3- 그 *다음* 에 grade_assess + 페이즈 04 인터뷰 + 후속 페이즈 진행.
 >
-> **금지 (자동 거부 — sub-claude 의 첫 동작이 다음이면 본 스킬 위반):**
+> **금지 (자동 거부 — 실행 에이전트 의 첫 동작이 다음이면 본 스킬 위반):**
 >
 > a- 사용자 요구를 받자마자 *직접* 코드 (Go / Python / TS / etc.) 작성 — 페이즈 산출물 우회.
 > b- `.ShipofTheseus/<프로젝트>/_tools/` 또는 `code/` 디렉터리에 *retroactive* 페이즈 frontmatter 생성 스크립트 (`build_artifacts.py` 등) 작성. **하네스의 frontmatter 는 페이즈가 *진행되며 박는 것* 이지 사후 일괄 생성 대상이 아님.**
 > c- "out-of-sandbox" / "cannot invoke harness scripts" 등의 사유로 자체 emulator 작성 — sandbox 친화 fallback 은 [`../theseus-harness/scoring/`](../theseus-harness/scoring/) 의 도구를 *직접 import* 하거나 사용자에게 명시적 ack 요청.
 > d- 페이즈 04 인터뷰의 "사전 박힌 답" 지시를 *페이즈 04 자체 생략* 으로 해석. 사전 답은 *질의 답안 자동 매핑* 일 뿐 페이즈 자체는 진행되어야 함 (`intent/04-questions.md` + `04-answers.md` 산출물 의무).
 >
-> **위반 시 처리** — sub-claude 가 위 a-d 중 어느 하나라도 시작하면 본 스킬은 즉시 정지 + `intent/00-violation.md` 에 위반 사유 기록 + 페이즈 01 부터 정상 진행 재시작.
+> **위반 시 처리** — 실행 에이전트 가 위 a-d 중 어느 하나라도 시작하면 본 스킬은 즉시 정지 + `intent/00-violation.md` 에 위반 사유 기록 + 페이즈 01 부터 정상 진행 재시작.
 >
 > **HARD-RULE 8 — 그레이드별 의무 산출물 (sprint-03-c, 모든 페이즈 완주 강제):**
 >
@@ -39,7 +39,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 > | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
 > | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
 >
-> **자발적 조기 종료 금지** — sub-claude 가 페이즈 06 까지만 만들고 "끝" 으로 보고하면 본 스킬 위반. 위 표의 의무 산출물을 *모두* 박아야 정상 종료.
+> **자발적 조기 종료 금지** — 실행 에이전트 가 페이즈 06 까지만 만들고 "끝" 으로 보고하면 본 스킬 위반. 위 표의 의무 산출물을 *모두* 박아야 정상 종료.
 >
 > **부분 채움 OK** — 본문이 한 줄이라도 frontmatter (skill_name / skill_version / phase / fingerprint / prev_fingerprint / created_at) 는 박혀야 함. 본문 truncated 시 마지막 줄에 `<!-- budget-truncated -->` 명시.
 
@@ -93,7 +93,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 
 ## 발견 배경 (livetest fail #1, 2026-05-03)
 
-본 HARD-RULE 은 livetest 시나리오 #1 (G2 url-shortener) 의 fail 분석에서 도출. sub-claude 가 본 스킬을 호출 *없이* 직접 Go 구현 + retroactive `_tools/build_artifacts.py` 작성으로 우회. 페이즈 산출물 0 → verify 5 체크 중 4 fail. 본 룰이 정정 (sprint-03-a). 추가로 sprint-03-b 에서 7 phase 분해 stub 제거 — pure delegation 이라 cost > benefit.
+본 HARD-RULE 은 livetest 시나리오 #1 (G2 url-shortener) 의 fail 분석에서 도출. 실행 에이전트 가 본 스킬을 호출 *없이* 직접 Go 구현 + retroactive `_tools/build_artifacts.py` 작성으로 우회. 페이즈 산출물 0 → verify 5 체크 중 4 fail. 본 룰이 정정 (sprint-03-a). 추가로 sprint-03-b 에서 7 phase 분해 stub 제거 — pure delegation 이라 cost > benefit.
 
 상세 finding: `.tests/results/01-url-shortener-g2/finding.md` + `finding-v0.8.0.md`.
 
@@ -108,7 +108,7 @@ c- **fingerprint 체인** — 각 페이즈 산출물이 직전 산출물의 fin
 이전 v0.8.x 까지 본 저장소에 9 SKILL.md (orchestrator + harness + 7 phase 분해 stub: theseus-{intent, plan, implement, quality, sprint, webview, handoff}) 존재. 7 phase stub 은 pure delegation 이라 unique content 0, cost > benefit:
 
 - 9 파일 skill_version 동기화 누락 위험 (v0.5.0 PR #9 사건)
-- sub-claude 토큰 낭비 (8 stub bounce)
+- 실행 에이전트 토큰 낭비 (8 stub bounce)
 - self_lint 5x 복잡도
 - livetest #1 fail 의 *간접 원인* (어느 스킬이 source 인가 혼동)
 
