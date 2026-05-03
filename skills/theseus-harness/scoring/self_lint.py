@@ -1425,6 +1425,32 @@ def check_interactive_viewer_agent_product_only(skill_root: Path) -> list[str]:
     return issues
 
 
+# === sprint-05-e 신규 룰 (Q1 회귀 원인 분류 + Q3 plan 본문 implementation guidance) ===
+
+def check_phase11_regression_classification(skill_root: Path) -> list[str]:
+    """C-RB1 — phases/11-regression-bisect.md 본문에 회귀 원인 4 분류 (sprint-05-e Q1)."""
+    text = _read(skill_root / "phases" / "11-regression-bisect.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["plan defect", "impl defect", "data defect", "external defect", "회귀 원인 분류"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/11-regression-bisect.md: '{kw}' 회귀 분류 키워드 누락 (sprint-05-e)")
+    return issues
+
+
+def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
+    """C-IG1 — phases/06-plan.md 본문에 implementation guidance 절 (sprint-05-e Q3)."""
+    text = _read(skill_root / "phases" / "06-plan.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["implementation guidance", "데이터 구조", "의사코드", "클래스 시그니처"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/06-plan.md: '{kw}' implementation guidance 키워드 누락 (sprint-05-e)")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1486,6 +1512,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-MV5", "resources universe N 병렬 budget profile (sprint-05-b)", check_resources_multiverse_budget),
     ("C-IV1", "phase13 interactive-viewer 결과 프로덕트 only + 하네스 메타 emit 금지 (sprint-05-d)", check_phase13_product_only),
     ("C-IV2", "interactive-viewer-builder agent 책임 좁힘 결과 only (sprint-05-d)", check_interactive_viewer_agent_product_only),
+    ("C-RB1", "phase11 회귀 원인 4 분류 plan/impl/data/external defect (sprint-05-e Q1)", check_phase11_regression_classification),
+    ("C-IG1", "phase06 implementation guidance 본문 의무 (sprint-05-e Q3)", check_phase06_implementation_guidance),
 ]
 
 

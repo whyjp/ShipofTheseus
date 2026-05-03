@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.9.4
+version: 0.9.5
 description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 22 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 알고리즘 + 부트스트래핑 자기 평가. 모든 그레이드 진행 (G1 mini_harness_tbd ~ G5 빡빡) — 그레이드는 내부 모듈레이션만.
 ---
 

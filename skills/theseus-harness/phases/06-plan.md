@@ -83,3 +83,43 @@ c- 모든 TODO 제목에 "and" 없음 — 있으면 분할 신호.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## implementation guidance — plan 본문 의무 (sprint-05-e Q3)
+
+plan 이 *what to build* 에 그치지 않고 *how to build* 의 핵심 디자인 결정도 본문에 박는다 — 별도 impl-design.md 신규 산출물 만들지 않고 plan 본문 흡수가 정공 (메모리 보수화 정합).
+
+### 본문 의무 추가 (HARD-RULE 9.a 강화)
+
+기존 본문 의무 :
+- 모듈 분할 + 파일 배치 (≥ 5 파일 경로)
+- Mermaid 시퀀스 ≥ 1 OR 인터페이스 정의 ≥ 3
+- TODO DAG (T-001, ...)
+
+**추가 (sprint-05-e)** :
+- **데이터 구조** ≥ 2 — 핵심 entity / state object 의 dataclass 또는 schema 정의 (필드 타입 명시)
+- **의사코드** ≥ 1 — 핵심 알고리즘 (디스패치 / 라우팅 / 머지 등) 의 의사코드 또는 단계별 설명
+- **클래스 시그니처** ≥ 3 — 주요 클래스의 `__init__` + 핵심 메서드 시그니처 (Python 형식 또는 의사 형식)
+
+### 왜 신규 산출물 (impl-design.md) 안 만드나
+
+a- plan 이 충분히 상세하면 *중복* — sprint-05-c universe 별 plan 569~699 lines 에 이미 implementation guidance 일부 포함
+b- 산출물 1 추가 = sub-agent 호출 + 시간 비용
+c- plan + impl-log 의 관계 = 디자인 + 결과. 그 사이 *implementation guidance 디자인* 분리 = 응집 약화
+d- HARD-RULE 9.a 본문 의무 강화로 *plan 안에서* implementation guidance 박는 것이 정공
+
+### 산출물 매핑
+
+| 본문 의무 | 페이즈 11 회귀 분류 (sprint-05-e Q1) 와의 연결 |
+|----|----|
+| 모듈 분할 + 파일 배치 | impl 이 plan 따랐는지 = 디렉터리 일치 |
+| Mermaid / 인터페이스 | impl 의 인터페이스 시그니처 = plan 일치 |
+| TODO DAG | impl-log 의 TODO 매핑 = plan ID 일치 |
+| **데이터 구조** | impl 의 dataclass 필드 = plan schema 일치 → impl defect 검출 |
+| **의사코드** | impl 의 알고리즘 동작 = plan 의사코드 일치 → plan defect vs impl defect 판별 |
+| **클래스 시그니처** | impl 의 메서드 시그니처 = plan 일치 → drift 검출 |
+
+페이즈 11 회귀 분류가 본 implementation guidance 와 *대응* — plan 의 데이터 구조/의사코드/클래스 시그니처가 명시되어 있어야 회귀 시 *plan defect vs impl defect* 자동 판별 가능.
+
+### sprint-05-c 회고
+
+sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, Truck dataclass, EventQueue heap), 의사코드 (`_dispatch_event(ev)` switch), 클래스 시그니처 (`SchedulerLoop.run(env)`, `EventQueue.push/pop`) 모두 박혀있었음. 본 sprint-05-e 룰은 그 패턴을 *명시 의무* 로 격상.
