@@ -5,12 +5,12 @@
 
 ## 매 스프린트 테스트 매트릭스
 
-ⓐ 백엔드 단위 — Go `testing` (또는 사용자 명시 스택).
-ⓑ 백엔드 통합 — `httptest` 로 어댑터 페이크.
-ⓒ 프론트엔드 단위 — `bun test` + 컴포넌트 단위.
-ⓓ 프론트엔드 통합 — fake 서비스로 컴포넌트 와이어드.
-ⓔ E2E — Playwright 등 — happy-path + 에러 1 경로.
-ⓕ 속성 기반 (직전 스프린트가 커버리지 얕음 플래그 시).
+a- 백엔드 단위 — Go `testing` (또는 사용자 명시 스택).
+b- 백엔드 통합 — `httptest` 로 어댑터 페이크.
+c- 프론트엔드 단위 — `bun test` + 컴포넌트 단위.
+d- 프론트엔드 통합 — fake 서비스로 컴포넌트 와이어드.
+e- E2E — Playwright 등 — happy-path + 에러 1 경로.
+f- 속성 기반 (직전 스프린트가 커버리지 얕음 플래그 시).
 
 ## 서브에이전트
 [`../agents/tester.md`](../agents/tester.md). 테스터는 *실행* 만, 채점은 안 함 — 채점은 [`../scoring/score.py`](../scoring/score.py) 가 권위.
@@ -60,14 +60,14 @@ while True:
     if score >= 0.999:
         return "pass"
 
-    # ① 회귀 우선 — 페이즈 11 (lessons.md 의 정체와 별 트리거)
+    # 1- 회귀 우선 — 페이즈 11 (lessons.md 의 정체와 별 트리거)
     if len(prev_scores) >= 2 and score < prev_scores[-2] - 0.05:
         run_phase_11 → `sprints/{sprint:02d}/bisect.md`
         # autonomy.md Q-D1 사전 위임 답 자동 적용 — 인터럽트 없음
         apply_q_d1_policy(bisect_recommendation, autonomy_policy["Q-D1"])
         report_live("회귀 권고 자동 적용 (Q-D1.<답>)")
 
-    # ② 정체 감지 — lessons.md / scoring/stagnation.py
+    # 2- 정체 감지 — lessons.md / scoring/stagnation.py
     history_json = build_history(prev_scores, dim_history)
     stag = stagnation.detect(prev_scores, dim_history, threshold=0.999)
     lesson_pack = stagnation.build_lesson_pack(
@@ -90,7 +90,7 @@ while True:
         continue
 
     if stag["stagnant_dims"]:
-        # ②-1 천정 검토 — 정체 차원이 NFR 측정 (latency/RPS) 이면
+        # 2-1 천정 검토 — 정체 차원이 NFR 측정 (latency/RPS) 이면
         # resource_ceiling.detect 로 추정 천정 도달 여부 판단 (resources.md)
         for dim in stag["stagnant_dims"]:
             if dim in {"p99_ms", "p95_ms", "rps", "latency_ms"}:
@@ -111,7 +111,7 @@ while True:
                     )
                     continue   # 다음 차원으로
 
-        # ②-2 천정 아닌 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
+        # 2-2 천정 아닌 정체 — 해당 모듈 통째 재작성 (preserve=false 강제)
         snapshot_current_impl_to(`sprints/{sprint:02d}/snapshot/`)
         for module in identify_modules_for_dims(stag["stagnant_dims"]):
             spawn_implementer(
@@ -144,10 +144,10 @@ while True:
 
 핵심:
 
-ⓐ **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/lessons.md`](../conventions/lessons.md) 의 형식.
-ⓑ **정체 감지 자동** — `scoring/stagnation.py` 가 매 스프린트 종료 후 시계열 분석. 종합 정체 → 페이즈 06 재시작, 차원 정체 → 해당 모듈 통째 재작성.
-ⓒ **부분 수정 금지 강제** — 정체로 트리거된 rewrite 는 `preserve=false` 명시. 구현자가 기존 코드를 *보강* 하면 정체 지속.
-ⓓ **3 회 누적 rewrite 도 정체면 Q-D4 사전 위임 답** 자동 매핑 (인터럽트 없음, 자동 적용) — 무한 자율의 합리적 한계.
+a- **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/lessons.md`](../conventions/lessons.md) 의 형식.
+b- **정체 감지 자동** — `scoring/stagnation.py` 가 매 스프린트 종료 후 시계열 분석. 종합 정체 → 페이즈 06 재시작, 차원 정체 → 해당 모듈 통째 재작성.
+c- **부분 수정 금지 강제** — 정체로 트리거된 rewrite 는 `preserve=false` 명시. 구현자가 기존 코드를 *보강* 하면 정체 지속.
+d- **3 회 누적 rewrite 도 정체면 Q-D4 사전 위임 답** 자동 매핑 (인터럽트 없음, 자동 적용) — 무한 자율의 합리적 한계.
 
 ## 사용자 보고 (매 스프린트)
 
@@ -159,15 +159,15 @@ while True:
 
 ## 성공 기준
 
-ⓐ 점수 ≥ 0.9 도달 — 테스트 비활성화·임계값 낮추기·rubric 편집 없이.
-ⓑ 모든 스프린트 보고서 존재.
-ⓒ 회귀 트리거가 있었던 스프린트는 `bisect.md` 가 동행, 자동 적용된 Q-D1 매핑 결과 기록 (인터럽트 없음).
+a- 점수 ≥ 0.9 도달 — 테스트 비활성화·임계값 낮추기·rubric 편집 없이.
+b- 모든 스프린트 보고서 존재.
+c- 회귀 트리거가 있었던 스프린트는 `bisect.md` 가 동행, 자동 적용된 Q-D1 매핑 결과 기록 (인터럽트 없음).
 
 ## 금지된 안티 패턴 (테스터)
 
-ⓐ flaky 테스트 skip 처리 → 점수 부풀리기.
-ⓑ 커버리지 임계 낮추기.
-ⓒ "rubric 조정" — rubric 은 실행 동안 read-only.
+a- flaky 테스트 skip 처리 → 점수 부풀리기.
+b- 커버리지 임계 낮추기.
+c- "rubric 조정" — rubric 은 실행 동안 read-only.
 
 ## 흔한 실패
 

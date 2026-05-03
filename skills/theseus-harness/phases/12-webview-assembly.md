@@ -51,10 +51,10 @@ webview/
 
 ## be4fe 책임
 
-ⓐ `.ShipofTheseus/<프로젝트>/**/*.md` Read 후 frontmatter/섹션 파싱해 JSON 으로 노출.
-ⓑ `sprints/*/inputs.json` + `report.md` 합쳐 차트용 시계열 데이터 생성.
-ⓒ 단위/E2E 테스트 결과 (Go `go test -json`, Playwright JSON reporter) 를 정규화.
-ⓓ 파일 변경 감시 (chokidar 등) → SSE 로 fe 에 푸시.
+a- `.ShipofTheseus/<프로젝트>/**/*.md` Read 후 frontmatter/섹션 파싱해 JSON 으로 노출.
+b- `sprints/*/inputs.json` + `report.md` 합쳐 차트용 시계열 데이터 생성.
+c- 단위/E2E 테스트 결과 (Go `go test -json`, Playwright JSON reporter) 를 정규화.
+d- 파일 변경 감시 (chokidar 등) → SSE 로 fe 에 푸시.
 
 ## 실행
 
@@ -68,16 +68,16 @@ bun run dev          # be4fe + fe 동시 기동, http://localhost:5173
 
 ## 성공 기준
 
-ⓐ `bun install && bun run dev` 가 성공.
-ⓑ 모든 6 탭이 데이터 로드 (해당 산출물이 있는 한).
-ⓒ TimingHeader 가 모든 페이지에 보이고 라이브 업데이트.
-ⓓ 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭으로 드릴다운.
-ⓔ Lighthouse 같은 외부 점검까지 강제하지는 않음 — 기능 동작만 확인.
+a- `bun install && bun run dev` 가 성공.
+b- 모든 6 탭이 데이터 로드 (해당 산출물이 있는 한).
+c- TimingHeader 가 모든 페이지에 보이고 라이브 업데이트.
+d- 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭으로 드릴다운.
+e- Lighthouse 같은 외부 점검까지 강제하지는 않음 — 기능 동작만 확인.
 
 ## 흔한 실패
 
-ⓐ 정적 HTML 만 출력 — 인터랙티브 요구 미충족, fail.
-ⓑ E2E 탭이 숨겨져 있거나 "차후 구현" 표시 — 항상 생성 룰 위반.
-ⓒ 산출 파일을 빌드 시점에 fs 로 박아넣음 — 런타임 폴링/감시여야 의도와 코드가 변할 때 자동 반영.
+a- 정적 HTML 만 출력 — 인터랙티브 요구 미충족, fail.
+b- E2E 탭이 숨겨져 있거나 "차후 구현" 표시 — 항상 생성 룰 위반.
+c- 산출 파일을 빌드 시점에 fs 로 박아넣음 — 런타임 폴링/감시여야 의도와 코드가 변할 때 자동 반영.
 
 > **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.

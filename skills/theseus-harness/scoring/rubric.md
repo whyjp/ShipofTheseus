@@ -63,11 +63,11 @@ score = min(score_raw, 0.6)  if DIP 위반 발견
 
 ## 점수와 무관한 hard cap
 
-ⓐ `.only` / 정당화 없는 `.skip` 테스트 → 총점 cap 0.5.
-ⓑ 프로덕션 코드에 `console.log` / `fmt.Println` 디버그 잔재 → cap 0.85.
-ⓒ Lint 에러 → cap 0.85.
-ⓓ Type 에러 → cap 0.7.
-ⓔ DIP 위반 → cap 0.6 (위 SOLID 섹션과 동일, hard cap 으로 재차 강제).
+a- `.only` / 정당화 없는 `.skip` 테스트 → 총점 cap 0.5.
+b- 프로덕션 코드에 `console.log` / `fmt.Println` 디버그 잔재 → cap 0.85.
+c- Lint 에러 → cap 0.85.
+d- Type 에러 → cap 0.7.
+e- DIP 위반 → cap 0.6 (위 SOLID 섹션과 동일, hard cap 으로 재차 강제).
 
 ## 회귀 임계
 
@@ -75,9 +75,9 @@ score = min(score_raw, 0.6)  if DIP 위반 발견
 
 ## rubric 이 *아닌* 것
 
-ⓐ 코드 미감 측정기.
-ⓑ 실행 중 조정 가능한 노브 — read-only.
-ⓒ 사람의 아키텍처 판단 대체 — 0.95 점에 나쁜 아키텍처면 여전히 나쁜 결과. 본 rubric 은 *실행* 실패를 잡고, 페이즈 05 (비평) 가 *방향* 실패를 잡는다.
+a- 코드 미감 측정기.
+b- 실행 중 조정 가능한 노브 — read-only.
+c- 사람의 아키텍처 판단 대체 — 0.95 점에 나쁜 아키텍처면 여전히 나쁜 결과. 본 rubric 은 *실행* 실패를 잡고, 페이즈 05 (비평) 가 *방향* 실패를 잡는다.
 
 ## 왜 DIP 만 hard cap 인가
 

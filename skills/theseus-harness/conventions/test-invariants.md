@@ -61,10 +61,10 @@ T5: Concurrent Read During Write
 
 체크리스트 (페이즈 09 quality-gate 에이전트 의무):
 
-ⓐ **프로브 오버헤드** — 측정 루프의 CPU/메모리가 측정 대상의 10% 이상이면 SUSPECT (예: Python GIL 이 concurrent 프로브의 실질 병렬성 제한).
-ⓑ **불변 조건 충족** — `invariants` 의 모든 조건이 *실제 실행* 에서 만족되는지 (타임스탬프 오버랩, 스레드/프로세스 수, 데이터 영역 일치 등).
-ⓒ **베이스라인 sanity** — 알려진 대상에서 같은 프로브가 합리적 결과를 내는지. 안 그러면 프로브 자체 문제.
-ⓓ **반복 편차** — 동일 테스트 3 회 결과 편차가 30% 이상이면 SUSPECT (환경 불안정 또는 프로브 비결정성).
+a- **프로브 오버헤드** — 측정 루프의 CPU/메모리가 측정 대상의 10% 이상이면 SUSPECT (예: Python GIL 이 concurrent 프로브의 실질 병렬성 제한).
+b- **불변 조건 충족** — `invariants` 의 모든 조건이 *실제 실행* 에서 만족되는지 (타임스탬프 오버랩, 스레드/프로세스 수, 데이터 영역 일치 등).
+c- **베이스라인 sanity** — 알려진 대상에서 같은 프로브가 합리적 결과를 내는지. 안 그러면 프로브 자체 문제.
+d- **반복 편차** — 동일 테스트 3 회 결과 편차가 30% 이상이면 SUSPECT (환경 불안정 또는 프로브 비결정성).
 
 판정:
 - **VALID** → Phase 2(PASS) 또는 Phase F(FAIL) 로 진행.
@@ -75,12 +75,12 @@ T5: Concurrent Read During Write
 
 본 저장소의 self_lint (`scoring/test_score.py`, `test_self_lint.py`, `test_stagnation.py`, `test_resource_ceiling.py`, `test_checkpoint.py`) 자체에도 본 룰 적용:
 
-ⓐ 각 테스트의 *불변 조건* — 예: `test_perfect_inputs_pass_at_999_threshold` 의 불변 = "모든 차원 1.0 이면 self_score 1.0".
-ⓑ Phase V 적용 — 단위 테스트 실행 시 환경 의존성 (subprocess, tempfile) 이 결과를 흐리지 않는지 검증 — `test_score.py` 의 `tempfile.NamedTemporaryFile` 변경이 그 결과 (race-free).
+a- 각 테스트의 *불변 조건* — 예: `test_perfect_inputs_pass_at_999_threshold` 의 불변 = "모든 차원 1.0 이면 self_score 1.0".
+b- Phase V 적용 — 단위 테스트 실행 시 환경 의존성 (subprocess, tempfile) 이 결과를 흐리지 않는지 검증 — `test_score.py` 의 `tempfile.NamedTemporaryFile` 변경이 그 결과 (race-free).
 
 ## 안티 패턴
 
-ⓐ **불변 조건 명시 없이 테스트 작성** — 실패 시 어떤 변경이 회피인지 판단 불가.
-ⓑ **Phase V 건너뛰기** — fail 결과를 바로 신뢰하면 *테스트가 제대로 실행 안 된* 케이스를 잘못된 레슨으로 누적.
-ⓒ **불변 조건 무시한 레슨을 정상 lesson_pack 으로** — 본 컨벤션 핵심 위반. forbidden_strategies 분리가 의무.
-ⓓ **"테스트가 통과한다" 만으로 만족** — 통과 자체가 목적이 아니라, 테스트 *목적이 측정한* 것이 만족됐는지가 본질.
+a- **불변 조건 명시 없이 테스트 작성** — 실패 시 어떤 변경이 회피인지 판단 불가.
+b- **Phase V 건너뛰기** — fail 결과를 바로 신뢰하면 *테스트가 제대로 실행 안 된* 케이스를 잘못된 레슨으로 누적.
+c- **불변 조건 무시한 레슨을 정상 lesson_pack 으로** — 본 컨벤션 핵심 위반. forbidden_strategies 분리가 의무.
+d- **"테스트가 통과한다" 만으로 만족** — 통과 자체가 목적이 아니라, 테스트 *목적이 측정한* 것이 만족됐는지가 본질.

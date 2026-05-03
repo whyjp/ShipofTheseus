@@ -19,9 +19,9 @@
 
 체크포인트는 **페이즈 내부의 하위 세부 단계** 에서 산출물·상태·측정값·레슨을 한 번에 봉인한 시점.
 
-ⓐ 페이즈 = 큰 단위 (00 명명 / 01 의도 / ... / 13 핸드오프)
-ⓑ 체크포인트 = 페이즈 안의 작은 단위 (예: 페이즈 08 구현 안에서 모듈별 또는 TODO별 체크포인트)
-ⓒ 각 체크포인트마다 [`contracts.md`](contracts.md) 의 frontmatter + 부모 체크포인트 fingerprint 체인 + 누적 레슨 ([`lessons.md`](lessons.md))
+a- 페이즈 = 큰 단위 (00 명명 / 01 의도 / ... / 13 핸드오프)
+b- 체크포인트 = 페이즈 안의 작은 단위 (예: 페이즈 08 구현 안에서 모듈별 또는 TODO별 체크포인트)
+c- 각 체크포인트마다 [`contracts.md`](contracts.md) 의 frontmatter + 부모 체크포인트 fingerprint 체인 + 누적 레슨 ([`lessons.md`](lessons.md))
 
 ### 체크포인트 ID 명명
 
@@ -43,7 +43,7 @@
 
 ## 회귀 알고리즘 — 실패 원인 → 회귀 위치 매핑
 
-**모든 깊은 품질 위반이 회귀·재빚기 트리거**: DIP/SOLID 위반만이 아니라 ① 코드 오류 누적 ② 기획-구현 갭 (스펙 누락) ③ 성능/NFR 미달 ④ 의도 표류 ⑤ 정체/회귀 누적 ⑥ 테스트 회귀 ⑦ 천정 도달 ⑧ scope creep 모두 동등한 트리거 — 차원만 달라질 뿐 어느 차원이라도 깊이가 임계를 넘으면 부분 수정 금지·해당 모듈 통째 재작성 (`re-architect`).
+**모든 깊은 품질 위반이 회귀·재빚기 트리거**: DIP/SOLID 위반만이 아니라 1- 코드 오류 누적 2- 기획-구현 갭 (스펙 누락) 3- 성능/NFR 미달 4- 의도 표류 5- 정체/회귀 누적 6- 테스트 회귀 7- 천정 도달 8- scope creep 모두 동등한 트리거 — 차원만 달라질 뿐 어느 차원이라도 깊이가 임계를 넘으면 부분 수정 금지·해당 모듈 통째 재작성 (`re-architect`).
 
 실패 (테스트 fail / 게이트 fail / 정체 / 천정 / 코드 오류 / 스펙 누락 / 성능 미달 / 의도 표류) 발생 시:
 
@@ -109,10 +109,10 @@ def find_regression_target(
 ```
 
 회귀 후 **자동 진행**:
-ⓐ 회귀 위치의 산출물을 작업 트리로 복원 (`snapshot/` → 모듈 디렉터리).
-ⓑ 회귀 사유와 새 lesson_pack 을 다음 시도의 입력에 첨부 (`forbidden_strategies` 누적).
-ⓒ 같은 분기를 *3 회 회귀해도* 같은 실패면 멀티버스 분기로 전환 (한 우주의 한계 = 다른 우주 시도 신호).
-ⓓ [`autonomy.md`](autonomy.md) Q-D7 사전 위임 답에 따라 자율 적용 — 인터뷰 후 인터럽트 없음.
+a- 회귀 위치의 산출물을 작업 트리로 복원 (`snapshot/` → 모듈 디렉터리).
+b- 회귀 사유와 새 lesson_pack 을 다음 시도의 입력에 첨부 (`forbidden_strategies` 누적).
+c- 같은 분기를 *3 회 회귀해도* 같은 실패면 멀티버스 분기로 전환 (한 우주의 한계 = 다른 우주 시도 신호).
+d- [`autonomy.md`](autonomy.md) Q-D7 사전 위임 답에 따라 자율 적용 — 인터뷰 후 인터럽트 없음.
 
 ## 멀티버스 병렬 — 한 의사결정에서 N 우주 동시 분기
 
@@ -120,9 +120,9 @@ def find_regression_target(
 
 ### 트리거
 
-ⓐ 같은 의사결정 지점에서 회귀가 3 회 누적 (한 우주가 막혔다는 신호).
-ⓑ 비평가가 "두 접근의 *전체 결과* 가 어떻게 다를지 모르겠다" 표시 (페이즈 단위 비교 불가능).
-ⓒ 멀티버스를 명시 트리거하는 사용자 사전 위임 (Q-D7).
+a- 같은 의사결정 지점에서 회귀가 3 회 누적 (한 우주가 막혔다는 신호).
+b- 비평가가 "두 접근의 *전체 결과* 가 어떻게 다를지 모르겠다" 표시 (페이즈 단위 비교 불가능).
+c- 멀티버스를 명시 트리거하는 사용자 사전 위임 (Q-D7).
 
 ### 분기 구조
 
@@ -192,11 +192,11 @@ def select_universe(universes: list[Universe]) -> Universe:
 
 [`../scoring/checkpoint.py`](../scoring/checkpoint.py) 가 다음 명령 제공:
 
-ⓐ `checkpoint create --phase NN --sequence MMM --snapshot <dir>` — 새 체크포인트 봉인.
-ⓑ `checkpoint list --phase NN` — 페이즈 N 의 모든 체크포인트 ID + 점수 + 시각.
-ⓒ `checkpoint regress --to <id>` — 지정 체크포인트로 작업 트리 복원 + lesson_pack 자동 생성.
-ⓓ `checkpoint find-target --failure <kind> --module <name>` — 회귀 매핑 자동 결정.
-ⓔ `checkpoint multiverse --branch <id> --universes N` — N 우주 분기 디렉터리 생성.
+a- `checkpoint create --phase NN --sequence MMM --snapshot <dir>` — 새 체크포인트 봉인.
+b- `checkpoint list --phase NN` — 페이즈 N 의 모든 체크포인트 ID + 점수 + 시각.
+c- `checkpoint regress --to <id>` — 지정 체크포인트로 작업 트리 복원 + lesson_pack 자동 생성.
+d- `checkpoint find-target --failure <kind> --module <name>` — 회귀 매핑 자동 결정.
+e- `checkpoint multiverse --branch <id> --universes N` — N 우주 분기 디렉터리 생성.
 
 ## Q-D7 사전 위임 (autonomy.md 추가)
 
@@ -211,10 +211,10 @@ def select_universe(universes: list[Universe]) -> Universe:
 
 ## 안티 패턴
 
-ⓐ **체크포인트 없이 페이즈 단위만 봉인** — 실패 시 페이즈 통째 재실행 = 비용 폭발.
-ⓑ **회귀 위치를 사람이 매번 결정** — 본 컨벤션의 핵심 위반 (인터뷰 후 인터럽트 0).
-ⓒ **멀티버스 우주 5개 이상** — 비용 폭발. 최대 3.
-ⓓ **패자 우주 즉시 삭제** — 학습 자산 손실. 항상 `losers/` 로 보존.
-ⓔ **같은 위치 3 회 회귀해도 단일 우주 고집** — 정체 신호 무시. 멀티버스 자동 분기 룰.
-ⓕ **체크포인트 fingerprint 체인 무시** — `contracts.md` 의 무결성 위반, 페이즈 09 게이트 자동 fail.
-ⓖ **DIP 위반에만 rewrite 트리거 한정** — 코드 오류 누적·스펙 누락·NFR 미달·의도 표류 같은 *다른 깊은 위반* 도 동등한 통째 재작성 트리거 ([`lessons.md`](lessons.md) "부분 수정 vs 깨고 다시 작성" 표). 본 컨벤션 11 분류 (`code_error_cascade`/`spec_omission`/`nfr_violation`/`scope_creep`/...) 가 그 일반화.
+a- **체크포인트 없이 페이즈 단위만 봉인** — 실패 시 페이즈 통째 재실행 = 비용 폭발.
+b- **회귀 위치를 사람이 매번 결정** — 본 컨벤션의 핵심 위반 (인터뷰 후 인터럽트 0).
+c- **멀티버스 우주 5개 이상** — 비용 폭발. 최대 3.
+d- **패자 우주 즉시 삭제** — 학습 자산 손실. 항상 `losers/` 로 보존.
+e- **같은 위치 3 회 회귀해도 단일 우주 고집** — 정체 신호 무시. 멀티버스 자동 분기 룰.
+f- **체크포인트 fingerprint 체인 무시** — `contracts.md` 의 무결성 위반, 페이즈 09 게이트 자동 fail.
+g- **DIP 위반에만 rewrite 트리거 한정** — 코드 오류 누적·스펙 누락·NFR 미달·의도 표류 같은 *다른 깊은 위반* 도 동등한 통째 재작성 트리거 ([`lessons.md`](lessons.md) "부분 수정 vs 깨고 다시 작성" 표). 본 컨벤션 11 분류 (`code_error_cascade`/`spec_omission`/`nfr_violation`/`scope_creep`/...) 가 그 일반화.

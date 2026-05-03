@@ -11,13 +11,13 @@
 
 ## 실행할 것
 
-ⓐ **백엔드 단위** — Go: `go test -json ./...` (또는 사용자 명시 스택).
-ⓑ **백엔드 통합** — `httptest` 어댑터로 페이크 와이어.
-ⓒ **프론트엔드 단위** — `bun test`.
-ⓓ **프론트엔드 통합** — fake 서비스로 컴포넌트 와이어.
-ⓔ **E2E** — Playwright JSON reporter — happy-path + 에러 1 경로.
-ⓕ **커버리지** — Go: `-cover -coverpkg=./...`, FE: `bun test --coverage`.
-ⓖ **속성 기반** — 직전 스프린트가 커버리지 얕음 플래그 시.
+a- **백엔드 단위** — Go: `go test -json ./...` (또는 사용자 명시 스택).
+b- **백엔드 통합** — `httptest` 어댑터로 페이크 와이어.
+c- **프론트엔드 단위** — `bun test`.
+d- **프론트엔드 통합** — fake 서비스로 컴포넌트 와이어.
+e- **E2E** — Playwright JSON reporter — happy-path + 에러 1 경로.
+f- **커버리지** — Go: `-cover -coverpkg=./...`, FE: `bun test --coverage`.
+g- **속성 기반** — 직전 스프린트가 커버리지 얕음 플래그 시.
 
 ## 체크포인트 커밋
 
@@ -47,10 +47,10 @@ git commit -m "sprint-NN checkpoint" --allow-empty
 
 ## 하드 룰
 
-ⓐ skip / `.only` 로 점수 부풀리기 금지.
-ⓑ rubric 편집 금지 — 실행 동안 read-only.
-ⓒ flaky 테스트 묵인 금지 — 실패는 실패.
-ⓓ 스위트 기동 자체가 실패 (env 누락 등) 면 setup-error 사유로 fail 기록 — 누락 처리 금지.
+a- skip / `.only` 로 점수 부풀리기 금지.
+b- rubric 편집 금지 — 실행 동안 read-only.
+c- flaky 테스트 묵인 금지 — 실패는 실패.
+d- 스위트 기동 자체가 실패 (env 누락 등) 면 setup-error 사유로 fail 기록 — 누락 처리 금지.
 
 
 ## 산출물 frontmatter / 핑거프린트 강제
@@ -68,7 +68,7 @@ python skills/theseus-harness/scoring/fingerprint.py compute \
 
 ## 완료 조건
 
-ⓐ 모든 스위트 실행 시도 완료.
-ⓑ `inputs.json`, `report.md` 존재.
-ⓒ 체크포인트 커밋 존재.
-ⓓ 지휘자가 점수와 sub-score 를 받아 루프 판단 가능.
+a- 모든 스위트 실행 시도 완료.
+b- `inputs.json`, `report.md` 존재.
+c- 체크포인트 커밋 존재.
+d- 지휘자가 점수와 sub-score 를 받아 루프 판단 가능.

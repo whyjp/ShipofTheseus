@@ -147,10 +147,10 @@ naming/00-naming.md                                    [ok ✓]
 
 ## 인덱스 자동 갱신 의무
 
-ⓐ 매 페이즈 산출물 작성 *직후* `index_builder.py rebuild` 자동 호출.
-ⓑ 멀티버스 분기/머지 직후 자동 갱신 — 우주 상태 변화 즉시 반영.
-ⓒ 서브에이전트 디스패치/머지 직후 자동 갱신 — 분해 트리 변화 반영.
-ⓓ self_lint C30 가 INDEX.md 의 *최신성* 검증 — 가장 최근 산출물의 timestamp ≤ INDEX.md 갱신 시각.
+a- 매 페이즈 산출물 작성 *직후* `index_builder.py rebuild` 자동 호출.
+b- 멀티버스 분기/머지 직후 자동 갱신 — 우주 상태 변화 즉시 반영.
+c- 서브에이전트 디스패치/머지 직후 자동 갱신 — 분해 트리 변화 반영.
+d- self_lint C30 가 INDEX.md 의 *최신성* 검증 — 가장 최근 산출물의 timestamp ≤ INDEX.md 갱신 시각.
 
 ## index.json — 기계 판독용 인덱스
 
@@ -206,10 +206,10 @@ INDEX.md 와 같은 데이터의 *프로그램 친화 형식*:
 
 본 하네스의 *오해 방지 장치* — 다음 시점에 INDEX.md / index.json 이 사용자/에이전트의 마지막 안전장치:
 
-ⓐ **사용자 핸드오프 시** (페이즈 13) — handoff/13-handoff.md 가 INDEX.md 를 인용해 "어떤 결정이 어디에 기록됐는지" 한 표로 제시.
-ⓑ **단독 스킬 호출 시** ([`sub-agents.md`](sub-agents.md) §"단독 호출 input 계약") — 진입 스킬이 INDEX.md 를 먼저 읽고 *현재 어떤 우주의 어떤 산출물이 valid 한가* 판단.
-ⓒ **회귀 결정 시** ([`checkpoints.md`](checkpoints.md) `find_regression_target`) — 인덱스 트리에서 회귀 가능 지점을 즉시 식별.
-ⓓ **외부 검토 시** — PR 리뷰어가 INDEX.md 한 파일만 봐도 본 회차의 모든 결정이 한눈에.
+a- **사용자 핸드오프 시** (페이즈 13) — handoff/13-handoff.md 가 INDEX.md 를 인용해 "어떤 결정이 어디에 기록됐는지" 한 표로 제시.
+b- **단독 스킬 호출 시** ([`sub-agents.md`](sub-agents.md) §"단독 호출 input 계약") — 진입 스킬이 INDEX.md 를 먼저 읽고 *현재 어떤 우주의 어떤 산출물이 valid 한가* 판단.
+c- **회귀 결정 시** ([`checkpoints.md`](checkpoints.md) `find_regression_target`) — 인덱스 트리에서 회귀 가능 지점을 즉시 식별.
+d- **외부 검토 시** — PR 리뷰어가 INDEX.md 한 파일만 봐도 본 회차의 모든 결정이 한눈에.
 
 ## 인덱스가 깨지는 상황과 보호
 
@@ -223,7 +223,7 @@ INDEX.md 와 같은 데이터의 *프로그램 친화 형식*:
 
 ## 안티 패턴
 
-ⓐ **INDEX.md 수동 작성** — `index_builder.py` 가 자동 재생성 source. 수동 편집은 다음 자동 재생성에서 덮어써짐. *사용자가 수정하고 싶으면 frontmatter / 산출물 본문* 을 고침.
-ⓑ **frontmatter 비직렬성 메타 누락** — universe/parent_module/depth/branch_kind 누락은 인덱스 빌더가 *기본값* (선형) 으로 추론하지만 — 실제 멀티버스/서브에이전트 산출물이 누락하면 트리 잘못 그려짐. 산출 에이전트 의무.
-ⓒ **자기 갱신 사이클 무시** — 한 페이즈 산출 후 즉시 인덱스 재생성 안 하면, 다음 페이즈가 stale INDEX 로 잘못된 입력 검증. C30 의 timestamp 검사로 차단.
-ⓓ **인덱스를 사용자 인터럽트 트리거로 활용** — 인덱스는 *사후 리뷰 도구*. 페이즈 04 외 사용자 인터럽트 0 룰 ([`autonomy.md`](autonomy.md)) 변경 안 됨.
+a- **INDEX.md 수동 작성** — `index_builder.py` 가 자동 재생성 source. 수동 편집은 다음 자동 재생성에서 덮어써짐. *사용자가 수정하고 싶으면 frontmatter / 산출물 본문* 을 고침.
+b- **frontmatter 비직렬성 메타 누락** — universe/parent_module/depth/branch_kind 누락은 인덱스 빌더가 *기본값* (선형) 으로 추론하지만 — 실제 멀티버스/서브에이전트 산출물이 누락하면 트리 잘못 그려짐. 산출 에이전트 의무.
+c- **자기 갱신 사이클 무시** — 한 페이즈 산출 후 즉시 인덱스 재생성 안 하면, 다음 페이즈가 stale INDEX 로 잘못된 입력 검증. C30 의 timestamp 검사로 차단.
+d- **인덱스를 사용자 인터럽트 트리거로 활용** — 인덱스는 *사후 리뷰 도구*. 페이즈 04 외 사용자 인터럽트 0 룰 ([`autonomy.md`](autonomy.md)) 변경 안 됨.
