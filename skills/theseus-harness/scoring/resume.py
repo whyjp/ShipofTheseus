@@ -197,7 +197,7 @@ def cmd_next(args) -> int:
         out = {
             "ok": False,
             "action": "repair_required",
-            "reason": "fingerprint 체인 끊김 — 사용자 ack 필요 (인터럽트 0 의 유일 추가 예외)",
+            "reason": "fingerprint 체인 끊김 — 자율 repair 시도 (마지막 valid 페이즈 다음부터 재시작), handoff/13 에 사후 보고",
             "integrity": integrity,
         }
         json.dump(out, sys.stdout, indent=2, ensure_ascii=False)

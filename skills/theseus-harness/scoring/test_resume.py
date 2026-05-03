@@ -134,7 +134,7 @@ def test_next_with_chain_break_requires_repair():
     rc, out = _run("next", root)
     assert rc == 1
     assert out["action"] == "repair_required"
-    assert "유일 추가 예외" in out["reason"]
+    assert "자율 repair" in out["reason"]
 
 
 def test_next_with_incomplete_pending_discards_then_resumes():

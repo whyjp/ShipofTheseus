@@ -93,7 +93,7 @@ LOG_LEVEL=info
 - `.env` 자동 `.gitignore` 추가 (없으면 신설).
 - `.env.template` 의 값 자리에 실 시크릿 (`sk_live_*`, `prod-*`) 잔존 금지 — self_lint C-RP RP3.
 - 답 1 (실 paste) 시 frontmatter 의 `env_hash` 에 sha256 만 박힘 — 평문 0, audit 가능.
-- 실 secret 의 git 커밋 감지 시 자율 차단 + 사용자 ack 1회 (인터럽트 0 룰의 유일한 예외).
+- 실 secret 의 git 커밋 감지 시 자율 차단 + `.gitignore` 자동 추가 + handoff/13 사후 보고 (ack 없음).
 
 ## Decision Trace
 
