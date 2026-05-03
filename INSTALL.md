@@ -10,18 +10,13 @@
 
 ```
 skills/
-├── theseus-orchestrator/   # 14 페이즈를 7 분해 스킬로 위임하는 인덱스
-├── theseus-intent/         # 페이즈 00–05 (명명·의도·인터뷰·비평)
-├── theseus-plan/           # 페이즈 06–07 (TODO DAG·재이해)
-├── theseus-implement/      # 페이즈 08 (모듈 단위 구현)
-├── theseus-quality/        # 페이즈 09 (5 게이트)
-├── theseus-sprint/         # 페이즈 10–11 (무한 루프·바이섹트·멀티버스)
-├── theseus-webview/        # 페이즈 12 (bun 웹뷰)
-├── theseus-handoff/        # 페이즈 13 (요약·PR)
-└── theseus-harness/        # 플래그십 — 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기
+├── theseus-orchestrator/   # 사용자 entry — HARD-RULE + 그레이드 인덱스 (theseus-harness 동반 필수)
+└── theseus-harness/        # 콘텐츠 source — 22 컨벤션 + 14 페이즈 + 14 에이전트 + scoring/ + templates/
 ```
 
-스킬 간 인터페이스는 산출물 frontmatter ([`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md))가 계약 — 검증 실패 시 다음 스킬이 진입을 거부.
+> **v0.9.0 sprint-03-b 단순화** — 이전 9 SKILL.md (orchestrator + 7 phase 분해 stub + harness) 에서 7 phase stub 제거. pure delegation 이라 cost > benefit 으로 판정. 사용자 entry namespace 동일.
+
+페이즈 산출물 frontmatter ([`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약 — fingerprint chain 으로 다음 페이즈 진입 검증.
 
 ## Fresh User 환경 점검 (v0.4.0 — ralph bootstrap 거울)
 
@@ -55,44 +50,21 @@ scripts\self-check.bat --check-stack-only
 # 본 저장소를 적절한 위치에 클론
 git clone https://github.com/whyjp/shipoftheseus.git ~/src/shipoftheseus
 
-# 본인 프로젝트 루트에서 — 9 스킬 일괄 링크
+# 본인 프로젝트 루트에서 — 2 스킬 (orchestrator + harness) 모두 링크
 cd /path/to/your/project
 mkdir -p .claude/skills
 for s in ~/src/shipoftheseus/skills/*/; do
   ln -s "$s" ".claude/skills/$(basename "$s")"
 done
-
-# 또는 일괄 복사 (업스트림 갱신 추적이 필요 없을 때)
-cp -r ~/src/shipoftheseus/skills/* .claude/skills/
 ```
 
 이후 Claude Code 세션에서:
 
 ```
-/theseus-orchestrator <요구사항>   # 14 페이즈 자동 진행 (권장)
-/theseus-harness <요구사항>        # 단일 source of truth 직접 호출
-/theseus-plan <요구사항>           # 외부 intent 산출물로 plan 부터 재진입
+/shipoftheseus:theseus-orchestrator <요구사항>   # 14 페이즈 자율 driver (사용자 entry)
 ```
 
-### 일부만 설치
-
-플래그십만 쓰는 경우(단일 호출):
-
-```bash
-ln -s ~/src/shipoftheseus/skills/theseus-harness .claude/skills/theseus-harness
-```
-
-orchestrator + 분해 7 개만(플래그십 단일 source of truth 는 같이 설치 권장 — 분해 스킬이 본문을 위임하기 때문):
-
-```bash
-for s in theseus-orchestrator theseus-intent theseus-plan theseus-implement \
-         theseus-quality theseus-sprint theseus-webview theseus-handoff \
-         theseus-harness; do
-  ln -s "$HOME/src/shipoftheseus/skills/$s" ".claude/skills/$s"
-done
-```
-
-> **주의** — 분해 스킬(`theseus-intent`/`theseus-plan` 등)은 콘텐츠를 `theseus-harness/` 경로로 위임한다. 분해 스킬만 설치하고 플래그십을 빠뜨리면 페이즈 본문 링크가 깨진다.
+> **두 스킬 모두 설치 필수** — `theseus-orchestrator` 는 HARD-RULE entry 룰 + 그레이드 인덱스만 정의. 콘텐츠 source 는 `theseus-harness/` 가 가짐. 한 쪽만 설치하면 동작 안 함.
 
 ## 2. 사용자 전역 설치
 

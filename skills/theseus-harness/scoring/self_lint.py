@@ -763,14 +763,9 @@ def check_sub_agents_wired(skill_root: Path) -> list[str]:
     if not sa.exists():
         return ["conventions/sub-agents.md 누락 — 서브에이전트 재귀 분해 정의 필요"]
     text = _read(sa)
-    # 단독 호출 input 매트릭스 검증 — 7 분해 스킬 모두 이름 등장
-    expected_skills = [
-        "theseus-intent", "theseus-plan", "theseus-implement",
-        "theseus-quality", "theseus-sprint", "theseus-webview", "theseus-handoff",
-    ]
-    for name in expected_skills:
-        if name not in text:
-            issues.append(f"sub-agents.md 의 단독 호출 input 매트릭스에 {name} 누락")
+    # v0.8.1 sprint-03-b: 7 phase 분해 stub 제거됨. orchestrator + harness 만.
+    # 본 매트릭스의 검증 대상은 conventions/sub-agents.md 안의 *서브에이전트 분해*
+    # (planner/implementer/etc.) 이지 외부 분해 스킬이 아님.
     # AIDE 4 오퍼레이터 매핑 검증
     for op in ["Draft", "Improve", "Debug", "Memory"]:
         if op not in text:
@@ -792,36 +787,23 @@ def check_sub_agents_wired(skill_root: Path) -> list[str]:
 
 
 def check_decomposition_stubs(repo_root: Path, skill_root: Path) -> list[str]:
-    """C28 — 8 분해 stub 존재 + 단일 source of truth 룰 검증."""
+    """C28 — orchestrator + harness 두 스킬 존재 + harness 가 source of truth (v0.8.1 sprint-03-b).
+
+    이전 v0.8.x 까지: 8 분해 stub (orchestrator + 7 phase stub) 검증.
+    sprint-03-b 에서 7 phase stub 제거 — pure delegation 만 했으므로 cost > benefit.
+    이제는 단순히 두 스킬 존재 + cross-link 만 검증.
+    """
     skills_root = repo_root / "skills"
-    expected = [
-        "theseus-orchestrator",
-        "theseus-intent",
-        "theseus-plan",
-        "theseus-implement",
-        "theseus-quality",
-        "theseus-sprint",
-        "theseus-webview",
-        "theseus-handoff",
-    ]
     issues: list[str] = []
-    for stub in expected:
-        skill_md = skills_root / stub / "SKILL.md"
-        if not skill_md.exists():
-            issues.append(f"{stub}/SKILL.md 누락 (분해 stub)")
-            continue
-        text = skill_md.read_text(encoding="utf-8")
-        if stub != "theseus-orchestrator" and "../theseus-harness/" not in text:
-            issues.append(f"{stub} 가 ../theseus-harness/ source 참조 누락 (단일 source of truth 위반)")
-    # orchestrator 가 7 stub 모두 링크
+    expected = ["theseus-orchestrator", "theseus-harness"]
+    for s in expected:
+        if not (skills_root / s / "SKILL.md").exists():
+            issues.append(f"{s}/SKILL.md 누락")
     orch = skills_root / "theseus-orchestrator" / "SKILL.md"
     if orch.exists():
         orch_text = orch.read_text(encoding="utf-8")
-        for stub in expected:
-            if stub == "theseus-orchestrator":
-                continue
-            if stub not in orch_text:
-                issues.append(f"theseus-orchestrator 가 {stub} 링크 누락")
+        if "theseus-harness" not in orch_text:
+            issues.append("theseus-orchestrator 가 theseus-harness 참조 누락 (single source of truth)")
     return issues
 
 
@@ -1025,13 +1007,9 @@ def check_anti_patterns_consolidation(repo_root: Path, skill_root: Path) -> list
 
 
 def check_description_length_and_anti_pattern(repo_root: Path, skill_root: Path) -> list[str]:
-    """C41 — 9 SKILL.md description 이 200자 이하 + theseus-harness/orchestrator 는 anti-pattern 마커 보유."""
+    """C41 — 2 SKILL.md description 이 200자 이하 + 두 스킬 모두 anti-pattern 마커 보유 (v0.8.1)."""
     issues: list[str] = []
-    skill_dirs = [
-        "theseus-harness", "theseus-orchestrator", "theseus-intent",
-        "theseus-plan", "theseus-implement", "theseus-quality",
-        "theseus-sprint", "theseus-webview", "theseus-handoff",
-    ]
+    skill_dirs = ["theseus-harness", "theseus-orchestrator"]
     for name in skill_dirs:
         path = repo_root / "skills" / name / "SKILL.md"
         if not path.exists():
@@ -1060,26 +1038,19 @@ def check_hard_rule_markup(repo_root: Path, skill_root: Path) -> list[str]:
 
 
 def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
-    """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
+    """C37 — orchestrator 가 harness 동반 의존 명시 (v0.8.1 sprint-03-b 단순화).
+
+    이전: 7 phase stub 의 단독 호출 가능성 + 본문 점프 정직성.
+    sprint-03-b 에서 7 stub 제거. orchestrator 가 harness 의 콘텐츠를
+    참조하므로 'theseus-harness 동반 필수' 명시만 검증.
+    """
     issues: list[str] = []
-    decomposed_skills = [
-        "theseus-orchestrator", "theseus-intent", "theseus-plan",
-        "theseus-implement", "theseus-quality", "theseus-sprint",
-        "theseus-webview", "theseus-handoff",
-    ]
-    for skill_name in decomposed_skills:
-        skill_path = repo_root / "skills" / skill_name / "SKILL.md"
-        if not skill_path.exists():
-            issues.append(f"{skill_name}/SKILL.md 누락")
-            continue
-        text = skill_path.read_text(encoding="utf-8")
-        if "단독 호출" in text and "../theseus-harness/" in text:
-            jump_count = text.count("../theseus-harness/")
-            if jump_count > 0 and "동반" not in text and "필요" not in text:
-                issues.append(
-                    f"{skill_name}: 단독 호출 주장하나 본문이 ../theseus-harness/ "
-                    f"{jump_count} 번 점프 — '동반 필요' 명시 누락"
-                )
+    orch_path = repo_root / "skills" / "theseus-orchestrator" / "SKILL.md"
+    if not orch_path.exists():
+        return ["theseus-orchestrator/SKILL.md 누락"]
+    text = orch_path.read_text(encoding="utf-8")
+    if "theseus-harness" not in text:
+        issues.append("theseus-orchestrator 가 theseus-harness 의존 명시 누락")
     return issues
 
 

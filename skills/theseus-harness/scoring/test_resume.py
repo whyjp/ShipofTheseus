@@ -87,7 +87,7 @@ def test_next_after_completed_phase_routes_to_next_skill():
     assert rc == 0
     assert out["action"] == "resume_next_phase"
     assert out["next_phase"] == "02-document"
-    assert out["entry_skill"] == "theseus-intent"
+    assert out["entry_skill"] == "theseus-orchestrator"
 
 
 def test_next_after_phase_07_routes_to_implement():
@@ -101,7 +101,7 @@ def test_next_after_phase_07_routes_to_implement():
     rc, out = _run("next", root)
     assert rc == 0
     assert out["next_phase"] == "08-implement"
-    assert out["entry_skill"] == "theseus-implement"
+    assert out["entry_skill"] == "theseus-orchestrator"
 
 
 def test_validate_passes_for_clean_chain():
@@ -148,7 +148,7 @@ def test_next_with_incomplete_pending_discards_then_resumes():
         root,
         last_completed_phase="08-implement",
         last_completed_artifact="impl/08-impl-log.md",
-        active_skill="theseus-implement",
+        active_skill="theseus-orchestrator",
         current_phase="08-implement",
         pending_artifacts=["impl/T-020/sub/A.1/code.go (in_progress)"],
     )
@@ -156,7 +156,7 @@ def test_next_with_incomplete_pending_discards_then_resumes():
     assert rc == 0
     assert out["action"] == "discard_incomplete_then_resume"
     assert "impl/T-020/sub/A.1/code.go" in out["discard_files"]
-    assert out["entry_skill"] == "theseus-implement"
+    assert out["entry_skill"] == "theseus-orchestrator"
 
 
 def test_next_after_phase_13_returns_already_complete():

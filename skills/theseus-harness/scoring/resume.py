@@ -29,23 +29,9 @@ PHASE_ORDER = [
     "11-regression-bisect", "12-webview-assembly", "13-handoff",
 ]
 
-# 페이즈 → 분해 스킬 매핑 (theseus-orchestrator 의 호출 순서)
-PHASE_TO_SKILL = {
-    "00-naming": "theseus-intent",
-    "01-intent": "theseus-intent",
-    "02-document": "theseus-intent",
-    "03-independent-comprehension": "theseus-intent",
-    "04-clarify": "theseus-intent",
-    "05-critique": "theseus-intent",
-    "06-plan": "theseus-plan",
-    "07-plan-recursion": "theseus-plan",
-    "08-implement": "theseus-implement",
-    "09-quality-gates": "theseus-quality",
-    "10-test-loop": "theseus-sprint",
-    "11-regression-bisect": "theseus-sprint",
-    "12-webview-assembly": "theseus-webview",
-    "13-handoff": "theseus-handoff",
-}
+# 페이즈 → 스킬 매핑 (v0.9.0 sprint-03-b — 7 phase 분해 stub 제거 후 모든 페이즈가
+# theseus-orchestrator 단일 entry 로 resume).
+PHASE_TO_SKILL = {p: "theseus-orchestrator" for p in PHASE_ORDER}
 
 
 def _read_json(path: Path) -> dict | None:
