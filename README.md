@@ -4,11 +4,23 @@
 
 ## 한 줄 요약
 
-**조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 8 분해 스킬 + 1 인덱스 스킬 + 1 플래그십(단일 source of truth)으로 파편화해 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (전체 자동 진행) 또는 [`theseus-harness`](skills/theseus-harness/SKILL.md) (단일 호출).
+**조립을 다시 하든, 부수고 다시 만들든, 결국 처음 의도한 이름으로 불릴 수 있는 결과물을 보장**하는 Claude Code 스킬 묶음. 14 페이즈를 1 entry 스킬 (orchestrator) + 1 source 스킬 (harness) 의 2 SKILL.md 로 운영한다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md).
 
-## 현재 성숙도 — 정직 박스 (v0.2.2)
+## 현재 성숙도 — 정직 박스 (v0.8.x, *체감 성숙도 0.4~0.5*)
 
-> **v0.2.x 는 자기 평가만 통과한 스캐폴드입니다. 외부 실 프로젝트 적용 0 건.**
+> **v0.8.x 의 라벨은 SemVer 누적이지만 *체감 성숙도는 0.4~0.5 수준*** — 외부 실 프로젝트 적용 1 건도 아직 없음. 라벨 = 마이그레이션 추적, *실 maturity ≠ 라벨*.
+>
+> **진척 지표 (2026-05-03)**:
+> - ✅ 자기 평가 (self_lint 47/47, pytest 106/106, 자기 임계 0.99999 통과)
+> - ✅ livetest scenario #1 (G2 url-shortener) v0.8.0 PASS — sub-claude 가 14 페이즈 산출물 11개 정확 생성 (HARD-RULE 정정 후)
+> - ✅ livetest scenario #2 (G3 notification backend) v0.8.0 PASS — plan-tree 폭 2 + 토너먼트 + impl + sprint cap 3 + webview 8 탭
+> - ⏸ livetest scenario #3 (G4 task management, FE+BE) — 미실행
+> - ⏸ livetest scenario #4 (G5 payment webhook) — 미실행
+> - ⏸ **외부 실 프로젝트 적용 1건** (정직박스 ⓓ) — 미실행. 본 적용 후 maturity 0.6~0.7 도달 가능.
+>
+> v1.0 = 외부 적용 ≥ 5 건 + 사각지대 0 + maintainer 외 사용자가 prod 채택. 현재는 그 길의 절반 이전.
+
+> **이전 v0.2.x 정직 박스 본문**: 자기 평가만 통과한 스캐폴드. 외부 실 프로젝트 적용 0 건.
 >
 > ⓐ `self_lint 35/35 pass`, `sample_score 1.0`, `임계 0.99999 통과` 같은 수치는 **본 저장소의 마크다운·코드 인덱스 정합성·예시 입력 채점 통과** 를 의미합니다 — *LLM 에이전트가 프롬프트를 행동으로 따르는지* 의 외부 실증과 다릅니다.
 > ⓑ self_lint 는 *마크다운 텍스트 패턴* 만 검사합니다. "phase 10 본문에 lessons + stagnation 단어가 박혀 있는가" 는 검증되지만, "implementer 에이전트가 *실제로* lesson_pack 을 받아 forbidden 전략을 회피하는가" 는 검증 불가.
@@ -31,59 +43,45 @@
 
 ## 14 페이즈 파이프라인
 
-| 단계 | 페이즈 | 담당 스킬 | 산출물 |
-| ---: | ----- | -------- | ------ |
-| 00 | 명명 | `theseus-intent` | `naming/00-naming.md` |
-| 01–05 | 의도·마인드맵·교차 이해·인터뷰·비평 | `theseus-intent` | `intent/01..05*.md` |
-| 06–07 | TODO DAG 계획·재이해 | `theseus-plan` | `plan/06..07*.md` |
-| 08 | 모듈 구현 (코드+테스트+빌드) | `theseus-implement` | `impl/08-impl-log.md` + 코드 |
-| 09 | 5 종 게이트 + Phase V 측정 유효성 | `theseus-quality` | `quality/09-quality-gate.md` |
-| 10–11 | 무한 스프린트 루프 + 회귀 바이섹트 + 멀티버스 | `theseus-sprint` | `sprints/NN/{report,inputs,bisect}.*` |
-| 12 | bun 기반 인터랙티브 웹뷰 자동 생성 | `theseus-webview` | `webview/` (hono + react, 6 탭) |
-| 13 | 한 줄 요약 + 점수 시계열 + (자율 시) PR 생성 | `theseus-handoff` | `handoff/13-handoff.md` |
+| 단계 | 페이즈 | 산출물 |
+| ---: | ----- | ------ |
+| 00 | 명명 (G3+) | `naming/00-naming.md` |
+| 01–05 | 의도·마인드맵·교차 이해·인터뷰·비평 | `intent/01..05*.md` (+ `04-{verification,runtime-prereq}.md`) |
+| 06 | TODO DAG 계획 (G3+ AIDE 트리) | `plan/{tournament,06-plan}.md` + `plan/candidates/universe-N/` |
+| 07 | 계획 재이해 (G4+) | `plan/07-plan-review.md` |
+| 08 | 모듈 구현 (코드+테스트+빌드) | `impl/08-impl-log.md` + 코드 |
+| 09 | 7 종 게이트 (의도·범위·SOLID·테스트·FE-BE 패리티·NFR·실 부팅) | `quality/09-quality-gate.md` |
+| 10 | 무한 스프린트 루프 (G3+) | `sprints/NN/{report,inputs}.*` |
+| 11 | 회귀 바이섹트 (G4+) | `sprints/NN/bisect.md` |
+| 12 | bun 인터랙티브 웹뷰 자동 생성 (G3+) | `webview/` (8 탭) |
+| 13 | 한 줄 요약 + 점수 시계열 + (자율 시) PR 생성 | `handoff/13-handoff.md` |
 
-플래그십 [`theseus-harness`](skills/theseus-harness/SKILL.md) 가 위 모든 페이즈의 *콘텐츠 단일 source of truth* — 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기. 분해 스킬은 *형태와 인터페이스만* 정의하고 본문을 위임한다.
+페이즈별 활성 그레이드 + 컨벤션은 [`conventions/grades.md`](skills/theseus-harness/conventions/grades.md) 의 매트릭스. 22 컨벤션 + 14 에이전트 + 채점기는 모두 `theseus-harness/` 단일 source.
 
-## 수록 스킬 (9 개)
+## 수록 스킬 (2 개, v0.9.0)
 
 | 스킬 | 역할 | 가이드 |
 | ---- | ---- | ----- |
-| [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) | 14 페이즈를 8 분해 스킬로 순차 위임하는 인덱스. 단순 호출은 grade-assess 로 거부 또는 미니 모드로 자동 다운시프트. 사용자 인터뷰는 페이즈 04 한 번. | [docs/skills/theseus-orchestrator.md](docs/skills/theseus-orchestrator.md) |
-| [`theseus-intent`](skills/theseus-intent/SKILL.md) | 페이즈 00–05. 명명 + 의도 추출 + 마인드맵 + 콜드 재이해 + 사용자 질의(Q-G1+Q-D1~D7+NFR) + 비평·대안. | [docs/skills/theseus-intent.md](docs/skills/theseus-intent.md) |
-| [`theseus-plan`](skills/theseus-plan/SKILL.md) | 페이즈 06–07. TODO DAG 계획 + 시퀀스 다이어그램 + 콜드 재이해. 경쟁 트리거 가능. | [docs/skills/theseus-plan.md](docs/skills/theseus-plan.md) |
-| [`theseus-implement`](skills/theseus-implement/SKILL.md) | 페이즈 08. TODO 별 모듈 단위 구현 (코드 + 테스트 + 목 표면 한 호출에). | [docs/skills/theseus-implement.md](docs/skills/theseus-implement.md) |
-| [`theseus-quality`](skills/theseus-quality/SKILL.md) | 페이즈 09. 5 게이트 + Phase V 측정 유효성 + frontmatter 검증. | [docs/skills/theseus-quality.md](docs/skills/theseus-quality.md) |
-| [`theseus-sprint`](skills/theseus-sprint/SKILL.md) | 페이즈 10–11. 무한 스프린트 루프 (그레이드별 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 천정 자동 조정 + 멀티버스. | [docs/skills/theseus-sprint.md](docs/skills/theseus-sprint.md) |
-| [`theseus-webview`](skills/theseus-webview/SKILL.md) | 페이즈 12. bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). | [docs/skills/theseus-webview.md](docs/skills/theseus-webview.md) |
-| [`theseus-handoff`](skills/theseus-handoff/SKILL.md) | 페이즈 13. 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + 웹뷰 실행 명령 + (자율 권한 시) PR 생성. | [docs/skills/theseus-handoff.md](docs/skills/theseus-handoff.md) |
-| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. **분해 스킬 없이 단독 호출 가능 — 분해 stub 은 본문이 본 플래그십 점프이므로 fresh user 가 분해 stub 만 설치하면 dead link.** | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
+| [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) | **사용자 entry point.** HARD-RULE (호출 직후 첫 동작 강제) + 그레이드 처리 인덱스 + harness 동반 의존 명시. | [docs/skills/theseus-orchestrator.md](docs/skills/theseus-orchestrator.md) |
+| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **콘텐츠 source of truth.** 22 컨벤션 + 14 페이즈 + 14 에이전트 + 채점기 (`scoring/`) + 템플릿 (`templates/`). | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
 
-스킬 간 인터페이스는 산출물 frontmatter ([`conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약. 검증 실패 시 다음 스킬이 진입을 거부 — 분해의 안전 장치.
+> **v0.9.0 sprint-03-b 단순화** — 이전 9 SKILL.md (orchestrator + harness + 7 phase 분해 stub) 에서 7 phase stub 제거. pure delegation 이라 cost > benefit 으로 판정 (livetest #1 fail 분석). 사용자 entry namespace (`/shipoftheseus:theseus-orchestrator`) 동일.
 
-새 스킬은 `skills/<이름>/SKILL.md` 로 추가하고 [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) `skills` 배열에 등록한다.
+스킬 간 인터페이스는 산출물 frontmatter ([`conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약. 페이즈 산출물 fingerprint chain 으로 무결성 검증.
+
+새 스킬은 `skills/<이름>/SKILL.md` 로 추가하고 [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) 에 등록한다.
 
 ## 빠른 사용
 
-ⓐ **전체 자동 진행 (권장)** — `theseus-orchestrator` 가 14 페이즈를 자동 위임:
+**기본** — `theseus-orchestrator` 가 14 페이즈를 자동 driver 로:
 
 ```
-/theseus-orchestrator <요구사항>
+/shipoftheseus:theseus-orchestrator <요구사항>
 ```
 
-ⓑ **단일 호출** — 단일 source of truth 인 `theseus-harness` 직접:
+페이즈 04 인터뷰 1회 후 인터럽트 0. 그레이드 매트릭스 + Q-D1~Q-D9 사전 위임 답에 따라 자율 진행.
 
-```
-/theseus-harness <요구사항>
-```
-
-ⓒ **부분 호출 (재진입)** — 외부에서 받은 산출물로 *다음 단계부터*:
-
-```
-/theseus-plan       # plan/06 부터, intent 산출물이 입력
-/theseus-implement  # impl/08 부터, plan 산출물이 입력
-```
-
-frontmatter 핑거프린트가 입력 무결성을 검증해야 진입한다.
+frontmatter 핑거프린트가 입력 무결성을 검증해야 다음 페이즈 진입한다.
 
 ## 설치
 

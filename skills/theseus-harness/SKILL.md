@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.8.0
+version: 0.8.1
 description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
@@ -118,13 +118,7 @@ c- 자율 시스템 업데이트 (스택 점검) — 사전 동의 시 자율.
 본 하네스의 SoC/DIP 철학을 본 하네스 자신에게 적용한 결과:
 
 a- `skills/theseus-orchestrator/` — 인덱스 + 14 페이즈 진행 제어만.
-b- `skills/theseus-intent/` — 페이즈 00–05 (명명, 의도, 리뷰, 재이해, 질의, 비평).
-c- `skills/theseus-plan/` — 페이즈 06–07 (계획, 재이해).
-d- `skills/theseus-implement/` — 페이즈 08 (구현).
-e- `skills/theseus-quality/` — 페이즈 09 + 채점 rubric.
-f- `skills/theseus-sprint/` — 페이즈 10–11 (스프린트 루프, 회귀 바이섹트).
-g- `skills/theseus-webview/` — 페이즈 12.
-h- `skills/theseus-handoff/` — 페이즈 13.
+b- (v0.8.1 sprint-03-b — 7 phase 분해 stub 제거. 모든 페이즈는 본 harness 의 phases/ + agents/ 가 직접 driver. 사용자 entry 는 [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) — HARD-RULE + 그레이드 매트릭스 인덱스만.)
 i- 공유 자원: 저장소 루트의 `core/{conventions,scoring,templates,agents}` — 모든 스킬이 상대 경로 참조.
 
 각 스킬이 [`conventions/contracts.md`](conventions/contracts.md) 의 frontmatter 계약만 지키면 독립 호출·교체 가능. 본 PR 은 분해 *가능성을 만든* 단계 — 실제 분해는 후속.
