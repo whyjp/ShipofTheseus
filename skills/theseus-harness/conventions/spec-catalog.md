@@ -194,3 +194,30 @@ a- 사용자에게 NFR 임계를 묻지 않고 *암묵 가정* 으로 진행 —
 b- 카탈로그 임계를 *사용자 동의 없이* 게이트로 적용 — 자율 결정의 범위 초과 (autonomy.md 의 사용자 ack 필요 케이스).
 c- 모든 도메인에 일률적 임계 적용 — 결제 API 와 검색 API 의 p99 가 같을 수 없다.
 d- NFR 미확정인데도 게이트 6 를 fail 처리 — ⏸ 항목은 skip, fail 아님.
+
+---
+
+## 도메인별 interactive-viewer dashboard 카탈로그 (페이즈 13)
+
+페이즈 13 ([`../phases/13-interactive-viewer.md`](../phases/13-interactive-viewer.md)) 의 interactive-viewer 가 도메인 식별 후 아래 매트릭스에서 default dashboard 를 선택한다. observability 목적 — 프로젝트 결과를 도메인 특성에 맞게 시각화.
+
+| 도메인 | default dashboard |
+|---|---|
+| DES (시뮬레이션) | scenario throughput bar + bottleneck heatmap + truck cycle gantt |
+| 데이터 ETL/스트리밍 | flow diagram + batch progress + record count over time + schema drift |
+| ML | metric curves (loss/accuracy) + confusion matrix + feature importance + sample drift |
+| 분석 | key metric dashboard + drill-down view + cohort comparison |
+| REST API | endpoint latency p50/p95/p99 + error rate + RPS over time + status code distribution |
+| Frontend | screen tree + component metric + Lighthouse score + bundle size |
+| (도메인 미매칭) | 단순 결과 JSON pretty + 1 summary plot |
+
+### 선택 기준
+
+1- 페이즈 01 의도 추출 시 도메인 키워드 식별 (NFR 카탈로그 도메인 매칭과 동일 흐름).
+2- Q-D4 답으로 도메인 확정 — "Skip" 시에도 카탈로그 매칭이 있으면 최소 1 plot 자동 emit.
+3- 도메인 완전 미매칭 시 페이즈 13 skip 허용 — handoff(페이즈 14) 에 사유 기록 의무.
+4- 도메인 2개 이상 매칭 시 모든 도메인 dashboard 병렬 emit.
+
+### NFR 카탈로그와의 관계
+
+본 절의 dashboard 카탈로그는 *결과 시각화* 용, 위 NFR 카탈로그는 *성능 임계 제안* 용 — 목적이 다르나 도메인 분류 체계는 동기화한다. 새 도메인 추가 시 두 카탈로그 모두 갱신 의무.
