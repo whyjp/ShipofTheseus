@@ -48,6 +48,10 @@
 4. 정체 수용 — 게이트 영구 fail 로 표시하고 다음 페이즈 진행
 ```
 
+**v0.4.0 sub-option (보조 천정 흡수):**
+- `1-aux` / `2-aux` — 위 1/2 답 + [`resources.md`](resources.md) "Opt-In 보조 천정" 활성. config.toml `[supplementary_ceiling]` 정합.
+- 답이 sub-option 이면 본 하네스는 *임계 점수 + wall-clock + token + iter cap* 4 차원으로 정지 조건 검사 — 어느 하나라도 도달하면 `on_breach` 정책 발동.
+
 ### Q-D4. 정체 누적 (lessons.md) 시 정책
 
 ```

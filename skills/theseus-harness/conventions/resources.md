@@ -227,3 +227,40 @@ while True:
 ⓒ 천정 도달 후 *임계 조정 없이* 무한 시도 — 본 컨벤션 위반, [`lessons.md`](lessons.md) 의 정체와 같이 자동 조정 권고로 빠져나가야.
 ⓓ 인터뷰 종료 후 임계 변경에 사용자 ack 호출 — [`autonomy.md`](autonomy.md) 의 핵심 룰 위반 (인터뷰 후 인터럽트 0). 임계 변경은 페이즈 04 의 Q-D3 사전 위임 답에 따라 자율 적용.
 ⓔ 도메인 보정 무시 — ML inference 에 단순 CRUD 천정 적용하면 너무 빡빡.
+
+## Opt-In 보조 천정 — wall-clock + token + bounded iteration (v0.4.0 신규)
+
+> **거울 원칙 차용** — ralph (`.ralph/run.sh` wall-clock cap) + autoresearch (`Iterations: N`) 의 *직교 차원* 차용. 본 하네스 컨셉상 임계 점수 (0.999) 까지 *무한 스프린트* 가 기본이지만, *외부 운영 환경* (CI 시간 한도 / API 토큰 budget / 자동화 회차 cap) 에서 *기본 활성* 은 컨셉 충돌이므로 **기본 비활성 + opt-in** 으로 차용.
+
+### 컨셉 충돌 명시
+
+본 하네스는 *도자기 장인의 깨고 다시 빚기* 메타포 — 시간이 다 됐다고 *부족한 품질로 정지* 하는 건 본 하네스의 핵심 정신과 정반대. 따라서 본 절의 보조 천정 활성은 *외부 환경 강제* 일 때만 정당.
+
+### 활성 조건 (모두 만족 시 활성)
+
+ⓐ Q-D3 (천정 도달) 답이 sub-option `1-aux` 또는 `2-aux` ([`autonomy.md`](autonomy.md)).
+ⓑ `.ShipofTheseus/<프로젝트>/config.toml` 에 다음 키가 *명시* 존재:
+
+```toml
+[supplementary_ceiling]
+enabled = true                # 기본 false — 명시 true 만 활성
+max_wall_clock_minutes = 90   # 권고 60~90, 0 이면 비활성
+max_total_tokens = 1000000    # 권고 100k~10M, 0 이면 비활성
+max_sprint_iterations = 10    # 권고 5~20, 0 이면 비활성
+on_breach = "checkpoint"      # checkpoint | abort | ack-and-continue
+```
+
+ⓒ 본 하네스 호출 직전 사용자가 위 config 를 *생성/편집* — 호출 도중 변경은 무시.
+
+### 천정 도달 시 동작 (`on_breach`)
+
+| 값 | 동작 |
+|--|--|
+| `checkpoint` (default) | 현 sprint 완료 시 [`checkpoints.md`](checkpoints.md) 의 `partial-completion` 체크포인트 자동 생성 + 핸드오프 진입 |
+| `abort` | 즉시 종료 (Phase 13 핸드오프 직행) |
+| `ack-and-continue` | autonomy 위배라 *비권장* — Q-D6 답이 1 (라이브 보고) 일 때만 허용 |
+
+### 본 컨벤션의 자기 가드
+
+ⓐ self_lint C39 — 본 절의 *기본 비활성* 명시 + *컨셉 충돌* 명시 + Q-D3 sub-option 흡수 명시 일관성 검증.
+ⓑ 본 보조 천정은 *임계 점수 (0.999) 의 대체 아님* — 점수 미달 + 시간 도달 시 `partial-completion` 으로 마킹되어 *후속 회차의 입력* 으로만 사용.

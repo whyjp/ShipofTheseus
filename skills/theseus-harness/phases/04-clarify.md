@@ -35,7 +35,7 @@
 
 본 페이즈의 **가장 첫 질의**. `scoring/grade_assess.py` 의 자동 추정을 두괄식으로 보여주고 5 보기 객관식으로 사용자 확정. Grade 1 (Trivial) 답이면 본 하네스 즉시 종료 + 단순 응답 권고.
 
-## PRD 입력 처리 — 인터뷰 스킵 금지 ([`../conventions/prd-handling.md`](../conventions/prd-handling.md))
+## PRD 입력 처리 — 인터뷰 스킵 금지 ([`../conventions/interview.md`](../conventions/interview.md) "PRD/스펙 입력 처리" 절)
 
 사용자가 PRD/스펙 문서를 첨부했어도 본 페이즈의 *모든 인터뷰 항목* 은 생략 안 됨. PRD 추출값은 객관식의 1번 보기로 제안되고, 사용자가 빠르게 1 클릭 확정. 각 답에 `user_explicit_confirmation: true` + `confirmed_at` timestamp 필수. self_lint C33 이 누락된 항목 자동 검출 → 페이즈 05 진입 거부.
 
@@ -64,3 +64,5 @@
 ⓐ 질문 6개 이상 — 차원이 섞임. clarifier 재실행해 차원별로 재구성.
 ⓑ 객관식인데 알파벳 라벨 — 컨벤션 위반. 수정 후 재질의.
 ⓒ 두괄식 누락 — 사용자가 끝까지 읽어야 핵심이 나오는 질문은 무효.
+
+> **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.

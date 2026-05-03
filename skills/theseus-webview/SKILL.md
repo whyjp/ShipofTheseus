@@ -1,7 +1,7 @@
 ---
 name: theseus-webview
 version: 0.2.2
-description: bun + hono + react 기반 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). theseus-orchestrator 또는 단독 호출. 단일 source of truth 는 ../theseus-harness/. frontmatter (contracts.md) 가 입출력 계약.
+description: 페이즈 12 분해 — bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid + TimingHeader). 단일 source 는 ../theseus-harness/.
 ---
 
 # theseus-webview — 페이즈 12 분해 stub
@@ -42,18 +42,16 @@ python ../theseus-harness/scoring/fingerprint.py verify --file <input>
 
 G3 (단순) / G4 / G5
 
-## 단독 호출
+## 단독 호출 (재진입)
+
+> **단독 호출 시 의존성:** 본 stub 은 *위임 + 인터페이스* 만. 룰 본문은 [`../theseus-harness/`](../theseus-harness/) 단일 source 에 위치. **fresh user 가 본 stub 만 설치하면 본문 점프가 모두 dead link** — 본 저장소 전체 또는 최소 [`../theseus-harness/`](../theseus-harness/) 동반 설치 필요.
 
 ```bash
+# 반드시 theseus-harness 동반 설치 후
 /theseus-webview --from <input_dir>
 ```
 
-`<input_dir>` 의 frontmatter 가 본 스킬의 *입력 계약* 을 만족하면 진입. 예:
-
-```bash
-# 이미 의도 산출물 있음 → 본 스킬부터
-/theseus-webview --from .ShipofTheseus/<프로젝트>/
-```
+`<input_dir>` 의 frontmatter 가 본 스킬의 *입력 계약* 을 만족하면 진입.
 
 ## 본 stub 의 안전 보장
 

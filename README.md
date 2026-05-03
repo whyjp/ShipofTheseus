@@ -15,6 +15,7 @@
 > ⓒ **임계 0.999 / 자기 임계 0.99999 는 SLO 가용성이 아닙니다** — 6 차원 rubric 가중평균 + DIP 단독 hard cap 0.6 + 5 hard cap 의 *명명 규칙* 입니다. 외부 사용자에게 "99.999% 신뢰 가능" 으로 오해되지 않도록 본 README 에서 명시.
 > ⓓ **v0.3.0 의 유일 시급 목표**: 첫 외부 실 프로젝트 적용 1 건 + 4 메트릭(인터럽트 0 / 14 페이즈 시간 / 의도 일치 / 채택 가능) post-mortem. 그때까지 새 컨벤션·새 도구 추가 동결.
 > ⓔ **자기 평가 통과 수치는 OS 무관** — Linux / Mac / Windows 모두에서 `bash scripts/self-check.sh` 또는 `scripts\self-check.bat` 으로 같은 결과 재현. v0.2.1 까지는 한국어 로케일 Windows 에서 cp949 디코딩 비호환으로 재현이 깨져 있었으며 v0.2.2 의 `scoring/conftest.py` + 명시 `encoding="utf-8"` + self_lint C35 가드로 해소.
+> ⓕ **외부 차용 메서돌로지 — 거울 원칙** (v0.4.0 신규): oh-my-ralph 등 외부 스킬은 *사각지대 탐지용 거울* 로만 사용. *합성 source 가 아님*. 차용은 본 하네스의 *컨셉 보존* 우선, *직교 차원 입증 시* 만 *기존 한 단락 증강*. 자세한 메서돌로지는 [`PHILOSOPHY.md`](PHILOSOPHY.md) "외부 패턴 차용 메서돌로지" 절. 본 메서돌로지가 v0.3.0 정직 박스 ⓓ 의 *동결 룰* 을 자연스럽게 흡수 — 동결 예외는 *직교 차원 + 기존 증강만* 으로 좁아짐.
 
 ## 왜 "테세우스의 배" 인가
 
@@ -55,7 +56,7 @@
 | [`theseus-sprint`](skills/theseus-sprint/SKILL.md) | 페이즈 10–11. 무한 스프린트 루프 (그레이드별 임계 0.95~0.99999) + 회귀 바이섹트 + 정체 감지 + 천정 자동 조정 + 멀티버스. | [docs/skills/theseus-sprint.md](docs/skills/theseus-sprint.md) |
 | [`theseus-webview`](skills/theseus-webview/SKILL.md) | 페이즈 12. bun + hono + react 인터랙티브 웹뷰 자동 생성 (6 탭 + Mermaid 자동 렌더 + TimingHeader 라이브). | [docs/skills/theseus-webview.md](docs/skills/theseus-webview.md) |
 | [`theseus-handoff`](skills/theseus-handoff/SKILL.md) | 페이즈 13. 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + 웹뷰 실행 명령 + (자율 권한 시) PR 생성. | [docs/skills/theseus-handoff.md](docs/skills/theseus-handoff.md) |
-| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. 분해 스킬 없이 단독 호출도 가능. | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
+| [`theseus-harness`](skills/theseus-harness/SKILL.md) | **플래그십.** 21 컨벤션 + 14 페이즈 + 13 에이전트 + 채점기를 모두 담은 단일 source of truth. **분해 스킬 없이 단독 호출 가능 — 분해 stub 은 본문이 본 플래그십 점프이므로 fresh user 가 분해 stub 만 설치하면 dead link.** | [docs/skills/theseus-harness.md](docs/skills/theseus-harness.md) |
 
 스킬 간 인터페이스는 산출물 frontmatter ([`conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약. 검증 실패 시 다음 스킬이 진입을 거부 — 분해의 안전 장치.
 

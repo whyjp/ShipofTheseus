@@ -158,3 +158,25 @@ clarifier 가 `intent/04-answers.md` 의 각 답에 다음 메타를 부착:
 ⓒ 객관식 보기에 알파벳 — 사용자가 답할 때 형식이 흐려진다.
 ⓓ 제안과 선택이 한 블록 — 사용자가 무엇에 답하는지 헷갈린다.
 ⓔ 두괄식 누락 — 사용자가 끝까지 읽어야 핵심이 나오는 질문.
+
+## PRD/스펙 입력 처리 (v0.4.0 — prd-handling.md 흡수)
+
+> **중복 제거 (PR-13):** 기존 별도 컨벤션 `prd-handling.md` 가 본 절로 흡수. PRD 처리는 인터뷰의 *특수 모드* 라 별도 컨벤션 분리 비정합. 28 컨벤션 → 27.
+
+사용자가 PRD/스펙 문서를 첨부했어도 본 페이즈 (Phase 04) 의 *모든 인터뷰 항목* 은 생략 안 됨. 이유:
+
+ⓐ PRD 는 *작성된 시점의 의도* 일 뿐, 본 호출 시점에 *여전히 유효* 인지 미보장.
+ⓑ PRD 추출값과 사용자 *현재* 답이 일치해도 *명시 확정* 이 의도 봉인의 시각 표시.
+ⓒ self_lint C33 가 PRD 첨부 시에도 모든 답에 `user_explicit_confirmation: true` + `confirmed_at` timestamp 의무화.
+
+PRD 추출값은 객관식의 *1번 보기* 로 제안 — 사용자가 빠른 1 클릭 확정. 4 보기 객관식 룰 위반 아님 — 1번이 *PRD 매핑*, 2~4번이 *PRD 와 다른 답* 후보, 자유 응답이 본질이면 도구 없이 평문으로 보강.
+
+각 답에 `user_explicit_confirmation: true` + `prd_evidence_cited: true` + `confirmed_at` timestamp 가 frontmatter 에 박힘.
+
+### PRD 인터뷰 안티 패턴
+
+ⓐ PRD 가 충실하다는 이유로 인터뷰 스킵 — `intent/04-answers.md` 가 비면 페이즈 05 진입 거부.
+ⓑ 1번 보기 (PRD 매핑) 만 자동 답 — 사용자 명시 클릭 없이 진행 금지.
+ⓒ `confirmed_at` timestamp 누락 — self_lint C33 fail.
+
+(참고: 본 절 흡수 전 별도 파일 `prd-handling.md` 가 있었으나 PR-13 에서 삭제. self_lint C2 인덱스 정합은 자동 갱신 — 컨벤션 디렉터리에 실제 존재하는 파일만 검증.)

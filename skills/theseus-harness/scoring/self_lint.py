@@ -353,42 +353,72 @@ def check_prd_handling_wired(skill_root: Path) -> list[str]:
     """
     C33 — PRD 처리 룰 박힘 + 인터뷰 스킵 금지 허들.
 
-    검증 항목:
-      ⓐ conventions/prd-handling.md 존재
+    검증 항목 (PR-13 이후 — prd-handling.md 가 interview.md 로 흡수됨):
+      ⓐ interview.md 에 PRD/스펙 입력 처리 절 존재
       ⓑ phase 04 가 PRD 처리 절차 + user_explicit_confirmation 명시
-      ⓒ agents/clarifier.md 가 PRD 입력 시 1 클릭 확정 룰 명시
-      ⓓ agents/intent-extractor.md 가 PRD → 후보 매핑 명시 (선택적, 권고)
+      ⓒ agents/clarifier.md 가 PRD 입력 시 명시 확정 룰 명시
     """
     issues: list[str] = []
-    prd = skill_root / "conventions" / "prd-handling.md"
-    if not prd.exists():
-        return ["conventions/prd-handling.md 누락 — PRD 충실해도 인터뷰 스킵 금지 허들 부재"]
 
-    text = _read(prd)
-    # 핵심 키워드 — passive default 채택 차단을 위한 active critique 룰 명시 검증
+    # PR-13: prd-handling.md → interview.md 흡수. interview.md 의 흡수 절 검증.
+    interview = skill_root / "conventions" / "interview.md"
+    if not interview.exists():
+        return ["conventions/interview.md 누락 — 인터뷰 룰 정의 필요"]
+
+    text = _read(interview)
+    # 핵심 키워드 — passive default 채택 차단을 위한 명시 검증
     for must_have in [
         "user_explicit_confirmation",
         "prd_evidence_cited",
-        "alternative_proposals_offered",
-        "default 강조 금지",
-        "drift_reason",
-        "비평가",
-        "Q-D1",
-        "확증 회귀",
+        "PRD/스펙 입력 처리",
         "인터뷰 스킵",
+        "confirmed_at",
     ]:
         if must_have not in text:
-            issues.append(f"prd-handling.md 가 '{must_have}' 명시 누락")
+            issues.append(f"interview.md 가 '{must_have}' 명시 누락 (C33 PRD 처리 허들)")
 
     p4 = _read(skill_root / "phases" / "04-clarify.md")
-    if "prd-handling.md" not in p4 or "user_explicit_confirmation" not in p4:
+    if "user_explicit_confirmation" not in p4:
         issues.append(
             "phases/04-clarify.md 가 PRD 처리 절차 또는 user_explicit_confirmation 의무 누락"
         )
 
     cl = _read(skill_root / "agents" / "clarifier.md")
-    if "prd-handling.md" not in cl and "user_explicit_confirmation" not in cl:
+    if "user_explicit_confirmation" not in cl:
         issues.append("agents/clarifier.md 가 PRD 입력 시 명시 확정 룰 누락")
+
+    return issues
+
+
+def check_convention_consolidation_prd(repo_root: Path, skill_root: Path) -> list[str]:
+    """C42 — interview.md 가 PRD/스펙 입력 처리 절 흡수 + prd-handling.md 제거 + dead link 부재."""
+    issues: list[str] = []
+
+    # 1. interview.md has the absorbed section
+    interview_path = skill_root / "conventions" / "interview.md"
+    interview = interview_path.read_text(encoding="utf-8")
+    if "PRD/스펙 입력 처리" not in interview:
+        issues.append("interview.md: PRD/스펙 입력 처리 흡수 절 누락 (PR-13)")
+    if "prd-handling.md 흡수" not in interview:
+        issues.append("interview.md: prd-handling 흡수 명시 누락 (PR-13)")
+
+    # 2. prd-handling.md is gone
+    if (skill_root / "conventions" / "prd-handling.md").exists():
+        issues.append("prd-handling.md 가 여전히 존재 — interview.md 로 흡수되어야 (PR-13)")
+
+    # 3. No dead links to prd-handling.md
+    import re
+    targets = (
+        list((skill_root / "phases").glob("*.md"))
+        + list((skill_root / "agents").glob("*.md"))
+        + [skill_root / "SKILL.md", skill_root / "README.md"]
+    )
+    for t in targets:
+        if not t.exists():
+            continue
+        text = t.read_text(encoding="utf-8")
+        if "prd-handling.md" in text:
+            issues.append(f"{t.name}: dead link 'prd-handling.md' 잔존 (PR-13)")
 
     return issues
 
@@ -904,6 +934,112 @@ def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_install_fresh_user_section(repo_root: Path, skill_root: Path) -> list[str]:
+    """C38 — INSTALL.md 가 fresh-user 환경 prep 절 + self-check.{sh,bat} 가 --check-stack-only 모드 보유."""
+    issues: list[str] = []
+    install = (repo_root / "INSTALL.md").read_text(encoding="utf-8")
+    if "Fresh User 환경 점검" not in install:
+        issues.append("INSTALL.md: Fresh User 환경 점검 절 누락 (PR-2)")
+    for script in ("scripts/self-check.sh", "scripts/self-check.bat"):
+        text = (repo_root / script).read_text(encoding="utf-8")
+        if "--check-stack-only" not in text:
+            issues.append(f"{script}: --check-stack-only 모드 누락 (PR-2)")
+    return issues
+
+
+def check_resources_supplementary_ceiling(repo_root: Path, skill_root: Path) -> list[str]:
+    """C39 — resources.md 의 opt-in 보조 천정 절 + 컨셉 충돌 + 기본 비활성 + Q-D3 sub-option 흡수 일관."""
+    issues: list[str] = []
+    resources = (skill_root / "conventions" / "resources.md").read_text(encoding="utf-8")
+    autonomy = (skill_root / "conventions" / "autonomy.md").read_text(encoding="utf-8")
+
+    if "Opt-In 보조 천정" not in resources:
+        issues.append("resources.md: Opt-In 보조 천정 절 누락 (PR-3)")
+    if "컨셉 충돌" not in resources:
+        issues.append("resources.md: 컨셉 충돌 명시 누락 (PR-3)")
+    if "기본 비활성" not in resources:
+        issues.append("resources.md: 기본 비활성 명시 누락 (PR-3)")
+    if "[supplementary_ceiling]" not in resources:
+        issues.append("resources.md: config.toml schema 누락 (PR-3)")
+
+    if "1-aux" not in autonomy or "2-aux" not in autonomy:
+        issues.append("autonomy.md: Q-D3 sub-option (1-aux/2-aux) 흡수 누락 (PR-3)")
+
+    return issues
+
+
+def check_anti_patterns_consolidation(repo_root: Path, skill_root: Path) -> list[str]:
+    """C40 — SKILL.md 의 안티 패턴 통합 카탈로그 + 페이즈별 본문이 통합 카탈로그 링크."""
+    issues: list[str] = []
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    if "안티 패턴 통합 카탈로그" not in skill:
+        issues.append("SKILL.md: 안티 패턴 통합 카탈로그 절 누락 (PR-11)")
+    for p in sorted((skill_root / "phases").glob("*.md")):
+        text = p.read_text(encoding="utf-8")
+        if "흔한 실패" in text and "안티 패턴 통합 카탈로그" not in text:
+            issues.append(f"{p.name}: 흔한 실패 절은 있으나 통합 카탈로그 링크 누락 (PR-11)")
+    return issues
+
+
+def check_description_length_and_anti_pattern(repo_root: Path, skill_root: Path) -> list[str]:
+    """C41 — 9 SKILL.md description 이 200자 이하 + theseus-harness/orchestrator 는 anti-pattern 마커 보유."""
+    issues: list[str] = []
+    skill_dirs = [
+        "theseus-harness", "theseus-orchestrator", "theseus-intent",
+        "theseus-plan", "theseus-implement", "theseus-quality",
+        "theseus-sprint", "theseus-webview", "theseus-handoff",
+    ]
+    for name in skill_dirs:
+        path = repo_root / "skills" / name / "SKILL.md"
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        m = re.search(r"^description:\s*(.+?)$", text, re.MULTILINE)
+        if not m:
+            issues.append(f"{name}: frontmatter description 누락")
+            continue
+        desc = m.group(1).strip()
+        if len(desc) > 200:
+            issues.append(f"{name}: description {len(desc)}자 — 200자 초과 (PR-12 압축 후)")
+        if name in ("theseus-harness", "theseus-orchestrator"):
+            if not any(marker in desc for marker in ("사용 금지", "거부", "G1")):
+                issues.append(f"{name}: description 에 anti-pattern 마커 (사용 금지/거부/G1) 누락")
+    return issues
+
+
+def check_hard_rule_markup(repo_root: Path, skill_root: Path) -> list[str]:
+    """C43 — theseus-harness SKILL.md 의 하드 룰 절이 HARD-RULE 마크업 보유."""
+    issues: list[str] = []
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    if "## 하드 룰" in skill and "<!-- HARD-RULE:" not in skill:
+        issues.append("SKILL.md: 하드 룰 절은 있으나 HARD-RULE 마크업 누락 (PR-10)")
+    return issues
+
+
+def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> list[str]:
+    """C37 — 분해 SKILL.md 의 단독 호출 주장이 본문 점프 의존과 정합."""
+    issues: list[str] = []
+    decomposed_skills = [
+        "theseus-orchestrator", "theseus-intent", "theseus-plan",
+        "theseus-implement", "theseus-quality", "theseus-sprint",
+        "theseus-webview", "theseus-handoff",
+    ]
+    for skill_name in decomposed_skills:
+        skill_path = repo_root / "skills" / skill_name / "SKILL.md"
+        if not skill_path.exists():
+            issues.append(f"{skill_name}/SKILL.md 누락")
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        if "단독 호출" in text and "../theseus-harness/" in text:
+            jump_count = text.count("../theseus-harness/")
+            if jump_count > 0 and "동반" not in text and "필요" not in text:
+                issues.append(
+                    f"{skill_name}: 단독 호출 주장하나 본문이 ../theseus-harness/ "
+                    f"{jump_count} 번 점프 — '동반 필요' 명시 누락"
+                )
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -941,6 +1077,13 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C34", "rewrite trigger generalized to all deep quality violations (multi-dimensional, not DIP-only)", check_rewrite_trigger_multidimensional),
     ("C35", "subprocess/tempfile encoding explicit (Windows cp949 latent-bug guard, v0.2.2)", check_subprocess_encoding_explicit),
     ("C36", "Q-D8 Verification Commands wired (oh-my-ralph latch, v0.3.0)", check_qd8_verification_commands_wired),
+    ("C37", "decomposed stub standalone honesty (동반 필요 명시, v0.4.0)", check_decomposed_standalone_honesty),
+    ("C38", "INSTALL.md fresh-user prep + self-check stack-only mode (PR-2, v0.4.0)", check_install_fresh_user_section),
+    ("C39", "resources opt-in supplementary ceiling + Q-D3 sub-option (PR-3, v0.4.0)", check_resources_supplementary_ceiling),
+    ("C40", "anti-patterns consolidation catalog (PR-11, v0.4.0)", check_anti_patterns_consolidation),
+    ("C41", "description compressed (≤200) + anti-pattern preserved (PR-12, v0.4.0)", check_description_length_and_anti_pattern),
+    ("C42", "interview ← prd-handling consolidation + no dead links (PR-13, v0.4.0)", check_convention_consolidation_prd),
+    ("C43", "SKILL.md hard-rule markup (PR-10, v0.4.0)", check_hard_rule_markup),
 ]
 
 
