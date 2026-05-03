@@ -13,3 +13,5 @@ dist/
 .vite/
 bun.lockb
 .omc/
+.claude/settings.local.json
+
