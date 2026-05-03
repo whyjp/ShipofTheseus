@@ -861,6 +861,15 @@ def check_grade_scope_no_gate(skill_root: Path) -> list[str]:
         skill_root / "README.md",
         skill_root / "conventions" / "sub-agents.md",
     ]
+    # v0.6.x sprint-02-c — 분해 스킬 stub 도 검사 (sprint-02-a 의 sweep 미완 보강).
+    # theseus-harness/ 의 부모 = skills/, 형제 분해 스킬 8 개의 SKILL.md 도 동일 룰 적용.
+    sibling_root = skill_root.parent
+    if sibling_root.name == "skills":
+        for sibling in sorted(sibling_root.iterdir()):
+            if sibling.is_dir() and sibling.name.startswith("theseus-") and sibling.name != skill_root.name:
+                stub = sibling / "SKILL.md"
+                if stub.exists():
+                    targets.append(stub)
     for tgt in targets:
         if not tgt.exists():
             continue

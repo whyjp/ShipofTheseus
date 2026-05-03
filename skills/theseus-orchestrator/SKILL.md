@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.6.0
+version: 0.6.1
 description: theseus-harness 의 14 페이즈를 8 분해 스킬로 순차 위임. frontmatter 자동 핸드오프, 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단독 단순 작업에는 사용 금지 — grade-assess 로 먼저 확인.
 ---
 
@@ -56,8 +56,8 @@ def enter_skill(input_artifacts: list[Path]):
 ```
 1. grade_assess.py 자동 추정 (사용자 원문)
 2. 페이즈 04 의 Q-G1 객관식 → 사용자 그레이드 확정
-3. 그레이드별 분해 스킬 호출:
-   - Grade 1 (Trivial): 즉시 종료, 단순 응답 권고
+3. 그레이드별 분해 스킬 호출 (모든 그레이드 진행 — 그레이드는 *내부 모듈레이션만*):
+   - Grade 1 (Trivial): mini_harness_tbd 모드 — 최소 페이즈 (v0.5.x 후속에서 모듈레이션 정의)
    - Grade 2 (Simple):  intent + plan + implement + quality (4 스킬)
    - Grade 3 (Standard): intent + plan + implement + quality + sprint(3 cap) + handoff (6)
    - Grade 4 (Complex): 7 스킬 모두 (default)
@@ -121,12 +121,13 @@ def orchestrate(user_request: str, project_root: Path):
     로 자동 핸드오프. 인터럽트 0 (페이즈 04 안에서만 사용자 질의).
     """
     # 1. 그레이드 자동 추정 (호출 직후 첫 동작)
+    #    grade.md 룰: 그레이드는 *내부 모듈레이션만*. 진행/거부 게이트 아님.
+    #    G1 도 mini_harness_tbd 로 진행 (v0.5.0 sprint-02-a).
     grade_report = subprocess.run([
         "python", "../theseus-harness/scoring/grade_assess.py",
         "--request", user_request,
     ])
-    if grade_report["recommendation"] == "reject_harness_call":
-        return short_circuit_with_simple_response()
+    # recommendation: tight_mode (G5) / full_or_standard (G3/G4) / mini_harness (G2) / mini_harness_tbd (G1)
 
     # 2. timing 시작 시각 기록 (timing.md)
     timing_start = write_timing_start(project_root)
