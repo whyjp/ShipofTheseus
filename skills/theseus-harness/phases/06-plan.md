@@ -33,9 +33,20 @@ b- **모듈 외부 시퀀스** — FE ↔ BE ↔ DB ↔ 외부 API.
 
 각 화살표에 호출 함수명·요청/응답 페이로드 키 표기. PlantUML 도 허용하지만 프로젝트 시작 시 형식 하나로 고정.
 
-## 경쟁 컨벤션 트리거 (페이즈 06 적용)
+## 플랜 트리 (디폴트, G3+) — AIDE 멀티버스
 
-[`../conventions/competition.md`](../conventions/competition.md) 의 트리거 조건 b- ("두 모듈 분할안의 장단점이 길항") 가 본 페이즈에서 충족되면, 단일 계획 대신 2~3 후보 계획을 격리 병렬 생성 후 점수 비교 → 우승자 채택 또는 머지. 경쟁 모드 진입 결정은 planner, 후보별 콜드 리딩 비교는 plan-reviewer (페이즈 07).
+[`../conventions/plan-tree.md`](../conventions/plan-tree.md) 가 본 페이즈의 *디폴트 동작*. G3 이상이면 단일 플랜 대신 2~5 우주의 트리:
+
+a- 폭 (root 우주 수) 와 깊이 cap 은 [`../conventions/grades.md`](../conventions/grades.md) 의 그레이드 매트릭스 + plan-tree 매트릭스 병합 결정.
+b- 시드 카탈로그 5 종 (domain-first / adapter-first / minimal-subtraction / tdd-topology / strict-layering) 중 그레이드별 필수 + 옵션 시드 선택.
+c- 형제 우주는 격리 + 병렬 디스패치 ([`../conventions/competition.md`](../conventions/competition.md) 재사용).
+d- 자식 우주는 부모 우주 완료 후 깊이 layer 단위 디스패치 (자원 가드).
+e- 토너먼트는 plan-reviewer (페이즈 07) 가 우주별 fresh 콜드 리딩 (4 답) → 5 차원 점수 → auto_resolve.
+f- 결과는 `plan/tournament.md` (사용자 대면) + `plan/06-plan.md` (우승 우주 사본, 다음 페이즈 입력).
+
+G1·G2 는 트리 비활성 — 단일 플랜 그대로.
+
+옛 트리거 진입 ([`../conventions/competition.md`](../conventions/competition.md) 의 트리거 b "모듈 분할 길항") 은 *G3+ 에서는 항상 참* 으로 의미 변경 — 디폴트 진입.
 
 ## 필수 섹션
 

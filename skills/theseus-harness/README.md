@@ -30,6 +30,7 @@ d- [`conventions/`](conventions/) — 8 컨벤션 모듈:
   d-19 [`indexing.md`](conventions/indexing.md) — **산출물 = DB, 비직렬성 트리 인덱싱** — 멀티버스(우주 분기) × 서브에이전트(재귀 분해) 3차원 그래프, frontmatter 비직렬성 메타 (universe/parent_branch/parent_module/depth/branch_kind), INDEX.md/index.json 자동 갱신, 사용자/에이전트 오해 방지 허들.
   d-20 [`resume.md`](conventions/resume.md) — **리줌 (중단/재개)** — 매우 장기간 작업 중 사용자가 webview Progress 탭으로 라이브 관찰, 중단 시 `state.json` 자동 기록, `resume.py next` 가 마지막 valid 페이즈 다음 진입점 자동 결정, 부분 산출물 자동 폐기, 무결성 깨짐 시 사용자 ack 1 회만.
   d-21 [`interview.md`](conventions/interview.md) "PRD/스펙 입력 처리" 절 — **PRD 처리 허들** — 충실한 PRD 가 입력이어도 페이즈 04 의 모든 인터뷰 항목 (Q-G1+Q-D1~D7+NFR+스택) 생략 금지. PRD 추출값은 객관식 1번 보기로, 사용자 1 클릭 확정 + `user_explicit_confirmation: true` + timestamp 강제. 인터럽트 0 약속의 *전제* 보호. (PR-13: 별도 컨벤션 → interview.md 흡수, 28→27 컨벤션)
+  d-22 [`plan-tree.md`](conventions/plan-tree.md) — **AIDE 플랜 트리** — 페이즈 06 디폴트 (G3+) 가 단일 플랜 → N 우주 트리 (5 시드 카탈로그: domain/adapter/minimal/tdd/strict-layering). 형제 우주 격리 동시 디스패치 + 자식 우주 재귀 분기. plan-reviewer 가 우주별 fresh 콜드 리딩 → 5 차원 점수 → auto_resolve. `plan/tournament.md` 가 사후 audit 단일 파일. 본 프로젝트의 두 강점 (회귀+병렬) 을 페이즈 06 에 노출. (sprint-02-b, v0.6.0)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999**, **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 19 체크 + `--score` 모드, 임계 **0.99999** (자기 표준).

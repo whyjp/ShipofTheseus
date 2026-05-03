@@ -1,6 +1,6 @@
 ---
 name: theseus-handoff
-version: 0.2.2
+version: 0.6.0
 description: 페이즈 13 분해 — 한 줄 요약 + 점수 시계열 + 자율 결정 이력 + (자율 권한 시) PR 생성. 단일 source 는 ../theseus-harness/.
 ---
 

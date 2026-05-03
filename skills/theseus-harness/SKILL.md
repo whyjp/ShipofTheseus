@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.2.2
+version: 0.6.0
 description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
@@ -31,6 +31,7 @@ q- **그레이드 시스템 — 작업 복잡도별 내부 모듈레이션 (G1 T
 r- **모듈 → 하위 모듈 서브에이전트 재귀 분해 (parallel/sequential/competition)**: [`conventions/sub-agents.md`](conventions/sub-agents.md)
 s- **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: [`conventions/indexing.md`](conventions/indexing.md)
 t- **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
+u- **AIDE 플랜 트리 — N 우주 격리 + 토너먼트 (회귀+병렬 강점 인코딩)**: [`conventions/plan-tree.md`](conventions/plan-tree.md)
 ## 산출물 트리
 
 ```
@@ -38,7 +39,7 @@ t- **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`
 ├── timing/start.json
 ├── naming/{00-candidates.md, 00-naming.md}
 ├── intent/{01-intent.md, 02-..05-decisions.md, 04-stack.md}
-├── plan/{06-plan.md, 07-plan-review.md}
+├── plan/{06-plan.md, 07-plan-review.md, tournament.md, candidates/universe-N/...}  # G3+ AIDE 트리
 ├── impl/08-impl-log.md
 ├── quality/09-quality-gate.md
 ├── sprints/NN/{report.md, inputs.json, bisect.md?, unit.json, e2e.json}
