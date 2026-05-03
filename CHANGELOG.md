@@ -2,6 +2,61 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.3 — 2026-05-04 (sprint-05-c — 재측정 + multi-universe 첫 실 시연)
+
+### 마일스톤
+
+sprint-05-b 의 architectural 변화 (폭 3 + universe 별 head-to-head + 자동 머지 + interactive-viewer) 실 시연. simulation-bench 재측정 결과 + 3 universe 비교 검증.
+
+### 측정 결과 (`.ShipofTheseus/synthetic_mine_throughput_002/` — gitignored, 본 commit 미포함)
+
+- 경과 : **44.4 분** (60 min budget 안전, sprint-05-a 43.1 min 동급)
+- 15 페이즈 (00~14) 모두 진행 / 인터럽트 0 / autonomous
+- **3 universe head-to-head 실 측정** :
+  - U1 (process-first / per-direction) : 1555.8 t/h / D_CRUSH 병목 (per-direction 가짜 cap 인플레 노출)
+  - U2 (hybrid centralized / shared bidirectional) : 1150.0 t/h / 로더 saturation
+  - U3 (data-first event scheduler) : **1150.0 t/h / E03 ramp 정확 식별 + byte-reproducibility SHA256 매치**
+- **자동 머지 알고리즘 결정 → U3 단독 채택** (차원별 sub-score gap 4pt vs U2)
+- **interactive-viewer 페이즈 13 첫 실 시연** : matplotlib 3 plot (scenario throughput / bottleneck heatmap / universe comparison) + dashboard.json + index.html (CDN 0)
+
+### 핵심 발견 (sprint-05-b 효과 검증)
+
+a- **자동 머지 알고리즘 정상 작동** — 사람 critic 의 결정과 같은 답에 도달 (U3 단독 채택)
+b- **per-direction vs bidirectional 차이 측정** — sprint-05-a 의 per-direction 머지가 ~35% throughput 인플레 (가짜 cap-1) 였음을 head-to-head 가 노출
+c- **byte-reproducibility** = G5 미션 크리티컬 차원 신규 NFR. U3 가 도달
+d- **페이즈 13 interactive-viewer 동작 검증** = matplotlib 0.43s 에 3 plot
+
+### 자체 추정 점수
+
+| 차원 (max) | sprint-05-a 단일 머지 | sprint-05-c U3 단독 |
+|----|:-:|:-:|
+| Conceptual 20 | 19 | 18 (narrative 보강 sprint 실패) |
+| Sim correctness 20 | 16 | **18** (병목 정확 식별 +2) |
+| Code quality 10 | 8 | **9** (45 tests + 0 ruff) |
+| (기타 동일) | | |
+| **합계** | **92** | **92~93** |
+
+narrative 보강 후 추정 95~97 (1위 ouroboros 동급/상위 가능).
+
+### sub-agent 회계
+
+8 sub-agent 호출 — 1 실패 (페이즈 10 sprint narrative). intervention.category = autonomous 유지.
+
+### 본 commit 의 변경 (본 하네스 source)
+
+- `.claude-plugin/plugin.json` : version 0.9.2 → 0.9.3
+- `skills/theseus-{harness,orchestrator}/SKILL.md` : frontmatter version
+- `CHANGELOG.md` : 본 절 추가
+
+본 sprint-05-c 는 *측정 + 검증* 이라 본 하네스 source 변경 0. 측정 결과 (`.ShipofTheseus/synthetic_mine_throughput_002/`) 는 .gitignore 됨.
+
+### 다음 후보
+
+- sprint-05-d : narrative 보강 (Conceptual 18→20 + Results 13→15 = +4pt → 추정 95~97)
+- 외부 PR : simulation-bench 외부 채점으로 자체 추정 검증 (1위 ouroboros 97 head-to-head)
+
+---
+
 ## v0.9.2 — 2026-05-04 (sprint-05-b)
 
 ### 마일스톤
