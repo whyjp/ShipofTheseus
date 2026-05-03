@@ -157,7 +157,7 @@ f- **G5 에서 mock 모드 통과** — 매트릭스 위반. self_lint C-RP4 fai
 
 ## 후속 (sprint-02-e 또는 v0.7.x)
 
-a- `agents/runtime-detector.md` — env / 외부 서비스 자동 추정 에이전트 (사용자 원문 + 패키지 매니페스트에서 키워드 매칭).
+a- ✅ `agents/runtime-detector.md` — env / 외부 서비스 자동 추정 에이전트 (sprint-02-e #3 출하). 키워드 매칭 + dep 매칭 + 코드 grep 으로 Q-D9 자동 추정 답안 + `.env.template` 초안 + boot_command 추정 산출.
 b- `scoring/boot_check.py` — 부팅 검증 자동화 헬퍼 (timeout / healthz / SIGTERM).
 c- `templates/env.template` — 도메인별 (.env 권고 키 카탈로그 — 결제/인증/저장소/메시지/LLM).
 d- self_lint C-RP1~C-RP4 — `.env` gitignore / Q-D9 entry_blocked / `.env.template` 보안 / G5 mock 금지.
