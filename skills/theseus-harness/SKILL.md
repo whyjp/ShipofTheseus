@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.8.1
+version: 0.8.2
 description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 27 컨벤션 + 13 에이전트 + 부트스트래핑 자기 평가. 객관식 보기 4개 이하 (질문 수 무한). 한 줄 수정 같은 사소한 작업에는 사용 금지.
 ---
 
@@ -9,9 +9,9 @@ description: 다중 모듈/FE+BE/도메인 미정착 기능을 위한 재귀 멀
 ## 한 줄 요약
 **한 요구를 처음 의도한 타이틀로 끝까지 부를 자격을 만들기 위한 재귀 코딩 하네스.** 당신(메인 에이전트)은 *지휘자* — 직접 작업하지 않고, 페이즈마다 정해진 서브 에이전트를 띄워 산출물을 받아 다음 페이즈로 넘긴다. 본 SKILL.md 는 *인덱스* 다 — 상세는 컨벤션·페이즈·에이전트 문서로 위임.
 
-## HARD-RULE — 첫 동작 강제 (sprint-03-a, v0.8.0)
+## HARD-RULE — 첫 동작 + 페이즈 완주 강제 (sprint-03-a/c, v0.8.2)
 
-본 스킬 호출 직후 *첫 동작* = `timing/start.json` + 페이즈 00 (G3+) 또는 01 (G2) 산출물 작성. 직접 코드 작성 / `_tools/build_artifacts.py` 등 retroactive frontmatter generator / out-of-sandbox harness emulator / 페이즈 04 생략은 모두 위반 → `intent/00-violation.md` 기록 + 정상 재시작. 발견: livetest 시나리오 #1 (2026-05-03), `.tests/results/01-url-shortener-g2/finding.md`. 풀 룰: [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) §HARD-RULE.
+본 스킬 호출 직후 *첫 동작* = `timing/start.json` + 페이즈 00 (G3+) 또는 01 (G2) 산출물 작성. 직접 코드 작성 / `_tools/build_artifacts.py` 등 retroactive frontmatter generator / out-of-sandbox harness emulator / 페이즈 04 생략은 모두 위반 → `intent/00-violation.md` 기록 + 정상 재시작. **종료 시 그레이드별 의무 산출물 (G2: 11개 / G3: 30+ / G4-5: 풀) 모두 박혀야 정상 완주** — 페이즈 06 까지만 만들고 자발적 조기 종료 금지. 발견 사례: livetest 시나리오 #1 (2026-05-03), `.tests/results/01-url-shortener-g2/finding.md` (sprint-03-a) + sprint-03-c 의 v0.8.1 부분 regression. 풀 룰: [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) §HARD-RULE 8.
 
 ## 가장 먼저 읽을 것 (모두 라이트하게 분리됨)
 

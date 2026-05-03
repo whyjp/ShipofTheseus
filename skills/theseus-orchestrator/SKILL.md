@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.8.1
+version: 0.8.2
 description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 단독 단순 작업에는 사용 금지 — grade-assess 로 먼저 확인.
 ---
 
@@ -26,6 +26,22 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 > d- 페이즈 04 인터뷰의 "사전 박힌 답" 지시를 *페이즈 04 자체 생략* 으로 해석. 사전 답은 *질의 답안 자동 매핑* 일 뿐 페이즈 자체는 진행되어야 함 (`intent/04-questions.md` + `04-answers.md` 산출물 의무).
 >
 > **위반 시 처리** — sub-claude 가 위 a-d 중 어느 하나라도 시작하면 본 스킬은 즉시 정지 + `intent/00-violation.md` 에 위반 사유 기록 + 페이즈 01 부터 정상 진행 재시작.
+>
+> **HARD-RULE 8 — 그레이드별 의무 산출물 (sprint-03-c, 모든 페이즈 완주 강제):**
+>
+> 본 스킬 호출 후 종료 시 다음 산출물이 *모두* `.ShipofTheseus/<프로젝트>/` 에 박혀 있어야 함. 누락 = 본 스킬 미완. budget cap 도달 시에도 *최소한 frontmatter 만이라도* 박고 `(budget-truncated)` 표시.
+>
+> | Grade | 의무 산출물 |
+> | ----- | ---------- |
+> | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/13-handoff.md` (3개) |
+> | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
+> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + `plan/{tournament.md, candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 30+) |
+> | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
+> | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
+>
+> **자발적 조기 종료 금지** — sub-claude 가 페이즈 06 까지만 만들고 "끝" 으로 보고하면 본 스킬 위반. 위 표의 의무 산출물을 *모두* 박아야 정상 종료.
+>
+> **부분 채움 OK** — 본문이 한 줄이라도 frontmatter (skill_name / skill_version / phase / fingerprint / prev_fingerprint / created_at) 는 박혀야 함. 본문 truncated 시 마지막 줄에 `<!-- budget-truncated -->` 명시.
 
 ## 14 페이즈 진행
 

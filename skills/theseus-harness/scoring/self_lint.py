@@ -1217,6 +1217,8 @@ def check_orchestrator_driver_hardrule(skill_root: Path) -> list[str]:
         "build_artifacts.py",     # retroactive 안티패턴 명시
         "out-of-sandbox",         # 우회 사유 안티패턴 명시
         "00-violation.md",        # 위반 시 처리 산출물
+        "의무 산출물",             # HARD-RULE 8 — 그레이드별 산출물 체크리스트 (sprint-03-c)
+        "조기 종료",               # 자발적 조기 종료 금지 명시
     ]
     for tgt in targets:
         if not tgt.exists():
