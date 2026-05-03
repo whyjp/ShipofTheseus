@@ -2,6 +2,53 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.2 — 2026-05-04 (sprint-05-b)
+
+### 마일스톤
+
+본 하네스 강점 (다차원 동시진행 = plan-tree N universe + 경쟁 + 머지) 의 *폭 확장 + 자동 머지 강화*. 사용자 명시 — "다차원 동시진행이 강점이니 플랜/구현을 더 넓게 진행해서 트리를 더 가지많게".
+
+### 변경 — MV-1. 멀티버스 폭 default 확장
+
+- `conventions/grades.md` 새 절 — G3 폭 2→**3** / G4 폭 3→**4** / G5 폭 5→**6**
+- self_lint C-MV1 룰 신규
+
+### 변경 — MV-2. 페이즈 08 universe 별 head-to-head
+
+- `phases/08-implement.md` 새 절 — universe 별 5 서브페이즈 (08-α/β/γ/δ/ε) 독립 사이클
+- 각 universe 별 격리 코드 (`code/universe-N/`) + 격리 impl-log
+- head-to-head 점수 비교 + 차원별 머지
+- self_lint C-MV2 룰 신규
+
+### 변경 — MV-3. 분기 축 카탈로그 ≥6
+
+- `conventions/plan-tree.md` 새 절 — 6 axis 카탈로그 (process-vs-data / sync-vs-async / centralized-vs-distributed / dynamic-vs-static / push-vs-pull / mutable-vs-immutable) + 확장 후보 5
+- planner 가 폭 N 진행 시 상위 N 개 axis 선택 → 본질적 의미 분기 강제
+- self_lint C-MV3 룰 신규
+
+### 변경 — MV-4. 자동 머지 알고리즘 강화
+
+- `conventions/competition.md` 새 절 — head-to-head 점수 비교 + 차원별 sub-score (Conceptual/Data/Correctness/Experimental/Results/Code/Traceability)
+- 자동 resolve 4 규칙 (단일 우승자 / 차원별 머지 / 재경쟁 / 타임아웃)
+- self_lint C-MV4 룰 신규
+
+### 변경 — MV-5. universe N 병렬 budget profile
+
+- `conventions/resources.md` 새 절 — universe N 병렬 메모리 가드 (G3 40% / G4 50% / G5 60% RAM) + per-universe wall-clock budget + 초과 시 자율 폭 축소
+- self_lint C-MV5 룰 신규
+
+### 검증
+
+- self_lint 53 → **58 룰** PASS / pytest 12/12 회귀 0 / self_score 1.0 / 임계 0.99999 통과
+
+### 효과 추정 (simulation-bench 재측정 시)
+
+- sprint-05-a 후 추정 92~95
+- sprint-05-b (본 sprint) 후 추정 **96~98** — 1위 ouroboros (97) 동급 또는 상위
+- 핵심 = G3 폭 3 적용 + 페이즈 08 universe 별 head-to-head 가 *실 코드 head-to-head* 비교 → 차원별 머지로 단일 universe 보다 강함
+
+---
+
 ## v0.9.1 — 2026-05-04 (sprint-05-a)
 
 ### 마일스톤 묶음

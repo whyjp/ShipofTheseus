@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.1
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 페이즈 08 TDD 5 서브 + 페이즈 13 interactive-viewer 신규. 모든 그레이드 진행 (G1 mini_harness_tbd ~ G5 빡빡) — 그레이드 = 내부 모듈레이션만.
+version: 0.9.2
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 멀티버스 폭 G3-3/G4-4/G5-6 + TDD 5 서브 + 자동 머지 + universe 별 head-to-head. 모든 그레이드 진행 — 내부 모듈레이션만.
 ---
 
 # theseus-orchestrator — 사용자 entry skill

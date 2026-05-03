@@ -1328,6 +1328,77 @@ def check_phase08_tdd_subphases(skill_root: Path) -> list[str]:
     return issues
 
 
+# === sprint-05-b 신규 룰 (TDD test-first — multi-universe 폭 확장 + impl head-to-head) ===
+
+def check_grades_multiverse_width_expanded(skill_root: Path) -> list[str]:
+    """C-MV1 — conventions/grades.md 의 G3/G4/G5 멀티버스 폭 확장 (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "grades.md")
+    issues: list[str] = []
+    needed = ["폭 3", "폭 4", "폭 6", "sprint-05-b"]
+    for kw in needed:
+        if kw not in text:
+            issues.append(f"conventions/grades.md: '{kw}' 멀티버스 폭 확장 키워드 누락")
+    return issues
+
+
+def check_phase08_universe_head_to_head(skill_root: Path) -> list[str]:
+    """C-MV2 — phases/08-implement.md 본문에 universe 별 5 서브페이즈 사이클 + head-to-head (sprint-05-b)."""
+    text = _read(skill_root / "phases" / "08-implement.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["universe 별 implementer", "head-to-head", "universe 별 5 서브페이즈"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/08-implement.md: '{kw}' multi-universe head-to-head 키워드 누락")
+    return issues
+
+
+def check_plan_tree_axis_catalog(skill_root: Path) -> list[str]:
+    """C-MV3 — conventions/plan-tree.md 분기 축 카탈로그 ≥6 axis (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "plan-tree.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed_axes = [
+        "process-vs-data",
+        "sync-vs-async",
+        "centralized-vs-distributed",
+        "dynamic-vs-static",
+        "push-vs-pull",
+        "mutable-vs-immutable",
+    ]
+    found = sum(1 for ax in needed_axes if ax in text_lower)
+    if found < 6:
+        issues.append(
+            f"conventions/plan-tree.md: 분기 축 카탈로그 ≥6 axis 누락 (현재 {found}/6: "
+            f"{', '.join(ax for ax in needed_axes if ax not in text_lower)} 누락)"
+        )
+    return issues
+
+
+def check_competition_auto_merge_algorithm(skill_root: Path) -> list[str]:
+    """C-MV4 — conventions/competition.md 자동 머지 알고리즘 강화 (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "competition.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["자동 머지 알고리즘", "차원별 sub-score", "head-to-head"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"conventions/competition.md: '{kw}' 자동 머지 강화 키워드 누락")
+    return issues
+
+
+def check_resources_multiverse_budget(skill_root: Path) -> list[str]:
+    """C-MV5 — conventions/resources.md 의 universe N 병렬 budget profile (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "resources.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["universe N 병렬 budget", "병렬 universe 메모리 가드"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"conventions/resources.md: '{kw}' multi-universe 자원 가드 키워드 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1382,6 +1453,11 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-WV3", "phase14 handoff renamed from 13 (sprint-05-a C)", check_phase14_handoff_renamed),
     ("C-AGENT-IVB", "interactive-viewer-builder agent present (sprint-05-a C)", check_interactive_viewer_builder_agent),
     ("C-TDD-08", "phase08 5 sub-phases + RED-GREEN-REFACTOR + universe trigger (sprint-05-a TDD)", check_phase08_tdd_subphases),
+    ("C-MV1", "grades multiverse 폭 확장 G3 폭3 / G4 폭4 / G5 폭6 (sprint-05-b)", check_grades_multiverse_width_expanded),
+    ("C-MV2", "phase08 universe 별 5 서브페이즈 head-to-head (sprint-05-b)", check_phase08_universe_head_to_head),
+    ("C-MV3", "plan-tree 분기 축 카탈로그 ≥6 axis (sprint-05-b)", check_plan_tree_axis_catalog),
+    ("C-MV4", "competition 자동 머지 알고리즘 + 차원별 sub-score (sprint-05-b)", check_competition_auto_merge_algorithm),
+    ("C-MV5", "resources universe N 병렬 budget profile (sprint-05-b)", check_resources_multiverse_budget),
 ]
 
 

@@ -104,3 +104,43 @@ c- 테스트만 있고 외부 의존 목 표면 없음 = fail.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## universe 별 5 서브페이즈 head-to-head (sprint-05-b)
+
+페이즈 06 plan-tree 의 폭 확장 (G3 폭 3 / G4 폭 4 / G5 폭 6) 으로 N 개 universe 가 살아남으면, 페이즈 08 도 *universe 별 implementer* 가 *각각 5 서브페이즈 (08-α/β/γ/δ/ε) 를 독립 사이클* 로 진행한다. 즉 각 universe 가 자기 plan 으로 자기 코드를 써 *실 head-to-head* 비교 가능.
+
+### universe 별 5 서브페이즈 사이클
+
+각 universe-N 마다 :
+- 08-α scope : universe-N 의 plan 의 인터페이스/모듈 분해에 맞춘 test scope
+- 08-β test (RED) : universe-N 의 인터페이스 시그니처 따른 테스트
+- 08-γ impl (GREEN) : universe-N 의 plan 의 디자인 결정 따른 최소 구현
+- 08-δ refactor : universe-N 코드 정리 (ruff + DRY/SOLID)
+- 08-ε log : `impl/08-impl-log.universe-N.md`
+
+산출물 :
+- `code/universe-1/`, `code/universe-2/`, ..., `code/universe-N/` (격리)
+- 각 universe 별 `impl/08-test-scope.universe-N.md` + `impl/08-impl-log.universe-N.md`
+
+### head-to-head 점수 비교 (페이즈 09 게이트 + 페이즈 10 sprint)
+
+각 universe-N 의 코드를 *동일한 acceptance criteria* (Q-D8 verification) 에 통과시킨 뒤 점수 비교 :
+- 각 universe 의 pytest pass rate
+- 각 universe 의 sprint metric (해당 도메인의 sanity check / NFR / etc.)
+- 각 universe 의 wall-clock + 토큰 + LOC + ruff 위반 수
+
+[`../conventions/competition.md`](../conventions/competition.md) 의 자동 머지 알고리즘 (sprint-05-b 신규) 이 차원별 sub-score 로 :
+a- 단일 우승자 채택 OR
+b- 차원별 머지 (예: universe-1 의 Resource topology + universe-2 의 Dispatcher + universe-3 의 EventLogger) — 머지 결과를 *새 code/* 디렉터리로 emit + 페이즈 10 sprint 재진입
+
+### universe 변경 시 재진입 (기존 룰 강화)
+
+페이즈 06 의 머지 결정 변경 시 → 모든 활성 universe 의 08-α 부터 재실행 (test-first 위반 방지). 새 머지 결과 universe → 새 5 서브페이즈 사이클.
+
+### 비용 가드
+
+[`../conventions/resources.md`](../conventions/resources.md) 의 universe N 병렬 budget profile (sprint-05-b) 가 메모리/시간 가드. 초과 시 자율 폭 축소 (G4 4→3, G5 6→5) + lessons 기록.
+
+### sprint-05-a 베이스라인 retro
+
+sprint-05-a 의 simulation-bench 케이스는 *페이즈 06 에서 머지 결정 후 페이즈 08 단일 universe 로 진행* (G3 폭 2, 머지 fast resolve). sprint-05-b 후 동일 케이스 = 폭 3 × 5 서브페이즈 독립 → 3 후보 코드 head-to-head → 차원별 머지 → 추정 점수 92 → 95-97 lift 가능.
