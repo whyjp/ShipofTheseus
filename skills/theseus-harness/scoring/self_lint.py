@@ -1399,6 +1399,58 @@ def check_resources_multiverse_budget(skill_root: Path) -> list[str]:
     return issues
 
 
+# === sprint-05-d 신규 룰 (페이즈 13 interactive-viewer 의 결과 프로덕트 only 강제) ===
+
+def check_phase13_product_only(skill_root: Path) -> list[str]:
+    """C-IV1 — phases/13-interactive-viewer.md 본문에 결과 프로덕트 only 명시 + 하네스 메타 emit 금지 (sprint-05-d)."""
+    text = _read(skill_root / "phases" / "13-interactive-viewer.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["결과 프로덕트", "topology", "animation", "drill-down", "하네스 메타 emit 금지"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/13-interactive-viewer.md: '{kw}' 결과 프로덕트 only 키워드 누락 (sprint-05-d)")
+    return issues
+
+
+def check_interactive_viewer_agent_product_only(skill_root: Path) -> list[str]:
+    """C-IV2 — agents/interactive-viewer-builder.md 의 책임 좁힘 (결과 프로덕트 only, 하네스 메타 금지) (sprint-05-d)."""
+    text = _read(skill_root / "agents" / "interactive-viewer-builder.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["프로젝트 결과 only", "하네스 메타 emit 금지", "topology", "animation"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"agents/interactive-viewer-builder.md: '{kw}' 결과 프로덕트 only 책임 명시 누락 (sprint-05-d)")
+    return issues
+
+
+# === sprint-05-e 신규 룰 (Q1 회귀 원인 분류 + Q3 plan 본문 implementation guidance) ===
+
+def check_phase11_regression_classification(skill_root: Path) -> list[str]:
+    """C-RB1 — phases/11-regression-bisect.md 본문에 회귀 원인 4 분류 (sprint-05-e Q1)."""
+    text = _read(skill_root / "phases" / "11-regression-bisect.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["plan defect", "impl defect", "data defect", "external defect", "회귀 원인 분류"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/11-regression-bisect.md: '{kw}' 회귀 분류 키워드 누락 (sprint-05-e)")
+    return issues
+
+
+def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
+    """C-IG1 — phases/06-plan.md 본문에 implementation guidance 절 (sprint-05-e Q3)."""
+    text = _read(skill_root / "phases" / "06-plan.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["implementation guidance", "데이터 구조", "의사코드", "클래스 시그니처"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/06-plan.md: '{kw}' implementation guidance 키워드 누락 (sprint-05-e)")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1458,6 +1510,10 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-MV3", "plan-tree 분기 축 카탈로그 ≥6 axis (sprint-05-b)", check_plan_tree_axis_catalog),
     ("C-MV4", "competition 자동 머지 알고리즘 + 차원별 sub-score (sprint-05-b)", check_competition_auto_merge_algorithm),
     ("C-MV5", "resources universe N 병렬 budget profile (sprint-05-b)", check_resources_multiverse_budget),
+    ("C-IV1", "phase13 interactive-viewer 결과 프로덕트 only + 하네스 메타 emit 금지 (sprint-05-d)", check_phase13_product_only),
+    ("C-IV2", "interactive-viewer-builder agent 책임 좁힘 결과 only (sprint-05-d)", check_interactive_viewer_agent_product_only),
+    ("C-RB1", "phase11 회귀 원인 4 분류 plan/impl/data/external defect (sprint-05-e Q1)", check_phase11_regression_classification),
+    ("C-IG1", "phase06 implementation guidance 본문 의무 (sprint-05-e Q3)", check_phase06_implementation_guidance),
 ]
 
 

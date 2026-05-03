@@ -2,6 +2,95 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.5 — 2026-05-04 (sprint-05-e — 회귀 원인 분류 + plan implementation guidance)
+
+### 마일스톤
+
+사용자 4 질문 비판적 검토 후 *진짜 가치* 2건만 채택 (Q4 페이즈 02/03/09 경쟁 추가는 over-engineering 으로 거부).
+
+### 변경 — Q1. 페이즈 11 회귀 원인 4 분류
+
+`phases/11-regression-bisect.md` 새 절 — git bisect 결과를 4 분류 (plan defect / impl defect / data defect / external defect) 자동 판별 + 권고 페이즈 자동 진입 :
+
+| 분류 | 권고 페이즈 |
+|----|----|
+| plan defect | 페이즈 06 재실행 (re-plan, universe 재분기 가능) |
+| impl defect | 페이즈 08-γ 재실행 (re-impl, plan 유지) |
+| data defect | 페이즈 04 Q-D8 재검증 (re-data) |
+| external defect | 페이즈 09 게이트 7 재실행 (re-env) |
+
+분류 알고리즘 — git bisect commit 의 변경 파일 + plan TODO DAG ↔ impl-log TODO 매핑 비교.
+
+### 변경 — Q3. plan 본문 implementation guidance 의무 (HARD-RULE 9.a 강화)
+
+`phases/06-plan.md` 새 절 — plan 본문 의무에 추가 :
+- **데이터 구조** ≥ 2 (entity/state object dataclass + schema)
+- **의사코드** ≥ 1 (핵심 알고리즘)
+- **클래스 시그니처** ≥ 3 (`__init__` + 핵심 메서드)
+
+신규 산출물 (impl-design.md) 만들지 않고 plan 본문 흡수 = 메모리 보수화 정합 + plan/impl-log 응집.
+
+페이즈 11 회귀 분류와 *대응* — plan 의 데이터 구조/의사코드/클래스 시그니처 명시가 회귀 시 plan defect vs impl defect 자동 판별 입력.
+
+### 변경 — self_lint 신규 룰 2
+
+- **C-RB1** : 페이즈 11 본문 키워드 (plan defect / impl defect / data defect / external defect / 회귀 원인 분류) 검증
+- **C-IG1** : 페이즈 06 본문 키워드 (implementation guidance / 데이터 구조 / 의사코드 / 클래스 시그니처) 검증
+
+### 거부 (over-engineering 의심)
+
+사용자 Q4 = 페이즈 02 의도 리뷰 / 03 콜드 재이해 / 09 게이트 에 경쟁 추가 → **거부** :
+- 페이즈 03 = 단일 fresh agent 가 이미 격리 reviewer 역할 (사실상 페이즈 01 vs 03 경쟁)
+- 페이즈 09 7 게이트 = 단일 evaluator 가 이미 multi-dim (7 차원) 평가
+- 추가 sub-agent 비용 > 본질 가치 → over-engineering
+
+### 검증
+
+self_lint 60 → **62 룰** PASS / pytest 12/12 회귀 0 / self_score 1.0 / 임계 0.99999 통과
+
+### sprint-05 묶음 종합 (v0.9.1 ~ v0.9.5)
+
+| sprint | 변경 |
+|----|----|
+| 05-a (v0.9.1) | simulation-bench 베이스라인 + viewer split + TDD 5 서브페이즈 + ruff |
+| 05-b (v0.9.2) | multiverse 폭 확장 + 자동 머지 알고리즘 + budget profile |
+| 05-c (v0.9.3) | 재측정 + 3 universe head-to-head + interactive-viewer 첫 시연 |
+| 05-d (v0.9.4) | 페이즈 13 책임 정정 (결과 프로덕트 only) |
+| **05-e (v0.9.5)** | **회귀 원인 분류 + plan implementation guidance** |
+
+self_lint 47 → **62 룰** (sprint-05 묶음으로 +15). 본 하네스 architectural 깊이 강화.
+
+---
+
+## v0.9.4 — 2026-05-04 (sprint-05-d — 페이즈 13 책임 정정)
+
+### 마일스톤
+
+v0.9.3 sprint-05-c 첫 시연 시 페이즈 13 interactive-viewer 가 *하네스 메타* (universe_comparison.png 등) 를 emit — 사용자 비판 정확 : "인터렉티브 뷰어가 우리 하네스 위주의 플랜이나 내부 과정에 종속된 결과물이 되어버렸다. 인터렉티브 뷰어는 결과 프로덕트의 데이터나 시뮬레이션 뷰어로서 동작하도록 설계되야 하는 스킬이다." sprint-05-d 가 본 룰 self_lint 로 강제.
+
+### 변경
+
+- `phases/13-interactive-viewer.md` 새 절 — 결과 프로덕트 only + topology + animation + drill-down + 하네스 메타 emit 금지 명시 + DES 도메인 결과 프로덕트 4 카탈로그 (topology/animation/drill-down/metric chart) + 분리 검증 어휘 black list (universe-N, multiverse, plan-tree, sprint metric 등)
+- `agents/interactive-viewer-builder.md` 책임 좁힘 — 프로젝트 결과 only + 하네스 메타 emit 금지 + 도메인별 의무 emit 카탈로그
+- `scoring/self_lint.py` 신규 룰 2 :
+  - **C-IV1** : 페이즈 13 본문 키워드 (결과 프로덕트 / topology / animation / drill-down / 하네스 메타 emit 금지) 검증
+  - **C-IV2** : interactive-viewer-builder agent 의 책임 좁힘 (프로젝트 결과 only / 하네스 메타 emit 금지 / topology / animation) 검증
+- 메모리 `feedback_phase12_real_definition.md` 정정 — 페이즈 12 책임 강화 (하네스 메타 + multiverse 비교 차트), 페이즈 13 = 결과 프로덕트 only
+
+### 검증
+
+self_lint 58 → **60 룰** PASS / pytest 12/12 회귀 0 / self_score 1.0 / 임계 0.99999 통과
+
+### 회귀 방지
+
+본 sprint 가 self_lint C-IV1/C-IV2 룰로 강제 — 다음 회차 페이즈 13 진행 시 하네스 메타 emit 시도 → self_lint fail → 본 페이즈 재실행 강제.
+
+### 후속 — interactive-viewer 결과 재 emit (별도)
+
+simulation-bench 기존 interactive-viewer (sprint-05-c) 디렉터리 (`.ShipofTheseus/synthetic_mine_throughput_002/interactive-viewer/`) 의 universe_comparison.png 제거 + topology + animation + scenario drill-down 신규 emit 은 별도 작업 (gitignored 라 본 commit 영향 0). sprint-05-e 후보.
+
+---
+
 ## v0.9.3 — 2026-05-04 (sprint-05-c — 재측정 + multi-universe 첫 실 시연)
 
 ### 마일스톤
