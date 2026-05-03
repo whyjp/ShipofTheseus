@@ -1,6 +1,6 @@
 ---
 name: theseus-plan
-version: 0.7.2
+version: 0.7.3
 description: 페이즈 06–07 분해 — TODO DAG 계획 + 콜드 재이해. 시퀀스 다이어그램 의무. G3+ AIDE 플랜 트리 디폴트 (5 시드 우주 토너먼트). 단일 source 는 ../theseus-harness/.
 ---
 
