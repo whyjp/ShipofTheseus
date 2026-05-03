@@ -1081,6 +1081,96 @@ def check_decomposed_standalone_honesty(repo_root: Path, skill_root: Path) -> li
     return issues
 
 
+def check_plan_tree_wired(skill_root: Path) -> list[str]:
+    """C-PT — plan-tree.md (AIDE 플랜 트리, v0.6.0) wiring 일관성.
+
+    검증 항목:
+      a- conventions/plan-tree.md 존재 + 5 시드 카탈로그 (domain-first /
+         adapter-first / minimal-subtraction / tdd-topology / strict-layering).
+      b- phases/06-plan.md 가 plan-tree.md 링크 + G3+ 디폴트 명시.
+      c- conventions/grades.md 매트릭스 row 에 plan-tree.md.
+      d- SKILL.md 산출물 트리에 plan/candidates/ + tournament.md 명시.
+    """
+    issues: list[str] = []
+    pt = skill_root / "conventions" / "plan-tree.md"
+    if not pt.exists():
+        return ["conventions/plan-tree.md 누락 — AIDE 플랜 트리 컨벤션 정의 필요"]
+    pt_text = _read(pt)
+    seeds = ["domain-first", "adapter-first", "minimal-subtraction", "tdd-topology", "strict-layering"]
+    for seed in seeds:
+        if seed not in pt_text:
+            issues.append(f"conventions/plan-tree.md 가 5 시드 카탈로그 '{seed}' 누락")
+
+    phase06 = _read(skill_root / "phases" / "06-plan.md")
+    if "plan-tree.md" not in phase06:
+        issues.append("phases/06-plan.md 가 plan-tree.md 링크 누락")
+    if "G3" not in phase06 or "디폴트" not in phase06:
+        issues.append("phases/06-plan.md 가 G3+ 디폴트 트리 명시 누락")
+
+    grades = _read(skill_root / "conventions" / "grades.md")
+    if "plan-tree.md" not in grades:
+        issues.append("conventions/grades.md 매트릭스에 plan-tree.md row 누락")
+
+    skill = _read(skill_root / "SKILL.md")
+    if "plan/candidates" not in skill and "candidates/universe" not in skill:
+        issues.append("SKILL.md 산출물 트리에 plan/candidates/ 명시 누락")
+    if "tournament.md" not in skill:
+        issues.append("SKILL.md 산출물 트리에 plan/tournament.md 명시 누락")
+    return issues
+
+
+def check_runtime_prereq_wired(skill_root: Path) -> list[str]:
+    """C-RP — runtime-prereq.md + Q-D9 + 게이트 7 (v0.7.0) wiring 일관성.
+
+    검증 항목 (RP1~RP4):
+      RP1- conventions/runtime-prereq.md 가 .env / .gitignore 자동 추가 룰 명시.
+      RP2- Q-D9 wiring — autonomy.md ### Q-D9 + env_satisfied + entry_blocked,
+           phases/04-clarify.md 산출물 04-runtime-prereq.md + Q-D9 + 9 답,
+           phases/09-quality-gates.md 게이트 7 + env-satisfied 키워드.
+      RP3- runtime-prereq.md 가 .env.template 보안 가드 (sk_live_ / prod-) 명시.
+      RP4- G5 mock 금지 명시 (runtime-prereq.md + grades.md 매트릭스).
+    """
+    issues: list[str] = []
+    rp = skill_root / "conventions" / "runtime-prereq.md"
+    if not rp.exists():
+        return ["conventions/runtime-prereq.md 누락 — Q-D9 / 게이트 7 컨벤션 정의 필요"]
+    rp_text = _read(rp)
+
+    # RP1 — .env / .gitignore 자동 추가 룰
+    if ".gitignore" not in rp_text or ".env" not in rp_text:
+        issues.append("[RP1] runtime-prereq.md 가 .env / .gitignore 자동 추가 룰 누락")
+
+    # RP2 — Q-D9 wiring
+    autonomy = _read(skill_root / "conventions" / "autonomy.md")
+    for must in ["### Q-D9", "env_satisfied", "entry_blocked"]:
+        if must not in autonomy:
+            issues.append(f"[RP2] autonomy.md 가 Q-D9 wiring '{must}' 누락")
+
+    phase04 = _read(skill_root / "phases" / "04-clarify.md")
+    if "04-runtime-prereq.md" not in phase04:
+        issues.append("[RP2] phases/04-clarify.md 산출물에 04-runtime-prereq.md 누락")
+    if "Q-D9" not in phase04:
+        issues.append("[RP2] phases/04-clarify.md 본문에 Q-D9 명시 누락")
+    if "Q-D1 ~ Q-D9" not in phase04 and "9 답" not in phase04:
+        issues.append("[RP2] phases/04-clarify.md 가 사전 위임 9 답 (Q-D1~Q-D9) 명시 누락")
+
+    phase09 = _read(skill_root / "phases" / "09-quality-gates.md")
+    if "게이트 7" not in phase09 and "Gate 7" not in phase09:
+        issues.append("[RP2] phases/09-quality-gates.md 가 게이트 7 (env-satisfied) 명시 누락")
+    if "env-satisfied" not in phase09 and "env_satisfied" not in phase09:
+        issues.append("[RP2] phases/09-quality-gates.md 게이트 7 에 env-satisfied 키워드 누락")
+
+    # RP3 — .env.template 보안 가드
+    if "sk_live_" not in rp_text or "prod" not in rp_text:
+        issues.append("[RP3] runtime-prereq.md 가 .env.template 보안 가드 (sk_live_ / prod-) 명시 누락")
+
+    # RP4 — G5 mock 금지
+    if "mock 금지" not in rp_text and "mock 금지" not in _read(skill_root / "conventions" / "grades.md"):
+        issues.append("[RP4] runtime-prereq.md 또는 grades.md 가 G5 mock 금지 룰 명시 누락")
+
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1126,6 +1216,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C41", "description compressed (≤200) + anti-pattern preserved (PR-12, v0.4.0)", check_description_length_and_anti_pattern),
     ("C42", "interview ← prd-handling consolidation + no dead links (PR-13, v0.4.0)", check_convention_consolidation_prd),
     ("C43", "SKILL.md hard-rule markup (PR-10, v0.4.0)", check_hard_rule_markup),
+    ("C-PT", "plan-tree wiring (5 seeds + G3+ default + grades matrix + outputs, v0.6.0)", check_plan_tree_wired),
+    ("C-RP", "runtime-prereq + Q-D9 + 게이트 7 wiring (RP1~RP4, v0.7.0)", check_runtime_prereq_wired),
 ]
 
 
