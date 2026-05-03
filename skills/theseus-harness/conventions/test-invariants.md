@@ -84,3 +84,43 @@ a- **불변 조건 명시 없이 테스트 작성** — 실패 시 어떤 변경
 b- **Phase V 건너뛰기** — fail 결과를 바로 신뢰하면 *테스트가 제대로 실행 안 된* 케이스를 잘못된 레슨으로 누적.
 c- **불변 조건 무시한 레슨을 정상 lesson_pack 으로** — 본 컨벤션 핵심 위반. forbidden_strategies 분리가 의무.
 d- **"테스트가 통과한다" 만으로 만족** — 통과 자체가 목적이 아니라, 테스트 *목적이 측정한* 것이 만족됐는지가 본질.
+
+## RED-GREEN-REFACTOR 루프 (sprint-05-a TDD)
+
+페이즈 08 은 sprint-05-a 부터 RED-GREEN-REFACTOR 3 단계 루프를 강제한다.
+
+**RED** (08-β, test-writer):
+- test-first 원칙 — 구현 없이 테스트만 작성
+- pytest 실행 시 모든 신규 테스트 fail (right reason)
+- right reason = 구현 부재. 인프라 오류로 fail 은 right reason 아님
+
+**GREEN** (08-γ, implementer):
+- RED 확인된 테스트를 통과하는 *최소* 구현만 작성
+- pytest 모두 GREEN 확인 후 출하
+- 과잉 구현 (테스트 없는 기능 추가) 금지
+
+**REFACTOR** (08-δ, refactorer):
+- GREEN 유지하면서 DRY / SOLID / docstring / type hint 개선
+- 기능 변경 0 — pytest GREEN 유지가 기능 불변의 증거
+- REFACTOR 후 새로운 RED 발생 시 즉시 중단 + 롤백
+
+페이즈 08 의 5 서브페이즈 연결: 08-α(scope) → 08-β(RED) → 08-γ(GREEN) → 08-δ(REFACTOR) → 08-ε(log).
+
+자세한 서브페이즈 정의는 [`../phases/08-implement.md`](../phases/08-implement.md) 참조.
+
+## universe 변경 트리거
+
+페이즈 06 (plan-tree) 의 머지 결정이 변경되는 경우 — universe 추가, 제거, 머지 결정 변경 — 페이즈 08 을 **08-α 부터 재실행**한다.
+
+트리거 조건:
+- 새 universe 추가 → 기존 test scope (08-α) 가 새 universe 를 포함하지 않음 → scope 무효
+- universe 제거 → 해당 universe 대상 테스트 삭제 필요 → scope 재정의
+- 머지 결정 변경 → 모듈 경계 변경 → atomic/group scope 재정의
+
+재진입 절차:
+1. 현재 08 서브페이즈 중단
+2. 08-α (test-architect) 재호출 — 새 plan-tree 기반 scope 재정의
+3. 08-β → 08-γ → 08-δ → 08-ε 순서 재실행
+4. 이전 `impl/08-test-scope.md` 는 `impl/08-test-scope.prev.md` 로 보존 (감사 추적)
+
+부분 재진입(08-β 만 재실행 등)은 scope 불일치를 유발하므로 **금지**.

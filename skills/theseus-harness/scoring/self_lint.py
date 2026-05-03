@@ -1241,6 +1241,164 @@ def check_orchestrator_driver_hardrule(skill_root: Path) -> list[str]:
     return issues
 
 
+# === sprint-05-a 신규 룰 (TDD test-first — RED 확인 단계) ===
+
+def check_build_config_ruff_integration(skill_root: Path) -> list[str]:
+    """C-LINT1 — conventions/build-and-config.md 가 ruff 통합을 명시 (sprint-05-a A)."""
+    text = _read(skill_root / "conventions" / "build-and-config.md")
+    issues: list[str] = []
+    if "ruff" not in text.lower():
+        issues.append("conventions/build-and-config.md: ruff 통합 본문 누락")
+    if "ruff check" not in text and "ruff format" not in text:
+        issues.append(
+            "conventions/build-and-config.md: ruff 호출 명령 (ruff check / ruff format) 누락"
+        )
+    return issues
+
+
+def check_phase12_theseus_view_naming(skill_root: Path) -> list[str]:
+    """C-WV1 — phases/12-webview-assembly.md 본문에 theseus-view 명시 (sprint-05-a C)."""
+    text = _read(skill_root / "phases" / "12-webview-assembly.md")
+    if "theseus-view" not in text:
+        return [
+            "phases/12-webview-assembly.md: 'theseus-view' (스킬 진행 추적 viewer) 명시 누락"
+        ]
+    return []
+
+
+def check_phase13_interactive_viewer_present(skill_root: Path) -> list[str]:
+    """C-WV2 — phases/13-interactive-viewer.md 신규 + 본문 키워드 (sprint-05-a C)."""
+    p = skill_root / "phases" / "13-interactive-viewer.md"
+    if not p.exists():
+        return [
+            "phases/13-interactive-viewer.md: 신규 페이즈 파일 누락 "
+            "(interactive-viewer = 프로젝트 output observability 관측용 뷰어)"
+        ]
+    text = _read(p)
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["interactive-viewer", "observability", "도메인", "dashboard"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/13-interactive-viewer.md: '{kw}' 키워드 본문 누락")
+    return issues
+
+
+def check_phase14_handoff_renamed(skill_root: Path) -> list[str]:
+    """C-WV3 — phases/14-handoff.md 신규 (현 13-handoff → 14-handoff 이동, sprint-05-a C)."""
+    p = skill_root / "phases" / "14-handoff.md"
+    if not p.exists():
+        return [
+            "phases/14-handoff.md: 페이즈 14 신규 누락 "
+            "(현 phases/13-handoff.md → phases/14-handoff.md 이동 의무)"
+        ]
+    text = _read(p)
+    if "페이즈 14" not in text and "phase 14" not in text.lower():
+        return ["phases/14-handoff.md: 페이즈 14 번호 본문 명시 누락"]
+    return []
+
+
+def check_interactive_viewer_builder_agent(skill_root: Path) -> list[str]:
+    """C-AGENT-IVB — agents/interactive-viewer-builder.md 신규 (페이즈 13 책임, sprint-05-a C)."""
+    p = skill_root / "agents" / "interactive-viewer-builder.md"
+    if not p.exists():
+        return [
+            "agents/interactive-viewer-builder.md: 신규 에이전트 파일 누락 (페이즈 13 책임)"
+        ]
+    text = _read(p)
+    issues: list[str] = []
+    if "권장 모델:" not in text:
+        issues.append("agents/interactive-viewer-builder.md: '권장 모델:' 줄 누락")
+    if "fingerprint" not in text.lower():
+        issues.append("agents/interactive-viewer-builder.md: fingerprint.py 호출 명시 누락")
+    return issues
+
+
+def check_phase08_tdd_subphases(skill_root: Path) -> list[str]:
+    """C-TDD-08 — phases/08-implement.md 본문에 5 서브페이즈 + RED-GREEN-REFACTOR (sprint-05-a TDD)."""
+    text = _read(skill_root / "phases" / "08-implement.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["08-α", "08-β", "08-γ", "RED", "GREEN", "REFACTOR", "test-first", "universe 변경"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(
+                f"phases/08-implement.md: '{kw}' 5 서브페이즈/TDD 키워드 본문 누락"
+            )
+    return issues
+
+
+# === sprint-05-b 신규 룰 (TDD test-first — multi-universe 폭 확장 + impl head-to-head) ===
+
+def check_grades_multiverse_width_expanded(skill_root: Path) -> list[str]:
+    """C-MV1 — conventions/grades.md 의 G3/G4/G5 멀티버스 폭 확장 (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "grades.md")
+    issues: list[str] = []
+    needed = ["폭 3", "폭 4", "폭 6", "sprint-05-b"]
+    for kw in needed:
+        if kw not in text:
+            issues.append(f"conventions/grades.md: '{kw}' 멀티버스 폭 확장 키워드 누락")
+    return issues
+
+
+def check_phase08_universe_head_to_head(skill_root: Path) -> list[str]:
+    """C-MV2 — phases/08-implement.md 본문에 universe 별 5 서브페이즈 사이클 + head-to-head (sprint-05-b)."""
+    text = _read(skill_root / "phases" / "08-implement.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["universe 별 implementer", "head-to-head", "universe 별 5 서브페이즈"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"phases/08-implement.md: '{kw}' multi-universe head-to-head 키워드 누락")
+    return issues
+
+
+def check_plan_tree_axis_catalog(skill_root: Path) -> list[str]:
+    """C-MV3 — conventions/plan-tree.md 분기 축 카탈로그 ≥6 axis (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "plan-tree.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed_axes = [
+        "process-vs-data",
+        "sync-vs-async",
+        "centralized-vs-distributed",
+        "dynamic-vs-static",
+        "push-vs-pull",
+        "mutable-vs-immutable",
+    ]
+    found = sum(1 for ax in needed_axes if ax in text_lower)
+    if found < 6:
+        issues.append(
+            f"conventions/plan-tree.md: 분기 축 카탈로그 ≥6 axis 누락 (현재 {found}/6: "
+            f"{', '.join(ax for ax in needed_axes if ax not in text_lower)} 누락)"
+        )
+    return issues
+
+
+def check_competition_auto_merge_algorithm(skill_root: Path) -> list[str]:
+    """C-MV4 — conventions/competition.md 자동 머지 알고리즘 강화 (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "competition.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["자동 머지 알고리즘", "차원별 sub-score", "head-to-head"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"conventions/competition.md: '{kw}' 자동 머지 강화 키워드 누락")
+    return issues
+
+
+def check_resources_multiverse_budget(skill_root: Path) -> list[str]:
+    """C-MV5 — conventions/resources.md 의 universe N 병렬 budget profile (sprint-05-b)."""
+    text = _read(skill_root / "conventions" / "resources.md")
+    text_lower = text.lower()
+    issues: list[str] = []
+    needed = ["universe N 병렬 budget", "병렬 universe 메모리 가드"]
+    for kw in needed:
+        if kw not in text and kw.lower() not in text_lower:
+            issues.append(f"conventions/resources.md: '{kw}' multi-universe 자원 가드 키워드 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1289,6 +1447,17 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PT", "plan-tree wiring (5 seeds + G3+ default + grades matrix + outputs, v0.6.0)", check_plan_tree_wired),
     ("C-RP", "runtime-prereq + Q-D9 + 게이트 7 wiring (RP1~RP4, v0.7.0)", check_runtime_prereq_wired),
     ("C-OD", "orchestrator driver HARD-RULE (livetest #1 fail 정정, v0.8.0)", check_orchestrator_driver_hardrule),
+    ("C-LINT1", "build-and-config ruff integration (sprint-05-a A)", check_build_config_ruff_integration),
+    ("C-WV1", "phase12 theseus-view naming (sprint-05-a C)", check_phase12_theseus_view_naming),
+    ("C-WV2", "phase13 interactive-viewer present + body keywords (sprint-05-a C)", check_phase13_interactive_viewer_present),
+    ("C-WV3", "phase14 handoff renamed from 13 (sprint-05-a C)", check_phase14_handoff_renamed),
+    ("C-AGENT-IVB", "interactive-viewer-builder agent present (sprint-05-a C)", check_interactive_viewer_builder_agent),
+    ("C-TDD-08", "phase08 5 sub-phases + RED-GREEN-REFACTOR + universe trigger (sprint-05-a TDD)", check_phase08_tdd_subphases),
+    ("C-MV1", "grades multiverse 폭 확장 G3 폭3 / G4 폭4 / G5 폭6 (sprint-05-b)", check_grades_multiverse_width_expanded),
+    ("C-MV2", "phase08 universe 별 5 서브페이즈 head-to-head (sprint-05-b)", check_phase08_universe_head_to_head),
+    ("C-MV3", "plan-tree 분기 축 카탈로그 ≥6 axis (sprint-05-b)", check_plan_tree_axis_catalog),
+    ("C-MV4", "competition 자동 머지 알고리즘 + 차원별 sub-score (sprint-05-b)", check_competition_auto_merge_algorithm),
+    ("C-MV5", "resources universe N 병렬 budget profile (sprint-05-b)", check_resources_multiverse_budget),
 ]
 
 

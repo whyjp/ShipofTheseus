@@ -145,8 +145,43 @@ b- 단, 동시 실행 에이전트 수 N 의 상한은 다음 가드:
 c- 메모리/CPU 과사용으로 OS 가 프로세스를 죽이는 일이 발생하면, 다음 스프린트는 병렬도를 절반으로 줄여 재시도.
 d- 측정 명령: `top -b -n1 | head -20`, `free -m` (linux), `ps -A -o %mem= | sort -rn | head` 활용.
 
+## 8. 코드 lint/format — ruff 통합 (sprint-05-a)
+
+a- **모든 Python 모듈** 은 `ruff` 를 lint + format 도구로 사용 (default 채택). 외부 도구지만 *본 하네스가 코드 micro 품질 게이트를 자체 정의하지 않고 표준 도구 호출* 하는 거울 원칙 정합 — 메모리 `feedback_borrow_discipline.md` 정합.
+b- 빌드/테스트 스크립트에 `ruff check` + `ruff format --check` 호출 의무. 페이즈 09 게이트 3 (SOLID DIP) 에 *ruff 통과* 가 부속 게이트로 박힘.
+c- 설정 파일 — 모듈 루트의 `pyproject.toml` 의 `[tool.ruff]` 절에 룰 셋 명시. 권장 룰 셋 = `select = ["E", "F", "I", "B", "UP"]` (PEP8 + pyflakes + isort + bugbear + pyupgrade).
+d- 페이즈 08-δ refactor 서브페이즈가 `ruff check --fix` + `ruff format` 으로 자동 정리 (test GREEN 유지하며).
+
+### 예시 — `scripts/lint.sh` / `lint.bat`
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "==> ruff check (lint)"
+ruff check .
+
+echo "==> ruff format --check (formatting)"
+ruff format --check .
+```
+
+```bat
+@echo off
+setlocal enabledelayedexpansion
+cd /d "%~dp0\.."
+
+echo ==^> ruff check
+ruff check . || exit /b 1
+
+echo ==^> ruff format --check
+ruff format --check . || exit /b 1
+```
+
+e- 비-Python 모듈 (Go, TS, Rust 등) 은 각 언어의 표준 lint/format 도구 사용 — Go: `go vet` + `gofmt -l`, TS: `biome check`, Rust: `cargo clippy` + `cargo fmt --check`. ruff 룰의 *정신* (외부 표준 도구 통합) 을 따름.
+
 ## 강제 시점
 
 a- 페이즈 06 (계획) — planner 가 위 룰을 계획 산출물에 반영.
-b- 페이즈 08 (구현) — implementer 가 스크립트/설정 예시/docs 동행 출하.
-c- 페이즈 09 (게이트) — quality-gate 가 누락 검사: `config.toml.example`, `.env.example`, `.gitattributes`, 모듈별 sh+bat, 모듈별 `docs/` 가 없으면 fail.
+b- 페이즈 08 (구현) — implementer 가 스크립트/설정 예시/docs 동행 출하. 페이즈 08-δ refactor 가 `ruff check --fix` + `ruff format` 자동 호출.
+c- 페이즈 09 (게이트) — quality-gate 가 누락 검사: `config.toml.example`, `.env.example`, `.gitattributes`, 모듈별 sh+bat, 모듈별 `docs/`, **`pyproject.toml [tool.ruff]` (Python 모듈 시)**, **ruff check + ruff format --check 통과** 가 없으면 fail.

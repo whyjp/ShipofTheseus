@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.0
-description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페이즈 04 한 번 인터뷰 후 인터럽트 0. 모든 그레이드 진행 (G1 trivial 도 mini_harness_tbd 모드로) — 그레이드는 내부 모듈레이션만 (페이즈 수, 컨벤션, 임계, 멀티버스, 모델 라우팅).
+version: 0.9.3
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 멀티버스 폭 G3-3/G4-4/G5-6 + TDD 5 서브 + 자동 머지 + universe 별 head-to-head. 모든 그레이드 진행 — 내부 모듈레이션만.
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -33,7 +33,7 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 >
 > | Grade | 의무 산출물 |
 > | ----- | ---------- |
-> | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/13-handoff.md` (3개) |
+> | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/14-handoff.md` (3개) |
 > | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
 > | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + `plan/{tournament.md, candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 30+) |
 > | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
@@ -62,9 +62,9 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 >
 > 위 산출물 본문이 의무를 미달해도 frontmatter 만 박혀있으면 본 스킬은 "정상 완주" 로 종료하나, *설계 품질 부족* 시 외부 repo 의 구현이 모호해짐. verify 의 i/j/k 체크가 본 의무 검증.
 
-## 14 페이즈 진행
+## 15 페이즈 진행
 
-상세는 [`../theseus-harness/SKILL.md`](../theseus-harness/SKILL.md) 의 14 페이즈 표 + [`../theseus-harness/phases/`](../theseus-harness/phases/) 의 페이즈 문서. 본 entry skill 은 그 표를 따라 sub-agent 호출 + frontmatter chain + 산출물 의무 + autonomy 정책을 강제할 뿐, 룰 본문은 한 곳 (theseus-harness) 에 있다.
+상세는 [`../theseus-harness/SKILL.md`](../theseus-harness/SKILL.md) 의 15 페이즈 표 + [`../theseus-harness/phases/`](../theseus-harness/phases/) 의 페이즈 문서. 본 entry skill 은 그 표를 따라 sub-agent 호출 + frontmatter chain + 산출물 의무 + autonomy 정책을 강제할 뿐, 룰 본문은 한 곳 (theseus-harness) 에 있다.
 
 | # | 페이즈 | 그레이드 활성 (그레이드 매트릭스: [`../theseus-harness/conventions/grades.md`](../theseus-harness/conventions/grades.md)) |
 | --- | --- | --- |
@@ -76,12 +76,13 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 | 05 | 비평 | G3+ |
 | 06 | 계획 (G3+ AIDE 트리) | G2+ |
 | 07 | 계획 재이해 | G4+ |
-| 08 | 구현 | G2+ |
+| 08 | 구현 (5 서브페이즈 TDD) | G2+ |
 | 09 | 게이트 (7 게이트) | G2+ |
 | 10 | 스프린트 루프 | G3+ |
 | 11 | 회귀 바이섹트 | G4+ |
-| 12 | 웹뷰 | G3+ (G2 단순) |
-| 13 | 핸드오프 | G2+ |
+| 12 | theseus-view (스킬 진행 추적) | G3+ (G2 단순) |
+| 13 | interactive-viewer (프로젝트 output observability) | G3+ (G2 옵션, G5 강제) |
+| 14 | 핸드오프 | G2+ |
 
 ## 그레이드 처리 (호출 직후 첫 동작 후)
 
@@ -91,9 +92,9 @@ description: theseus-harness 의 14 페이즈 자율 driver — entry point. 페
 3. 그레이드별 매트릭스 활성 페이즈만 진행 (모든 그레이드 진행 — 그레이드는 *내부 모듈레이션만*):
    - Grade 1 (Trivial): mini_harness_tbd 모드 — 최소 페이즈 (모듈레이션 정의 진행 중)
    - Grade 2 (Simple):  intent + plan + implement + quality + handoff (5 페이즈)
-   - Grade 3 (Standard): naming + intent + plan-tree + implement + quality + sprint(3 cap) + handoff (12 페이즈)
-   - Grade 4 (Complex): 14 페이즈 풀 (default)
-   - Grade 5 (Critical): 14 페이즈 풀 + 빡빡 모드 (DIP 0.4 / 회귀 0.02 / 멀티버스 강제 5 / 깊이 2)
+   - Grade 3 (Standard): naming + intent + plan-tree + implement(5 sub-phase TDD) + quality + sprint(3 cap) + theseus-view + interactive-viewer + handoff (13 페이즈)
+   - Grade 4 (Complex): 15 페이즈 풀 (default)
+   - Grade 5 (Critical): 15 페이즈 풀 + 빡빡 모드 (DIP 0.4 / 회귀 0.02 / 멀티버스 강제 5 / 깊이 2 + interactive-viewer 강제)
 ```
 
 자세한 그레이드 매트릭스는 [`../theseus-harness/conventions/grades.md`](../theseus-harness/conventions/grades.md).

@@ -257,3 +257,25 @@ b- ✅ `scoring/tournament.py` — 우주별 점수 산출 + auto_resolve 호출
 c- `phases/06-plan.md` 본 컨벤션 흡수 + 트리거 → 디폴트 격상.
 d- ✅ `templates/universe-meta.template.md` 신규 (sprint-02-e #5 출하). frontmatter 키 (universe_id / seed / depth / hypothesis / score / status) + 본문 reference.
 e- self_lint C-PT 룰 — `plan/tournament.md` + `plan/candidates/` 무결성 검증.
+
+## 분기 축 카탈로그 (sprint-05-b)
+
+플랜-트리 폭 확장 (G3 폭 3 / G4 폭 4 / G5 폭 6) 시 *형식적 분기 (네이밍만 다른 plan)* 가 아닌 *본질적 의미 분기* 를 강제하는 ≥6 axis 카탈로그. planner 서브에이전트가 폭 N 진행 시 본 카탈로그에서 *상위 N 개 axis* 를 선택해 universe seed 부여.
+
+| axis | universe-A stance | universe-B stance | 적합 도메인 |
+|----|----|----|----|
+| **process-vs-data** | process-first (각 entity = 활성 generator/coroutine) | data-first (state arrays + event scheduler) | DES, simulation, queueing |
+| **sync-vs-async** | 동기 인터페이스 (request/response) | 비동기 (event/queue/promise) | API, ETL, 실시간 |
+| **centralized-vs-distributed** | 중앙 코디네이터 (Dispatcher/Scheduler) | 분산 (peer-to-peer, eventual consistency) | 분산 시스템, 마이크로서비스 |
+| **dynamic-vs-static** | 런타임 결정 (re-evaluate per cycle) | 컴파일/init 시 결정 (precompute) | dispatch/routing/binding |
+| **push-vs-pull** | producer 가 consumer 에 push (broadcast) | consumer 가 pull (poll/fetch) | 데이터 fetch, eventing |
+| **mutable-vs-immutable** | 가변 상태 (in-place update) | 불변 + 새 값 (functional/persistent) | 상태 관리, replay |
+
+추가 후보 axis (확장 카탈로그) :
+- **eager-vs-lazy** : 즉시 계산 vs 지연 (iterator/promise)
+- **typed-vs-duck** : 명시 타입 vs 덕 타이핑
+- **monolith-vs-microservice** : 단일 배포 단위 vs 다중
+- **stream-vs-batch** : 연속 흐름 vs 배치 윈도우
+- **optimistic-vs-pessimistic** : 낙관적 락 vs 비관적 락
+
+본 카탈로그는 *외부 패턴 차용 아님* — 본 하네스의 plan-tree 본래 의도 (의미 분기) 를 *명시적 enumeration* 으로 강화. 메모리 `feedback_borrow_discipline.md` 정합.

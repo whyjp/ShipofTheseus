@@ -177,3 +177,20 @@ d- DIP cap 0.4 (현재 0.6 보다 빡빡).
 e- 회귀 임계 0.02 (현재 0.05 보다 빡빡).
 
 위 강화는 v0.3.0 의 BOOTSTRAP.md 갱신 후보.
+
+## 멀티버스 폭 확장 (sprint-05-b)
+
+본 하네스의 강점 = *다차원 동시진행* (plan-tree N universe + 경쟁 + 머지). 폭이 좁으면 디자인 다양성 부족 — *동급 외부 스킬 (plan-mode 96 / ouroboros 97)* 을 능가하려면 폭 확장 필수.
+
+| Grade | sprint-05-a 까지 (default) | sprint-05-b 후 (확장 default) | 사유 |
+|----|:-:|:-:|----|
+| G3 Standard | 폭 2 / 깊이 1 | **폭 3 / 깊이 1** | 단일 사이드 작업도 3 디자인 후보 비교 → process/data/sync 등 ≥3 axis |
+| G4 Complex | 폭 3 / 깊이 1 | **폭 4 / 깊이 1** | FE+BE 의 본질적 다차원 (frontend stance × backend stance) 표현 |
+| G5 Critical | 폭 5 / 깊이 2 | **폭 6 / 깊이 2** | 미션 크리티컬은 6 후보 head-to-head 비교 + 깊이 2 의 자식 분기 |
+
+폭 확장 트레이드오프 :
+a- **비용** : 폭 N → planner sub-agent N 회 호출. wall-clock = max(N) (병렬). 토큰 = sum(N).
+b- **메모리** : N 병렬 sub-agent 의 메모리 합 → [`resources.md`](resources.md) 의 universe N 병렬 budget profile (sprint-05-b) 가 가드.
+c- **머지 복잡도** : 후보 ↑ → tournament resolve 알고리즘 부담 ↑. [`competition.md`](competition.md) 의 자동 머지 알고리즘 (sprint-05-b) 강화로 흡수.
+
+폭 축소 옵션 — 사용자 시간/비용 압박 시 Q-D3 답으로 폭 축소 가능 (G3 폭 2 / G4 폭 3 등). default 만 확장.

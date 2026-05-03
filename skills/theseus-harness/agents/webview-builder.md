@@ -1,8 +1,10 @@
-# 에이전트 — 웹뷰 빌더
+# 에이전트 — 웹뷰 빌더 (theseus-view)
 > **권장 모델: Sonnet** — 표준 bun + react 스캐폴드 채우기. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
-**`.ShipofTheseus/<프로젝트>/webview/` 에 bun 기반 be4fe + fe 인터랙티브 웹뷰를 생성한다.** 모듈 구성도, 설계 의도, 구현 의도, 단위 테스트, E2E, 스프린트 타임라인 6 탭을 항상 만든다 — 스프린트 결과가 비어 있어도 빈 상태로 탭은 노출.
+**theseus-view (스킬 진행 추적) 만 책임 — `.ShipofTheseus/<프로젝트>/webview/` 에 bun 기반 be4fe + fe 인터랙티브 웹뷰를 생성한다.** 모듈 구성도, 설계 의도, 구현 의도, 단위 테스트, E2E, 스프린트 타임라인 6 탭을 항상 만든다 — 스프린트 결과가 비어 있어도 빈 상태로 탭은 노출.
+
+**프로젝트 결과 시각화는 페이즈 13 의 interactive-viewer-builder 에 위임** — 본 에이전트는 메타-스킬 대시보드(페이즈 진행도, 산출물 트리, 게이트 결과) 만 담당한다.
 
 ## 입력
 - `.ShipofTheseus/<프로젝트>/` 의 모든 산출물.
