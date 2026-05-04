@@ -1451,6 +1451,131 @@ def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_convention_traceability(skill_root: Path) -> list[str]:
+    """C-CT — convention-traceability.md 본문 + contracts.md 의 expected catalog spec (v0.9.16 sprint-10 #1)."""
+    issues: list[str] = []
+    ct_path = skill_root / "conventions" / "convention-traceability.md"
+    if not ct_path.exists():
+        issues.append("conventions/convention-traceability.md 누락")
+        return issues
+    ct = _read(ct_path)
+    required = ["applied_conventions", "expected", "convention_usage", "zero-applied"]
+    for kw in required:
+        if kw not in ct:
+            issues.append(f"convention-traceability.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_sprint_score_delta_tracking(skill_root: Path) -> list[str]:
+    """C-SDT — sprint-score-delta-tracking.md + budget-saturation-loop cross-ref (v0.9.16 sprint-10 #2)."""
+    issues: list[str] = []
+    sdt_path = skill_root / "conventions" / "sprint-score-delta-tracking.md"
+    bsl_path = skill_root / "conventions" / "budget-saturation-loop.md"
+    if not sdt_path.exists():
+        issues.append("conventions/sprint-score-delta-tracking.md 누락")
+        return issues
+    sdt = _read(sdt_path)
+    bsl = _read(bsl_path)
+    required = ["delta", "lesson_applied", "EXPECTED_DELTA", "label honesty"]
+    for kw in required:
+        if kw not in sdt:
+            issues.append(f"sprint-score-delta-tracking.md: '{kw}' 키워드 누락")
+    if "sprint-score-delta-tracking" not in bsl:
+        issues.append("budget-saturation-loop.md: sprint-score-delta-tracking cross-ref 누락")
+    return issues
+
+
+def check_evidence_driven_sprint_planning(skill_root: Path) -> list[str]:
+    """C-EDP — evidence-driven-sprint-planning.md + score-rubric / budget-sat cross-ref (v0.9.16 sprint-10 #3)."""
+    issues: list[str] = []
+    edp_path = skill_root / "conventions" / "evidence-driven-sprint-planning.md"
+    sro_path = skill_root / "conventions" / "score-rubric-objectivity.md"
+    bsl_path = skill_root / "conventions" / "budget-saturation-loop.md"
+    if not edp_path.exists():
+        issues.append("conventions/evidence-driven-sprint-planning.md 누락")
+        return issues
+    edp = _read(edp_path)
+    sro = _read(sro_path)
+    bsl = _read(bsl_path)
+    required = ["next_sprint_candidates", "lesson_source", "free_lesson_allowed", "candidate_match"]
+    for kw in required:
+        if kw not in edp:
+            issues.append(f"evidence-driven-sprint-planning.md: '{kw}' 키워드 누락")
+    if "evidence-driven-sprint-planning" not in sro:
+        issues.append("score-rubric-objectivity.md: evidence-driven-sprint-planning cross-ref 누락")
+    if "evidence-driven-sprint-planning" not in bsl:
+        issues.append("budget-saturation-loop.md: evidence-driven-sprint-planning cross-ref 누락")
+    return issues
+
+
+def check_cross_universe_lesson_distillation(skill_root: Path) -> list[str]:
+    """C-CULD — cross-universe-lesson-distillation.md + plan-tree / ensemble cross-ref (v0.9.16 sprint-10 #4)."""
+    issues: list[str] = []
+    culd_path = skill_root / "conventions" / "cross-universe-lesson-distillation.md"
+    pt_path = skill_root / "conventions" / "plan-tree.md"
+    ens_path = skill_root / "conventions" / "ensemble-synthesis-default.md"
+    if not culd_path.exists():
+        issues.append("conventions/cross-universe-lesson-distillation.md 누락")
+        return issues
+    culd = _read(culd_path)
+    pt = _read(pt_path)
+    ens = _read(ens_path)
+    required = ["Patterns to Avoid", "avoid_patterns", "extract_loser_weakness", "weakest_dim"]
+    for kw in required:
+        if kw not in culd:
+            issues.append(f"cross-universe-lesson-distillation.md: '{kw}' 키워드 누락")
+    if "cross-universe-lesson-distillation" not in pt:
+        issues.append("plan-tree.md: cross-universe-lesson-distillation cross-ref 누락")
+    if "cross-universe-lesson-distillation" not in ens:
+        issues.append("ensemble-synthesis-default.md: cross-universe-lesson-distillation cross-ref 누락")
+    return issues
+
+
+def check_regression_derived_lint_rule_autogen(skill_root: Path) -> list[str]:
+    """C-RDLR — regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)."""
+    issues: list[str] = []
+    rdlr_path = skill_root / "conventions" / "regression-derived-lint-rule-autogen.md"
+    p11_path = skill_root / "phases" / "11-regression-bisect.md"
+    if not rdlr_path.exists():
+        issues.append("conventions/regression-derived-lint-rule-autogen.md 누락")
+        return issues
+    rdlr = _read(rdlr_path)
+    p11 = _read(p11_path)
+    required = ["lint_rule_proposal", "rule_id", "regression_lint_registry", "C-RDR"]
+    for kw in required:
+        if kw not in rdlr:
+            issues.append(f"regression-derived-lint-rule-autogen.md: '{kw}' 키워드 누락")
+    if "regression-derived-lint-rule-autogen" not in p11:
+        issues.append("phases/11-regression-bisect.md: regression-derived-lint-rule-autogen cross-ref 누락")
+    return issues
+
+
+def check_polyglot_code_quality(skill_root: Path) -> list[str]:
+    """C-PCQ — polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)."""
+    issues: list[str] = []
+    pcq_path = skill_root / "conventions" / "polyglot-code-quality.md"
+    bnc_path = skill_root / "conventions" / "build-and-config.md"
+    if not pcq_path.exists():
+        issues.append("conventions/polyglot-code-quality.md 누락")
+        return issues
+    pcq = _read(pcq_path)
+    bnc = _read(bnc_path)
+    required_languages = ["Python", "Go", "TypeScript", "Rust", "Java", "Ruby"]
+    for lang in required_languages:
+        if lang not in pcq:
+            issues.append(f"polyglot-code-quality.md: '{lang}' 언어 카탈로그 누락")
+    required_metrics = [
+        "cyclomatic_complexity", "function_length", "nesting_depth",
+        "duplicate_blocks", "lint_errors", "format_diff",
+    ]
+    for m in required_metrics:
+        if m not in pcq:
+            issues.append(f"polyglot-code-quality.md: '{m}' 메트릭 누락")
+    if "polyglot-code-quality" not in bnc:
+        issues.append("build-and-config.md: polyglot-code-quality cross-ref 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1514,6 +1639,12 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IV2", "interactive-viewer-builder agent 책임 좁힘 결과 only (sprint-05-d)", check_interactive_viewer_agent_product_only),
     ("C-RB1", "phase11 회귀 원인 4 분류 plan/impl/data/external defect (sprint-05-e Q1)", check_phase11_regression_classification),
     ("C-IG1", "phase06 implementation guidance 본문 의무 (sprint-05-e Q3)", check_phase06_implementation_guidance),
+    ("C-CT", "convention-traceability.md (v0.9.16 sprint-10 #1 발현 검증)", check_convention_traceability),
+    ("C-SDT", "sprint-score-delta-tracking.md + budget-saturation cross-ref (v0.9.16 sprint-10 #2)", check_sprint_score_delta_tracking),
+    ("C-EDP", "evidence-driven-sprint-planning.md + SRO/BSL cross-ref (v0.9.16 sprint-10 #3)", check_evidence_driven_sprint_planning),
+    ("C-CULD", "cross-universe-lesson-distillation.md + plan-tree/ensemble cross-ref (v0.9.16 sprint-10 #4)", check_cross_universe_lesson_distillation),
+    ("C-RDLR", "regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)", check_regression_derived_lint_rule_autogen),
+    ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
 ]
 
 

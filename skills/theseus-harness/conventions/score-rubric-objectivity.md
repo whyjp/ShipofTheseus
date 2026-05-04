@@ -183,3 +183,7 @@ budget-saturation-loop + score-rubric-objectivity 합성 :
 ## 9. 자기 검증
 
 본 컨벤션 = strict rubric 룰 자체에 적용 시 — 본 컨벤션의 *체크리스트 카탈로그* 가 *모든 도메인 / 모든 bench* 적용 가능한지 검증. 본 회차 (v0.9.15) = simulation-bench 만 카탈로그 명시. 다른 bench 적용 시 후속 PR 에서 추가.
+
+## 10. v0.9.16 sprint-10 후속 — evidence_missing 자동 흐름
+
+본 컨벤션이 `evidence_missing` 명시 의무만 강제. v0.9.16 [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) 가 그 항목을 *다음 sprint 의 lesson source 로 자동 매핑* — handoff 에서 evidence_missing 박고 종료하지 않고, budget 여유 시 자동 sprint 진입. 두 합성 시 진짜 0.999 도달.

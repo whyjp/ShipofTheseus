@@ -45,7 +45,7 @@
 
 ## 자체 lint — 객관 측정 도구
 
-[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **42 개 체크** 로 본 저장소를 검사 (회차마다 새 체크 추가, 부트스트래핑 회귀 누적):
+[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **60+ 룰** 로 본 저장소를 검사 (회차마다 새 룰 추가, 부트스트래핑 회귀 누적). v0.9.5 까지 62 룰 + v0.9.6~v0.9.15 sprint 회차마다 신규 컨벤션별 룰 추가 (C-NFR / C-PMF / C-SRL / C-PCR / C-MMC / C-AT-SEQ / C-AT-MP / C-TBR / C-IFP / C-ABV / C-MIF / C-BAF / C-DSI / C-DRS / C-MQG / C-ESD / C-DHS / C-BSL / C-SRO 등):
 
 | # | 체크 |
 | - | --- |
@@ -91,6 +91,24 @@
 | C40 | 안티 패턴 통합 카탈로그 (PR-11, v0.4.0) |
 | C41 | description 200자 이하 압축 + anti-pattern 마커 보존 (PR-12, v0.4.0) |
 | C42 | interview ← prd-handling 흡수 + dead link 부재 (PR-13, 28→27 컨벤션, v0.4.0) |
+| C43 | SKILL.md hard-rule markup (PR-10, v0.4.0) |
+| C-PT | plan-tree wiring (5 시드 + G3+ default, v0.6.0) |
+| C-RP | runtime-prereq + Q-D9 + 게이트 7 (v0.7.0) |
+| C-OD | orchestrator driver HARD-RULE (livetest #1 fail 정정, v0.8.0) |
+| C-LINT1 / C-WV1~3 / C-AGENT-IVB / C-TDD-08 | sprint-05-a (v0.9.1) — ruff + viewer 분리 + TDD 5 sub |
+| C-MV1~5 | sprint-05-b (v0.9.2) — multiverse 폭 확장 + universe head-to-head + 분기 축 + 자동 머지 + budget profile |
+| C-IV1~2 | sprint-05-d (v0.9.4) — interactive-viewer 결과 only + 책임 좁힘 |
+| C-RB1 / C-IG1 | sprint-05-e (v0.9.5) — 회귀 4 분류 + plan implementation guidance |
+| C-NFR | sprint-05-f (v0.9.6) — NFR derivation 자동 도출 |
+| C-PMF | sprint-05-g (v0.9.7) — premortem friction |
+| C-SRL / C-PCR | sprint-05-h (v0.9.8) — sprint regression loop + parallel cold review |
+| C-MMC | sprint-05-i (v0.9.9) — mindmap centrality |
+| C-AT-SEQ / C-AT-MP / C-TBR | sprint-06-a (v0.9.10) — AIDE multiverse 풀 발현 (symmetry + multi-phase + blind rerun) |
+| C-IFP | sprint-06-b (v0.9.11) — interface-first parallel impl |
+| C-ABV / C-MIF / C-BAF | sprint-06-c (v0.9.12) — analytical bound + multiverse impl fan-out + budget-aware fallback |
+| C-DSI / C-DRS / C-MQG / C-ESD | sprint-07 (v0.9.13) — content depth layer (deep semantic + domain stacking + mindmap gardening + ensemble synthesis) |
+| C-DHS | sprint-08 (v0.9.14) — Layer 3 결과물 허들 supremacy |
+| C-BSL / C-SRO | sprint-09 (v0.9.15) — budget saturation loop + score rubric objectivity |
 
 실행:
 ```bash
@@ -118,11 +136,11 @@ python skills/theseus-harness/scoring/self_lint.py --score
 self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ```
 
-ⓐ `lint_score` — 42 self_lint 체크 통과율 (현재 42/42 = 1.0)
-ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (현재 12/12 = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
+ⓐ `lint_score` — self_lint 체크 통과율 (현재 모든 룰 PASS = 1.0)
+ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (모두 PASS = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
 ⓒ `sample_score` — `templates/sample-inputs.json` 채점 (현재 1.0)
 
-1차 회차 결과: **self_score = 1.000000, 임계 0.99999 통과**. 자세한 회차 보고는 [`.ShipofTheseus/theseus-self/quality/09-quality-gate.md`](.ShipofTheseus/theseus-self/quality/09-quality-gate.md).
+회차 결과 (v0.9.15): **self_score = 1.000000, 임계 0.99999 통과**. 자세한 회차 보고는 [`.ShipofTheseus/theseus-self/quality/09-quality-gate.md`](.ShipofTheseus/theseus-self/quality/09-quality-gate.md).
 
 ## 회귀 개선 사이클 (본 하네스로 본 하네스 회귀)
 
@@ -133,7 +151,7 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ③ 페이즈 08 (보완 구현) — 실제 phase/agent/convention 본문 갱신
 ④ self_lint 재실행 → 0 fail 확인
 ⑤ `--score` 모드로 임계 0.99999 통과 확인
-⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (현재 C42 까지 누적, 다음 회차 C43+) → ② 로 회귀
+⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (v0.9.15 까지 60+ 룰 누적, 신규 컨벤션마다 C-XYZ 추가) → ② 로 회귀
 ⑦ 회차 산출물을 `.ShipofTheseus/theseus-self/sprints/NN/` 로 누적 (다음 회차의 reference)
 
 회차 간 비교는 `quality-gate.md` 의 `self_score` 시계열로 — 본 하네스가 매 릴리스 *더 단단해지는지* 객관 측정.
@@ -174,5 +192,5 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ## 참고
 
 ⓐ [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미.
-ⓑ [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) — 본 하네스의 14 페이즈.
+ⓑ [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) — 본 하네스의 15 페이즈 + 41 컨벤션.
 ⓒ [`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md) — frontmatter, 단계 재진입.

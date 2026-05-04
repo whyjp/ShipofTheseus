@@ -1,7 +1,7 @@
 # 철학
 
 ## 한 줄 요약
-**테세우스의 배라는 이름은 "재조립·재구현 후에도 같은 이름으로 불릴 자격" 을 묻는 사고 실험이자, 도자기 장인의 작업 방식을 코드로 옮긴 메타포다.** 마음에 드는 결과가 나올 때까지 모듈을 깨고 다시 빚는다 — 그러나 매 회차마다 더 단단해진다. 그 단단함을 만드는 골격이 **의존성 역전(DIP)** 과 **관심사 분리(SoC)**, 그리고 결과를 계량하는 **점수·회귀 바이섹트** 다.
+**Theseus 는 *브랜딩 + 신뢰 담보 메타포* 로 남는 이름이고, 본 프로젝트의 *실 동력* 은 AIDE 멀티버스 트리다.** 한 요구를 *N 우주의 트리* 로 동시 탐색하고 *토너먼트* 로 우승 우주를 선별하며 (페이즈 06 plan-tree, 후반 v0.9.10~v0.9.15 에서 페이즈 02/05/08/11/13 까지 확장), *마음에 들지 않으면 깨고 다시 빚어* 매 회차 더 단단해진다 (도자기 장인 — 페이즈 11 `re-architect`). 그 단단함을 만드는 골격이 **AIDE 트리 (멀티버스 경합)**, **의존성 역전(DIP)**, **관심사 분리(SoC)**, 그리고 결과를 계량하는 **점수·회귀 바이섹트·결과물 허들 (Layer 3 supremacy)** 다.
 
 ## 도자기 장인의 비유
 
@@ -28,6 +28,52 @@
 
 배의 모든 판자를 갈아도 같은 배라고 부를 수 있는가 — 이 질문에 코드는 "그렇다, **단, 매 판자가 sound 하다는 보증이 누적되어 있다면**" 으로 답한다. 본 하네스의 모든 페이즈·게이트·점수·바이섹트는 그 보증을 누적시키기 위한 장치다. 결과물이 처음 의도한 타이틀로 끝까지 불릴 자격을 만든다.
 
+이름은 *브랜딩과 메타포* 로 그대로 유지하되, 본 프로젝트가 후반 회차 (v0.9.10~v0.9.15) 에서 *진짜 차별 동력* 으로 부각시킨 것은 다음 절의 **AIDE 멀티버스 트리** 다.
+
+## AIDE 멀티버스 — 본 하네스의 진짜 차별 동력
+
+**닥터 스트레인지가 14,000,605 미래를 본 이유와 같다 — 결정 이전에 다 가본다.** 본 하네스가 *유일한 차별 강점* 으로 부각시키는 것은 LLM 비결정성을 *분기 동력* 으로 전환하는 AIDE 트리다.
+
+### AIDE 의 의미
+
+**A**I-**D**riven **E**xploration — 트리 탐색은 사람의 휴리스틱이 아니라 LLM 비결정성 자체를 분기 동력으로 사용. 시드 카탈로그가 *의미 있는 분기 방향* 을 강제함으로써 노이즈 분기 대신 의미 분기를 만든다. 모태는 Weco AI 의 AIDE Tree Search (2024.01~, MLE-Bench SOTA) — 본 하네스가 *Plan-Tree* 로 초기 채택, *Multi-Phase 확장* 으로 후반 격상.
+
+### v0.9.10~v0.9.15 의 4 차원 격상
+
+| 차원 | v0.9.10 이전 | v0.9.10~v0.9.15 |
+|---|---|---|
+| **폭** (universe count) | G3 폭 2 / G4 폭 3 / G5 폭 5 | G3 폭 3 / G4 폭 3-4 / G5 폭 5-6 |
+| **깊이** | depth 1 (cap) | depth 1-2 (G5 강제), 자식 우주 재귀 분기 |
+| **활성 페이즈** | 06 plan-tree 단독 | **06 + 02 + 05 + 08 + 11 + 13 (multi-phase 확장)** |
+| **검증 강도** | line-count ≥ 20 diff lines | sequenceDiagram per-universe 강제 + tournament blind rerun + ensemble synthesis default + analytical-bound cross-validation |
+
+본 하네스의 두 강점 — *회귀성 (recursion: 우주 안에 우주)* + *병렬성 (parallelism: 형제 우주 동시 디스패치)* — 이 페이즈 06 한 곳에서 *시작* 해 v0.9.10 부터 *5+ 페이즈로 확산*.
+
+### 왜 단일 우주가 아닌가
+
+ⓐ **단일 플랜 → 단일 구현** 회귀에서 멀티버스 (구현 경쟁) 만 돌리면 *이미 좁혀진 분할 위에서* 노이즈만 비교하게 된다. 분할 자체가 모호한 케이스를 못 잡음.
+ⓑ **플랜 = 분할 결정** 이고, 분할은 LLM 비결정성이 가장 크게 발산하는 지점. 평행 우주에서 동시 탐색 → 토너먼트 → 우승 = 가장 의미 있는 노이즈 분리 지점.
+ⓒ **Doc-review / Critique / Implementation / Regression / Visualization 도 같은 비결정성 발산** — v0.9.10 의 multi-phase 확장이 단일 axis 한계 노출.
+ⓓ **Ensemble synthesis default** (v0.9.13) — 단일 우승 우주만 보지 않고 *교집합 + 합집합* 동시 활용. tournament 가 *선별* 만이 아니라 *합성* 으로 격상.
+
+### 5 시드 카탈로그 + 6 분기 축
+
+페이즈 06 plan-tree 의 *시드별 의미 분기* 강제:
+
+| # | 시드 | 분할 동력 |
+|---|---|---|
+| 1 | domain-first | 비즈니스 boundary = 모듈 boundary |
+| 2 | adapter-first | 외부 의존 다양성 = 모듈 boundary |
+| 3 | minimal-subtraction | 모듈 수 최소화, 추가보다 감산 보상 |
+| 4 | tdd-topology | 테스트 토폴로지가 모듈 토폴로지 결정 |
+| 5 | strict-layering | domain / app / adapter / ui / infra 5 레이어 빡빡 분리 |
+
+폭 N 진행 시 *6 분기 축* (process-vs-data / sync-vs-async / centralized-vs-distributed / dynamic-vs-static / push-vs-pull / mutable-vs-immutable) 에서 상위 N 개 axis 를 선택해 *형식적 분기 대신 본질적 의미 분기* 강제. 자세한 룰은 [`skills/theseus-harness/conventions/plan-tree.md`](skills/theseus-harness/conventions/plan-tree.md) + [`aide-tree-symmetry.md`](skills/theseus-harness/conventions/aide-tree-symmetry.md) + [`aide-tree-multi-phase.md`](skills/theseus-harness/conventions/aide-tree-multi-phase.md).
+
+### 도자기 장인과의 관계
+
+AIDE 트리가 *깨기 전 N 우주를 동시에 가본다* 면, 도자기 장인은 *깨고 다시 빚을 트리거* 다. 두 컨셉은 보완 관계 — AIDE 가 *forward exploration* (가능성 탐색), 도자기 장인이 *re-architecture* (깊은 위반 시 통째 재빚기). 페이즈 11 `re-architect` 가 발동되면 페이즈 06 부터 *새 AIDE 트리* 가 다시 펼쳐진다.
+
 ## 가장 중요한 원칙: 의존성 역전(DIP)
 
 SOLID 다섯 중 본 하네스는 **DIP 를 최우선** 으로 본다. 이유:
@@ -53,11 +99,11 @@ SoC 는 단위 테스트 기반을 가장 쉽게 다지는 수단이다.
 ⓐ **Ralph 루프** — 모델이 작업·자가 평가·재시도하는 짧은 루프. 강점: 끈질긴 반복. 약점: 외부 grounding 없는 표류와 자만.
 ⓑ **OhMy 시리즈 하네스** — 역할(설계자, 구현자, 리뷰어, 테스터)을 명시 분리하고 외부 평가자를 둠. 강점: 적대적 리뷰와 관심사 분리. 약점: 역할 전환 시 컨텍스트 손실.
 ⓒ **우로보로스 하네스** — 자기 꼬리를 무는 뱀. 출력이 다음 입력이 되고 출처가 보존되어 회귀를 바이섹트할 수 있다. 강점: 추적 가능성. 약점: 점수 규율 없으면 비대화.
-ⓓ **AIDE Tree Search** (Weco AI, 2024.01~) — Draft / Improve / Debug / Memory 4 오퍼레이터, tree 기반 백트랙. MLE-Bench SOTA 검증. 본 하네스의 체크포인트 회귀 + 멀티버스 알고리즘의 직접적 기반.
+ⓓ **AIDE Tree Search** (Weco AI, 2024.01~) — Draft / Improve / Debug / Memory 4 오퍼레이터, tree 기반 백트랙. MLE-Bench SOTA 검증. **본 하네스의 진짜 차별 동력** — Plan-Tree 초기 채택 (v0.6.0) → Multi-Phase 확장 (v0.9.10) → Ensemble Synthesis Default (v0.9.13) → Tournament Blind Rerun (v0.9.10). 위 "AIDE 멀티버스" 절 참조.
 ⓔ **Karpathy LLM Wiki** (2026.04) — Two Outputs Rule, 모순 감지, Lint, Decision Records. 본 하네스의 lesson_pack + decisions.md + self_lint 의 패턴 출처.
 ⓕ **Da Capo 루프** (사용자 이전 연구, 2026.04 *AIDE × LLM Wiki × Lesson Loop 프레임워크*) — AIDE 와 LLM Wiki 의 강제 순차 결합. 실패 → 해결 → 레슨 → 방어 테스트 → 회귀 검증 → (방어 깨지면) 무효화 → 재해결.
 
-여기에 ① 점수 ≥ 0.999 의 하드 게이트, ② 점수 0.05 하락 시 즉시 발동되는 회귀 바이섹트, ③ DIP 우선 채점, ④ 매 페이즈에 시작·경과·현재 시각 표기로 사용자가 실시간을 체감할 수 있게 한 점, ⑤ 사용자 명시 없을 때 백엔드 기본값 Go, ⑥ FE/BE 채점 분리, ⑦ 페이즈 04 가 *유일한* 인터럽트 — 이후 모든 ack 는 사전 위임 자동 매핑, ⑧ 체크포인트 회귀 + 멀티버스 닥터 스트레인지 모드, ⑨ 불변 조건 + Phase V 측정 유효성, ⑩ **파편화 우선 — 단일 헤비 스킬 금지** 가 더해진다.
+여기에 ① 점수 ≥ 0.999 의 하드 게이트 + budget ≥ 80% 사용 강제 (v0.9.15), ② 점수 0.05 하락 시 즉시 발동되는 회귀 바이섹트 + 4 분류 (plan/impl/data/external defect), ③ DIP 우선 채점 + score-rubric-objectivity (evidence 1:1 self-rating, v0.9.15), ④ 매 페이즈에 시작·경과·현재 시각 표기, ⑤ 사용자 명시 없을 때 백엔드 기본값 Go, ⑥ FE/BE 채점 분리, ⑦ 페이즈 04 가 *유일한* 인터럽트 — 이후 모든 ack 는 사전 위임 자동 매핑 (Q-D1~Q-D9 + Q-D-DELIVERABLE-MODE + Q-D-BUDGET-MODE), ⑧ AIDE 멀티버스 닥터 스트레인지 모드 (5+ 페이즈로 확산, v0.9.10), ⑨ 불변 조건 + Phase V 측정 유효성 + analytical-bound cross-validation (v0.9.12), ⑩ **파편화 우선 — 단일 헤비 스킬 금지**, ⑪ **Layer 3 결과물 허들 supremacy** (v0.9.14) — 메모리/컨벤션 override 불가, 실 코드 + 실행 + 측정값 의무 가 더해진다.
 
 ## 외부 패턴 차용 메서돌로지 — *거울 원칙*
 

@@ -2,109 +2,90 @@
 
 ## 한 줄 요약
 
-**14 페이즈를 7 분해 스킬로 순차 위임하는 인덱스 스킬.** 가장 흔한 진입점이며, 단순 요청은 자동으로 거부 또는 미니 모드로 다운시프트한다.
+**15 페이즈 자율 driver — 사용자 entry point.** 페이즈 04 인터뷰 1회 후 인터럽트 0. 본 스킬은 HARD-RULE (호출 직후 첫 동작 강제 + 그레이드별 의무 산출물) + 그레이드 처리 인덱스만 자체 보유 — 콘텐츠 source 는 [`theseus-harness`](theseus-harness.md) 동반 필수.
 
 ## 언제 호출하는가
 
-ⓐ 다중 모듈 / FE+BE 동시 / 도메인 미정착 신규 기능을 처음부터 끝까지 자동으로 진행하고 싶을 때.
+ⓐ 다중 모듈 / FE+BE 동시 / 도메인 미정착 신규 기능 / 외부 evaluator 가 채점하는 bench 작업 (G4 자동 escalation).
 ⓑ 사용자 인터뷰 인터럽트는 페이즈 04 한 번만 받고 이후는 자율 진행을 원할 때.
-ⓒ 사람 손으로는 14 페이즈를 다 챙기기 부담스러울 때.
+ⓒ AIDE multiverse 의 *유일한 차별 강점* (N 우주 토너먼트 + 5+ 페이즈 multi-phase 확장 + ensemble synthesis + blind rerun) 을 그대로 활용하고 싶을 때.
 
 ## 호출 형식
 
 ```
-/theseus-orchestrator <요구사항>
+/shipoftheseus:theseus-orchestrator <요구사항>
 ```
 
-요구사항이 단순하면(G1) 호출이 거부된다 — `theseus-intent` 안의 grade-assess 가 판정. 사용자에게 "한 줄 수정은 본 하네스 대상이 아닙니다" 안내 후 종료.
+요구사항이 단순하면(G1) 본 스킬 내부의 grade-assess 가 mini_harness_tbd 모드로 처리. **G2~G5 모두 진행 — 그레이드는 *내부 모듈레이션만* 결정 (복잡도 / 페이즈 수 / 컨벤션 / 임계 / 멀티버스 폭).**
 
-## 진행 흐름
+## 진행 흐름 (15 페이즈)
 
-```
-사용자 요청
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-intent (페이즈 00–05)                    │
-│   - grade-assess (G1 거부 / G2 미니 / G3+ 정식)  │
-│   - 명명, 의도 추출, 마인드맵                    │
-│   - 사용자 인터뷰 (Q-G1+Q-D1~D7+NFR+스택)       │
-│   - 비평·대안                                    │
-└─────────────────────────────────────────────────┘
-    │ frontmatter 검증
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-plan (페이즈 06–07)                      │
-│   - TODO DAG + 시퀀스 다이어그램                 │
-│   - 콜드 재이해                                  │
-└─────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-implement (페이즈 08)                    │
-│   - TODO 별 모듈 구현 (코드+테스트+빌드)         │
-└─────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-quality (페이즈 09)                      │
-│   - 5 게이트 + Phase V 측정 유효성              │
-└─────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-sprint (페이즈 10–11)                    │
-│   - 무한 루프 (임계 0.95~0.99999 그레이드별)    │
-│   - 회귀 바이섹트 + 정체 감지 + 멀티버스        │
-└─────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-webview (페이즈 12)                      │
-│   - bun + hono + react 6 탭 웹뷰                 │
-└─────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────┐
-│ theseus-handoff (페이즈 13)                      │
-│   - 한 줄 요약 + 점수 시계열 + (자율 시) PR     │
-└─────────────────────────────────────────────────┘
-```
+| # | 페이즈 | 그레이드 활성 |
+| --- | --- | --- |
+| 00 | 명명 | G3+ |
+| 01 | 의도 + 마인드맵 | G2+ |
+| 02 | 의도 리뷰 (multi-reviewer multi-phase 옵션, v0.9.10) | G3+ |
+| 03 | 콜드 재이해 (parallel cold review, v0.9.8) | G3+ |
+| 04 | 사용자 질의 + 스택 + Q-D9 + Q-D-DELIVERABLE-MODE + Q-D-BUDGET-MODE | G2+ (*유일한 인터럽트*) |
+| 05 | 비평 (multi-critic multi-phase 옵션) | G3+ |
+| 06 | **AIDE Plan-Tree** — N 우주 토너먼트 (G3-3 / G4-4 / G5-6 + 깊이 1-2 + sequenceDiagram per-universe + ensemble synthesis default) | G2+ |
+| 07 | 계획 재이해 | G4+ |
+| 08 | 구현 (5 서브페이즈 TDD + multiverse impl fan-out) | G2+ |
+| 09 | 7 게이트 + Gate 0 결과물 허들 (H1-H5) supremacy | G2+ |
+| 10 | 무한 스프린트 (budget-saturation-loop ≥80% 사용 강제) | G3+ |
+| 11 | 회귀 바이섹트 (4 분류 + multi-hypothesis multi-phase 옵션) | G4+ |
+| 12 | theseus-view (스킬 진행 추적) | G3+ (G2 단순) |
+| 13 | interactive-viewer (프로젝트 output observability + multi-framing 옵션) | G3+ (G2 옵션, G5 강제) |
+| 14 | 핸드오프 (score-rubric-objectivity self-estimate) | G2+ |
 
-각 화살표 지점에서 다음 스킬은 *이전 산출물의 frontmatter* 를 검증해야 진입한다. 실패 시 거부 — 분해의 안전 장치.
+자세한 그레이드 매트릭스는 [`../../skills/theseus-harness/conventions/grades.md`](../../skills/theseus-harness/conventions/grades.md).
 
 ## 입출력
 
 - **입력**: 사용자 자연어 요청 + 레포 컨텍스트.
-- **출력**: 14 페이즈 산출물 모두 + 웹뷰 + 핸드오프 메시지.
+- **출력**: 15 페이즈 산출물 모두 + (standalone 시) 코드 + theseus-view 웹뷰 + interactive-viewer + 핸드오프 메시지.
 
 산출물 위치: `.ShipofTheseus/<프로젝트명>/`.
 
-## grade-assess 판정 결과
+## HARD-RULE 요약
 
-| 그레이드 | 의미 | orchestrator 동작 |
-| ------- | ---- | ----------------- |
-| G1 | Trivial (한 줄 수정·오타) | **호출 거부** — "본 하네스 대상이 아닙니다" 메시지 후 종료 |
-| G2 | Small (단일 모듈·단일 스택) | **미니 모드** — 일부 페이즈 스킵 (인터뷰 축약·스프린트 단일) |
-| G3 | Standard (다중 모듈) | 정식 진행, 임계 0.95 |
-| G4 | Critical (FE+BE+E2E 동반) | 정식 진행, 임계 0.99 |
-| G5 | Mission Critical (보안·결제·실시간) | 정식 진행, 임계 0.999, 멀티버스 default |
+| # | 룰 |
+|---|---|
+| HARD-RULE 1~7 | 호출 직후 첫 동작 = `timing/start.json` + 페이즈 00/01 산출물 작성. 코드 직접 작성 / retroactive frontmatter generator / harness emulator / 페이즈 04 생략 모두 위반 |
+| HARD-RULE 8 | 그레이드별 의무 산출물 (G1 3개 / G2 11개 / G3 30+ / G4-5 풀) 모두 박혀야 정상 완주 |
+| HARD-RULE 9 | 산출물 *내용* 의무 — `plan/06-plan.md` (파일 경로 ≥ 5 / Mermaid 시퀀스 ≥ 1 또는 인터페이스 ≥ 3 / TODO DAG) + `impl/08-impl-log.md` (TODO ID 매핑 ≥ 3 / 모듈명 / 인터페이스 노출) |
 
-자세한 매핑은 [`../../skills/theseus-harness/conventions/grades.md`](../../skills/theseus-harness/conventions/grades.md).
+전체 룰: [`../../skills/theseus-orchestrator/SKILL.md`](../../skills/theseus-orchestrator/SKILL.md) §HARD-RULE.
+
+## Layer 3 결과물 허들 supremacy (v0.9.14)
+
+본 스킬 종료 시 *standalone 컨텍스트* (= bench / 단독 진행) 면 5 hurdle 의무:
+
+- H1 Code Existence (≥ 5 모듈)
+- H2 Code Execution (verification command exit 0)
+- H3 Test Suite (실 측정 통과 수 0 금지)
+- H4 Bench-Required Outputs (file existence + size > 0 + schema 정합)
+- H5 Executed Values Recording (placeholder 금지)
+
+실패 시 자동 retry sprint. 사용자 명시 ack (Q-D-DELIVERABLE-MODE = 3 design-only) 만 면제.
 
 ## 자주 묻는 질문
 
-**Q. orchestrator 와 theseus-harness(플래그십) 의 차이는?**
-A. 둘 다 14 페이즈 전체를 진행한다. orchestrator 는 *분해 스킬에 위임* 하므로 각 페이즈 산출물의 책임 스킬이 명확하고 단독 호출이 가능하다. theseus-harness 는 모든 콘텐츠를 한 곳에 두고 자기가 다 한다 — 단일 source of truth 로서 콘텐츠가 중복되지 않게 한다. 일반 사용 시 orchestrator 를 권장.
+**Q. orchestrator 와 theseus-harness 단독 호출의 차이는?**
+A. orchestrator 는 *사용자 entry point* — HARD-RULE entry 룰 + 그레이드 처리 흐름 인덱스만 자체 보유. 콘텐츠는 모두 [`theseus-harness/`](theseus-harness.md) 의 47 컨벤션 + 18 에이전트 + 채점기. 두 스킬 모두 설치 필수 (orchestrator 단독 설치 시 본문 링크 깨짐).
 
 **Q. 페이즈 04 외에 사용자 인터럽트가 발생하는가?**
-A. 자율 권한 매트릭스에 따라 사용자에게 ack 가 필요한 결정이 있을 때만. 페이즈 11 의 회귀 바이섹트가 깊어지거나, 페이즈 13 에서 자율 PR 권한이 없는 경우 등. 자세한 위임 매트릭스는 [`../../skills/theseus-harness/conventions/autonomy.md`](../../skills/theseus-harness/conventions/autonomy.md).
+A. 페이즈 04 답안 매핑이 모든 후속 결정을 자율 처리. 보안 가드 (실 secret 의 git 커밋 감지) 만 *유일한* 인터럽트 추가 예외 — [`../../skills/theseus-harness/conventions/runtime-prereq.md`](../../skills/theseus-harness/conventions/runtime-prereq.md). 페이즈 11 회귀 바이섹트 / 페이즈 13 PR 권한 / 멀티버스 머지 결정 모두 Q-D 사전 위임 자동 매핑.
 
 **Q. 중간에 끊어지면?**
 A. `state.json` 이 자동 기록되어 다음 호출 시 마지막 valid 페이즈 다음부터 재개. 자세한 절차는 [`../../skills/theseus-harness/conventions/resume.md`](../../skills/theseus-harness/conventions/resume.md).
 
+**Q. budget 80% 강제는 무엇인가?**
+A. v0.9.15 budget-saturation-loop — 페이즈 10 sprint loop 가 임계 first-try PASS 해도 budget ≥ 80% 사용까지 sprint 추가. 추가 sprint 의 lesson type = *content depth* (enforcement 아님). 94 plateau 돌파 룰. 페이즈 04 Q-D-BUDGET-MODE 답 2 (Quick-stop) 로 사용자 명시 ack 시 fast-stop.
+
 ## 더 읽을거리
 
 - [`../../skills/theseus-orchestrator/SKILL.md`](../../skills/theseus-orchestrator/SKILL.md) — 기계 진입점 (LLM 이 읽음).
-- [`../../skills/theseus-harness/SKILL.md`](../../skills/theseus-harness/SKILL.md) — 플래그십 인덱스.
+- [`../../skills/theseus-harness/SKILL.md`](../../skills/theseus-harness/SKILL.md) — 콘텐츠 source of truth.
 - [`../../skills/theseus-harness/conventions/contracts.md`](../../skills/theseus-harness/conventions/contracts.md) — 스킬 간 frontmatter 계약.
+- [`../../PHILOSOPHY.md`](../../PHILOSOPHY.md) — AIDE 멀티버스 (진짜 차별 동력) + 도자기 장인 비유.

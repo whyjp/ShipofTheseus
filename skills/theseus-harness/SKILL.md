@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.15
-description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 41 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + 14 v0.9.6-14 컨벤션 + **budget-saturation-loop (default 임계 0.999 + budget 80% 사용 강제) + score-rubric-objectivity (strict checklist self-rating, evidence 1:1)**. self-rating noise 제거 + budget 끝까지 sprint iteration. 외부 evaluator 작업 자동 G4 escalation.
+version: 0.9.16
+description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 47 컨벤션 + 18 에이전트. AIDE 멀티버스 + 발현 검증 6 메타 (convention-traceability / sprint-score-delta / evidence-driven-sprint / cross-universe-lesson / regression-derived-lint / polyglot-code-quality) + Layer 3 결과물 허들 supremacy.
 ---
 
 # 테세우스 하네스
@@ -56,6 +56,12 @@ al- **Ensemble synthesis default — G4+ tournament 결과 algorithmic union def
 am- **Deliverable hurdle supremacy — Layer 3 supremacy: 실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가, 실패 시 자동 retry sprint (v0.9.14 신규, v0913_cold01 design-only 회피 차단)**: [`conventions/deliverable-hurdle-supremacy.md`](conventions/deliverable-hurdle-supremacy.md)
 an- **Budget saturation loop — sprint loop budget 끝까지 사용 + content depth lesson (v0.9.15 신규, 조기 종료 차단)**: [`conventions/budget-saturation-loop.md`](conventions/budget-saturation-loop.md)
 ao- **Score rubric objectivity — strict checklist self-rating, evidence 1:1 매칭, agent self-rating noise 제거 (v0.9.15 신규)**: [`conventions/score-rubric-objectivity.md`](conventions/score-rubric-objectivity.md)
+ap- **Convention traceability — 페이즈 산출물 frontmatter `applied_conventions` 의무 + 활용률 추적 (v0.9.16 신규, 발현 검증 #1)**: [`conventions/convention-traceability.md`](conventions/convention-traceability.md)
+aq- **Sprint score delta tracking — sprint NN+1 점수 변화 검증 + lesson type 라벨링 정직성 (v0.9.16 신규, 발현 검증 #2)**: [`conventions/sprint-score-delta-tracking.md`](conventions/sprint-score-delta-tracking.md)
+ar- **Evidence-driven sprint planning — `evidence_missing` → 다음 sprint lesson 자동 매핑 (v0.9.16 신규, 발현 검증 #3)**: [`conventions/evidence-driven-sprint-planning.md`](conventions/evidence-driven-sprint-planning.md)
+as- **Cross-universe lesson distillation — 패배 universe 약점 우승 본문 흡수 + ensemble 차이집합 (v0.9.16 신규, 발현 검증 #4)**: [`conventions/cross-universe-lesson-distillation.md`](conventions/cross-universe-lesson-distillation.md)
+at- **Regression-derived lint rule autogen — 페이즈 11 회귀 정정 후 self_lint 룰 자동 신규 (v0.9.16 신규, 발현 검증 #5 — 우로보로스 자기 강화 메커니즘)**: [`conventions/regression-derived-lint-rule-autogen.md`](conventions/regression-derived-lint-rule-autogen.md)
+au- **Polyglot code quality — 언어 무관 메트릭 + 9 언어 표준 도구 카탈로그 (Python/Go/TS/Rust/Java/Ruby/...) (v0.9.16 신규, 발현 검증 #6 — Python 종속 해소)**: [`conventions/polyglot-code-quality.md`](conventions/polyglot-code-quality.md)
 ## 산출물 트리
 
 ```

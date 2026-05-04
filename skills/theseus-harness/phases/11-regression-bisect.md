@@ -3,6 +3,8 @@
 ## 한 줄 요약
 **점수가 0.05 이상 하락한 스프린트가 발생하면 *추가 구현 전* 에 원인 판자를 찾는다.** 테세우스의 배에 잘못된 판자가 박혀 있다 — 더 박기 전에 빼낸다. 분석가는 진단만, 코드 수정 금지.
 
+> **v0.9.16 sprint-10 — 자기 강화 메커니즘 (`regression-derived-lint-rule-autogen`)**: 4 분류 (plan/impl/data/external defect) 정정 commit 시 *동일 차원 회귀 차단 self_lint 룰 신규* 의무. 회귀 정정이 일회성이 아니라 *영구 자산화* — 본 하네스가 회차마다 더 단단해지는 우로보로스 메커니즘. 자세한 룰은 [`../conventions/regression-derived-lint-rule-autogen.md`](../conventions/regression-derived-lint-rule-autogen.md).
+
 ## 트리거
 
 페이즈 10 의 루프가 `score(N) < score(N-1) - 0.05` 일 때 자동 호출. 수동: `score.py --bisect`.
