@@ -9,8 +9,8 @@
 | ----- | ---- | ------ | ------ | -----: | -------- | ---: |
 | **1** | Trivial | 한 줄 수정, 리네임, 기계적 리팩터, throwaway | **TBD (v0.5.x 후속)** | 0 | X | TBD |
 | **2** | Simple | 단일 모듈 작은 기능 (~100 LOC), 명확한 스펙 | 01+04+06+08+09 (5) | 7 (interview/timing/contracts/models/build-and-config/lessons/fragmentation) | X | 0.95 |
-| **3** | Standard | 다중 모듈 단일 사이드 (BE only or FE only), 도메인 정착 | 00-09 + 10(3 sprint cap) + 13 (12) | 12 (Grade 2 + diagrams/stack/spec-catalog/resources/checkpoints) | X | 0.97 |
-| **4** | Complex | FE+BE / 새 도메인 / SOLID 경계 리팩터 (현재 default) | 14 풀 | 26 (전부) | 옵션 (Q-D7=1 시) | 0.999 |
+| **3** | Standard | 도메인 정착 + 단일 sprint 충분 + *외부 evaluator 없음* (내부 작업 한정). v0.9.8: external-evaluator (벤치/채점/리더보드) 작업 → 자동 G4 escalation | 00-09 + 10(3 sprint cap) + 13 (12) | 12 (Grade 2 + diagrams/stack/spec-catalog/resources/checkpoints) | X | 0.97 |
+| **4** | Complex | FE+BE / 새 도메인 / SOLID 경계 리팩터 / **외부 evaluator 작업** (벤치마크 / 채점 / 외부 PR 등) (v0.9.8 default for non-trivial) | 14 풀 + sprint regression loop 의무 | 28 (전부 + sprint-regression-loop + parallel-cold-review) | 옵션 (Q-D7=1 시) | 0.999 |
 | **5** | Mission Critical | 결제/금융/안전 시스템 / 회복 불가 변경 | 14 풀 + 빡빡 모드 | 26 + 추가 가드 | 강제 | 0.99999 |
 
 ### 빡빡 모드 (Grade 5 추가 가드)
@@ -35,7 +35,10 @@ def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
       - 모호 신호 → Grade 3 default
     """
     triggers_g5 = ["결제", "금융", "payment", "billing", "안전", "safety", "의료", "medical"]
-    triggers_g4 = ["FE+BE", "프론트엔드", "백엔드", "frontend", "backend", "신규 도메인", "새 도메인", "리팩터", "refactor"]
+    triggers_g4 = ["FE+BE", "프론트엔드", "백엔드", "frontend", "backend", "신규 도메인", "새 도메인", "리팩터", "refactor",
+                   # v0.9.8: external-evaluator 작업 자동 G4 escalation
+                   "벤치마크", "benchmark", "leaderboard", "리더보드", "외부 채점", "external eval",
+                   "PR 제출", "submission", "심사", "review process", "competition"]
     triggers_g2 = ["단일 모듈", "single module", "작은 기능", "small feature", "추가", "add"]
     triggers_g1 = ["한 줄", "oneline", "one line", "rename", "리네임", "typo", "오타", "버그 수정", "throwaway"]
 

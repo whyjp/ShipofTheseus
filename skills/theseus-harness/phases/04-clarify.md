@@ -32,6 +32,28 @@ h- `intent/04-runtime-prereq.md` — Q-D9 답에 따른 *실행 가능 사전조
 5- 답을 받기 전에는 다음 질문으로 넘어가지 않는다 — 사용자가 답할 때까지 다른 페이즈 호출 금지.
 6- **질문 *수* 는 한도 없음** — 4 는 *한 질문의 옵션 수* 한도. 페이즈 04 의 NFR 항목별 / Q-G1 / Q-D1~D8 / 의도 모호 해소 / 회귀 짝까지 누적 *수십 질문* 이 정상. 사용자가 *질문 적게 만들려고* 의도 추출을 단축 금지 ([`../conventions/interview.md`](../conventions/interview.md) §3 정합).
 
+## NFR-derived 후속 질의 ([`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md), v0.9.6)
+
+**페이즈 01 의 §i "Derived NFRs" 의 각 항목마다 후속 질의 1건.** 사용자 답으로 verification method 와 fail 처리 정책 (auto-fix vs truthful record) 확정. NFR 갯수만큼 질의 수 증가 — [`../conventions/interview.md`](../conventions/interview.md) §3 의 *옵션 4 한도 ≠ 질문 갯수 한도* 룰 정합.
+
+각 NFR 후속 질의 (Q-N{nfr_id}-V) 는 페이즈 04 의 *Q-G1 + Q-D1~D9 사이* 위치 — 사전 위임 (Q-D1~D9) 이 *전체 자율 정책*, NFR-V 는 *NFR 별 verification 정책*.
+
+```
+질의 (Q-N2-V, NFR=Q2 reproducibility):
+재현 가능성 검증 방법은?
+
+자동 추정 : 옵션 2 (byte-hash SHA256 매치)
+선택지:
+1. seed 로그 + per-rep RNG 분리
+2. byte-hash SHA256 매치 across 2회 실행  ← 자동 추정
+3. pinned dep version + lockfile 봉인
+4. N/A — 본 NFR 은 본 작업에선 비활성
+```
+
+답을 `intent/04-nfr-verifications.md` (NFR 갯수만큼 행) 에 기록 → 페이즈 09 의 derived gate 생성 입력.
+
+페이즈 01 의 §i 가 "functional-only" 면 본 절 skip — derived 질의 0.
+
 ## 첫 질의 — Q-G1 그레이드 확정 ([`../conventions/grades.md`](../conventions/grades.md))
 
 본 페이즈의 **가장 첫 질의**. `scoring/grade_assess.py` 의 자동 추정을 두괄식으로 보여주고 5 보기 객관식으로 사용자 확정. Grade 1 (Trivial) 답이어도 본 하네스 진행 (그레이드는 내부 모듈레이션만, v0.5.x 후속 PR 에서 G1 모듈레이션 정의 예정).

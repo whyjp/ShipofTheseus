@@ -8,8 +8,9 @@
 
 1- `.ShipofTheseus/<프로젝트명>/00-request.txt` 또는 대화 첫 메시지에서 원문 Read.
 2- 레포 `README.md` 와 분명한 진입점 skim — 의도가 실 코드 위에 grounding 되도록.
-3- **도메인 키워드 추출** — 원문에서 "결제·검색·알림·로그인·관리자·실시간·ML·CRUD·지도·...·" 같은 도메인 단어 식별. [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) 의 표 1~3 개를 매칭.
-4- **NFR 자동 제안** — 매칭된 카탈로그의 권고 임계를 `intent/01-intent.md` 의 "성능/스펙" 섹션에 *proposed: true* 마크와 함께 자동 채움. 사용자는 페이즈 04 에서 항목별로 채택/조정.
+3- **도메인 키워드 추출** — 원문에서 "결제·검색·알림·로그인·관리자·실시간·ML·CRUD·지도·...·" 같은 도메인 단어 (*명사*) 식별. [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) 의 표 1~3 개를 매칭.
+4- **NFR 자동 제안 — 명사 카탈로그 channel** — 매칭된 카탈로그의 권고 임계를 `intent/01-intent.md` 의 "성능/스펙" 섹션에 *proposed: true* 마크와 함께 자동 채움. 사용자는 페이즈 04 에서 항목별로 채택/조정.
+4-bis- **NFR 자동 추출 — qualitative 형용사 channel** ([`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md)) — prompt 본문의 *형용사군* (clear/reproducible/interpretable/realtime/safe/resilient/accurate/scalable/maintainable/comprehensive 와 동의어) 을 LLM-driven semantic match 로 nfr-derivation 표 의미군 (Q1~Q10) 에 매핑 + 매칭된 NFR 후보를 `intent/01-intent.md` 의 §i "Derived NFRs from prompt qualitative adjectives" 절에 *proposed: true* 마크와 함께 자동 채움. 매칭 0개면 "본 prompt 는 functional-only" 명시. *본 step 은 §3 의 명사 channel 과 직교* — 둘 다 진행, 어느 한쪽이 비어 있어도 다른 쪽은 진행.
 5- [`../templates/intent.template.md`](../templates/intent.template.md) 의 나머지 섹션을 채워 `intent/01-intent.md` 작성.
 6- 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 표기.
 

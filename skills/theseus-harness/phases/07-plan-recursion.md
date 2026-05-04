@@ -9,15 +9,16 @@
 ## 서브에이전트
 **fresh `Agent(subagent_type="general-purpose")`**, [`../agents/plan-reviewer.md`](../agents/plan-reviewer.md) 의 self-contained 프롬프트.
 
-## 답해야 할 4 질문
+## 답해야 할 4 질문 + premortem
 
 1- 이 계획만 보면 어떤 기능을 만드는 것인가? (한 문단, 자기 말)
 2- 어떤 TODO 부터 시작하겠는가? 이유는?
 3- 과소 명세·과대 사이즈·순서 어긋남이 보이는 TODO 는?
 4- 누락·잘못된 의존은?
+5- **premortem** ([`../conventions/premortem-friction.md`](../conventions/premortem-friction.md), v0.9.7) — "이 플랜이 *수정 0* 으로 페이즈 08 진입 시, sprint 01 의 회귀 발생 위치 ≥ 3 곳?" 격언 prepend (F5 *知之為知之 不知為不知 是知也* / F2 *de omnibus dubitandum est*) + `derived_improvements ≥ 1` 의무. 0 면 self_lint C-PM fail.
 
 ## 산출물
-`plan/07-plan-review.md` — 4 답 + 판정 (`accept` | `revise` | `reject`).
+`plan/07-plan-review.md` — 4 답 + premortem 절 + 판정 (`accept` | `revise` | `reject`).
 
 ## 지휘자 후속
 
