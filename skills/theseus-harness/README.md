@@ -63,7 +63,11 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-46 [`conventions/regression-derived-lint-rule-autogen.md`](conventions/regression-derived-lint-rule-autogen.md) — 페이즈 11 4 분류 정정 후 self_lint 룰 자동 신규 (v0.9.16 #5)
   d-47 [`conventions/polyglot-code-quality.md`](conventions/polyglot-code-quality.md) — 언어 무관 메트릭 + 9 언어 표준 도구 카탈로그 (v0.9.16 #6)
   d-48 [`conventions/anti-patterns.md`](conventions/anti-patterns.md) — A1~A10 공통 안티 패턴 카탈로그 (v0.9.16 sprint-11 fragmentation 분리)
-  d-49 [`conventions/domain-adapters/`](conventions/domain-adapters/) — 도메인 어댑터 2개 (v0.9.13~)
+  d-49 [`conventions/intent-completeness.md`](conventions/intent-completeness.md) — 페이즈 01 §k 9 sub-criterion (limitations + data-derived 분리 등) (v0.9.18 sprint-12)
+  d-50 [`conventions/process-flow-coherence.md`](conventions/process-flow-coherence.md) — 페이즈 09 게이트 8: cycle / state machine / workflow 정합 (v0.9.18)
+  d-51 [`conventions/domain-failure-patterns.md`](conventions/domain-failure-patterns.md) — 페이즈 09 게이트 9: 도메인 어댑터 failure_patterns 자기 검증 (v0.9.18)
+  d-52 [`conventions/decision-support-framing.md`](conventions/decision-support-framing.md) — 페이즈 14 Q 답에 operational/trade-off/opportunity-cost 본문 (v0.9.18)
+  d-53 [`conventions/domain-adapters/`](conventions/domain-adapters/) — 도메인 어댑터 2개 (v0.9.13~)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

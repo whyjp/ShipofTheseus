@@ -1,13 +1,13 @@
-# Phase 09 — 7종 품질 게이트 (v0.7.0)
+# Phase 09 — 9종 품질 게이트 (v0.9.18)
 
 ## 한 줄 요약
-**테스트 실행 전에 일곱 게이트로 *코드 모양 + 실행 가능성* 을 감사한다.** 모양이 어긋나면 다음 스프린트가 잘못된 형태에 시간을 소진하고, 모양은 맞는데 부팅이 안 되면 사용자 손에서 즉시 죽는다. 게이트 1~5 는 정적 모양, 게이트 6 은 NFR 측정, 게이트 7 (v0.7.0 신규) 은 실 부팅 1회 통과.
+**테스트 실행 전에 아홉 게이트로 *코드 모양 + 실행 가능성 + 프로세스 정합 + 도메인 결손 부재* 를 감사한다.** 게이트 1~5 = 정적 모양, 게이트 6 = NFR 측정, **게이트 7 = env-satisfied + 실 부팅 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0), **게이트 8 (v0.9.18) = process flow / cycle coherence**, **게이트 9 (v0.9.18) = domain failure patterns 자기 검증**.
 
-## 7 정적 게이트 + N derived 게이트 (v0.9.6)
+## 9 정적 게이트 + N derived 게이트 (v0.9.18)
 
-총 게이트 수 = `static_gates_7 ∪ derived_gates(NFR_answers)`. derived 게이트는 페이즈 04 의 NFR-V 답안 (옵션 4=N/A 제외) 마다 *1개씩 자동 생성* — fixed list 가 아닌 *NFR 입력 종속 동적 생성*. NFR 0 = derived 0 = static 7 만. NFR 5 = derived 5 추가 = 12 게이트.
+총 게이트 수 = `static_gates_9 ∪ derived_gates(NFR_answers)`. NFR 0 = derived 0 = static 9. NFR 5 = derived 5 추가 = 14 게이트.
 
-### 정적 게이트 (7)
+### 정적 게이트 (9)
 
 | # | 게이트 | 무엇을 보는가 | fail 신호 |
 | - | ----- | ------------ | -------- |
@@ -16,8 +16,10 @@
 | 3 | **SOLID** | 모듈별 SRP/OCP/LSP/ISP/DIP | 변경 사유 2개 클래스, 포트 자리에 콘크리트 |
 | 4 | **테스트 모양** | 모든 public 표면에 단위, 모든 교차 모듈 경로에 통합, 사용자 시나리오 happy-path E2E | public 함수에 테스트 없음, 모듈에 페이크 없음 |
 | 5 | **FE/BE 패리티** | 양쪽 모두 동등한 테스트 깊이 | BE 80% 커버리지 + FE 스냅샷만 |
-| 6 | **NFR 명시 임계 일치** | `intent/01-intent.md` §d (제약, 명시 임계) 의 ✅ NFR 항목별 페이즈 10 측정 결과가 임계 만족 — [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) | p99 200ms 약속이 280ms 측정 / 가용성 99.95% 인데 99.8% / LCP 2.5s 인데 3.4s. ⏸ (미확정) 항목은 자동 skip, fail 아님 |
-| 7 | **env-satisfied + 실 실행 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0) | a- `intent/04-runtime-prereq.md` 의 `entry_blocked: false` b- Q-D9 답 1·2 시 `.env.template` 존재 + `.gitignore` 의 `.env` c- 부팅 명령 1회 exit 0 + healthz 200 (mock 모드면 mock 부팅 1회) | env_satisfied=false / missing env / 포트 충돌 / DB connect 실패 / G5 인데 mock 모드 |
+| 6 | **NFR 명시 임계 일치** | `intent/01-intent.md` §d 의 ✅ NFR 항목별 페이즈 10 측정 결과 — [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) | p99/가용성/LCP 임계 미달. ⏸ 항목 skip |
+| 7 | **env-satisfied + 실 실행 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0) | env / 부팅 / healthz 검증 |
+| 8 | **Process flow / cycle coherence** ([`../conventions/process-flow-coherence.md`](../conventions/process-flow-coherence.md), v0.9.18) — 작업이 process 차원 (workflow / state machine / DES / pipeline / transaction) 이면 활성. `process_flow_applicable: false` 시 skip | all_states_reachable / all_terminal_reachable / no_orphan_states / cycle_invariant_holds / error_paths_explicit / state_visit_count > 0 |
+| 9 | **Domain failure patterns 자기 검증** ([`../conventions/domain-failure-patterns.md`](../conventions/domain-failure-patterns.md), v0.9.18) — 작업 도메인 추정 후 [`../conventions/domain-adapters/<domain>.md`](../conventions/domain-adapters/) 의 `failure_patterns:` 모든 항목 자동 검증. 매칭 어댑터 없으면 skip + 명시 | DFP-* 패턴 매칭 시 severity 별 cap (cap_total / cap_correctness / cap_experimental / cap_results / warning) |
 
 ### Derived 게이트 (NFR-V 답안 종속, v0.9.6) — [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md)
 

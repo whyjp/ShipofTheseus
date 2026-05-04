@@ -14,6 +14,32 @@ references:
   - "AusIMM Mine Manager's Handbook — haulage cycle modeling"
   - "Caterpillar Performance Handbook — haul truck cycle time + payload patterns"
   - "Open-pit mining: empirical MTBF / availability data (industry typical 0.85-0.95)"
+failure_patterns:
+  - id: DFP-MH-1
+    name: "No saturation analysis"
+    detection: "fleet sweep (trucks_4 / baseline / trucks_12) 미진행 또는 saturation point 식별 부재"
+    severity: cap_results
+    remediation: "fleet sweep + saturation point 식별 + Δ(N→N+4) plot"
+  - id: DFP-MH-2
+    name: "Bottleneck claim without composite score"
+    detection: "bottleneck 결론이 utilization 만 또는 queue 만 — composite (util × wait) 부재"
+    severity: cap_results
+    remediation: "composite bottleneck score (utilisation × queue_wait) 계산"
+  - id: DFP-MH-3
+    name: "No capex / payback in fleet recommendation"
+    detection: "R1 fleet sizing 답에 truck capex / payback 본문 부재"
+    severity: cap_results
+    remediation: "capex per truck (typical $750K-1.2M) + payback estimate 의무"
+  - id: DFP-MH-4
+    name: "Per-direction ramp Resource"
+    detection: "단일 ramp 양방향에 Resource × 2 → throughput inflation"
+    severity: cap_correctness
+    remediation: "단일 Resource(capacity=1) + 방향 토큰 또는 passing bay 명시"
+  - id: DFP-MH-5
+    name: "Availability = 1.0 without limitation note"
+    detection: "MTBF / availability 모델링 0 + limitations 절에 명시 부재"
+    severity: warning
+    remediation: "limitations 절에 'no breakdown / availability=1.0' 명시 + bias 추정 (~10% upward)"
 ---
 
 # Mining Haulage Adapter
