@@ -6,8 +6,8 @@
     "url": "https://github.com/whyjp/shipoftheseus"
   },
   "metadata": {
-    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 38 컨벤션 + 2 도메인 어댑터 (mining-haulage / des-modeling) + 18 에이전트 + multiverse 경합 + ensemble synthesis default + bench cold validation 입증.",
-    "version": "0.9.13"
+    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 39 컨벤션 + 2 도메인 어댑터 + Layer 3 결과물 허들 supremacy + 18 에이전트 + multiverse 경합 + ensemble synthesis default.",
+    "version": "0.9.14"
   },
   "plugins": [
     {

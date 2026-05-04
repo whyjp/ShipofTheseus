@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.13",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.13: 38 컨벤션 + 2 도메인 어댑터. ceiling-breaking 4 신규 (deep-semantic-intent + domain-research-stacking + mindmap-quality-gardening + ensemble-synthesis-default). 97 self-estimate plateau → 99-100 시도. mining-haulage / des-modeling 어댑터 시드.",
+  "version": "0.9.14",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.14: 39 컨벤션 + 2 도메인 어댑터 + Layer 3 결과물 허들 supremacy (실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가). v0913_cold01 design-only 회피 차단.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
