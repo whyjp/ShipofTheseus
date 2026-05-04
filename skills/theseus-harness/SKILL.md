@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.13
-description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 38 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + NFR derivation + premortem-friction + sprint-regression-loop + parallel-cold-review + mindmap-centrality + aide-tree-symmetry + aide-tree-multi-phase + tournament-blind-rerun + interface-first-parallel-impl + analytical-bound-cross-validation + multiverse-impl-fan-out + budget-aware-fallback + deep-semantic-intent (adjective + noun implied framing) + domain-research-stacking (mindmap noun → domain adapter auto-stack) + mindmap-quality-gardening (Mermaid 강제 + 풍성도 임계) + ensemble-synthesis-default (G4+ algorithmic union default). 외부 evaluator 작업 자동 G4 escalation.
+version: 0.9.14
+description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 39 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + NFR derivation + premortem-friction + sprint-regression-loop + parallel-cold-review + mindmap-centrality + aide-tree-symmetry/multi-phase + tournament-blind-rerun + interface-first-parallel-impl + analytical-bound-cross-validation + multiverse-impl-fan-out + budget-aware-fallback + deep-semantic-intent + domain-research-stacking + mindmap-quality-gardening + ensemble-synthesis-default + **deliverable-hurdle-supremacy (Layer 3 supremacy: 실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가, 실패 시 자동 retry sprint)**. 외부 evaluator 작업 자동 G4 escalation.
 ---
 
 # 테세우스 하네스
@@ -53,6 +53,7 @@ ai- **Deep semantic intent — adjective + noun 결합 implied framing 추출 (v
 aj- **Domain research stacking — 마인드맵 noun → domain adapter 자동 stack (v0.9.13 신규, 도메인 전문성 layer)**: [`conventions/domain-research-stacking.md`](conventions/domain-research-stacking.md) + [`conventions/domain-adapters/`](conventions/domain-adapters/)
 ak- **Mindmap quality gardening — Mermaid 의무 + 4 axis × ≥3 sub-node + ≥15 노드 (v0.9.13 신규, v091_cold01 ASCII 회귀 발견)**: [`conventions/mindmap-quality-gardening.md`](conventions/mindmap-quality-gardening.md)
 al- **Ensemble synthesis default — G4+ tournament 결과 algorithmic union default (v0.9.13 신규)**: [`conventions/ensemble-synthesis-default.md`](conventions/ensemble-synthesis-default.md)
+am- **Deliverable hurdle supremacy — Layer 3 supremacy: 실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가, 실패 시 자동 retry sprint (v0.9.14 신규, v0913_cold01 design-only 회피 차단)**: [`conventions/deliverable-hurdle-supremacy.md`](conventions/deliverable-hurdle-supremacy.md)
 ## 산출물 트리
 
 ```
