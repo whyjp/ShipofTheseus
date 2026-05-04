@@ -24,12 +24,14 @@ e- **유비쿼터스 언어** — 도메인 용어 정의.
 f- **스테이크홀더** — 결과의 소비자.
 g- **성공 지표** — 외부에서 관찰·계량 가능.
 h- **열린 질문** — 원문에서 결정 불가한 것 (반드시 1개 이상).
+i- **Derived NFRs from prompt qualitative adjectives** ([`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md), v0.9.6) — prompt 본문의 *형용사군* (clear/reproducible/interpretable/...) 을 LLM-driven semantic match 로 nfr-derivation 표 의미군 (Q1~Q10) 에 매핑 + 매칭된 NFR 후보 list. 각 항목에 (a) 출처 형용사 인용 (b) 매핑 의미군 ID (c) verification method 후보 ≥1. 매칭 0개면 "functional-only — qualitative NFR 명시 0" 명시 (drift 가드). *본 §i 는 §d 의 명시 제약 과 직교* — d 는 *명시 임계* (성능 200ms 등), i 는 *prompt 형용사 도출 NFR*.
 
 ## 성공 기준
 
 a- 문서 자족성 — 원문을 보지 않은 사람이 이 문서만 읽고 무엇을 만들어야 할지 알 수 있다.
 b- 기본 백엔드 스택은 사용자가 명시 없으면 Go 로 가정하되, 이 문서는 기술 비종속이다 — 스택 선택은 페이즈 06 (계획) 의 책임. 의도 단계는 "Go 가 자연스러운가" 정도의 메모만 허용.
 c- 열린 질문이 비어 있지 않다.
+d- §i "Derived NFRs" 절이 *존재* — 매칭 결과가 0개라도 "functional-only" 명시. self_lint 가 §i 누락 자동 fail.
 
 ## 흔한 실패
 

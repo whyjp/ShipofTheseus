@@ -9,6 +9,10 @@
 ## 서브에이전트
 **반드시 fresh `Agent(subagent_type="general-purpose")`** — 이전 컨텍스트를 절대 공유하지 않음. [`../agents/independent-comprehender.md`](../agents/independent-comprehender.md) 의 self-contained 프롬프트로.
 
+## Premortem-Friction (v0.9.7, [`../conventions/premortem-friction.md`](../conventions/premortem-friction.md))
+
+agent prompt 헤더에 격언 prepend + 산출물에 `premortem` 절 의무. 핵심 질문 = "이 문서를 *처음 보는 사람* 의 첫 5 질문이 자기가 답할 수 없으면 어떤 결손이 표면화될까?". 콜드 재이해의 *친숙성 자동 동의* 결손이 본 컨벤션의 1차 적용 대상. `derived_improvements ≥ 1` 의무.
+
 ## 산출물
 `intent/03-comprehension.md`:
 
@@ -16,6 +20,7 @@ a- **내가 이해한 목표** — 한 문단, 자기 말.
 b- **성공의 모습** — 외부에서 관찰 가능한 결과.
 c- **나라면 어디부터** — 첫 3 단계.
 d- **불확실한 점** — 사용자에게 물어야 할 항목 (반드시 1개 이상).
+e- **premortem 절** — `proceed_as_is_findings ≥ 3` + `derived_improvements ≥ 1` + `accepted_silence`.
 
 ## 성공 기준
 

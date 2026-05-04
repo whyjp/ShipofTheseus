@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.5
-description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 22 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 알고리즘 + 부트스트래핑 자기 평가. 모든 그레이드 진행 (G1 mini_harness_tbd ~ G5 빡빡) — 그레이드는 내부 모듈레이션만.
+version: 0.9.12
+description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 34 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + NFR derivation + premortem-friction + sprint-regression-loop + parallel-cold-review + mindmap-centrality + aide-tree-symmetry + aide-tree-multi-phase + tournament-blind-rerun + interface-first-parallel-impl + analytical-bound-cross-validation + multiverse-impl-fan-out + budget-aware-fallback. 외부 evaluator 작업 자동 G4 escalation.
 ---
 
 # 테세우스 하네스
@@ -37,6 +37,18 @@ s- **산출물 = DB / 비직렬성 트리 인덱싱 (INDEX.md 자동 갱신)**: 
 t- **리줌 — state.json + 재개 진입점 + FE 라이브 진행 추적**: [`conventions/resume.md`](conventions/resume.md)
 u- **AIDE 플랜 트리 — N 우주 격리 + 토너먼트 (회귀+병렬 강점 인코딩)**: [`conventions/plan-tree.md`](conventions/plan-tree.md)
 v- **런타임 사전조건 — Q-D9 + 게이트 7 (코드-실행가능 까지 담보)**: [`conventions/runtime-prereq.md`](conventions/runtime-prereq.md)
+w- **NFR derivation — prompt 형용사로부터 NFR + derived 게이트 자동 도출 (v0.9.6 신규)**: [`conventions/nfr-derivation.md`](conventions/nfr-derivation.md)
+x- **Premortem friction — 콜드리뷰 *한 번 더 고민* + 미래 회고로 더 나은 결론 (v0.9.7 신규)**: [`conventions/premortem-friction.md`](conventions/premortem-friction.md)
+y- **Sprint regression loop — *self-polishing* 임계 도달까지 반복 (v0.9.8 신규)**: [`conventions/sprint-regression-loop.md`](conventions/sprint-regression-loop.md)
+z- **Parallel cold review — N framing fan-out 으로 페이즈 03 다양성 (v0.9.8 신규)**: [`conventions/parallel-cold-review.md`](conventions/parallel-cold-review.md)
+aa- **Mindmap centrality — canonical concept graph 모든 페이즈 backbone (v0.9.9 신규)**: [`conventions/mindmap-centrality.md`](conventions/mindmap-centrality.md)
+ab- **AIDE-tree symmetry — universe candidate sequenceDiagram per-universe 강제 (v0.9.10 신규, v01_cold audit 발견)**: [`conventions/aide-tree-symmetry.md`](conventions/aide-tree-symmetry.md)
+ac- **AIDE-tree multi-phase — 06 외 02/05/08/11/13 페이즈도 multiverse 확장 (v0.9.10 신규)**: [`conventions/aide-tree-multi-phase.md`](conventions/aide-tree-multi-phase.md)
+ad- **Tournament blind rerun — 임계 미달 시 anonymize previous winner 재경합 (v0.9.10 신규)**: [`conventions/tournament-blind-rerun.md`](conventions/tournament-blind-rerun.md)
+ae- **Interface-first parallel impl — 페이즈 06 모듈 인터페이스 의무 + 페이즈 08 sub-agent 병렬 fan-out (v0.9.11 신규)**: [`conventions/interface-first-parallel-impl.md`](conventions/interface-first-parallel-impl.md)
+af- **Analytical bound cross-validation — closed-form 상한 vs simulated baseline 자동 검증 (v0.9.12 신규, v01_cold audit)**: [`conventions/analytical-bound-cross-validation.md`](conventions/analytical-bound-cross-validation.md)
+ag- **Multiverse impl fan-out — universe N 모두 실 코드 의무 + tournament merge 코드 차원 (v0.9.12 신규)**: [`conventions/multiverse-impl-fan-out.md`](conventions/multiverse-impl-fan-out.md)
+ah- **Budget-aware fallback — silent fallback 금지, frontmatter `fallback_reason` 명시 의무 (v0.9.12 신규)**: [`conventions/budget-aware-fallback.md`](conventions/budget-aware-fallback.md)
 ## 산출물 트리
 
 ```
