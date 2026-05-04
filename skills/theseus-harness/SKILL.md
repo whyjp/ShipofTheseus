@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.14
-description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 39 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + NFR derivation + premortem-friction + sprint-regression-loop + parallel-cold-review + mindmap-centrality + aide-tree-symmetry/multi-phase + tournament-blind-rerun + interface-first-parallel-impl + analytical-bound-cross-validation + multiverse-impl-fan-out + budget-aware-fallback + deep-semantic-intent + domain-research-stacking + mindmap-quality-gardening + ensemble-synthesis-default + **deliverable-hurdle-supremacy (Layer 3 supremacy: 실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가, 실패 시 자동 retry sprint)**. 외부 evaluator 작업 자동 G4 escalation.
+version: 0.9.15
+description: 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 41 컨벤션 + 18 에이전트 + 멀티버스 폭 G3-3/G4-4/G5-6 + 페이즈 08 TDD 5 서브 + 자동 머지 + 14 v0.9.6-14 컨벤션 + **budget-saturation-loop (default 임계 0.999 + budget 80% 사용 강제) + score-rubric-objectivity (strict checklist self-rating, evidence 1:1)**. self-rating noise 제거 + budget 끝까지 sprint iteration. 외부 evaluator 작업 자동 G4 escalation.
 ---
 
 # 테세우스 하네스
@@ -54,6 +54,8 @@ aj- **Domain research stacking — 마인드맵 noun → domain adapter 자동 s
 ak- **Mindmap quality gardening — Mermaid 의무 + 4 axis × ≥3 sub-node + ≥15 노드 (v0.9.13 신규, v091_cold01 ASCII 회귀 발견)**: [`conventions/mindmap-quality-gardening.md`](conventions/mindmap-quality-gardening.md)
 al- **Ensemble synthesis default — G4+ tournament 결과 algorithmic union default (v0.9.13 신규)**: [`conventions/ensemble-synthesis-default.md`](conventions/ensemble-synthesis-default.md)
 am- **Deliverable hurdle supremacy — Layer 3 supremacy: 실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가, 실패 시 자동 retry sprint (v0.9.14 신규, v0913_cold01 design-only 회피 차단)**: [`conventions/deliverable-hurdle-supremacy.md`](conventions/deliverable-hurdle-supremacy.md)
+an- **Budget saturation loop — sprint loop budget 끝까지 사용 + content depth lesson (v0.9.15 신규, 조기 종료 차단)**: [`conventions/budget-saturation-loop.md`](conventions/budget-saturation-loop.md)
+ao- **Score rubric objectivity — strict checklist self-rating, evidence 1:1 매칭, agent self-rating noise 제거 (v0.9.15 신규)**: [`conventions/score-rubric-objectivity.md`](conventions/score-rubric-objectivity.md)
 ## 산출물 트리
 
 ```
