@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.12",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.12: 34 컨벤션 (NFR derivation + premortem + sprint-loop + parallel-cold + mindmap-centrality + AIDE-tree symmetry/multi-phase + tournament-blind-rerun + interface-first parallel impl + analytical-bound cross-validation + multiverse-impl-fan-out + budget-aware-fallback). simulation-bench cold validation 입증.",
+  "version": "0.9.13",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.13: 38 컨벤션 + 2 도메인 어댑터. ceiling-breaking 4 신규 (deep-semantic-intent + domain-research-stacking + mindmap-quality-gardening + ensemble-synthesis-default). 97 self-estimate plateau → 99-100 시도. mining-haulage / des-modeling 어댑터 시드.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
