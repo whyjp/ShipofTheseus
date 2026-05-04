@@ -14,6 +14,42 @@ references:
   - "Banks, Carson, Nelson, Nicol — Discrete-Event System Simulation (5th ed.)"
   - "SimPy 4.x official documentation — Resource / Process / Container patterns"
   - "Law — Simulation Modeling and Analysis (5th ed.)"
+failure_patterns:
+  - id: DFP-DES-1
+    name: "Static calculation rather than DES"
+    detection: "no SimPy.Process / yield env.timeout / queue mechanism in code"
+    severity: cap_total
+    remediation: "discrete event 메커니즘 도입 — SimPy Process / Resource / yield-based"
+  - id: DFP-DES-2
+    name: "No multiple replications"
+    detection: "single run only, no seed loop, no CI95 in summary"
+    severity: cap_experimental
+    remediation: "≥30 replications + seeded RNG + 95% CI"
+  - id: DFP-DES-3
+    name: "Hard-coded outputs"
+    detection: "results.csv values 가 input data / scenario 와 무관하게 fixed"
+    severity: cap_total
+    remediation: "scenario perturbation 마다 results 변동 검증 + behavioural sanity checks"
+  - id: DFP-DES-4
+    name: "Queue without resource constraint"
+    detection: "entity 가 queue 에 들어가나 SimPy.Resource(capacity=N) 정의 부재"
+    severity: cap_correctness
+    remediation: "SimPy.Resource + FIFO native queue + capacity 명시"
+  - id: DFP-DES-5
+    name: "Tonnes/credits at start instead of completion"
+    detection: "tonnes_recorded event != dump_end / completion event"
+    severity: cap_correctness
+    remediation: "credit 은 *완료* event 에만 (load_start 가 아닌 dump_end)"
+  - id: DFP-DES-6
+    name: "Per-direction Resource for bidirectional segment"
+    detection: "단일 lane 양방향에 Resource × 2 (per-direction)"
+    severity: cap_correctness
+    remediation: "단일 Resource(capacity=1) + 방향 토큰 — bidirectional cap 정확"
+  - id: DFP-DES-7
+    name: "Global random / threading RNG"
+    detection: "random.* / threading.local() RNG 사용 (per-rep 분리 부재)"
+    severity: cap_experimental
+    remediation: "np.random.default_rng(base_seed + rep_idx) per replication"
 ---
 
 # DES Modeling Adapter

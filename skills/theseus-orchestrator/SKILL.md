@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.17
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 + 발현 검증 6 메타 + Layer 3 결과물 허들 + grade_assess v2 (페이즈 01 다중 신호, default G4, v0.9.17).
+version: 0.9.18
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing (v0.9.18).
 ---
 
 # theseus-orchestrator — 사용자 entry skill

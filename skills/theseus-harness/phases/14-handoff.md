@@ -22,6 +22,11 @@ f- **추천 후속** — 비평가가 deferred 한 항목 + 범위 외이지만 
 g- **회귀 이력** — 페이즈 11 트리거된 스프린트들과 한 줄 해소.
 h- **시간 요약** — 최초 프롬프트 → 핸드오프 총 경과, 페이즈별 누적 (텍스트 막대 표).
 i- **웹뷰 실행 방법** — `cd .ShipofTheseus/<프로젝트>/webview && bun install && bun run dev`.
+j- **Decision-support framing** ([`../conventions/decision-support-framing.md`](../conventions/decision-support-framing.md), v0.9.18) — 결정 질문 (Q1~QN) 마다 다음 3 항목 본문 의무 :
+  - **Operational implications** — 결과가 운영에 의미하는 것 (1-2 문단)
+  - **Trade-off framing** — 대안 비교 표 (≥3 차원, 예: 비용 / throughput / latency)
+  - **Opportunity-cost** — 선택 시 *포기하는* 것 (명시 옵션)
+  Q 답이 *수치 + bottleneck 결론* 만 있으면 self_lint C-DSF fail. handoff frontmatter `evidence_decision_support` 매핑 (Q 별 3 항목 보유 boolean).
 
 ## 채팅 메시지 (사용자에게)
 

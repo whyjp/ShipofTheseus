@@ -2,6 +2,58 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.18 — 2026-05-04 (sprint-12 — 본 스킬 자체 가치 개선 4 컨벤션 + 발현 강제 메커니즘)
+
+### 마일스톤
+
+**v0.9.17 cold session (`001-mine-throughput-theseus`) 검토에서 *준비-vs-동작* 갭 재발견 — 마인드맵 ASCII 회귀 + §i NFR / §j grade signals / §k 9 sub 모두 미발현.** 사용자 진단: "**제안은 스킬 개선인가 스코어링 개선인가**" (분리 명확화) → "**외부 의존 없는 단일 스킬로서 가치만 개선**" (E reviewer-form alignment 제외). 4 컨벤션 신규 + 발현 강제 메커니즘 (intent-extractor 프롬프트 강화 + 페이즈 진입 거부) 동시 박음.
+
+### 변경 — 4 컨벤션 신규
+
+- **`intent-completeness.md`** (A) — 페이즈 01 의도 §k 9 sub-criterion 의무: system boundary / entities / resources / events / state variables / assumptions / **limitations** / performance measures / **data-derived vs introduced 분리**. v0915-cold01 외부 채점 -2pt (Conceptual) 직접 매핑.
+- **`process-flow-coherence.md`** (B) — 페이즈 09 게이트 8 신규: cycle / state machine / workflow / DES / pipeline / transaction 정합 자기 검증. all_states_reachable / cycle_invariant / orphan_states / error_paths_explicit / state_visit_count > 0. `process_flow_applicable: false` 시 skip.
+- **`domain-failure-patterns.md`** (C) — 페이즈 09 게이트 9 신규: domain-adapters/<domain>.md 의 `failure_patterns:` 자동 검증. severity (cap_total / cap_correctness / cap_experimental / cap_results / warning) 별 점수 cap. v0.9.16 regression-derived-lint-rule-autogen 와 우로보로스 정합.
+- **`decision-support-framing.md`** (D) — 페이즈 14 handoff 의 결정 질문 (Q1~QN) 마다 *operational implications + trade-off framing + opportunity-cost* 본문 의무. evidence_decision_support 매핑.
+
+### 변경 — 도메인 어댑터 failure_patterns 항목 신규
+
+- `domain-adapters/des-modeling.md` — DFP-DES-1~7 (static calc / no replications / hard-coded / queue without resource / credit at start / per-direction Resource / global RNG)
+- `domain-adapters/mining-haulage.md` — DFP-MH-1~5 (no saturation / bottleneck without composite / no capex / per-direction ramp / availability=1.0 무명시)
+
+### 변경 — 발현 강제 메커니즘 (사용자 핵심 요구)
+
+**룰 작성만으로는 부족** — v0.9.13 mindmap-quality-gardening / v0.9.6 nfr-derivation 모두 cold session 에서 발현 0 였음. 본 sprint 가 발현 강제 메커니즘 동시 박음:
+
+- **`agents/intent-extractor.md` 프롬프트 전면 재작성** — 11 단계 의무 순서 + §k 9 sub *templated section* + 마인드맵 *Mermaid block 의무* (ASCII text tree 금지) + §j grade signals 두 산출물 + frontmatter `applied_conventions` 자동 박음 + 하드 룰 (§k / §j 누락 = 페이즈 02 / Q-G1 진입 거부)
+- **페이즈 09 본문 9 게이트** (기존 7 → 9): 게이트 8 cycle coherence + 게이트 9 domain failure patterns
+- **페이즈 14 본문 §j Decision-support framing 의무**
+
+### 변경 — self_lint 룰 신규 4
+
+C-IC / C-PFC / C-DFP / C-DSF — 4 컨벤션 본문 + cross-ref 검증
+
+### 변경 — 컨벤션 51 누계
+
+47 (v0.9.16) + anti-patterns + 4 (v0.9.18) = 51. SKILL.md 컨벤션 카탈로그 표 av (anti-patterns) + aw~az (sprint-12 4) 추가.
+
+### 변경 — version bump
+
+- plugin.json / marketplace.json / harness SKILL.md / orchestrator SKILL.md frontmatter: 0.9.17 → 0.9.18
+- SKILL.md fragmentation 정리 (14361 → 14001 chars, C26 PASS) — 컨벤션 description / 페이즈 표 셀 압축
+
+### 검증
+
+- self_lint 69/69 PASS (all_ok=True, lint_score=1.0)
+- pytest 109/109 PASS, 회귀 0
+- v0915-cold01 retro 적용 시 Conceptual 18 → 19~20 (limitations + data-derived 분리) / Sim 18 → 19 (cycle coherence) / Results 14 → 15 (decision-support framing) — 추정 +3~4pt
+
+### 후속
+
+- v0.9.18 적용 cold session — Mermaid 마인드맵 + §i/§j/§k 모두 발현 검증 + 점수 변화 측정
+- *발현 강제 메커니즘* 의 효과 측정 — v0.9.13 mindmap-quality-gardening 처럼 룰만 박고 발현 0 가 반복되지 않는지
+
+---
+
 ## v0.9.17 — 2026-05-04 (sprint-11 — 키워드 매칭 폐기 + 페이즈 01 다중 신호 grade 추정 + default G4)
 
 ### 마일스톤
