@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.16",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.16: 47 컨벤션 + 2 도메인 어댑터 + 발현 검증 6 메타 컨벤션 (convention-traceability + sprint-score-delta-tracking + evidence-driven-sprint-planning + cross-universe-lesson-distillation + regression-derived-lint-rule-autogen + polyglot-code-quality). v0915-cold01 외부 채점 93/100 후 *준비-vs-동작* 갭 정정 sprint.",
+  "version": "0.9.17",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.16: 47 컨벤션 + 2 도메인 어댑터 + 발현 검증 6 메타 컨벤션 (convention-traceability + sprint-score-delta-tracking + evidence-driven-sprint-planning + cross-universe-lesson-distillation + regression-derived-lint-rule-autogen + polyglot-code-quality). v0.9.17 sprint-11: 키워드 매칭 폐기 + 페이즈 01 다중 신호 (18+ 차원) 기반 그레이드 추정 + default G4 (본 하네스 호출 자체가 G4+ 의도 신호). v0915-cold02 가 자동 G3 으로 떨어진 결손 정정.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"

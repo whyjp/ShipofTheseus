@@ -1,17 +1,21 @@
 # 그레이드 시스템 — 작업 복잡도별 허들 구조
 
 ## 한 줄 요약
-**14 페이즈 + 26 컨벤션 풀세트는 *복잡 작업* 의 비용을 정당화하지만, *단순 작업* 에는 over-engineering.** 본 하네스 호출 직후 그레이드를 자동 추정 + 사용자 객관식 확정해 그레이드별 페이즈/컨벤션을 활성화한다. **그레이드는 본 하네스의 내부 동작 (복잡도 / 페이즈 수 / 컨벤션 / 임계 / 멀티버스 / 모델 라우팅) 만 모듈레이션. 진행/거부에는 관여하지 않는다.**
+**15 페이즈 + 47 컨벤션 풀세트는 *복잡 작업* 의 비용을 정당화하지만, *증명된 단순 작업* 에는 over-engineering.** **default = G4** (본 하네스 호출 자체가 G4+ 의도 신호 — G3 이하 작업은 본 하네스 없이도 진행 가능). 페이즈 01 (의도 + 마인드맵) 의 *다중 신호 카탈로그* 로 그레이드 추정 후 페이즈 04 Q-G1 으로 사용자 확정. **그레이드는 내부 동작 (페이즈/컨벤션/임계/멀티버스/모델 라우팅) 만 모듈레이션 — 진행/거부에 관여하지 않음.**
+
+## v0.9.17 변경 — 키워드 매칭 폐기
+
+v0.9.16 까지의 *사용자 원문 키워드 매칭* 알고리즘은 폐기 — 키워드는 도메인 어휘를 추적 못해 (예: simulation-bench 작업이 default G3 으로 떨어짐) 잘못된 분류의 직접 원인이었음. v0.9.17 부터 *페이즈 01 의도 + 마인드맵 다중 신호* 기반.
 
 ## 5 그레이드
 
-| Grade | 별칭 | 작업 예 | 페이즈 | 컨벤션 | 멀티버스 | 임계 |
+| Grade | 별칭 | 진입 조건 | 페이즈 | 컨벤션 | 멀티버스 | 임계 |
 | ----- | ---- | ------ | ------ | -----: | -------- | ---: |
-| **1** | Trivial | 한 줄 수정, 리네임, 기계적 리팩터, throwaway | **TBD (v0.5.x 후속)** | 0 | X | TBD |
-| **2** | Simple | 단일 모듈 작은 기능 (~100 LOC), 명확한 스펙 | 01+04+06+08+09 (5) | 7 (interview/timing/contracts/models/build-and-config/lessons/fragmentation) | X | 0.95 |
-| **3** | Standard | 도메인 정착 + 단일 sprint 충분 + *외부 evaluator 없음* (내부 작업 한정). v0.9.8: external-evaluator (벤치/채점/리더보드) 작업 → 자동 G4 escalation | 00-09 + 10(3 sprint cap) + 13 (12) | 12 (Grade 2 + diagrams/stack/spec-catalog/resources/checkpoints) | X | 0.97 |
-| **4** | Complex | FE+BE / 새 도메인 / SOLID 경계 리팩터 / **외부 evaluator 작업** (벤치마크 / 채점 / 외부 PR 등) (v0.9.8 default for non-trivial) | 14 풀 + sprint regression loop 의무 | 28 (전부 + sprint-regression-loop + parallel-cold-review) | 옵션 (Q-D7=1 시) | 0.999 |
-| **5** | Mission Critical | 결제/금융/안전 시스템 / 회복 불가 변경 | 14 풀 + 빡빡 모드 | 26 + 추가 가드 | 강제 | 0.99999 |
+| **1** | Trivial | TBD (v0.5.x 후속) | TBD | 0 | X | TBD |
+| **2** | Simple | G3 단순 증명 + mindmap nodes ≤5 + 단일 모듈 + 단일 도메인 용어 — 사용자 ack 의무 | 01+04+06+08+09 (5) | 7 | X | 0.95 |
+| **3** | Standard | 12 차원 단순 증명 (외부 evaluator X / measured metrics X / multi-scenario X / NFR X / single stakeholder / mindmap 실재 작음) — 사용자 ack 의무. *G3 작업은 본 하네스 없이도 진행 가능 — 본 하네스 가치 부분만 활용* | 00-09 + 10(3 sprint cap) + 13 (12) | 12 | X | 0.999 |
+| **4** | **Complex (default)** | **default — 단순함 증명 미달 시 자동.** 본 하네스 호출 자체가 G4+ 의도 신호. escalation trigger (external evaluator / measured value / multi-scenario / domain adapter / FE+BE) 1+ 매칭 시 default 강화 | 15 풀 + sprint regression loop 의무 | 47 | 옵션 (Q-D7=1 시) | 0.999 |
+| **5** | Mission Critical | 사용자 *명시 ack* (`safety_critical` 또는 `irreversible_change`) 만 — 자율 키워드 매칭 X | 15 풀 + 빡빡 모드 | 47 + 추가 가드 | 강제 | 0.99999 |
 
 ### 빡빡 모드 (Grade 5 추가 가드)
 
@@ -21,70 +25,89 @@ c- Q-D 답 옵션 1 (모두 자동) → 옵션 2 (회귀만 자동) 강제.
 d- 멀티버스 우주 수 2~3 → 3~5.
 e- 페이즈 11 회귀 바이섹트도 자율 적용 — 본 하네스의 핵심 원칙 (페이즈 04 외 인터럽트 0). G5 빡빡 모드라도 ack 강제 안 함, multiverse + bisect 가 자율 정정 인프라.
 
-## 그레이드 자동 추정 알고리즘 (`scoring/grade_assess.py`)
+## 그레이드 추정 알고리즘 — 페이즈 01 다중 신호 (`scoring/grade_assess.py`, v0.9.17)
 
-원문 키워드 + 도메인 매칭 + 모듈 수 추정으로 그레이드 후보 산출:
+**호출 시점**: 페이즈 01 (의도 + 마인드맵) 완료 후, 페이즈 04 Q-G1 직전. intent-extractor 가 페이즈 01 산출물 작성 시 부산물로 *grade signals JSON* 를 박는다 (`intent/01-grade-signals.json`).
 
-```python
-def assess_grade(request_text: str, repo_context: dict) -> GradeReport:
-    """
-    원문에서 다음 신호 추출:
-      - 도메인 키워드 (결제/금융/안전 → Grade 5 후보)
-      - 모듈/사이드 키워드 (FE+BE / 다중 모듈 → Grade 4 후보)
-      - 단순 동사 (rename/typo/oneline → Grade 1)
-      - 모호 신호 → Grade 3 default
-    """
-    triggers_g5 = ["결제", "금융", "payment", "billing", "안전", "safety", "의료", "medical"]
-    triggers_g4 = ["FE+BE", "프론트엔드", "백엔드", "frontend", "backend", "신규 도메인", "새 도메인", "리팩터", "refactor",
-                   # v0.9.8: external-evaluator 작업 자동 G4 escalation
-                   "벤치마크", "benchmark", "leaderboard", "리더보드", "외부 채점", "external eval",
-                   "PR 제출", "submission", "심사", "review process", "competition"]
-    triggers_g2 = ["단일 모듈", "single module", "작은 기능", "small feature", "추가", "add"]
-    triggers_g1 = ["한 줄", "oneline", "one line", "rename", "리네임", "typo", "오타", "버그 수정", "throwaway"]
+**핵심 원칙**:
+- **default = G4** (본 하네스 호출 자체가 G4+ 의도 신호)
+- **G5 상향** = 사용자 *명시 ack* (`safety_critical` / `irreversible_change`) 만 — 자율 키워드 매칭 0
+- **G3 하향** = 단순함 *positive 증명* (12 차원 모두 negative + 마인드맵 실재 단순) + 사용자 ack 의무
+- **G2 하향** = G3 + 매우 단순 (mindmap nodes ≤ 5 + 단일 모듈 + 단일 도메인 용어)
+- **no signals** = G4 보존 (데이터 부재 ≠ 단순함)
 
-    text_lower = request_text.lower()
-    candidates = []
+### 18+ 신호 카탈로그 (`GradeSignals` dataclass)
 
-    if any(t in text_lower or t in request_text for t in triggers_g5):
-        candidates.append((5, "도메인 키워드 일치 (결제/금융/안전 등)"))
-    if any(t in text_lower or t in request_text for t in triggers_g4):
-        candidates.append((4, "FE+BE 또는 신규 도메인 키워드"))
-    if any(t in text_lower or t in request_text for t in triggers_g2):
-        candidates.append((2, "단일 모듈 작은 기능 키워드"))
-    if any(t in text_lower or t in request_text for t in triggers_g1):
-        candidates.append((1, "Trivial 키워드 — TBD (v0.5.x 후속)"))
+페이즈 01 의도 §a~§i 모든 섹션 + 마인드맵을 신호 source 로:
 
-    if not candidates:
-        candidates.append((3, "키워드 매칭 없음 — Standard default"))
+| 출처 | 신호 |
+|---|---|
+| 마인드맵 ([`mindmap-quality-gardening.md`](mindmap-quality-gardening.md)) | `mindmap_node_count` / `mindmap_axis_count` / `mindmap_max_depth` / `mindmap_external_systems` / `mindmap_domain_nouns` |
+| 의도 §a 무엇을 | `observable_results_count` |
+| 의도 §c 비목표 | `explicit_non_goals_count` |
+| 의도 §d 제약 | `constraint_count` / `explicit_thresholds_count` |
+| 의도 §e 유비쿼터스 언어 | `domain_term_count` |
+| 의도 §f 스테이크홀더 | `stakeholder_count` |
+| 의도 §g 성공 지표 | `success_metric_count` / `measured_metrics_count` |
+| 의도 §h 열린 질문 | `open_question_count` |
+| 의도 §i Derived NFRs ([`nfr-derivation.md`](nfr-derivation.md)) | `derived_nfr_count` / `qualitative_adjective_count` |
+| 외부 평가 / multi-scenario | `external_evaluator` / `multi_scenario` |
+| 인터페이스 / 리팩터 | `fe_be_split` / `refactor_scope_module_count` |
+| 미션 크리티컬 (사용자 명시 ack 의무) | `safety_critical` / `irreversible_change` |
 
-    # 가장 높은 그레이드를 기본 후보로 (보수적)
-    candidates.sort(key=lambda x: -x[0])
-    primary = candidates[0]
-    return GradeReport(
-        primary_grade=primary[0],
-        primary_reason=primary[1],
-        all_candidates=candidates,
-        require_user_confirmation=True,  # 항상 페이즈 04 의 Q-G1 으로 확정
-    )
+### G3 → G4 escalation triggers (5 차원, 1+ 매칭 시 G4 강화)
+
+| Trigger | 의미 |
+|---|---|
+| `external_evaluator` | bench / leaderboard / submission / external review |
+| `measured_value_obligation` | numeric metric ≥ 1 |
+| `multi_scenario` | multi-scenario 또는 sensitivity matrix |
+| `domain_adapter_stack` | 마인드맵 도메인 noun ≥ 1 (어댑터 stack 가능) |
+| `fe_be_split` | FE + BE 동시 진행 |
+
+### G4 → G3 하향 — 단순함 *positive 증명* (12 차원 모두 negative)
+
+```
+no_explicit_thresholds   no_measured_metrics      no_multi_scenario
+no_external_evaluator    no_derived_nfr           single_stakeholder
+few_open_questions       mindmap_present (≥1)     mindmap_small (≤10)
+mindmap_few_axes (≤2)    no_domain_stack          no_fe_be
+```
+
+`mindmap_present` 가 핵심 — *데이터 없음 (no signals)* 은 단순함 증명 X. 마인드맵이 *실재 작은* 경우만 단순으로 인정.
+
+### 사용
+
+```bash
+python scoring/grade_assess.py --mindmap-json intent/01-mindmap-signals.json --intent-json intent/01-grade-signals.json
+```
+
+또는 직접 신호 입력:
+
+```bash
+python scoring/grade_assess.py --signals '{"external_evaluator":true,"measured_metrics_count":5,...}'
 ```
 
 ## Q-G1 — 페이즈 04 의 첫 질의 (모든 그레이드 공통)
 
+페이즈 01 마인드맵 + 의도 다중 신호로 grade_assess.py 가 추정한 결과를 두괄식으로 보여준 뒤 5 보기 객관식 (default = G4):
+
 ```
 질의: 본 작업의 그레이드를 확정해주세요.
 
-자동 추정: Grade 4 (FE+BE 키워드 일치).
-페이즈 수와 컨벤션 적용 범위가 그레이드에 따라 달라집니다.
+자동 추정: Grade 4 (default — 본 하네스 호출 자체가 G4+ 의도 신호).
+        escalation triggers 매칭: [external evaluator, measured value, multi-scenario]
+        (또는 단순함 증명 미달 차원 명시)
 
 선택지:
-1. Grade 1 (Trivial) — TBD (v0.5.x 후속, 현재는 진행 가능)
+1. Grade 1 (Trivial) — TBD (v0.5.x 후속)
 2. Grade 2 (Simple) — 5 페이즈 / 7 컨벤션 / 임계 0.95
-3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / 임계 0.97
-4. Grade 4 (Complex) — 14 페이즈 풀 / 26 컨벤션 / 임계 0.999 (자동 추정)
-5. Grade 5 (Mission Critical) — Grade 4 + 빡빡 모드 / 임계 0.99999
+3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / 임계 0.999
+4. Grade 4 (Complex, default) — 15 페이즈 풀 / 47 컨벤션 / 임계 0.999 (자동 추정)
+5. Grade 5 (Mission Critical) — 빡빡 모드 / 임계 0.99999
 ```
 
-답을 `intent/04-grade.md` 에 기록. 이후 모든 페이즈가 본 답을 입력으로.
+G3·G2 하향 선택 시 grade_assess 가 단순함 증명 reasons 를 함께 보여주어 사용자가 *근거 있는* 선택. 답을 `intent/04-grade.md` 에 기록.
 
 ## 그레이드의 역할 — 내부 모듈레이션만
 

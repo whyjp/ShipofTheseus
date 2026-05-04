@@ -2,6 +2,79 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.17 — 2026-05-04 (sprint-11 — 키워드 매칭 폐기 + 페이즈 01 다중 신호 grade 추정 + default G4)
+
+### 마일스톤
+
+**v0.9.16 cold02 (synthetic_mine_throughput_v0915_cold02) 가 자동 G3 으로 떨어진 결손 정정.** 사용자 진단 — "그레이드 판단이 키워드 기반인 것 부터 잘못. intent 페이즈 자체가 grade 분류와 강결합. 마인드맵 복잡도는 한 차원일 뿐. 최대한 많은 지표로 판단. default G4-G5".
+
+### 변경 — `grade_assess.py` 전면 재작성 (v2)
+
+- **키워드 매칭 알고리즘 폐기** — `TRIGGERS_G5/G4/G2/G1` 키워드 set 전부 제거. 사용자 원문 키워드는 도메인 어휘 추적 못함 (cold02 = simulation-bench 작업이 default G3 으로 떨어진 직접 원인)
+- **`GradeSignals` dataclass — 18+ 차원 다중 신호** 페이즈 01 의도 §a~§i + 마인드맵 모든 섹션:
+  - 마인드맵: node_count / axis_count / max_depth / external_systems / domain_nouns
+  - 의도 §a: observable_results_count
+  - §c: explicit_non_goals_count
+  - §d: constraint_count / explicit_thresholds_count
+  - §e: domain_term_count
+  - §f: stakeholder_count
+  - §g: success_metric_count / measured_metrics_count
+  - §h: open_question_count
+  - §i: derived_nfr_count / qualitative_adjective_count
+  - boolean: multi_scenario / external_evaluator / fe_be_split / safety_critical / irreversible_change
+  - integer: refactor_scope_module_count
+- **default = G4** — 본 하네스 호출 자체가 G4+ 의도 신호. G3 작업은 본 하네스 없이도 진행 가능
+- **G5 상향** = `safety_critical` 또는 `irreversible_change` 사용자 *명시 ack* 만. 자율 키워드 매칭 0
+- **G3 하향** = 12 차원 모두 negative + `mindmap_node_count ≥ 1` (positive evidence) — *데이터 부재 ≠ 단순함*
+- **G2 하향** = G3 + nodes ≤5 + 단일 모듈 + 단일 도메인 용어
+- **호출 시점 변경** — 호출 직후 사용자 원문 → 페이즈 01 (의도 + 마인드맵) 완료 후. intent-extractor 가 페이즈 01 산출물 작성 시 부산물로 `intent/01-grade-signals.json` + `intent/01-mindmap-signals.json` 박음
+
+### 변경 — `conventions/grades.md`
+
+- 키워드 매칭 알고리즘 절 (line 24-69) 전부 제거 → 다중 신호 카탈로그 표 신규
+- default = G4 명시
+- G3 = "본 하네스 가치 부분만 활용 — G3 작업은 본 하네스 없이도 진행 가능" 명시
+- 5 차원 escalation triggers 카탈로그 + 12 차원 단순 증명 룰 명시
+
+### 변경 — `phases/01-intent.md`
+
+§j Grade signals 산출 단계 신규 — intent-extractor 가 §a~§i + 마인드맵을 18+ 차원 신호로 추출. 성공 기준 §e 추가 (산출물 박힘 검증).
+
+### 변경 — `phases/04-clarify.md`
+
+Q-G1 본문 정정 — `grade_assess.py` 가 `intent/01-grade-signals.json` + `intent/01-mindmap-signals.json` 입력으로 추정. default G4 명시 + escalation triggers 매칭 list / 단순 증명 차원 두괄식 표시 + G3·G2 하향 시 사용자 ack 의무 명시.
+
+### 변경 — self_lint 룰 신규
+
+`C-GAv2` (v0.9.17 sprint-11) — grade_assess v2 검증:
+1. 폐기 키워드 set (`TRIGGERS_G5/G4/G2/G1`) 잔존 0
+2. 다중 신호 dataclass (`GradeSignals`) + escalation triggers + 단순 증명 + default_was 본문 보유
+3. grades.md 의 default G4 + 키워드 매칭 폐기 명시 + 18+ 신호 카탈로그
+4. phase 01 §j 산출물 의무
+5. phase 04 Q-G1 default G4 명시
+
+### 변경 — `test_grade_assess.py` 전면 재작성
+
+기존 13 test 모두 `--request <text>` 키워드 인터페이스 가정. 14 신규 test (다중 신호 인터페이스):
+- default G4 (no signals / empty signals)
+- G5 명시 ack (safety_critical / irreversible_change)
+- G3 단순 증명 / G2 trivial 증명
+- escalation triggers 매칭 (external_evaluator / measured / multi-scenario / fe_be / domain_adapter)
+- 키워드 매칭 폐기 검증
+- user_confirmation always True / 5 보기 항상 / G1 진행 보존 / signals_used echo
+
+### 검증
+
+- self_lint 69/69 PASS (all_ok=True, lint_score=1.0)
+- pytest 109/109 PASS (이전 11 fail = 키워드 인터페이스 호환성 — 재작성으로 해소)
+- cold02 retro 적용 시 자동 G4 (escalation triggers 5 차원 매칭) — 임계 0.999 + 14 페이즈 풀 + 멀티버스 폭 4 활성
+
+### 후속
+
+- v0.9.17 적용 cold session — cold02 대비 점수 변화 측정 (G3 → G4 임계 강화 효과 검증)
+
+---
+
 ## v0.9.16 — 2026-05-04 (sprint-10 — 발현 검증 6 메타 컨벤션)
 
 ### 마일스톤

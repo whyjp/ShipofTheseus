@@ -56,7 +56,13 @@ h- `intent/04-runtime-prereq.md` — Q-D9 답에 따른 *실행 가능 사전조
 
 ## 첫 질의 — Q-G1 그레이드 확정 ([`../conventions/grades.md`](../conventions/grades.md))
 
-본 페이즈의 **가장 첫 질의**. `scoring/grade_assess.py` 의 자동 추정을 두괄식으로 보여주고 5 보기 객관식으로 사용자 확정. Grade 1 (Trivial) 답이어도 본 하네스 진행 (그레이드는 내부 모듈레이션만, v0.5.x 후속 PR 에서 G1 모듈레이션 정의 예정).
+본 페이즈의 **가장 첫 질의**. `scoring/grade_assess.py` 가 페이즈 01 의 `intent/01-grade-signals.json` + `intent/01-mindmap-signals.json` (페이즈 01 §j) 을 입력으로 그레이드 추정 — **default = G4** (v0.9.17 sprint-11, 키워드 매칭 폐기). 두괄식으로 추정 결과 (escalation triggers 매칭 / 단순함 증명 차원) 를 보여주고 5 보기 객관식으로 사용자 확정. Grade 1 (Trivial) 답이어도 본 하네스 진행 (그레이드는 내부 모듈레이션만).
+
+**Q-G1 의 두괄식 본문**:
+- *추정 grade + reason* (default G4 / G3 단순 증명 / G5 mission-critical 등)
+- *escalation triggers 매칭 list* (external evaluator / measured value / multi-scenario / domain adapter / FE+BE)
+- *단순함 증명 차원* (G3 추정 시 — 12 차원 중 satisfied list)
+- *G3·G2 하향 선택 시 사용자 ack 의무 명시* — "G3 작업은 본 하네스 없이도 진행 가능, 부분만 가치"
 
 ## PRD 입력 처리 — 인터뷰 스킵 금지 ([`../conventions/interview.md`](../conventions/interview.md) "PRD/스펙 입력 처리" 절)
 
