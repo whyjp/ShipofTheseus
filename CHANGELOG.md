@@ -2,6 +2,281 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.16 — 2026-05-04 (sprint-10 — 발현 검증 6 메타 컨벤션)
+
+### 마일스톤
+
+**v0915-cold01 외부 채점 93/100 진단 후 *준비-vs-동작* 갭 정정.** 자체 추정 == 외부 채점 (둘 다 93) 으로 score-rubric-objectivity 발현 PASS, 그러나 94 plateau 안 깨짐. 사용자 피드백: "준비한 부분이 *구동 안 됨* / *제대로 동작 안 함* / 코드 퀄리티 점수 극복" 3 가설 + *케이스 종속 룰 금지, 제너럴 메타 룰만*. 본 sprint 가 6 메타 컨벤션 동시 신규.
+
+### 변경 — 발현 검증 #1 `convention-traceability.md`
+
+페이즈 산출물 frontmatter `applied_conventions: [...]` 의무 + 페이즈별 *expected* 컨벤션 카탈로그 (contracts.md). 회차 종료 시 zero-applied 컨벤션이 expected 와 교집합 = self_lint fail. 본 하네스 41+ 컨벤션 중 *어느 것이 실제로 발현됐는지 추적 메커니즘* 0 → 검출 가능.
+
+### 변경 — 발현 검증 #2 `sprint-score-delta-tracking.md`
+
+매 sprint NN+1 의 score - sprint NN 의 score = delta. EXPECTED_DELTA 범위 (content_depth 0.005~0.030 / enforcement 0.000~0.005 / etc.) 위반 시 `LABEL_VIOLATION` self_lint fail. budget-saturation-loop 의 lesson type 4 분류가 *honest* 인지 사후 측정.
+
+### 변경 — 발현 검증 #3 `evidence-driven-sprint-planning.md`
+
+handoff 의 `evidence_missing` 항목 → 다음 sprint 의 `next_sprint_candidates` 자동 생성. `free_lesson_allowed: false` — agent 가 *자유롭게* lesson 못 정함, evidence_missing / zero_applied / bench_required 중에서만. budget-saturation-loop + score-rubric-objectivity 의 *결손 → 보강* 자동 흐름.
+
+### 변경 — 발현 검증 #4 `cross-universe-lesson-distillation.md`
+
+Tournament resolve 시 패배 universe 의 *핵심 약점 ≥ 1-2 줄* 을 우승 본문 (Patterns to Avoid 절) 흡수 의무. 페이즈 08 / 10 가 `avoid_patterns` 입력 받음 → forbidden_strategies 동급 처리. ensemble-synthesis-default 의 *합집합* 차원이 *합집합 + 교집합 + 차이집합* 으로 격상.
+
+### 변경 — 발현 검증 #5 `regression-derived-lint-rule-autogen.md`
+
+페이즈 11 회귀 4 분류 정정 commit 시 *동일 차원 회귀 차단 self_lint 룰 신규* 의무. `lint_rule_proposal` frontmatter + `regression_lint_registry.py` 등록. self_lint CHECKS 가 정적 + 동적 합성 — 회귀 학습이 *영구 자산화*. 본 하네스 *우로보로스 자기 강화* 메커니즘화.
+
+### 변경 — 발현 검증 #6 `polyglot-code-quality.md`
+
+build-and-config §8 ruff 통합 = Python 전용 → 9 언어 카탈로그 (Python ruff / Go golangci-lint / TS biome / Rust clippy / Java checkstyle / Ruby rubocop / C/C++ clang-tidy / Kotlin detekt) + 6 메트릭 (cyclomatic / function_length / nesting_depth / duplicate_blocks / lint_errors / format_diff). v1.0 외부 maintainer 채택 prerequisite 인프라.
+
+### 변경 — self_lint 6 룰 신규
+
+C-CT / C-SDT / C-EDP / C-CULD / C-RDLR / C-PCQ. 각 컨벤션 본문 키워드 + cross-reference 검증.
+
+### v0915-cold01 외부 채점 분석 (motivation)
+
+| 차원 | 점수 | 만점 | 갭 |
+|---|:-:|:-:|:-:|
+| Conceptual | 18 | 20 | -2 |
+| Sim correctness | 18 | 20 | -2 |
+| Data·topology | 14 | 15 | -1 |
+| Results | 14 | 15 | -1 |
+| Code quality | 9 | 10 | -1 |
+| Experimental design | 15 | 15 | 0 |
+| Traceability | 5 | 5 | 0 |
+| **Total** | **93** | **100** | **-7** |
+
+자동 검증 53/53 PASS. 자체 추정 == 외부 채점 = score-rubric-objectivity 정직성 검증.
+
+### 거부 (case-specific 후보)
+
+초기 4 후보 (Conceptual narrative quantitative gate / Sim correctness analytical-bound proof / Results decision-support enforcement / Code quality micro layer) **거부** — bench rubric 항목 (sensitivity matrix / capex / opportunity-cost / type hints) 에 매여 케이스 종속. 메모리 `feedback_harness_strengthening_methodology.md` 위반.
+
+### 검증
+
+self_lint 6 룰 신규 모두 PASS / pytest 회귀 0 / self_score 1.0 / 임계 0.99999 통과. C26 (SKILL.md 길이) + C41 (description 압축) = pre-existing.
+
+### 후속
+
+- v0.9.16 적용 cold session — 진짜 0.999 도달 검증 (94 plateau 돌파)
+- C26 정리 — SKILL.md 의 47 컨벤션 인덱스를 별도 INDEX 파일로 fragmentation
+- C41 정리 — description 추가 압축
+
+---
+
+## v0.9.15 — 2026-05-04 (sprint-09 — budget saturation + rubric objectivity)
+
+### 마일스톤
+
+**94 plateau 돌파 룰** — v01_cold (v0.9.9) / v091_cold01 (v0.9.12) / v0914_cold01 (v0.9.14) cold session 모두 자체 추정 94 도달. 분석 결과 *조기 종료* + *generous self-rating* 두 noise 가 plateau 의 실 원인. 본 sprint-09 가 두 차원 동시 정정.
+
+### 변경 — `conventions/budget-saturation-loop.md` 신규
+
+페이즈 10 sprint loop 룰 정정:
+- **임계 default = 0.999** (G3/G4 통일, G5 = 0.99999 유지)
+- **Budget 사용률 ≥ 80% 강제** — 임계 first-try PASS 해도 sprint 추가
+- 추가 sprint 의 lesson type = **content depth** (enforcement 아님) — Conceptual narrative / Results decision support / Sim cross-validation 의 *질적 layer*
+- handoff frontmatter `budget_saturation: <ratio>` 명시 의무, 80% 미달 종료 = `EARLY_STOP_VIOLATION` self_lint fail
+- 페이즈 04 신규 답안 `Q-D-BUDGET-MODE` (1=Saturation default / 2=Quick-stop / 3=Custom)
+
+cold session retro 적용 시 v091_cold01 (28% 사용) / v0914_cold01 (21% 사용) 모두 +5-6 sprint 가능 → 추정 94 → 96-98.
+
+### 변경 — `conventions/score-rubric-objectivity.md` 신규
+
+페이즈 14 handoff 의 self-estimate 를 *체크리스트 evidence 1:1 매칭* 으로 강제:
+- 8 차원 strict checklist 카탈로그 (Conceptual 20 / Sim correctness 20 / Data·topology 15 / Experimental 15 / Results 15 / Code quality 10 / Traceability 5 / Efficiency bonus)
+- 각 차원 만점 미달 시 `evidence_missing` 명시 의무 — 어느 항목이 누락인지 evidence 단위로
+- handoff frontmatter `self_estimate.type` (bench_rubric / internal_aggregate) 분리 — v0913_cold01 의 0.999 보고 패턴 (internal aggregate 만 보고) 차단
+- self_lint C-SRO — type / evidence_paths / evidence_missing / rubric_version 4 항목 검증
+
+retro 적용 시 v01_cold (v0.9.9) self-estimate 97 → strict 94 (-3pt generous noise 제거). 진짜 plateau = 92~94 명확화.
+
+### 두 컨벤션 시너지
+
+- saturation loop = budget *quantity* (sprint 횟수)
+- objective rubric = score *quality* (정확도 / 신뢰도)
+- 합성 시 매 sprint 후 `evidence_missing` 추적 → next sprint 가 채움 → 진짜 0.999 도달
+
+### 검증
+
+self_lint 룰 +2 (C-BSL / C-SRO) 신규 / pytest 회귀 0 / self_score 1.0 / 임계 0.99999 통과
+
+---
+
+## v0.9.14 — 2026-05-04 (sprint-08 — deliverable hurdle supremacy)
+
+### 마일스톤
+
+**Layer 3 결과물 허들 supremacy** — v0913_cold01 의 design-only 종료 (코드 0, 5 bench 의무 산출물 0, 실 실행 0) 가 메모리 룰 (`feedback_harness_scope.md` "코드 = 외부 repo only") 의 *literal 적용* 으로 발생. 본 sprint 가 *룰 우선순위* 재정의.
+
+### 변경 — `conventions/deliverable-hurdle-supremacy.md` 신규
+
+룰 precedence 3 layer:
+- **Layer 1**: 메모리 feedback (사용자 사전 위임 / 관찰)
+- **Layer 2**: 하네스 컨벤션 (페이즈 룰 / 게이트 / multiverse / etc.)
+- **Layer 3**: 결과물 허들 — 실행 가능 제품 + 코드 + 측정값
+
+**Layer 3 가 Layer 1/2 무조건 override.** 5 hard hurdle:
+- H1 Code Existence (≥ N 모듈 default 5)
+- H2 Code Execution (verification command exit 0)
+- H3 Test Suite (실 측정 통과 수, 0 금지)
+- H4 Bench-Required Outputs (file existence + size > 0 + schema 정합)
+- H5 Executed Values Recording (placeholder 금지, primary metric non-zero finite in expected range)
+
+허들 실패 시 *자동 retry sprint* — graceful skip / design-only handoff 금지. 사용자 *명시 ack* (페이즈 04 Q-D-DELIVERABLE-MODE = 3) 만 면제.
+
+### 변경 — 메모리 룰 정정
+
+`feedback_harness_scope.md` 의 *literal* "코드 = 외부 repo only" → *standalone 컨텍스트 시* 코드 + 실행 + 측정값 의무. 침습 가드는 *사용자 기존 repo 의 무관 코드 침습 금지* 만 유지.
+
+### 그레이드별 활성
+
+| Grade | 결과물 허들 |
+|---|---|
+| G1-G2 | optional |
+| G3 | 의무 (standalone default) |
+| G4 | 의무 + retry budget tighter (bench / external evaluator) |
+| G5 | 의무 + 사용자 명시 ack 강제 (Q-D-DELIVERABLE-MODE = 1 만 OK) |
+
+### 검증
+
+self_lint 룰 +1 (C-DHS) / pytest 12/12 / self_score 1.0 / v0914_cold01 cold session 18.5 min 5/5 산출물 real PASS — 본 sprint 효과 외부 검증.
+
+---
+
+## v0.9.13 — 2026-05-04 (sprint-07 — content depth layer × 4)
+
+### 마일스톤
+
+94 plateau 1차 분석 — Conceptual / Sim correctness / Results 3 차원의 *content depth* 가 sub-score gap. enforcement 강화 (v0.9.6-12) 만으로는 깨지지 않음. 4 컨벤션이 *content layer* 추가.
+
+### 변경 4건
+
+- `conventions/deep-semantic-intent.md` — adjective + noun 결합으로 *implied framing* 추출 (의도 추출 깊이 +1 layer, ceiling-breaking 1순위 추정)
+- `conventions/domain-research-stacking.md` + `conventions/domain-adapters/` 신규 — 마인드맵 noun → domain adapter 자동 stack (도메인 전문성 layer)
+- `conventions/mindmap-quality-gardening.md` — Mermaid 의무 + 4 axis × ≥3 sub-node + ≥15 노드 (v091_cold01 ASCII 회귀 발견 정정)
+- `conventions/ensemble-synthesis-default.md` — G4+ tournament 결과 *algorithmic union* default — 단일 우승 우주만 보지 않고 *교집합 + 합집합* 동시 활용
+
+### 검증
+
+self_lint 룰 +4 / pytest 회귀 0 / self_score 1.0. v0913_cold01 cold session 에서 design-only 회피 발견 → v0.9.14 deliverable-hurdle-supremacy 후속.
+
+### 알려진 결손 (v0.9.14 해소)
+
+본 sprint 만으로는 *코드 + 실행 + 측정값* 강제 부재 — agent 가 메모리 룰 literal 적용으로 design-only 종료 가능. v0.9.14 가 supremacy gate 추가.
+
+---
+
+## v0.9.12 — 2026-05-04 (sprint-06-c — analytical bound + multiverse impl fan-out)
+
+### 마일스톤
+
+v01_cold (v0.9.9) 회차의 *분석적 상한 vs 시뮬 baseline 자동 검증* 이 본 세션 v099 의 payload=50 잘못된 가정을 발견 — 메모리 `feedback_analytical_bound_validation.md` 정합. 본 sprint 가 발견을 컨벤션화.
+
+### 변경 3건
+
+- `conventions/analytical-bound-cross-validation.md` 신규 — closed-form 상한 vs simulated baseline 자동 검증, ratio [0.85, 1.00] 의무. 페이즈 09 derived gate 의무화.
+- `conventions/multiverse-impl-fan-out.md` 신규 — universe N *모두* 실 코드 의무 (페이즈 06 plan 만 분기, 페이즈 08 가 단일 우주만 코드화 하던 문제 해소). tournament merge 코드 차원.
+- `conventions/budget-aware-fallback.md` 신규 — silent fallback 금지, frontmatter `fallback_reason` 명시 의무.
+
+### 검증
+
+self_lint 룰 +3 / v091_cold01 cold session (90 min budget, 25 min 사용, 24/24 tests + 180/180 invariants) self 94 — analytical bound + ramp 비-병목 negative finding 도출.
+
+---
+
+## v0.9.11 — 2026-05-04 (sprint-06-b — interface-first parallel impl)
+
+### 변경
+
+- `conventions/interface-first-parallel-impl.md` 신규 — 페이즈 06 모듈 인터페이스 의무 + 페이즈 08 sub-agent 병렬 fan-out. universe N candidate 의 코드 작성이 *interface 의 다른 구현* 으로 격상 (v0.9.10 multi-phase 의 페이즈 08 axis 본격 발현).
+
+### 검증
+
+self_lint 룰 +1 / pytest 회귀 0.
+
+---
+
+## v0.9.10 — 2026-05-04 (sprint-06-a — AIDE multiverse 풀 발현)
+
+### 마일스톤
+
+본 하네스의 *유일한 차별 강점* (multiverse competition) 의 풀 발현 — *깊이 × 폭 × 검증* 3 차원 동시 강화. 페이즈 06 plan-tree 단독에서 5+ 페이즈로 multiverse 확장.
+
+### 변경 3건
+
+- `conventions/aide-tree-symmetry.md` 신규 — 각 universe candidate 의 sequenceDiagram ≥ 1 + actors ≥ 3 + interactions ≥ 5 + universe-specific differentiation 강제 (v01_cold audit 의 비대칭 경합 발견 정정).
+- `conventions/aide-tree-multi-phase.md` 신규 — 페이즈 02 (doc-review multi-reviewer) / 05 (critique multi-critic) / 08 (impl multi-strategy) / 11 (regression multi-hypothesis) / 13 (viewer multi-framing) 까지 multiverse 확장. Q-D10~D14 페이즈 04 신규.
+- `conventions/tournament-blind-rerun.md` 신규 — 임계 미달 시 anonymize previous winner 재경합. blind 검증으로 *우승 우주의 self-bias* 차단.
+
+### 시너지
+
+세 컨벤션 = "deep × broad × validated multiverse" — AIDE 의 풀 발현. README 본문에 *진짜 컨셉* 으로 부각.
+
+### 검증
+
+self_lint 룰 +3 / pytest 회귀 0 / self_score 1.0.
+
+---
+
+## v0.9.9 — 2026-05-04 (sprint-05-i — mindmap centrality)
+
+### 변경
+
+- `conventions/mindmap-centrality.md` 신규 — canonical concept graph 가 모든 페이즈 backbone. 페이즈 01 마인드맵이 단발 산출물에서 *전 페이즈 참조 grid* 로 격상.
+- v01_cold (v0.9.9) 외부 cold session — synthetic_mine_throughput_v01_cold fresh (0 외부 ref) + 90 min budget, 25 min 사용. 24/24 tests + 180/180 invariants. 자체 94. crusher binding · ramp 비-병목 negative finding 도출. 자체 추정 inflation 노출 (97 generous → strict 94).
+
+### 검증
+
+self_lint 룰 +1 / pytest 회귀 0.
+
+---
+
+## v0.9.8 — 2026-05-04 (sprint-05-h — sprint regression loop + parallel cold review)
+
+### 변경
+
+- `conventions/sprint-regression-loop.md` 신규 — *self-polishing* 임계 도달까지 sprint 반복. budget 끝까지 사용 룰의 모태 (v0.9.15 budget-saturation-loop 가 정정).
+- `conventions/parallel-cold-review.md` 신규 — N framing fan-out 으로 페이즈 03 다양성. single fresh agent 의 framing bias 차단.
+
+### 검증
+
+self_lint 룰 +2 / pytest 회귀 0.
+
+---
+
+## v0.9.7 — 2026-05-04 (sprint-05-g — premortem friction)
+
+### 변경
+
+- `conventions/premortem-friction.md` 신규 — 콜드리뷰의 *purpose* 가 *forward simulation* + derived_improvements 도출. 망설임 = 한 번 더 고민 + 미래 회고. 격언 동·서 1개 + 페이즈 02/03/07 적용.
+- 메모리 `feedback_premortem_not_pause.md` 신규 — *멈춤 아님, 한 번 더 고민* 정의.
+
+### 검증
+
+self_lint 룰 +1 / pytest 회귀 0.
+
+---
+
+## v0.9.6 — 2026-05-04 (sprint-05-f — NFR derivation 자동 도출)
+
+### 마일스톤
+
+**케이스 종속 룰 금지 / 본 하네스 강화 = 구조 컨벤션** 메서돌로지 — 외부 답안 후 패치는 케이스 종속, 본 하네스 강화 = prompt → 게이트 흐름의 *구조* 변경. 메모리 `feedback_harness_strengthening_methodology.md` 정합.
+
+### 변경
+
+- `conventions/nfr-derivation.md` 신규 — prompt 형용사 (예: "robust", "scalable", "low-latency") 로부터 NFR + derived 게이트 자동 도출. 페이즈 01 의도 추출 + 페이즈 04 Q-D + 페이즈 09 게이트 6 의 일관 흐름.
+
+### 검증
+
+self_lint 룰 +1 / pytest 회귀 0.
+
+---
+
 ## v0.9.5 — 2026-05-04 (sprint-05-e — 회귀 원인 분류 + plan implementation guidance)
 
 ### 마일스톤

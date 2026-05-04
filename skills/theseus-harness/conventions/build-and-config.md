@@ -3,6 +3,8 @@
 ## 한 줄 요약
 **모든 모듈 + 루트는 sh/bat 스크립트로 빌드·테스트·실행이 재현 가능해야 하고, 설정은 TOML 기본, `.example` 파일이 항상 동행, `docs/` 폴더가 누락 없이 단계별 변경을 기록한다.** 문서뿐 아니라 코드로서 환경 구성이 학습·실행 가능해야 함.
 
+> **v0.9.16 sprint-10 — `polyglot-code-quality` 격상**: 본 문서의 §8 ruff 통합 절은 v0.9.16 [`polyglot-code-quality.md`](polyglot-code-quality.md) 의 *언어 카탈로그 1번* 으로 격하됨. 외부 사용자가 Go / TS / Rust / Java / Ruby 등 비-Python 프로젝트 시 페이즈 09 게이트 3 가 발현되도록 polyglot-code-quality 가 master.
+
 ## 1. 빌드/실행 스크립트 — 모듈마다 + 루트
 
 a- 위치: 모듈마다 `<모듈>/scripts/`, 루트는 `scripts/`.

@@ -2,19 +2,19 @@
 
 ## 한 줄 요약
 
-**`git clone` 으로 받아 `.claude/skills/` 또는 `~/.claude/skills/` 에 9 스킬을 일괄 링크 (또는 복사) 한다.** 플러그인 매니페스트(`.claude-plugin/plugin.json`)는 Claude Code 플러그인 매니저가 9 스킬을 한 번에 등록할 수 있도록 준비된 파일이다.
+**`git clone` 으로 받아 `.claude/skills/` 또는 `~/.claude/skills/` 에 2 스킬을 일괄 링크 (또는 복사) 한다.** 플러그인 매니페스트(`.claude-plugin/plugin.json`)는 Claude Code 플러그인 매니저가 2 스킬을 한 번에 등록할 수 있도록 준비된 파일이다.
 
 ## 어떤 스킬이 설치되는가
 
-본 저장소는 9 스킬을 묶음으로 배포한다 — 1 인덱스 + 7 페이즈 분해 + 1 플래그십(단일 source of truth):
+본 저장소는 v0.9.15 기준 2 스킬을 묶음으로 배포한다 — 1 entry + 1 source of truth:
 
 ```
 skills/
 ├── theseus-orchestrator/   # 사용자 entry — HARD-RULE + 그레이드 인덱스 (theseus-harness 동반 필수)
-└── theseus-harness/        # 콘텐츠 source — 22 컨벤션 + 14 페이즈 + 14 에이전트 + scoring/ + templates/
+└── theseus-harness/        # 콘텐츠 source — 47 컨벤션 + 15 페이즈 + 18 에이전트 + 2 도메인 어댑터 + scoring/ + templates/
 ```
 
-> **v0.9.0 sprint-03-b 단순화** — 이전 9 SKILL.md (orchestrator + 7 phase 분해 stub + harness) 에서 7 phase stub 제거. pure delegation 이라 cost > benefit 으로 판정. 사용자 entry namespace 동일.
+> **v0.9.0 sprint-03-b 단순화** — 이전 9 SKILL.md (orchestrator + 7 phase 분해 stub + harness) 에서 7 phase stub 제거. pure delegation 이라 cost > benefit 으로 판정 (livetest #1 fail 분석). 사용자 entry namespace `/shipoftheseus:theseus-orchestrator` 동일.
 
 페이즈 산출물 frontmatter ([`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md)) 가 계약 — fingerprint chain 으로 다음 페이즈 진입 검증.
 
@@ -61,7 +61,7 @@ done
 이후 Claude Code 세션에서:
 
 ```
-/shipoftheseus:theseus-orchestrator <요구사항>   # 14 페이즈 자율 driver (사용자 entry)
+/shipoftheseus:theseus-orchestrator <요구사항>   # 15 페이즈 자율 driver (사용자 entry)
 ```
 
 > **두 스킬 모두 설치 필수** — `theseus-orchestrator` 는 HARD-RULE entry 룰 + 그레이드 인덱스만 정의. 콘텐츠 source 는 `theseus-harness/` 가 가짐. 한 쪽만 설치하면 동작 안 함.
@@ -80,7 +80,7 @@ done
 
 ## 3. Claude Code 플러그인 매니저 — 마켓플레이스 패턴 (권장)
 
-본 저장소는 *동시에* 마켓플레이스 + 단일 플러그인 역할 — `.claude-plugin/marketplace.json` 이 본 repo 를 마켓플레이스로 등록하고 `.claude-plugin/plugin.json` 이 9 스킬을 선언. Claude Code 세션 안에서:
+본 저장소는 *동시에* 마켓플레이스 + 단일 플러그인 역할 — `.claude-plugin/marketplace.json` 이 본 repo 를 마켓플레이스로 등록하고 `.claude-plugin/plugin.json` 이 2 스킬을 선언. Claude Code 세션 안에서:
 
 ```bash
 # ① 마켓플레이스 등록 (한 번만)
@@ -90,7 +90,7 @@ done
 /plugin install shipoftheseus@shipoftheseus
 ```
 
-설치 후 9 스킬 (`/theseus-orchestrator`, `/theseus-harness`, 7 분해 스킬) 이 한 번에 등록된다. 업데이트는 `/plugin marketplace update shipoftheseus` 로 원격 변경 반영.
+설치 후 2 스킬 (`/shipoftheseus:theseus-orchestrator`, `/shipoftheseus:theseus-harness`) 이 한 번에 등록된다. 업데이트는 `/plugin marketplace update shipoftheseus` 로 원격 변경 반영.
 
 > **⚠️ `claude plugin install <url>` 직접 호출은 안 됨** — Claude Code 의 플러그인 매니저는 마켓플레이스에 *먼저 등록된* 플러그인만 설치한다. URL 직접 install 패턴은 미지원이며 `Plugin not found in any configured marketplace` 에러가 난다. 위 두 단계가 표준.
 
@@ -126,7 +126,7 @@ cp -r ~/src/shipoftheseus/skills/* /path/to/your/project/.claude/skills/
 설치 후 (저장소 루트에서):
 
 ```bash
-# 일괄 점검 — 35 self_lint 체크 + pytest + sample 채점 + 자기 점수 + 핑거프린트 체인
+# 일괄 점검 — self_lint 60+ 체크 + pytest + sample 채점 + 자기 점수 + 핑거프린트 체인
 ./scripts/self-check.sh        # linux/mac
 scripts\self-check.bat         # windows
 ```
@@ -140,12 +140,12 @@ python skills/theseus-harness/scoring/score.py \
   --inputs skills/theseus-harness/templates/sample-inputs.json
 ```
 
-자기 점수 임계 0.99999 통과 + self_lint 35/35 + pytest 모두 통과해야 정상.
+자기 점수 임계 0.99999 통과 + self_lint 모든 룰 PASS + pytest 모두 통과해야 정상.
 
 ## 7. 제거
 
 ```bash
-# 9 스킬 일괄 제거
+# 2 스킬 일괄 제거
 rm .claude/skills/theseus-*       # 또는 ~/.claude/skills/theseus-*
 
 # 클론한 원본도 지우려면
@@ -155,7 +155,7 @@ rm -rf ~/src/shipoftheseus
 ## 트러블슈팅
 
 ⓐ **`/theseus-*` 슬래시 명령이 안 뜸** — `.claude/skills/<스킬명>/SKILL.md` 가 실제로 존재하는지 확인. 심볼릭 링크라면 깨지지 않았는지 `ls -L .claude/skills/`. Claude Code 재시작 필요.
-ⓑ **분해 스킬에서 페이즈 본문 링크가 깨짐** — `theseus-harness` 도 같이 설치되어 있는지 확인. 분해 스킬은 단일 source of truth 를 `../theseus-harness/` 상대 경로로 참조한다.
+ⓑ **`theseus-orchestrator` 만 설치 시 본문 링크가 깨짐** — `theseus-harness` 도 같이 설치되어 있는지 확인. orchestrator 의 룰 본문은 `../theseus-harness/` 상대 경로로 참조한다 (HARD-RULE + 그레이드 인덱스만 자체 보유).
 ⓒ **웹뷰 `bun install` 실패** — bun 버전 확인 (`bun --version` ≥ 1.0). `package.json` 의존이 모두 설치되는지 확인.
 ⓓ **Score 테스트 실패** — Python 3.10+ 필요. `python --version` 확인.
 ⓔ **frontmatter 검증 실패로 페이즈 진입 거부** — 외부에서 받은 산출물이라면 [`skills/theseus-harness/scoring/fingerprint.py`](skills/theseus-harness/scoring/fingerprint.py) 의 `verify` 와 `chain` 명령으로 무결성을 먼저 점검:
