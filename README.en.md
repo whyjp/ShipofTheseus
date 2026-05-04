@@ -8,9 +8,9 @@ A Claude Code skill bundle that **explores a request as a tree of N parallel uni
 
 Entry points: [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (user entry, HARD-RULE driver) — requires [`theseus-harness`](skills/theseus-harness/SKILL.md) (content source) installed alongside.
 
-## Maturity — Honesty Box (v0.9.15)
+## Maturity — Honesty Box (v0.9.16)
 
-> **v0.9.15 = budget-saturation + score-rubric-objectivity milestone.** 47 conventions + 18 agents + 15 phases + 2 domain adapters. Six external simulation-bench applications all hit the *94 plateau* — v0.9.15 attacks the ceiling with *budget ≥ 80% saturation* + *evidence 1:1 self-rating*.
+> **v0.9.16 = emergence-verification 6 meta-conventions milestone.** 47 conventions + 18 agents + 15 phases + 2 domain adapters. After v0915-cold01 external bench score 93/100 (self-rating == external — score-rubric-objectivity emergence validated) the diagnosis was *prepared conventions not measurably emerging*. v0.9.16 closes that gap with six general meta-conventions. Seven external simulation-bench applications all hit the *94 plateau* — v0.9.16 cold-session verification pending.
 >
 > **Progress signals (2026-05-04)**:
 > - ✅ Self-evaluation — all self_lint rules PASS / pytest no regression / `self_score = 1.0` / threshold 0.99999 cleared
@@ -19,14 +19,15 @@ Entry points: [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (us
 > - ✅ **6 external simulation-bench applications** — 18.5–44 min wall clock / intervention 0 / sanity 4 PASS
 > - ✅ **AIDE multiverse fully expressed** — phase 06 width 3-6 + depth 1-2 + multi-phase to phases 02/05/08/11/13 + per-universe sequenceDiagram + tournament blind rerun + ensemble synthesis default
 > - ✅ **94 plateau measured** — v01_cold (v0.9.9) / v091_cold01 (v0.9.12) / v0914_cold01 (v0.9.14) all self-estimate 94 — *content depth layer* alone breaks the ceiling
-> - ⏸ **94 → 97+ ceiling-break verification pending** — v0.9.15 budget-saturation + objective rubric not yet validated in cold session.
+> - ✅ **self_lint 68/68 PASS** — first complete-pass for this repo (lint_score = 1.0, all_ok = True), honoring the BOOTSTRAP promise *"100% pass on what I impose on others"*.
+> - ⏸ **94 → 97+ ceiling-break verification pending** — v0.9.16 six emergence-verification metas (convention-traceability / sprint-score-delta-tracking / evidence-driven-sprint-planning / cross-universe-lesson-distillation / regression-derived-lint-rule-autogen / polyglot-code-quality) not yet validated in cold session.
 >
 > v1.0 = external maintainer prod adoption + ≥5 external applications + 94 plateau breakthrough.
 >
 > ⓐ Numbers like `self_lint pass`, `sample_score 1.0`, `threshold 0.99999 cleared` measure **markdown / code-index consistency and example-input scoring of THIS repo** — not whether an LLM agent actually behaves like the prompts say. External bench applications are the proxy for "agent really follows the prompt."
 > ⓑ self_lint inspects *markdown text patterns* only. "Phase body contains keyword X" is verified; "implementer agent actually receives `lesson_pack` and avoids forbidden strategies" is verified via bench cold-session retro, not lint.
 > ⓒ **Threshold 0.999 / 0.99999 are NOT SLO availability** — they are a 6-dimension weighted average + DIP single hard cap 0.6 + 5 hard caps. Don't read "99.999% reliable" — that's a mis-read.
-> ⓓ **The single urgent goal of v0.9.15**: break the 94 plateau via budget 80% saturation (5-8 sprints) × evidence 1:1 self-rating × content-depth lessons.
+> ⓓ **The single urgent goal of v0.9.16**: break the 94 plateau by composing v0.9.15 (budget saturation × evidence 1:1 self-rating) with v0.9.16 (applied_conventions traceability × sprint score delta honesty × evidence-driven sprint planning × cross-universe lesson distillation × regression-derived lint autogen × polyglot code quality) — i.e. close every emergence-verification gap before claiming 0.999.
 > ⓔ Self-evaluation is **OS-agnostic**: `bash scripts/self-check.sh` (Linux/Mac) or `scripts\self-check.bat` (Windows) reproduce the same `self_score = 1.0`. cp949 latent bug fixed in v0.2.2 with `scoring/conftest.py` + explicit `encoding="utf-8"` + self_lint C35 guard.
 > ⓕ **External pattern adoption methodology — Mirror Principle**: external skills are *blind-spot detection mirrors only*, not a synthesis license. Adopt only on *orthogonal axes* — augment one paragraph in an existing file rather than creating a new one. See [`PHILOSOPHY.md`](PHILOSOPHY.md) "External Pattern Adoption" section.
 > ⓖ **Layer 3 deliverable-hurdle supremacy** (v0.9.14): memory rules / conventions / user pre-delegation *cannot override* the deliverable hurdle. v0913_cold01's design-only escape blocked + 003 / v091_cold01's code+execution result generalized.
@@ -41,6 +42,7 @@ Phase 06 plan-tree's result is not a single plan but **a tree of N universes**. 
 - **v0.9.13** — `ensemble-synthesis-default` (G4+ tournament result is *algorithmic union by default*) + `deep-semantic-intent` + `domain-research-stacking`
 - **v0.9.14** — `deliverable-hurdle-supremacy` (Layer 3 hurdle overrides memory/convention)
 - **v0.9.15** — `budget-saturation-loop` + `score-rubric-objectivity`
+- **v0.9.16** — six emergence-verification metas (`convention-traceability` + `sprint-score-delta-tracking` + `evidence-driven-sprint-planning` + `cross-universe-lesson-distillation` + `regression-derived-lint-rule-autogen` + `polyglot-code-quality`) + `anti-patterns.md` fragmentation split
 
 **Why Doctor Strange viewed 14,000,605 futures — go to all of them before deciding.** Converting LLM non-determinism into a *branching engine* is the harness's only differentiating strength.
 

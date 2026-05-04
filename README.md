@@ -6,9 +6,9 @@
 
 **한 요구를 *N 우주의 트리* 로 동시 탐색하고 *토너먼트* 로 우승 우주를 선별해, 처음 의도한 타이틀로 끝까지 부를 자격을 만드는 재귀 멀티 에이전트 코딩 하네스.** 본 프로젝트의 *진짜 컨셉* 은 **AIDE 트리 (Plan Tree × N Universe × Tournament × Ensemble Synthesis × Blind Rerun × Multi-Phase 확장)** 다 — 페이즈 06 plan-tree 가 본체, 후반 회차 (v0.9.10~v0.9.15) 에서 페이즈 02 / 05 / 08 / 11 / 13 으로 multiverse 가 확장되며 본 하네스의 *유일한 차별 강점* 으로 부각됐다. *Theseus* 는 브랜딩 + 신뢰 담보 메타포 (도자기 장인의 깨고 다시 빚기) 로 남는다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (1 entry) + [`theseus-harness`](skills/theseus-harness/SKILL.md) (1 source) 의 2 SKILL.md.
 
-## 현재 성숙도 — 정직 박스 (v0.9.15)
+## 현재 성숙도 — 정직 박스 (v0.9.16)
 
-> **v0.9.15 = budget-saturation + score-rubric-objectivity 마일스톤.** 47 컨벤션 + 18 에이전트 + 15 페이즈 + 2 도메인 어댑터. simulation-bench 외부 적용 4 회차 (002 / 003 / v01_cold / v091_cold01 / v0913_cold01 / v0914_cold01) 에서 *94 plateau* 도달 — *진짜 0.999 + content depth* 로 천정 깨기 시도 중.
+> **v0.9.16 = 발현 검증 6 메타 컨벤션 마일스톤.** 47 컨벤션 + 18 에이전트 + 15 페이즈 + 2 도메인 어댑터. v0915-cold01 외부 채점 93/100 (자체 추정과 일치 — score-rubric-objectivity 발현 PASS) 진단 후 *준비-vs-동작 갭* 정정 sprint. simulation-bench 외부 적용 6 회차 (002 / 003 / v01_cold / v091_cold01 / v0913_cold01 / v0914_cold01 / v0915-cold01) 모두 *94 plateau* 도달 — v0.9.16 적용 cold session 으로 돌파 검증 대기.
 >
 > **진척 지표 (2026-05-04)**:
 > - ✅ 자기 평가 — self_lint 모든 룰 PASS / pytest 회귀 0 / self_score 1.0 / 임계 0.99999 통과
@@ -17,7 +17,8 @@
 > - ✅ **simulation-bench 외부 적용 6 회차** — 18.5 ~ 44 분 wall clock / intervention 0 / sanity 4 PASS
 > - ✅ **AIDE multiverse 풀 발현** — 페이즈 06 폭 3-6 + 깊이 1-2 + 페이즈 02/05/08/11/13 multi-phase 확장 + sequenceDiagram per-universe + tournament blind rerun + ensemble synthesis default
 > - ✅ **94 plateau 측정** — v01_cold (v0.9.9) / v091_cold01 (v0.9.12) / v0914_cold01 (v0.9.14) 자체 추정 모두 94 — *content depth layer* 만이 천정 깬다
-> - ⏸ **94 → 97+ 천정 돌파 검증** — v0.9.15 budget saturation + objective rubric 적용 cold session 미실행. 본 적용 후 maturity 0.7~0.8.
+> - ✅ **self_lint 68/68 PASS** — 본 저장소 최초 완전 통과 (lint_score = 1.0, all_ok = True). BOOTSTRAP "내가 강제하는 모든 것을 내가 100% 통과한다" 약속 달성.
+> - ⏸ **94 → 97+ 천정 돌파 검증** — v0.9.16 발현 검증 6 메타 (convention-traceability / sprint-score-delta-tracking / evidence-driven-sprint-planning / cross-universe-lesson-distillation / regression-derived-lint-rule-autogen / polyglot-code-quality) 적용 cold session 미실행. 본 적용 후 maturity 0.7~0.8.
 >
 > v1.0 = 사용자 외 maintainer 가 prod 채택 + 외부 적용 ≥ 5 건 + 94 plateau 돌파 검증.
 >
@@ -26,7 +27,7 @@
 > ⓐ `self_lint pass`, `sample_score 1.0`, `임계 0.99999 통과` 같은 수치는 **본 저장소의 마크다운·코드 인덱스 정합성·예시 입력 채점 통과** 를 의미합니다 — *LLM 에이전트가 프롬프트를 행동으로 따르는지* 의 외부 실증과 다릅니다.
 > ⓑ self_lint 는 *마크다운 텍스트 패턴* 만 검사합니다. "phase 본문에 키워드가 박혀 있는가" 는 검증되지만, "implementer 에이전트가 *실제로* lesson_pack 을 받아 forbidden 전략을 회피하는가" 는 검증 불가 — bench 외부 채점 회차로 대신 검증.
 > ⓒ **임계 0.999 / 자기 임계 0.99999 는 SLO 가용성이 아닙니다** — 6 차원 rubric 가중평균 + DIP 단독 hard cap 0.6 + 5 hard cap 의 *명명 규칙*. 외부 사용자에게 "99.999% 신뢰 가능" 으로 오해되지 않도록 본 README 에서 명시.
-> ⓓ **v0.9.15 의 시급 목표**: 94 plateau 돌파 — budget 80% 사용 (5-8 sprint) × evidence 1:1 self-rating × content depth lesson 으로 진짜 0.999 도달. 사용자 외 prod 채택은 그 다음.
+> ⓓ **v0.9.16 의 시급 목표**: 94 plateau 돌파 — v0.9.15 의 budget saturation × evidence 1:1 self-rating + v0.9.16 의 발현 검증 6 메타 (applied_conventions traceability × sprint score delta honesty × evidence-driven sprint planning × cross-universe lesson distillation × regression-derived lint autogen × polyglot code quality) 합성으로 진짜 0.999 도달. 사용자 외 prod 채택은 그 다음.
 > ⓔ **자기 평가 통과 수치는 OS 무관** — Linux / Mac / Windows 모두에서 `bash scripts/self-check.sh` 또는 `scripts\self-check.bat` 으로 같은 결과 재현. cp949 잠재 버그는 v0.2.2 self_lint C35 가드로 해소.
 > ⓕ **외부 차용 메서돌로지 — 거울 원칙**: 외부 스킬은 *사각지대 탐지용 거울* 로만 사용. *합성 source 가 아님*. 차용은 본 하네스 *컨셉 보존* 우선, *직교 차원 입증 시* 만 *기존 한 단락 증강*. 자세한 메서돌로지는 [`PHILOSOPHY.md`](PHILOSOPHY.md) "외부 패턴 차용 메서돌로지" 절.
 > ⓖ **Layer 3 결과물 허들 supremacy** (v0.9.14): 메모리 룰 / 컨벤션 / 사용자 사전 위임 *어느 것도 결과물 허들 override 불가*. v0913_cold01 의 design-only 회피 차단 + 003 / v091_cold01 의 코드 + 실행 결과 generalize.
@@ -41,6 +42,7 @@
 - **v0.9.13** — `ensemble-synthesis-default` (G4+ tournament 결과 algorithmic union default) + `deep-semantic-intent` + `domain-research-stacking`
 - **v0.9.14** — `deliverable-hurdle-supremacy` (Layer 3 결과물 허들이 메모리/컨벤션 override)
 - **v0.9.15** — `budget-saturation-loop` + `score-rubric-objectivity`
+- **v0.9.16** — 발현 검증 6 메타 컨벤션 (`convention-traceability` + `sprint-score-delta-tracking` + `evidence-driven-sprint-planning` + `cross-universe-lesson-distillation` + `regression-derived-lint-rule-autogen` + `polyglot-code-quality`) + `anti-patterns.md` fragmentation 분리
 
 **닥터 스트레인지가 14,000,605 미래를 본 이유와 같다 — 결정 이전에 다 가본다.** LLM 비결정성을 *분기 동력* 으로 전환하는 것이 본 하네스의 유일한 차별 강점.
 
@@ -95,7 +97,7 @@
 
 **Layer 3 결과물 허들 supremacy** (v0.9.14): standalone 컨텍스트 (= bench / 단독 진행) 시 본 하네스가 *코드 + 실행 + 측정값* 까지 의무. design-only 종료는 사용자 명시 ack (Q-D-DELIVERABLE-MODE = 3) 만 예외.
 
-## 수록 스킬 (2 개, v0.9.15)
+## 수록 스킬 (2 개, v0.9.16)
 
 | 스킬 | 역할 | 가이드 |
 | ---- | ---- | ----- |
@@ -177,7 +179,7 @@ scripts\self-check.bat         # windows
 - [`examples/`](examples/) — 3 시나리오 (evolving-spec / frozen-spec / fix-bug) — 페이즈 04 의 사전 위임 답 실제 입력 예시.
 - [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미, AIDE 트리 격상, 도자기 장인 비유, Ralph 루프·OhMy 시리즈·우로보로스·Karpathy LLM Wiki·Da Capo 합성 근거, SOLID/TDD/BDD/DDD/Hexagonal 매핑.
 - [`BOOTSTRAP.md`](BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차.
-- [`CHANGELOG.md`](CHANGELOG.md) — v0.9.0 → v0.9.15 의미 있는 변경 기록.
+- [`CHANGELOG.md`](CHANGELOG.md) — v0.9.0 → v0.9.16 의미 있는 변경 기록.
 - [`INSTALL.md`](INSTALL.md) — 설치·갱신·트러블슈팅.
 - [`docs/skills/`](docs/skills/) — 스킬별 가이드 (역할, 입출력, 단독 호출 시점, 자주 묻는 질문).
 - [`skills/theseus-harness/conventions/`](skills/theseus-harness/conventions/) — 47 컨벤션 모듈 + 2 도메인 어댑터.

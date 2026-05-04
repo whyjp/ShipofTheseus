@@ -6,7 +6,7 @@
 
 ## 어떤 스킬이 설치되는가
 
-본 저장소는 v0.9.15 기준 2 스킬을 묶음으로 배포한다 — 1 entry + 1 source of truth:
+본 저장소는 v0.9.16 기준 2 스킬을 묶음으로 배포한다 — 1 entry + 1 source of truth:
 
 ```
 skills/

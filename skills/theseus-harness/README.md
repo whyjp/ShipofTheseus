@@ -2,7 +2,7 @@
 
 ## 한 줄 요약
 
-**v0.9.15 — AIDE 멀티버스 코딩 하네스의 콘텐츠 source of truth.** 15 페이즈 + 47 컨벤션 + 18 에이전트 + 2 도메인 어댑터 + 채점기 + 템플릿. 진짜 차별 동력은 **AIDE 트리 (Plan-Tree × Multi-Phase × Tournament × Ensemble Synthesis × Blind Rerun)**. 메인 진입점은 [`SKILL.md`](SKILL.md) (LLM 이 읽음). 사용자 entry 는 [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) — 본 스킬 동반 필수.
+**v0.9.16 — AIDE 멀티버스 코딩 하네스의 콘텐츠 source of truth.** 15 페이즈 + 47 컨벤션 + 18 에이전트 + 2 도메인 어댑터 + 채점기 + 템플릿 + 발현 검증 6 메타 (v0.9.16) + Layer 3 결과물 허들 supremacy. 진짜 차별 동력은 **AIDE 트리 (Plan-Tree × Multi-Phase × Tournament × Ensemble Synthesis × Blind Rerun)**. 메인 진입점은 [`SKILL.md`](SKILL.md) (LLM 이 읽음). 사용자 entry 는 [`../theseus-orchestrator/SKILL.md`](../theseus-orchestrator/SKILL.md) — 본 스킬 동반 필수.
 
 ## 빠른 참조
 
@@ -71,7 +71,7 @@ h- [`scoring/tournament.py`](scoring/tournament.py) — universe 점수 산출 +
 i- [`scoring/grade_assess.py`](scoring/grade_assess.py) — 호출 직후 그레이드 자동 추정 (Q-G1 객관식 사용자 확정).
 j- [`templates/`](templates/) — intent / plan / sprint-report / naming / universe-meta 템플릿 + bun 기반 webview 스캐폴드.
 
-## 주요 원칙 (v0.9.15)
+## 주요 원칙 (v0.9.16)
 
 a- **AIDE 멀티버스가 진짜 차별 동력** — 페이즈 06 plan-tree + v0.9.10 multi-phase 확장 (5+ 페이즈) + ensemble synthesis default + tournament blind rerun. 닥터 스트레인지처럼 *결정 이전에 다 가본다*.
 b- **의존성 역전(DIP) 이 SOLID 중 최우선** — 위반은 단독 hard fail (cap 0.6).
@@ -133,5 +133,5 @@ LLM 이 [`SKILL.md`](SKILL.md) 를 읽고 페이즈 00 부터 시작한다.
 a- [`../../PHILOSOPHY.md`](../../PHILOSOPHY.md) — AIDE 멀티버스 (진짜 차별 동력), 도자기 장인 비유, 합성 패턴 6 (Ralph/OhMy/우로보로스/AIDE/Wiki/Da Capo), SOLID/TDD/BDD/DDD/Hexagonal 매핑.
 b- [`../../INSTALL.md`](../../INSTALL.md) — git clone 기반 설치, 플러그인 매니페스트, 트러블슈팅.
 c- [`../../BOOTSTRAP.md`](../../BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차 (60+ self_lint 룰).
-d- [`../../CHANGELOG.md`](../../CHANGELOG.md) — v0.9.0 → v0.9.15 의미 있는 변경.
+d- [`../../CHANGELOG.md`](../../CHANGELOG.md) — v0.9.0 → v0.9.16 의미 있는 변경.
 e- [`../../docs/skills/theseus-harness.md`](../../docs/skills/theseus-harness.md) — 사람용 가이드 (역할, 입출력, FAQ).

@@ -10,7 +10,7 @@
 | [`../INSTALL.md`](../INSTALL.md) | 설치·갱신·트러블슈팅 | 10 분 |
 | [`../PHILOSOPHY.md`](../PHILOSOPHY.md) | 신뢰 담보 의미, AIDE 멀티버스 — 진짜 차별 동력, 도자기 장인 비유, 합성 패턴 6 (Ralph/OhMy/우로보로스/AIDE/Wiki/Da Capo) | 30 분 |
 | [`../BOOTSTRAP.md`](../BOOTSTRAP.md) | 본 하네스로 본 저장소를 평가하는 부트스트래핑 절차 | 20 분 |
-| [`../CHANGELOG.md`](../CHANGELOG.md) | v0.9.0 → v0.9.15 의미 있는 변경 기록 | 10 분 |
+| [`../CHANGELOG.md`](../CHANGELOG.md) | v0.9.0 → v0.9.16 의미 있는 변경 기록 | 10 분 |
 | [`skills/`](skills/) | **스킬별 가이드 — 역할, 입출력, FAQ** | 각 5–10 분 |
 | [`../skills/theseus-harness/`](../skills/theseus-harness/) | 깊은 콘텐츠 (47 컨벤션 + 15 페이즈 + 18 에이전트 + 2 도메인 어댑터 + 채점기) | 본격 |
 

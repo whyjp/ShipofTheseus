@@ -45,7 +45,7 @@
 
 ## 자체 lint — 객관 측정 도구
 
-[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **60+ 룰** 로 본 저장소를 검사 (회차마다 새 룰 추가, 부트스트래핑 회귀 누적). v0.9.5 까지 62 룰 + v0.9.6~v0.9.15 sprint 회차마다 신규 컨벤션별 룰 추가 (C-NFR / C-PMF / C-SRL / C-PCR / C-MMC / C-AT-SEQ / C-AT-MP / C-TBR / C-IFP / C-ABV / C-MIF / C-BAF / C-DSI / C-DRS / C-MQG / C-ESD / C-DHS / C-BSL / C-SRO 등):
+[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **68 룰** 로 본 저장소를 검사 (v0.9.16 시점, 회차마다 새 룰 추가, 부트스트래핑 회귀 누적). v0.9.5 까지 62 룰 + v0.9.6~v0.9.16 sprint 회차마다 신규 컨벤션별 룰 추가 (C-NFR / C-PMF / C-SRL / C-PCR / C-MMC / C-AT-SEQ / C-AT-MP / C-TBR / C-IFP / C-ABV / C-MIF / C-BAF / C-DSI / C-DRS / C-MQG / C-ESD / C-DHS / C-BSL / C-SRO / C-CT / C-SDT / C-EDP / C-CULD / C-RDLR / C-PCQ):
 
 | # | 체크 |
 | - | --- |
@@ -109,6 +109,7 @@
 | C-DSI / C-DRS / C-MQG / C-ESD | sprint-07 (v0.9.13) — content depth layer (deep semantic + domain stacking + mindmap gardening + ensemble synthesis) |
 | C-DHS | sprint-08 (v0.9.14) — Layer 3 결과물 허들 supremacy |
 | C-BSL / C-SRO | sprint-09 (v0.9.15) — budget saturation loop + score rubric objectivity |
+| C-CT / C-SDT / C-EDP / C-CULD / C-RDLR / C-PCQ | sprint-10 (v0.9.16) — 발현 검증 6 메타 (convention-traceability / sprint-score-delta / evidence-driven-sprint / cross-universe-lesson / regression-derived-lint / polyglot-code-quality) |
 
 실행:
 ```bash
@@ -140,7 +141,7 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ⓑ `pytest_score` — test_score.py 의 pytest 통과율 (모두 PASS = 1.0). `compute_self_score` 가 test_self_lint 를 제외해 self-recursion 차단.
 ⓒ `sample_score` — `templates/sample-inputs.json` 채점 (현재 1.0)
 
-회차 결과 (v0.9.15): **self_score = 1.000000, 임계 0.99999 통과**. 자세한 회차 보고는 [`.ShipofTheseus/theseus-self/quality/09-quality-gate.md`](.ShipofTheseus/theseus-self/quality/09-quality-gate.md).
+회차 결과 (v0.9.16): **self_score = 1.000000, 임계 0.99999 통과, 68 룰 모두 PASS, all_ok = True** — 본 저장소 최초 완전 통과. 자세한 회차 보고는 [`.ShipofTheseus/theseus-self/quality/09-quality-gate.md`](.ShipofTheseus/theseus-self/quality/09-quality-gate.md).
 
 ## 회귀 개선 사이클 (본 하네스로 본 하네스 회귀)
 
@@ -151,7 +152,7 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ③ 페이즈 08 (보완 구현) — 실제 phase/agent/convention 본문 갱신
 ④ self_lint 재실행 → 0 fail 확인
 ⑤ `--score` 모드로 임계 0.99999 통과 확인
-⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (v0.9.15 까지 60+ 룰 누적, 신규 컨벤션마다 C-XYZ 추가) → ② 로 회귀
+⑥ 실패 영역 발견 시 새 체크를 self_lint 에 추가 (v0.9.16 시점 68 룰 누적, 신규 컨벤션마다 C-XYZ 추가) → ② 로 회귀
 ⑦ 회차 산출물을 `.ShipofTheseus/theseus-self/sprints/NN/` 로 누적 (다음 회차의 reference)
 
 회차 간 비교는 `quality-gate.md` 의 `self_score` 시계열로 — 본 하네스가 매 릴리스 *더 단단해지는지* 객관 측정.

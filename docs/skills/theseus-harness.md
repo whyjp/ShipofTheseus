@@ -116,4 +116,4 @@ A. v0.9.10 `aide-tree-multi-phase` + `aide-tree-symmetry` + `tournament-blind-re
 - [`../../skills/theseus-harness/README.md`](../../skills/theseus-harness/README.md) — 빠른 참조 (사람이 읽음).
 - [`../../PHILOSOPHY.md`](../../PHILOSOPHY.md) — AIDE 멀티버스 격상 + 도자기 장인 + 합성 패턴 6 + SOLID/TDD/DDD 매핑.
 - [`../../BOOTSTRAP.md`](../../BOOTSTRAP.md) — 본 하네스로 본 저장소를 평가하는 절차 (60+ self_lint 룰).
-- [`../../CHANGELOG.md`](../../CHANGELOG.md) — v0.9.0 → v0.9.15 의미 있는 변경.
+- [`../../CHANGELOG.md`](../../CHANGELOG.md) — v0.9.0 → v0.9.16 의미 있는 변경.
