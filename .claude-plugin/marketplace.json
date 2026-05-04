@@ -6,8 +6,8 @@
     "url": "https://github.com/whyjp/shipoftheseus"
   },
   "metadata": {
-    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 14 페이즈 + 21 컨벤션 + 13 에이전트 + 채점기를 9 스킬로 파편화.",
-    "version": "0.9.0"
+    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 34 컨벤션 + 18 에이전트 + multiverse 경합 + sprint-regression-loop + bench cold validation 입증.",
+    "version": "0.9.12"
   },
   "plugins": [
     {

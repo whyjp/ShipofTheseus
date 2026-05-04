@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.5",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 의도 추출부터 무한 스프린트 루프, 회귀 바이섹트, bun 기반 인터랙티브 웹뷰 자동 생성, 핸드오프까지. 9 스킬(orchestrator + 7 분해 + flagship harness)로 파편화.",
+  "version": "0.9.12",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.12: 34 컨벤션 (NFR derivation + premortem + sprint-loop + parallel-cold + mindmap-centrality + AIDE-tree symmetry/multi-phase + tournament-blind-rerun + interface-first parallel impl + analytical-bound cross-validation + multiverse-impl-fan-out + budget-aware-fallback). simulation-bench cold validation 입증.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
