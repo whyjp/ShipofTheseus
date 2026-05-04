@@ -6,7 +6,7 @@
 
 **한 요구를 *N 우주의 트리* 로 동시 탐색하고 *토너먼트* 로 우승 우주를 선별해, 처음 의도한 타이틀로 끝까지 부를 자격을 만드는 재귀 멀티 에이전트 코딩 하네스.** 본 프로젝트의 *진짜 컨셉* 은 **AIDE 트리 (Plan Tree × N Universe × Tournament × Ensemble Synthesis × Blind Rerun × Multi-Phase 확장)** 다 — 페이즈 06 plan-tree 가 본체, 후반 회차 (v0.9.10~v0.9.15) 에서 페이즈 02 / 05 / 08 / 11 / 13 으로 multiverse 가 확장되며 본 하네스의 *유일한 차별 강점* 으로 부각됐다. *Theseus* 는 브랜딩 + 신뢰 담보 메타포 (도자기 장인의 깨고 다시 빚기) 로 남는다. 진입점은 [`theseus-orchestrator`](skills/theseus-orchestrator/SKILL.md) (1 entry) + [`theseus-harness`](skills/theseus-harness/SKILL.md) (1 source) 의 2 SKILL.md.
 
-## 현재 성숙도 — 정직 박스 (v0.9.16)
+## 현재 성숙도 — 정직 박스 (v0.9.17)
 
 > **v0.9.16 = 발현 검증 6 메타 컨벤션 마일스톤.** 47 컨벤션 + 18 에이전트 + 15 페이즈 + 2 도메인 어댑터. v0915-cold01 외부 채점 93/100 (자체 추정과 일치 — score-rubric-objectivity 발현 PASS) 진단 후 *준비-vs-동작 갭* 정정 sprint. simulation-bench 외부 적용 6 회차 (002 / 003 / v01_cold / v091_cold01 / v0913_cold01 / v0914_cold01 / v0915-cold01) 모두 *94 plateau* 도달 — v0.9.16 적용 cold session 으로 돌파 검증 대기.
 >
@@ -43,6 +43,7 @@
 - **v0.9.14** — `deliverable-hurdle-supremacy` (Layer 3 결과물 허들이 메모리/컨벤션 override)
 - **v0.9.15** — `budget-saturation-loop` + `score-rubric-objectivity`
 - **v0.9.16** — 발현 검증 6 메타 컨벤션 (`convention-traceability` + `sprint-score-delta-tracking` + `evidence-driven-sprint-planning` + `cross-universe-lesson-distillation` + `regression-derived-lint-rule-autogen` + `polyglot-code-quality`) + `anti-patterns.md` fragmentation 분리
+- **v0.9.17** — `grade_assess.py` v2: 키워드 매칭 폐기 + 페이즈 01 다중 신호 (18+ 차원) 기반 + **default = G4** (본 하네스 호출 자체가 G4+ 의도 신호). G3 하향은 12 차원 단순 증명 + 사용자 ack 의무. G5 상향은 명시 ack 만.
 
 **닥터 스트레인지가 14,000,605 미래를 본 이유와 같다 — 결정 이전에 다 가본다.** LLM 비결정성을 *분기 동력* 으로 전환하는 것이 본 하네스의 유일한 차별 강점.
 

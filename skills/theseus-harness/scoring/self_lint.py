@@ -1550,6 +1550,43 @@ def check_regression_derived_lint_rule_autogen(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_grade_assess_v2(skill_root: Path) -> list[str]:
+    """C-GAv2 — grade_assess.py 의 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)."""
+    issues: list[str] = []
+    ga = (skill_root / "scoring" / "grade_assess.py").read_text(encoding="utf-8")
+    grades_md = (skill_root / "conventions" / "grades.md").read_text(encoding="utf-8")
+    p1 = (skill_root / "phases" / "01-intent.md").read_text(encoding="utf-8")
+    p4 = (skill_root / "phases" / "04-clarify.md").read_text(encoding="utf-8")
+
+    # 1. grade_assess.py 에서 키워드 매칭 폐기 확인
+    deprecated_kw = ["TRIGGERS_G5", "TRIGGERS_G4", "TRIGGERS_G2", "TRIGGERS_G1"]
+    for kw in deprecated_kw:
+        if kw in ga:
+            issues.append(f"grade_assess.py: 폐기 키워드 set '{kw}' 잔존 (v0.9.17 키워드 매칭 폐기)")
+
+    # 2. grade_assess.py 가 다중 신호 dataclass + default G4 보유
+    required_ga = ["GradeSignals", "ESCALATION_TRIGGERS", "_is_proven_simple", "primary_grade", "default_was"]
+    for kw in required_ga:
+        if kw not in ga:
+            issues.append(f"grade_assess.py: '{kw}' 누락 (v0.9.17 다중 신호 알고리즘)")
+
+    # 3. grades.md 가 default G4 + 18+ 신호 카탈로그 + 키워드 매칭 폐기 명시
+    required_grades = ["default = G4", "키워드 매칭 폐기", "GradeSignals", "escalation triggers", "단순함 증명"]
+    for kw in required_grades:
+        if kw not in grades_md:
+            issues.append(f"grades.md: '{kw}' 키워드 누락 (v0.9.17)")
+
+    # 4. phase 01 §j grade signals 산출 단계
+    if "grade-signals.json" not in p1 or "mindmap-signals.json" not in p1:
+        issues.append("phases/01-intent.md: §j grade signals 산출물 (intent/01-grade-signals.json / intent/01-mindmap-signals.json) 누락")
+
+    # 5. phase 04 Q-G1 의 default G4 명시
+    if "default = G4" not in p4 and "default G4" not in p4:
+        issues.append("phases/04-clarify.md: Q-G1 본문에 'default = G4' 명시 누락")
+
+    return issues
+
+
 def check_polyglot_code_quality(skill_root: Path) -> list[str]:
     """C-PCQ — polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)."""
     issues: list[str] = []
@@ -1645,6 +1682,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-CULD", "cross-universe-lesson-distillation.md + plan-tree/ensemble cross-ref (v0.9.16 sprint-10 #4)", check_cross_universe_lesson_distillation),
     ("C-RDLR", "regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)", check_regression_derived_lint_rule_autogen),
     ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
+    ("C-GAv2", "grade_assess v2 — 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)", check_grade_assess_v2),
 ]
 
 

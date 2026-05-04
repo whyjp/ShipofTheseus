@@ -6,8 +6,8 @@
     "url": "https://github.com/whyjp/shipoftheseus"
   },
   "metadata": {
-    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 47 컨벤션 + 2 도메인 어댑터 + 발현 검증 6 메타 컨벤션 (convention-traceability / sprint-score-delta / evidence-driven-sprint / cross-universe-lesson / regression-derived-lint / polyglot-code-quality) + 18 에이전트 + multiverse 경합 + ensemble synthesis default + Layer 3 결과물 허들 supremacy.",
-    "version": "0.9.16"
+    "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 15 페이즈 + 47 컨벤션 + 2 도메인 어댑터 + 18 에이전트 + AIDE multiverse + 발현 검증 6 메타 (v0.9.16) + Layer 3 결과물 허들 supremacy + v0.9.17 grade_assess v2 (키워드 매칭 폐기, 페이즈 01 다중 신호, default G4).",
+    "version": "0.9.17"
   },
   "plugins": [
     {

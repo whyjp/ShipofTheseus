@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.16
-description: 재귀 멀티 에이전트 코딩 하네스 — 15 페이즈 / 47 컨벤션 / 18 에이전트. AIDE 멀티버스 + 발현 검증 6 메타 (v0.9.16) + Layer 3 결과물 허들 supremacy. anti-pattern 통합 카탈로그 보유.
+version: 0.9.17
+description: 재귀 멀티 에이전트 코딩 하네스 — 15 페이즈 / 47 컨벤션 / 18 에이전트. AIDE 멀티버스 + 발현 검증 6 메타 + Layer 3 결과물 허들 + grade_assess v2 (페이즈 01 다중 신호, default G4, v0.9.17).
 ---
 
 # 테세우스 하네스
