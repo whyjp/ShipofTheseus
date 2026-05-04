@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.14",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.14: 39 컨벤션 + 2 도메인 어댑터 + Layer 3 결과물 허들 supremacy (실행 가능 제품 + 코드 + 측정값 의무, 메모리/컨벤션 override 불가). v0913_cold01 design-only 회피 차단.",
+  "version": "0.9.15",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.15: 41 컨벤션 + 2 도메인 어댑터 + budget-saturation-loop (default 임계 0.999, budget 80% 사용 강제) + score-rubric-objectivity (strict checklist self-rating). v0914_cold01 baseline 외부 simulation-bench 첫 배포 동시 진행.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
