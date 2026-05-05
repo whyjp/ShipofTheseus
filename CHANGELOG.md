@@ -1,6 +1,113 @@
 # CHANGELOG
 
-본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
+본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
+
+## v0.9.25 — 2026-05-06 (sprint-20 — 정보 아키텍처 재설계 + 도메인 어댑터 제거)
+
+### 마일스톤
+
+**`theseus-harness-slim-proposal.md` 수렴.** SKILL.md 비대화 (32280 chars / 88 컨벤션 카탈로그 누적) 를 *구조적 분리* (압축 X) 로 영구 정리. lazy-load 3 분류 (always-load / phase-scoped / router-matched).
+
+### 변경 — 신규 산출물
+
+- **`HARD-CORE.md`** (신규) — always-load supremacy 본문. ≤ 4000 chars (C-HC1 lint 부풀음 영구 차단). HR1 (첫 동작 4 금지) + HR8 (G1~G5 의무 산출물) + HR9.a~c 본문 의무 + Layer 3 H1~H5 + 페이즈 04 외 인터럽트 0 + frontmatter 핑거프린트 체인.
+- **`conventions/INDEX.md`** (신규) — 88 컨벤션 router 단일 표 (id / cat / phases / grades / trigger). sprint/version 컬럼 부재 — history 는 본 CHANGELOG 만. C-IDX-1 lint 가 conventions/*.md ↔ INDEX row 1:1 매칭 검증.
+- **`SKILL.md`** 슬림화 — 32280 → ~6700 chars (-79%). 인덱스 + phase lookup + agent 18 링크 + 채점기 / 템플릿 / 산출물 트리 / 그레이드. *카탈로그 나열 안 함*.
+
+### 변경 — 도메인 어댑터 제거 (벤치 어뷰징 정리)
+
+- 삭제: `conventions/domain-adapters/mining-haulage.md`, `conventions/domain-adapters/des-modeling.md`, 디렉터리.
+- `conventions/domain-research-stacking.md` (aj) + `conventions/domain-failure-patterns.md` (ay) — 본문 도메인 종속 예시 제거. 프레임워크 보존 (사용자 per-project 어댑터).
+- 본 하네스에 *built-in 도메인 어댑터 0* — `feedback_harness_strengthening_methodology` 정합.
+
+### 변경 — self_lint
+
+- 신규 2 룰: **C-HC1**, **C-IDX-1**.
+- 기존 lint 갱신: C1 (INDEX.md 제외) / C2 (SKILL ∪ INDEX) / C-OD (HARD-CORE.md keyword) / C-IRPI (SKILL ∪ INDEX).
+- 96 → 98 checks. all_ok=True.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.24 → 0.9.25.
+
+### 알려진 결손 (sprint-21 후보)
+
+- **페이즈 fan-out**: intent 페이즈 (01→02→03 *문서화 / 콜드리뷰 / 판단* 분화) 와 달리 plan / impl / dacapo 는 페이즈 자체 미분화. 페이즈 06/08/dacapo 안에 *생성 / 콜드리뷰 / 판단* 분리 후 별도 페이즈 + 별도 에이전트.
+- **convention frontmatter backfill**: 88 컨벤션 router 메타 박힘 + C-IDX-2/3/4 활성화.
+- **컨벤션 본문 history narration 정리**: "sprint-NN 신규" / "v0.9.X" 류 본문 history 제거 (sprint-20 은 SKILL/INDEX 만).
+
+## v0.9.24 — 2026-05-06 (sprint-19 — Da Capo runtime polishing + plan/impl richness + 2nd refresh cycle)
+
+### 마일스톤
+**cold session 003 (v0.9.23) 90/100 plateau 정정.** sprint-15~18 enforcement 의 마지막 빈 구멍 5 동시 닫음.
+
+### 변경 — 6 컨벤션 신규 (ce~cj, HARD-RULE 9.gg~ll)
+
+- `dacapo-mandatory-rerun.md` (ce, 9.gg) — winner ≥ 임계 도달해도 무조건 ≥ 1 rerun. C-DCMR.
+- `plan-tournament-scoring-strict.md` (cf, 9.hh) — tournament 6-dim weighted, 1-5 cold-read coarse reject. C-PTSS.
+- `canonical-not-stub.md` (cg, 9.ii) — canonical ≥ winner 80% inline 또는 shared schema. C-CNS.
+- `impl-multiverse-strict.md` (ch, 9.jj) — phase 08 G4+ 7 조건 게이트. skip 자백 reject. C-IMS.
+- `intent-refresh-post-critique.md` (ci, 9.kk) — phase 05 → 06 사이 2nd intent refresh + 04/05 cascade. C-IRPC.
+- `cross-phase-shared-context.md` (cj, 9.ll) — shared 정보 단일 위치 + asof_fingerprint drift 차단. C-CPSC.
+
+### bump
+- plugin.json: 0.9.23 → 0.9.24. self_lint 90 → 96 checks.
+
+## v0.9.23 — 2026-05-05 (sprint-17+18 — orchestrator 슬림화 + intent-refresh + cap 측정-only + runtime enforcement 5)
+
+### 마일스톤
+**cold session 002 + 003 회귀 다발 정정.** orchestrator 287→121 lines (-58%) + 6 신규 컨벤션 (by~cd) + 9 신규 self_lint.
+
+### sprint-17 (orchestrator 구조 정정)
+
+- `intent-refresh-post-interview.md` (by) — phase 04 → 05 사이 의도 refresh 4 framing universe + 01-additional. C-IRPI.
+- orchestrator/SKILL.md 287→121 lines (HARD-RULE 9.a~aa prose 분리).
+- `dacapo-enforcement.md` (bm) — 시간 cap 측정 only. forward projection regex reject. min loop attempt rerun ≥ 1. C-DCL-NO-FORWARD-PROJECT/MIN-LOOP-ATTEMPT/CAP-MEASURED.
+- `diagrams.md` (c) + HARD-RULE 9.a — OR → AND. C-DIAG-AND-COVERAGE.
+
+### sprint-18 (runtime enforcement 5, 도메인 무관)
+
+- `readme-numbers-from-summary.md` (bz, 9.bb), `reproducibility-doublecheck.md` (ca, 9.cc), `magic-number-traceability.md` (cb, 9.dd), `dead-code-zero.md` (cc, 9.ee), `submission-portability.md` (cd, 9.ff). C-RNFS / C-RDC / C-MNT / C-DCZ / C-SPB.
+- 도메인 종속 룰 (transient-state-justification 등) 의도적 제외.
+
+### bump
+- plugin.json: 0.9.22 → 0.9.23. self_lint 81 → 90 checks.
+
+## v0.9.22 — 2026-05-05 (sprint-16 — 의사코드 → runtime guard 변환 + 7 차원 만점 push)
+
+### 마일스톤
+**cold session winner=0.892 + rerun=0 + fallback="" 회귀 정정.** 12 신규 컨벤션 (bm~bx) + HARD-RULE 9.p~aa.
+
+### Phase 1 enforcement layer (bm~br, 9.p~u)
+- `dacapo-enforcement.md` (bm), `dacapo-frontmatter-schema.md` (bn), `shadow-grader-zero-context.md` (bo), `dacapo-skip-sentinel.md` (bp), `dacapo-flow-trace.md` (bq), `phase-lineage-viewer.md` (br).
+
+### Phase 2 7 차원 만점 push (bs~bx, 9.v~aa)
+- `domain-model-completeness.md` (bs), `data-structure-invariants.md` (bt), `simulation-physical-invariants.md` (bu), `experimental-control-protocol.md` (bv), `results-decision-mapping.md` (bw), `idiomatic-code-quality.md` (bx).
+
+### bump
+- plugin.json: 0.9.21 → 0.9.22. self_lint 12 신규.
+
+## v0.9.21 — 2026-05-05 (sprint-15 — intra-phase Da Capo Loop 의사코드 hook)
+
+### 마일스톤
+**multiverse + sprint retry 통합** — phase 06 (plan) + phase 08 (impl) 안에 통합 의사코드 loop (Step A~G 다카포). cold session winner=0.853 (G4 임계 미달) 재경합 0 회 회귀 정정.
+
+### 변경 — 1 컨벤션 신규 (bl, HARD-RULE 9.o)
+- `intra-phase-dacapo-loop.md` (bl, 9.o) — Step A multiverse fan-out → B tournament → C shadow grade → D 4-conjunction AND threshold → E cap → F lesson + winner 갱신 → G anonymized prev winner + width-1 fresh → A 재진입. self_lint C-DCL-WIN-THRESHOLD/RERUN-LOG/ANON 3 신규.
+
+### bump
+- plugin.json: 0.9.20 → 0.9.21.
+
+## v0.9.20 — 2026-05-05 (sprint-14 — cold evaluator feedback 7 컨벤션, 94→97 plateau 돌파)
+
+### 마일스톤
+**cold session 자체 90 vs 외부 grader 97 의 7pt 갭 정정.** 7 컨벤션 신규 (be~bk) + HARD-RULE 9.h~n.
+
+### 변경 — 7 컨벤션 신규
+- `grader-in-sprint.md` (be, 9.h), `contested-decision-multiverse.md` (bf, 9.i), `directional-simplification.md` (bg, 9.j), `commentary-policy.md` (bh, 9.k), `measurement-contract.md` (bi, 9.l), `rubric-driven-doc-skeleton.md` (bj, 9.m), `rubric-targeted-quality-gates.md` (bk, 9.n).
+
+### bump
+- plugin.json: 0.9.19 → 0.9.20.
 
 ## v0.9.19 — 2026-05-05 (sprint-13 — 깊이 강화 + 발현 빈도 격상 4 컨벤션)
 

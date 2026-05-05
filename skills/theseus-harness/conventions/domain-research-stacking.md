@@ -2,73 +2,54 @@
 
 ## 한 줄 요약
 
-**페이즈 01 마인드맵의 *기능 axis 도메인 noun* (예: "광산", "트럭", "크러셔") 자동 추출 → 매칭되는 도메인 어댑터 (`conventions/domain-adapters/<domain>.md`) 가 *intent / NFR / architecture* layer 에 자동 stack.** 본 하네스의 *제너럴 골격* 위에 *도메인 전문성* layer 추가. 외부 URL visit 0 (어댑터는 plugin 에 bundled).
+**페이즈 01 마인드맵의 *기능 axis 도메인 noun* 자동 추출 → 매칭되는 *사용자 제공* 도메인 어댑터 (`conventions/domain-adapters/<domain>.md`, per-project 작성) 가 *intent / NFR / architecture* layer 에 자동 stack 하는 *프레임워크*.** 본 하네스의 *제너럴 골격* 위에 *도메인 전문성* layer 추가. **본 하네스에 built-in 어댑터 0** (sprint-19+, 벤치 어뷰징 회피). 외부 URL visit 0 (어댑터는 사용자 per-project 작성).
 
 ## 1. 결손 진단
 
-v0.9.6-12 의 모든 컨벤션 = *제너럴 구조 enforcement*. 도메인 *지식* 0 — mining 도메인 prompt 든 결제 시스템 prompt 든 같은 룰. 결과 :
-- mining bench 의 *도메인-specific behavior* (MTBF / grade variation / capex sequencing 패턴) 미반영
-- general harness가 mining-specific *insight* 미보유 → bench reviewer 의 도메인 점수 ceiling 97 plateau
+v0.9.6-12 의 모든 컨벤션 = *제너럴 구조 enforcement*. 도메인 *지식* 0 — 어떤 도메인 prompt 든 같은 룰. 결과 :
+- 도메인-specific behavior (정량/정성 임계, 산업 표준, 제약 패턴) 미반영
+- general harness 가 도메인 insight 미보유 → reviewer 의 도메인 점수 ceiling
+
+본 컨벤션 = 사용자가 per-project 로 도메인 어댑터를 *작성* 하는 프레임워크 (룰 + 디렉터리 layout + frontmatter schema). 본 하네스가 어댑터를 *제공* 하지 않는다 — 어댑터 본문은 사용자 책임 (벤치 어뷰징 회피).
 
 ## 2. 운영 룰
 
 ### Step 1 — 마인드맵 도메인 noun 추출
 
-페이즈 01 §9 마인드맵의 *기능 axis* 의 sub-node 들이 도메인 noun 후보 :
-
-```
-기능
-├── domain
-│   ├── truck            ← noun: "truck" + "haulage"
-│   ├── loader           ← noun: "loader"
-│   ├── crusher          ← noun: "crusher" + "ore"
-│   └── topology         ← noun: "graph" + "discrete-event"
-```
+페이즈 01 §9 마인드맵의 *기능 axis* 의 sub-node 들이 도메인 noun 후보 (도메인 무관 — 모든 prompt 의 명사들).
 
 도메인 noun 추출 룰 = v0.9.13 [`deep-semantic-intent.md`](deep-semantic-intent.md) 의 noun 추출과 *동일 source*.
 
-### Step 2 — 도메인 어댑터 매칭
+### Step 2 — 도메인 어댑터 매칭 (사용자 제공)
 
-`skills/theseus-harness/conventions/domain-adapters/` 디렉터리의 어댑터 파일들과 매칭 :
-
-```
-domain-adapters/
-├── des-modeling.md          (discrete-event simulation 일반)
-├── mining-haulage.md        (광산 haulage 시뮬)
-├── payment-systems.md       (결제 / idempotency / latency)
-├── search-ranking.md        (검색 / recall / precision)
-├── logistics.md             (logistics / routing / dispatch)
-└── ...
-```
+사용자가 per-project 로 작성한 `skills/theseus-harness/conventions/domain-adapters/` 디렉터리의 어댑터 파일들과 매칭. **본 하네스에 built-in 어댑터 0** — 디렉터리 부재 시 매칭 skip + "general-only" 명시 (모든 작업에 안전).
 
 각 어댑터 파일의 frontmatter `triggers: [...]` (도메인 noun 패턴 list) 와 매칭. 1+ 어댑터 매칭 시 stack.
 
 ### Step 3 — Stack into intent
 
-매칭된 어댑터의 본문이 페이즈 01 의 다음 절에 자동 stack :
+매칭된 어댑터의 본문이 페이즈 01 의 다음 절에 자동 stack (도메인 예시 *사용자 작성* 본문 그대로) :
 
-a- **NFR 후보 추가** — 어댑터의 §i-additions = §i NFR 추가 (예: mining-haulage 의 "MTBF / availability < 1.0 / grade variation").
-b- **Architecture 패턴** — 어댑터의 §architecture-patterns = 페이즈 06 plan 의 *도메인 검증* 입력 (예: "haulage = bidirectional cap-1 single-pool 정합" / "shift handover 모델 의무").
+a- **NFR 후보 추가** — 어댑터의 §i-additions = §i NFR 추가.
+b- **Architecture 패턴** — 어댑터의 §architecture-patterns = 페이즈 06 plan 의 *도메인 검증* 입력.
 c- **Known limitations** — 어댑터의 §limitations = 페이즈 01 §3 비목표 / 페이즈 09 limitation 절 입력.
 d- **Decision question 패턴** — 어댑터의 §decision-templates = 페이즈 04 NFR-V 질의 + 페이즈 14 handoff 의 권고 형식.
 
 ### Step 4 — Stack frontmatter
 
-페이즈 01 산출물의 frontmatter 에 stacked adapter 명시 :
+페이즈 01 산출물의 frontmatter 에 stacked adapter 명시 (사용자 제공 어댑터 매칭 시; built-in 0 이므로 default = stack 0) :
 
 ```yaml
 domain_adapters_stacked:
-  - name: "mining-haulage"
-    matched_nouns: ["truck", "loader", "crusher", "haulage"]
+  - name: "<user-supplied-domain>"
+    matched_nouns: [...]
     contributions:
-      - nfr_additions: ["MTBF", "availability_lt_1.0", "grade_variation"]
-      - architecture_patterns: ["bidirectional_cap1_single_pool", "shift_handover"]
-      - limitations: ["no_grade_modeling", "no_breakdown"]
-  - name: "des-modeling"
-    matched_nouns: ["simpy", "process", "resource", "event"]
-    contributions:
-      - nfr_additions: ["determinism", "byte_repro"]
-      - architecture_patterns: ["single_mutation_point", "fifo_queue"]
+      - nfr_additions: [...]
+      - architecture_patterns: [...]
+      - limitations: [...]
+# 또는 매칭 0 시:
+domain_adapters_stacked: []
+domain_stacking_mode: "general-only"   # built-in 0, 사용자 어댑터 매칭 0
 ```
 
 self_lint C-DRS (domain research stacking) = stack 0 인 경우 "general-only" 명시 검증 + 1+ 매칭 시 contributions 본문 적용 검증.
@@ -118,22 +99,20 @@ a- 어댑터 매칭 메커니즘 = 도메인 무관 룰 (regex + weight + thresh
 b- 어댑터 자체는 *각 도메인 별 1 파일* — 본 컨벤션 = 그 *룰* + *디렉터리 layout*.
 c- contributions 카테고리 (NFR / architecture / limitations / decision-templates) = 일반 schema.
 
-## 6. v0.9.13 reference 어댑터 (2 개 시드)
+## 6. built-in 어댑터 정책 (sprint-19+)
 
-플러그인 v0.9.13 에 다음 2 어댑터 시드 포함 :
-- `domain-adapters/des-modeling.md` — DES 일반 (SimPy / event-driven / determinism / byte-repro)
-- `domain-adapters/mining-haulage.md` — 광산 haulage (truck / loader / crusher / ramp / shift)
+**본 하네스에 built-in 어댑터 0** — 벤치 어뷰징 회피 (memory `feedback_harness_strengthening_methodology` 정합 — case-specific 패치 금지). v0.9.13 ~ v0.9.18 의 reference 어댑터 (des-modeling / mining-haulage 등) 는 sprint-19+ 에서 제거됨.
 
-후속 PR 에서 추가 어댑터 (payment / search / logistics 등) 작성 가능. 어댑터 추가 = 컨벤션 추가 0 (본 컨벤션 룰 그대로).
+사용자 per-project 어댑터 작성 가능 — 본 컨벤션의 frontmatter schema + 본문 절 layout 그대로 따름. 어댑터 추가 = 컨벤션 추가 0.
 
-## 7. 효과 추정 (mining bench 적용)
+## 7. 효과 추정 (사용자 어댑터 활성 시)
 
-reference 어댑터 활성 시 :
-- §i NFR 추가: MTBF / availability / grade-variation → +1pt (Conceptual)
-- Architecture pattern 검증: bidirectional cap-1 single-pool 정합 자동 → +1pt (Sim correctness)
-- Decision-template: 6 결정 질문의 *operational answer 형식* → +1pt (Results)
+사용자 작성 어댑터 매칭 시 :
+- §i NFR 추가 → Conceptual modelling 점수 +
+- Architecture pattern 검증 → Sim correctness / SOLID 점수 +
+- Decision-template → Results & interpretation 점수 +
 
-→ self-estimate 97 → 99-100 보강 (v0.9.13 [`deep-semantic-intent.md`](deep-semantic-intent.md) 와 합성).
+본 하네스 built-in 0 = 어댑터 contribution 0 (default). 사용자가 per-project 효과 책임.
 
 ## 8. 자기 검증
 
