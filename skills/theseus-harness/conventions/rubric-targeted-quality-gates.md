@@ -77,7 +77,7 @@ def convert_bullet_to_yes_no(bullet: Bullet) -> Callable:
 |---|:-:|---|
 | 정적 게이트 (1~9) | 9 | v0.9.18 까지 |
 | derived 게이트 (DG-*) | N | NFR-V 답안 종속 (v0.9.6) |
-| **rubric-targeted (RTG-*)** | R | rubric bullets 갯수 (v0.9.20 신규) |
+| **rubric-targeted (RTG-*)** | R | rubric bullets 갯수 |
 
 총 게이트 수 = 9 + N + R. rubric 미노출 작업 시 R = 0 (no-op).
 

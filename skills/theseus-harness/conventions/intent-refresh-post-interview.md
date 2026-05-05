@@ -1,4 +1,4 @@
-# Intent refresh post-interview — 사용자 질의 후 의도 4-멀티버스 재구성 (sprint-17)
+# Intent refresh post-interview — 사용자 질의 후 의도 4-멀티버스 재구성
 
 ## 한 줄 요약
 
