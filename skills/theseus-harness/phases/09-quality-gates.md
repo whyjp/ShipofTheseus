@@ -1,4 +1,23 @@
-# Phase 09 — 9종 품질 게이트 (v0.9.18)
+# Phase 09 — 9종 품질 게이트 (v0.9.18) + sprint-18 runtime enforcement 5
+
+## sprint-18 신규 — 90→100 cap 풀기 (runtime 검증 layer)
+
+bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *runtime 검증* — 두 layer 결합 시 enforcement 닫힘. **도메인 종속 룰 의도적 제외** — 본 하네스는 벤치 어뷰징 안 함.
+
+| 게이트 | 컨벤션 | 알고리즘 (요약) |
+|---|---|---|
+| **G-RNFS** ([`../conventions/readme-numbers-from-summary.md`](../conventions/readme-numbers-from-summary.md)) | bz · 9.bb | doc grep `\b[0-9]+\.[0-9]+\b` + measurement artifact key 매핑 → ±0.01% 일치 |
+| **G-RDC** ([`../conventions/reproducibility-doublecheck.md`](../conventions/reproducibility-doublecheck.md)) | ca · 9.cc | entry script 2회 실행 + sha256 byte-equal assert (PYTHONHASHSEED 회귀 차단) |
+| **G-MNT** ([`../conventions/magic-number-traceability.md`](../conventions/magic-number-traceability.md)) | cb · 9.dd | 모든 code literal → A_i 가정 또는 데이터 파일 출처 1:1 매핑 (programming constants 0/1/2/60/100/1024/3600 제외) |
+| **G-DCZ** ([`../conventions/dead-code-zero.md`](../conventions/dead-code-zero.md)) | cc · 9.ee | 언어별 dead-code analyzer 위반 0 (Python: `ruff check --select F,ARG,SIM` 또는 `vulture`. 다른 언어는 [`../conventions/polyglot-code-quality.md`](../conventions/polyglot-code-quality.md) au 표 참조) |
+| **G-SPB** ([`../conventions/submission-portability.md`](../conventions/submission-portability.md)) | cd · 9.ff | entry script grep — `Path(__file__).parent.parent` 등 path 하드코딩 detect → fail. `--data-dir` CLI + `DATA_DIR` env fallback 의무 |
+
+각 게이트 fail 시 :
+- `quality/09-quality-gate.md` frontmatter 에 `<gate_id>_pass: false` + `<gate_id>_violations: [...]` 박힘
+- 페이즈 09 종합 판정 = halt (수정 후 재진입 강제)
+- 페이즈 14 handoff 의 `lessons:` 에 자동 추가
+
+
 
 ## 한 줄 요약
 **테스트 실행 전에 아홉 게이트로 *코드 모양 + 실행 가능성 + 프로세스 정합 + 도메인 결손 부재* 를 감사한다.** 게이트 1~5 = 정적 모양, 게이트 6 = NFR 측정, **게이트 7 = env-satisfied + 실 부팅 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0), **게이트 8 (v0.9.18) = process flow / cycle coherence**, **게이트 9 (v0.9.18) = domain failure patterns 자기 검증**.

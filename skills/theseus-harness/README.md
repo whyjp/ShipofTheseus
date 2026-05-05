@@ -92,6 +92,12 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-75 [`conventions/experimental-control-protocol.md`](conventions/experimental-control-protocol.md) — IV/DV/CV/N/seed 5 항목 + N≥30 (Experimental design 만점) (v0.9.22 sprint-16)
   d-76 [`conventions/results-decision-mapping.md`](conventions/results-decision-mapping.md) — 결과 → 결정 1:1 매핑 (Results & interpretation 만점) (v0.9.22 sprint-16)
   d-77 [`conventions/idiomatic-code-quality.md`](conventions/idiomatic-code-quality.md) — naming/preferred/stdlib/readability 4 차원 (Code quality 만점) (v0.9.22 sprint-16)
+  d-78 [`conventions/intent-refresh-post-interview.md`](conventions/intent-refresh-post-interview.md) — 페이즈 04 → 05 사이 의도 refresh 4 framing universe (domain/constraint/risk/outcome) + 01-additional.md 의무 (sprint-17)
+  d-79 [`conventions/readme-numbers-from-summary.md`](conventions/readme-numbers-from-summary.md) — doc 숫자 vs measurement artifact ±0.01% 일치 (sprint-18, 범용)
+  d-80 [`conventions/reproducibility-doublecheck.md`](conventions/reproducibility-doublecheck.md) — entry script 2회 실행 후 출력 sha256 byte-equal (sprint-18, 범용)
+  d-81 [`conventions/magic-number-traceability.md`](conventions/magic-number-traceability.md) — 코드 매직넘버 → A_i 가정 또는 데이터 파일 출처 1:1 매핑 (sprint-18, 범용)
+  d-82 [`conventions/dead-code-zero.md`](conventions/dead-code-zero.md) — 언어별 dead-code analyzer (ruff F,ARG,SIM / vulture / etc) 위반 0 강제 (sprint-18, 범용)
+  d-83 [`conventions/submission-portability.md`](conventions/submission-portability.md) — entry script --data-dir CLI flag + DATA_DIR env var fallback 의무 (sprint-18, 범용)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).
