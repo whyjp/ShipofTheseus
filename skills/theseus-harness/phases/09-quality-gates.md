@@ -99,7 +99,7 @@ c- `halt` → 사용자 질의. 구조적 문제.
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
 
-## v0.9.20 sprint-14 — Rubric-Targeted Gates + 게이트 강화
+## Rubric-Targeted Gates + 게이트 강화
 
 ### Rubric-Targeted Gates (RTG-*) 신규 ([`../conventions/rubric-targeted-quality-gates.md`](../conventions/rubric-targeted-quality-gates.md), bk)
 

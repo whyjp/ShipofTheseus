@@ -46,7 +46,7 @@ if verification_fm.get("manual_only", False):
 ## 서브에이전트
 [`../agents/critic.md`](../agents/critic.md).
 
-## sprint-19 — phase 05 종료 직후 mandatory 2nd refresh cycle
+## phase 05 종료 직후 mandatory 2nd refresh cycle
 
 phase 05 critique + decisions 산출물 완성 직후, phase 06 plan 진입 *전* 에 [`../conventions/intent-refresh-post-critique.md`](../conventions/intent-refresh-post-critique.md) (ci, HARD-RULE 9.kk) 가 강제하는 6 신규 산출물 (사용자 인터랙션 0) :
 
@@ -84,7 +84,7 @@ c- 사용자 트레이드오프 1개 이상이 `05-decisions.md` 로 마무리.
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
 
-## v0.9.20 sprint-14 — Directional Simplification 표 의무
+## Directional Simplification 표 의무
 
 ### 본문 의무 표 ([`../conventions/directional-simplification.md`](../conventions/directional-simplification.md), bg)
 

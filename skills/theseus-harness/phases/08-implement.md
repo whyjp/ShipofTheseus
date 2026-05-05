@@ -43,9 +43,7 @@ Step F. lesson 도출 + winner 갱신
 Step G. Da Capo — anonymized prev winner + width-1 fresh universes 재 fan-out → Step A 재진입 (universe 변경 — 부분 재진입 금지)
 ```
 
-## v0.9.22 sprint-16 Da Capo enforcement gate
-
-phase 08 → 09 핸드오프 시점 의무 게이트 (HARD-RULE 9.p):
+## RULE 9.p):
 
 ```
 1- frontmatter dacapo_loop_executed: true

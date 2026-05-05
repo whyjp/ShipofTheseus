@@ -124,7 +124,7 @@ d- HARD-RULE 9.a 본문 의무 강화로 *plan 안에서* implementation guidanc
 
 sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, Truck dataclass, EventQueue heap), 의사코드 (`_dispatch_event(ev)` switch), 클래스 시그니처 (`SchedulerLoop.run(env)`, `EventQueue.push/pop`) 모두 박혀있었음. 본 sprint-05-e 룰은 그 패턴을 *명시 의무* 로 격상.
 
-## v0.9.19 sprint-13 갱신 — 폭 default 5/7/9 + per-module use-case + plan sprint loop
+## 폭 default 5/7/9 + per-module use-case + plan sprint loop
 
 ### 폭 default 격상 ([`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md), bc)
 
@@ -171,7 +171,7 @@ self_lint C-PMDF 가 검증.
 - 인터페이스 정의 ≥ 5 추가 (dataclass / pseudocode / 클래스 시그니처)
 - TODO DAG 의존 보강 (leaf TODO 별 테스트 TODO 추가)
 
-## v0.9.20 sprint-14 — Contested Decisions + Measurement Contract
+## Contested Decisions + Measurement Contract
 
 ### Contested Decisions 추출 + universe axis 회전 ([`../conventions/contested-decision-multiverse.md`](../conventions/contested-decision-multiverse.md), bf)
 
@@ -241,7 +241,7 @@ reconstruct_justified_ratio: <0.0-1.0>
 - **per-universe code spike** (각 universe meta.md, ≤ 50 LOC, contested decisions 매핑 시)
 - **plan frontmatter `audience` field** ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md) bh) — `internal-self | external-reviewer | mixed`
 
-## v0.9.21 sprint-15 — Da Capo Loop (의사코드)
+## Da Capo Loop (의사코드)
 
 [`../conventions/intra-phase-dacapo-loop.md`](../conventions/intra-phase-dacapo-loop.md) (bl) — multiverse fan-out + tournament + shadow grade + threshold AND + lesson + 처음으로 돌아감. **다카포 방식**.
 
@@ -349,7 +349,7 @@ self_lint 검증 (sprint-15 신규) :
 - **C-DCL-RERUN-LOG** — `rerun_count >= 1` 시 `dacapo-rerun-NN.md` 갯수 == rerun_count + 각 frontmatter `lesson_applied` 본문 ≥ 1 줄
 - **C-DCL-ANON** — `rerun >= 1` 시 universe 1 개가 anonymized previous winner (ad C-TBR-ANON 정합)
 
-## v0.9.22 sprint-16 — 의사코드 → runtime guard 변환
+## 의사코드 → runtime guard 변환
 
 v0.9.21 의사코드는 *agent 행동 가이드*. v0.9.22 가 그 위에 *orchestrator runtime guard* layer 박음. 두 layer 가 박혀야 enforcement 완성. 외부 cold session `2026-05-05__001_mine_g4` 의 winner=0.892 (G4 임계 0.999 미달) + rerun=0 + fallback="" 회귀 직접 정정.
 

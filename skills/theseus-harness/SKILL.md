@@ -1,6 +1,6 @@
 ---
 name: theseus-harness
-version: 0.9.26
+version: 0.9.27
 description: 재귀 멀티 에이전트 코딩 하네스 콘텐츠 source — 인덱스 전용. always-load (HARD-CORE) + phase-scoped (phases/) + router-matched lazy (conventions/INDEX.md). 88 컨벤션 / 15 페이즈 / 18 에이전트.
 ---
 
