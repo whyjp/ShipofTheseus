@@ -144,3 +144,27 @@ b- 차원별 머지 (예: universe-1 의 Resource topology + universe-2 의 Disp
 ### sprint-05-a 베이스라인 retro
 
 sprint-05-a 의 simulation-bench 케이스는 *페이즈 06 에서 머지 결정 후 페이즈 08 단일 universe 로 진행* (G3 폭 2, 머지 fast resolve). sprint-05-b 후 동일 케이스 = 폭 3 × 5 서브페이즈 독립 → 3 후보 코드 head-to-head → 차원별 머지 → 추정 점수 92 → 95-97 lift 가능.
+
+## v0.9.19 sprint-13 갱신 — universe별 use-case 분리 + impl sprint loop
+
+### universe-N 별 use-case / sequence 다이어그램 분리 ([`../conventions/per-module-diagram-fan-out.md`](../conventions/per-module-diagram-fan-out.md), bb)
+
+페이즈 06 plan-tree 폭 default G4=7 / G5=9 적용 시 universe-N 마다 *per-module use-case 다이어그램 분리* 의무. universe-N 의 코드 작성 시 :
+- 각 universe-N 의 모듈 수 ≥ 4 → universe-N 별 per-module use-case 다이어그램 ≥ universe 모듈 수
+- 단일 시퀀스 욱여넣음 anti-pattern ([`../conventions/diagrams.md`](../conventions/diagrams.md) §d)
+- 페이즈 시퀀스 (전체 흐름) 는 universe 무관 단일 보존
+
+산출물 :
+- `code/universe-N/` 디렉터리 + per-universe `impl/08-impl-log.universe-N.md`
+- 각 impl-log.universe-N.md 안에 universe-N 의 per-module use-case 다이어그램 분리 (모듈 ≥ 4 시)
+
+### impl sprint loop ([`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md), bd)
+
+페이즈 10 sprint trinity 의 *impl axis* (기존 sprint-regression-loop 룰 계승). axis 별 ≥ 2 sprint 강제. 첫 sprint = baseline measure, 두 번째 sprint 의 axis lesson 후보 :
+- 코드 / 테스트 / NFR 충족 보강 ([`../conventions/sprint-regression-loop.md`](../conventions/sprint-regression-loop.md) §3 dimension 매핑 적용)
+- universe-N 별 head-to-head 점수 비교 후 차원별 머지
+- DIP 위반 / cyclomatic / coverage 차원 보강
+
+### 폭 default 격상 sync ([`../conventions/multiverse-impl-fan-out.md`](../conventions/multiverse-impl-fan-out.md))
+
+universe 수 = 페이즈 06 plan-tree 폭 default 동기 (G3=5/G4=7/G5=9). budget tight 시 fallback 폭 + `fallback_reason`.

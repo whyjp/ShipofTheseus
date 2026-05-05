@@ -76,14 +76,16 @@ After all N universes complete:
 
 각 universe 의 sub-score 계산 → *실 차원 비교* 가능. plan 만 비교하던 v0.9.9 한계 보완.
 
-## 3. 그레이드별 활성
+## 3. 그레이드별 활성 (v0.9.19 sprint-13 갱신 — bc 와 sync)
 
-| Grade | universe 수 | impl fan-out | 비고 |
-|---|:-:|:-:|---|
-| G2 Simple | n/a | n/a | single 진행 |
-| G3 Standard | 3 (plan only) | optional (cost vs benefit) | code 차원 plan-only OK |
-| **G4 Complex** | 3-4 | **의무** | 모든 universe code |
-| G5 Critical | 5-6 + 깊이 2 | 의무 + 깊이 2 의 child universe 도 impl | 깊은 multiverse |
+| Grade | universe 수 (default) | universe 수 (옵션 default) | impl fan-out | 비고 |
+|---|:-:|:-:|:-:|---|
+| G2 Simple | 2 | n/a | optional | single 또는 2 후보 |
+| G3 Standard | **5** (← 3) | 10 (사용자 ack) | optional (cost vs benefit) | plan + impl 동기 |
+| **G4 Complex** | **7** (← 3-4) | 12 | **의무** | 모든 universe code, [`multiverse-width-default-bump.md`](multiverse-width-default-bump.md) bc 정합 |
+| G5 Critical | **9** (← 5-6) + 깊이 2 | 16 | 의무 + 깊이 2 의 child universe 도 impl | 깊은 multiverse |
+
+**v0.9.19 sprint-13 갱신** — [`plan-tree.md`](plan-tree.md) 폭 매트릭스 갱신 + 본 컨벤션 동기. budget tight 시 fallback 폭 ([`budget-aware-fallback.md`](budget-aware-fallback.md) `fallback_reason` 의무).
 
 ## 4. 안티 패턴
 

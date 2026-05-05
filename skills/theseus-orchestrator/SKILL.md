@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.18
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing (v0.9.18).
+version: 0.9.19
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing + v0.9.19 sprint-13 (mindmap A default / per-module diagram / multiverse width bump / sprint trinity 3 axis × ≥2).
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -61,6 +61,32 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >    - 우주마다 *시드별* 의미 차이 — universe-1 (domain-first) vs universe-2 (adapter-first) 의 06-plan.md 가 동일 ≠ 형식적 분기. 의미 분기 ≥ 20 diff 라인.
 >
 > 위 산출물 본문이 의무를 미달해도 frontmatter 만 박혀있으면 본 스킬은 "정상 완주" 로 종료하나, *설계 품질 부족* 시 외부 repo 의 구현이 모호해짐. verify 의 i/j/k 체크가 본 의무 검증.
+>
+> **HARD-RULE 9.d~g — sprint-13 / v0.9.19 신규** (산출물 *발현 빈도* 강제):
+>
+> d- **마인드맵 풍성도** ([`../theseus-harness/conventions/mindmap-richness-default.md`](../theseus-harness/conventions/mindmap-richness-default.md), ba):
+>    - frontmatter `mindmap_quality_grade ∈ [A, B]` 만 PASS (C/D fail).
+>    - A 등급 default (≥25 노드 / 4 axis × ≥4 sub-node / 3 axis sub-sub + 1 axis sub-sub-sub).
+>    - B 등급 fallback (≥15 노드 + Mermaid 형식) — *PASS with lesson* (sprint NN+1 의 mindmap 보강 trigger).
+>    - C/D 등급 — self_lint C-MRD-A-DEFAULT fail / 페이즈 02 진입 거부.
+>
+> e- **per-module 다이어그램** ([`../theseus-harness/conventions/per-module-diagram-fan-out.md`](../theseus-harness/conventions/per-module-diagram-fan-out.md), bb):
+>    - 페이즈 06 plan/06-plan.md 의 모듈 수 ≥ 4 OR consumer-producer 페어 ≥ 6 → per-module use-case / sequence 다이어그램 ≥ 모듈 수 의무.
+>    - 모듈 ≤ 3 → 단일 통합 OK.
+>    - self_lint C-PMDF 가 검증.
+>
+> f- **multiverse 폭 default** ([`../theseus-harness/conventions/multiverse-width-default-bump.md`](../theseus-harness/conventions/multiverse-width-default-bump.md), bc):
+>    - 페이즈 06 plan-tree 폭 default G2=2 / G3=5 / G4=7 / G5=9.
+>    - 사용자 명시 ack 시 옵션 default G3=10 / G4=12 / G5=16.
+>    - budget tight 시 fallback 폭 + `fallback_reason` frontmatter 의무 ([`../theseus-harness/conventions/budget-aware-fallback.md`](../theseus-harness/conventions/budget-aware-fallback.md)).
+>    - self_lint C-MWDB 가 검증.
+>
+> g- **sprint trinity** ([`../theseus-harness/conventions/intent-plan-impl-sprint-trinity.md`](../theseus-harness/conventions/intent-plan-impl-sprint-trinity.md), bd):
+>    - 페이즈 10 sprint axis count: intent ≥ 2 / plan ≥ 2 / impl ≥ 2 (총 ≥ 6 sprint).
+>    - 임계 0.999 default (모든 그레이드 G2~G4 / G5 = 0.99999 보존).
+>    - early stop violation = (axis 별 < 2) OR (budget < 80%).
+>    - budget 분배 default: intent 20% / plan 30% / impl 50%.
+>    - self_lint C-IPI 가 검증.
 
 ## 15 페이즈 진행
 

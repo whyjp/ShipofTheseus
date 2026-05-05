@@ -2,6 +2,66 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합.
 
+## v0.9.19 — 2026-05-05 (sprint-13 — 깊이 강화 + 발현 빈도 격상 4 컨벤션)
+
+### 마일스톤
+
+**v0.9.18 sprint-12 발현 강제 메커니즘 도입 후 사용자 진단 7 항목 (2026-05-05) — 마인드맵 풍부화 / 다이어그램 모듈별 분할 / 유니버스 폭 증량 / plan·impl 디테일 향상 / intent·plan·impl 3 axis sprint loop / 0.999 지향 2회 이상 무한 / 전체 시간 cap.** v0.9.18 까지의 *룰 본문 작성* 면 진전 후, 본 sprint-13 = *발현 default 격상* 단계. 자기 적용 self-eating dogfood — 본 sprint 의 산출물 자체가 v0.9.19 신규 컨벤션 4 의 자기 적용 사례.
+
+### 변경 — 4 컨벤션 신규 (ba~bd)
+
+- **`mindmap-richness-default.md`** (ba) — 페이즈 01 §9 마인드맵 A 등급 default 격상 (≥25 노드 / 4 axis × ≥4 sub / 3 axis sub-sub + 1 axis sub-sub-sub). intent-extractor 프롬프트 templated stub 의무. B fallback PASS *with lesson*. C-MRD-A-DEFAULT self_lint. v0.9.13 mindmap-quality-gardening 의 *A 옵션* → *A default* 격상.
+- **`per-module-diagram-fan-out.md`** (bb) — use-case / sequence 다이어그램 모듈별 분할 default. 트리거: 모듈 ≥ 4 OR consumer-producer 페어 ≥ 6. 모듈 ≤ 3 시 단일 통합 OK. C-PMDF self_lint. v0.9.6 diagrams.md 의 *negative anti-pattern* → *positive default* 격상.
+- **`multiverse-width-default-bump.md`** (bc) — 폭 default 격상: G2=2 / G3=5 / G4=7 / G5=9. 옵션 default (사용자 명시 ack): G3=10 / G4=12 / G5=16. budget profile cap 동기 갱신 (resources.md universe parallel cap G3=10/G4=12/G5=16). budget tight 시 fallback 폭 + `fallback_reason` frontmatter 의무. C-MWDB self_lint. sprint-05-b의 *폭 3/4/6 plateau* 격상.
+- **`intent-plan-impl-sprint-trinity.md`** (bd) — sprint loop 3 axis (intent / plan / impl) × 각 ≥ 2 회. budget 분배 default: intent 20% / plan 30% / impl 50%. 임계 0.999 default (모든 그레이드 G2~G4 / G5 = 0.99999 보존). early stop violation = (axis 별 < 2) OR (budget < 80%). C-IPI self_lint. v0.9.8 sprint-regression-loop + v0.9.15 budget-saturation-loop 의 *impl 단위만 axis* → *3 axis trinity* 확장.
+
+### 변경 — 6 컨벤션 갱신
+
+- `mindmap-quality-gardening.md` (ak) — Quality 등급 표 A default 격상 + B fallback PASS with lesson + ba cross-ref
+- `plan-tree.md` (u) — 그레이드 폭 매트릭스 갱신 (G3=5 / G4=7 / G5=9 + 옵션 default) + bc cross-ref
+- `multiverse-impl-fan-out.md` (ag) — 그레이드별 universe 수 sync + bc cross-ref
+- `diagrams.md` (c) — 안티 패턴 d/e 추가 (모듈 ≥ 4 단일 시퀀스 + 모듈 ≤ 3 over-fragmentation) + bb cross-ref
+- `budget-saturation-loop.md` (an) — `should_continue_sprint` axis 별 sprint < 2 시 무조건 추가 + Soft-converge handoff `sprint_axis_counts` 의무 + bd cross-ref
+- `intent-completeness.md` (aw) — intent sprint loop trigger (§k 9 sub PASS 라도 ≥ 2 회 polish) + bd cross-ref
+- `resources.md` — universe parallel cap 갱신 (G3=10/G4=12/G5=16) + wall-clock budget per universe 갱신
+
+### 변경 — 4 페이즈 갱신
+
+- `phases/01-intent.md` — `v0.9.19 sprint-13 갱신` 섹션 + ba A default + bd intent sprint loop + Templated Section §9 (universe-2 merge — 발현 강제)
+- `phases/06-plan.md` — `v0.9.19 sprint-13 갱신` 섹션 + bc 폭 default 5/7/9 + bb per-module 다이어그램 + bd plan sprint loop + Templated per-module section
+- `phases/08-implement.md` — `v0.9.19 sprint-13 갱신` 섹션 + bb universe-N 별 use-case 분리 + bd impl sprint loop + 폭 default sync
+- `phases/10-test-loop.md` — sprint trinity 3 axis 분배 + Templated report.json schema + early_stop_violation 강화
+
+### 변경 — HARD-RULE 9 (orchestrator/SKILL.md)
+
+기존 9.a/b/c (산출물 *내용* 의무) 에 d/e/f/g 4 항목 추가 (산출물 *발현 빈도* 강제):
+- 9.d: 마인드맵 풍성도 (mindmap_quality_grade ∈ [A, B] 만 PASS)
+- 9.e: per-module 다이어그램 (모듈 ≥ 4 트리거)
+- 9.f: multiverse 폭 default (G3=5/G4=7/G5=9)
+- 9.g: sprint trinity (axis 별 ≥ 2 sprint)
+
+### 변경 — version bump
+
+- plugin.json / marketplace.json / harness SKILL.md / orchestrator SKILL.md frontmatter: 0.9.18 → 0.9.19
+- 컨벤션 카탈로그 51 → 55 (4 신규 ba~bd)
+
+### 검증
+
+- 본 sprint 자체가 v0.9.19 self-eating dogfood:
+  - 마인드맵 36 노드 A 등급 (frontmatter mindmap_quality_grade=A) — ba 자기 적용
+  - 5 모듈 per-module use-case 다이어그램 분할 — bb 자기 적용 (모듈 ≥ 4 트리거 충족)
+  - plan-tree 폭 4 universe (G4 default 7 의 budget-aware fallback, fallback_reason 명시) — bc 자기 적용
+  - sprint trinity intent 2 + plan 2 + impl 2 = 6 sprint — bd 자기 적용
+- 산출물: `.ShipofTheseus/theseus_self_v0919/` 트리 (timing/start.json, naming/00-naming.md, intent/01-intent.md ~ 05-decisions.md, plan/{tournament.md, 06-plan.md, 07-plan-review.md, candidates/universe-{1..4}/}, impl/08-impl-log.md, sprints/{intent,plan,impl}-{01,02}/, quality/09-quality-gate.md, handoff/14-handoff.md)
+
+### 후속
+
+- v0.9.19 적용 cold session — 4 신규 컨벤션 발현 검증 (mindmap A 등급 / per-module 다이어그램 / 폭 default 5+ / sprint trinity ≥ 6) + 점수 변화 측정
+- intent-extractor 프롬프트 templated mindmap stub 적용 효과 측정 (v0.9.18 sprint-12 의 §k 9 sub 발현 강제 패턴 계승)
+- 폭 default 격상 (G3=5/G4=7) 의 budget profile cap 충돌 모니터링 — fallback_reason 빈도 추적
+
+---
+
 ## v0.9.18 — 2026-05-04 (sprint-12 — 본 스킬 자체 가치 개선 4 컨벤션 + 발현 강제 메커니즘)
 
 ### 마일스톤
