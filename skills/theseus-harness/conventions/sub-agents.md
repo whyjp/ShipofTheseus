@@ -44,7 +44,7 @@ e- **회귀 누적** — 같은 모듈에 회귀 3 회 누적 → checkpoints.md
 | **Debug** | 하위 모듈 fail 시 회귀 — 같은 깊이 다른 후보로 / 또는 부모로 회귀 |
 | **Memory** | 한 하위 모듈의 lesson_pack 을 *형제* 모듈에 자동 주입 (병렬 디스패치 후 머지 시) |
 
-## 페이즈별 입력 계약 (v0.9.0 sprint-03-b 단순화)
+## 페이즈별 입력 계약
 
 이전 v0.8.x 까지는 7 phase 분해 stub 의 단독 호출 input 매트릭스가 본 절에 있었음. sprint-03-b 에서 phase stub 제거 — 사용자 entry 는 `theseus-orchestrator` 단일이고 본 컨벤션의 "분해" 는 *페이즈 내부의 서브에이전트 재귀 분해* 만 의미. 페이즈별 입력은 [`contracts.md`](contracts.md) 의 frontmatter chain (이전 페이즈 산출물 fingerprint 가 prev_fingerprint) 으로 검증.
 
@@ -110,7 +110,7 @@ b- **competition** — `checkpoint.py` 의 `select_universe` 알고리즘 적용
 
 부모 모듈의 `impl/08-impl-log.md` 항목에 `subdivision: true` + 하위 모듈 ID 목록 기록.
 
-## 페이즈 내부 서브에이전트 분해 (v0.9.0 sprint-03-b)
+## 페이즈 내부 서브에이전트 분해
 
 페이즈 08 (구현) 의 한 TODO 가 LOC 추정 > 200 또는 복합 책임이면 implementer 에이전트가 자동 하위 디스패치 (`sub_agent_dispatch.py`). 본 컨벤션은 페이즈 *내부* 의 서브에이전트 재귀 분해 정의 — 외부 스킬 분해와 무관.
 

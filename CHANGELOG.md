@@ -2,6 +2,39 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.28 — 2026-05-06 (sprint-23 — conventions docs header history cleanup)
+
+### 마일스톤
+
+phase docs (sprint-22) 와 동일 원칙을 conventions docs 에 적용. 7 conventions 의 header history label 일괄 cleanup.
+
+### 변경 — conventions docs header label 제거 (7 파일)
+
+bulk regex 2 패턴:
+
+**Pattern 1** — `^## v0\.9\.\d+ sprint-\d+ ...` / `^## sprint-\d+ ...` / `^## v0\.9\.\d+ ...` 헤더 라벨 제거 (2 파일):
+- `competition.md`, `resources.md`
+
+**Pattern 2** — `^#{2,3} ... \(v0\.9\.\d+ ...\)` 헤더 후미 괄호 라벨 제거 (5 파일):
+- `budget-saturation-loop.md`, `mindmap-quality-gardening.md`, `multiverse-impl-fan-out.md`, `resources.md`, `sub-agents.md`
+
+### 보존 (non-history 인용)
+
+- `[`X.md`](X.md) (v0.9.X)` — convention 인용 metadata (현재 룰 조합 표시, history 아님)
+- `cold session XXX 회귀 정정` — evidence-driven design rationale
+- 본문 inline `(v0.9.X 신규)` non-header 위치 — 후속 sprint 에서 case-by-case
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.27 → 0.9.28.
+- self_lint 98/98 PASS.
+
+### 알려진 결손 (sprint-24+ 후속)
+
+- 88 conventions inline body history (parenthetical citations + temporal narratives) 더 깊은 cleanup
+- 21 conventions 도메인 narration (mining/SimPy/truck) generic 화
+- plan/dacapo phase body 의무 강화 (HARD-RULE 9.a 8 항목 외)
+
 ## v0.9.27 — 2026-05-06 (sprint-22 — phase docs deep history cleanup)
 
 ### 마일스톤

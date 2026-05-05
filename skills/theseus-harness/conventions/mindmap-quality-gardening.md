@@ -60,7 +60,7 @@ root((프로젝트))
 
 `self_lint C-MQG-DEPTH` = 4 axis 중 ≥ 2 axis 가 sub-sub-node ≥ 1.
 
-### D. 풍성도 임계 — 총 노드 ≥ 15 (v0.9.19 sprint-13: A default 임계 ≥ 25)
+### D. 풍성도 임계 — 총 노드 ≥ 15
 
 `self_lint C-MQG-RICHNESS` = mindmap 의 leaf node + intermediate node 합 ≥ 15. **v0.9.19 sprint-13** [`mindmap-richness-default.md`](mindmap-richness-default.md) (ba) 가 A 등급 default 격상 — 임계 ≥ 25 노드 + sub-sub-sub 1+ axis 강제. C-MRD-A-DEFAULT 가 grade 별 검증 (G4+ A 의무, G3 C 허용, B fallback PASS with lesson).
 

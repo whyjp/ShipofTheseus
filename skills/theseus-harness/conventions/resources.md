@@ -269,7 +269,7 @@ b- 본 보조 천정은 *임계 점수 (0.999) 의 대체 아님* — 점수 미
 
 플랜-트리 폭 확장 (G3 폭 5 / G4 폭 7 / G5 폭 9, 옵션 default G3=10/G4=12/G5=16) → 동시 N planner sub-agent + N implementer sub-agent. 본 절은 *병렬 universe 메모리 가드* 와 *wall-clock budget* 을 정의해 OS OOM / 타임아웃 자율 회피.
 
-### 병렬 universe 메모리 가드 (v0.9.19 sprint-13 갱신)
+### 병렬 universe 메모리 가드
 
 | Grade | 동시 universe 수 (폭 default) | universe parallel cap (옵션 default) | 메모리 가드 | 회피 동작 |
 |----|:-:|:-:|----|----|
@@ -284,7 +284,7 @@ b- 본 보조 천정은 *임계 점수 (0.999) 의 대체 아님* — 점수 미
 python scoring/resource_ceiling.py --check-multiverse-memory --universe-count 3 --grade G3
 ```
 
-### wall-clock budget per universe (v0.9.19 sprint-13 갱신)
+### wall-clock budget per universe
 
 | Grade | 폭 default | 페이즈 06 (planner) budget per universe | 페이즈 08 (implementer) budget per universe |
 |----|:-:|----|----|
@@ -301,6 +301,6 @@ python scoring/resource_ceiling.py --check-multiverse-memory --universe-count 3 
 a- per-universe budget 초과 → 해당 universe 의 부분 산출물 + `<!-- budget-truncated -->` 태그, 다른 universe 는 진행. tournament resolve 시 부분 universe 는 weight 절반.
 b- 전체 wall-clock budget 초과 → 가장 빠른 N-1 universe 결과로 머지, 마지막 universe drop. handoff/14 에 기록.
 
-### sprint-05-a 케이스 retro
+### a 케이스 retro
 
 simulation-bench 베이스라인 (G3 폭 2, sprint-05-a 직전 default) → 폭 2 × 평균 5분 = 10분, 8 트럭 simulation 4.9s × 180 reps = 15분. wall-clock 총 ~25분 (45 분 budget 안전). 폭 3 으로 확장 (sprint-05-b default) → 총 ~30 분 추정 (여전히 45분 cap 안).

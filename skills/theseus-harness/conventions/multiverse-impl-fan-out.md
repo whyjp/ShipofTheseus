@@ -76,7 +76,7 @@ After all N universes complete:
 
 각 universe 의 sub-score 계산 → *실 차원 비교* 가능. plan 만 비교하던 v0.9.9 한계 보완.
 
-## 3. 그레이드별 활성 (v0.9.19 sprint-13 갱신 — bc 와 sync)
+## 3. 그레이드별 활성
 
 | Grade | universe 수 (default) | universe 수 (옵션 default) | impl fan-out | 비고 |
 |---|:-:|:-:|:-:|---|

@@ -66,7 +66,7 @@ def should_continue_sprint(state) -> bool:
 
 → 추가 sprint 가 *enforcement* 가 아닌 *content* 차원의 lesson 적용 의무. v0.9.8 sprint-regression-loop §3 의 lesson dimension 매핑 강화.
 
-### Step 4 — Soft-converge handoff (v0.9.19: axis 별 sprint ≥ 2 추가)
+### Step 4 — Soft-converge handoff
 
 budget 80% 사용 + 임계 도달 + **axis 별 sprint ≥ 2** 시 :
 - handoff status = "PASS_AT_BUDGET_THRESHOLD"
