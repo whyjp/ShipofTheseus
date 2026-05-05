@@ -182,7 +182,7 @@ budget-saturation-loop + score-rubric-objectivity 합성 :
 
 ## 9. 자기 검증
 
-본 컨벤션 = strict rubric 룰 자체에 적용 시 — 본 컨벤션의 *체크리스트 카탈로그* 가 *모든 도메인 / 모든 bench* 적용 가능한지 검증. 본 회차 (v0.9.15) = simulation-bench 만 카탈로그 명시. 다른 bench 적용 시 후속 PR 에서 추가.
+본 컨벤션 = strict rubric 룰 자체에 적용 시 — 본 컨벤션의 *체크리스트 카탈로그* 가 *모든 도메인 / 모든 bench* 적용 가능한지 검증. 본 회차 = simulation-bench 만 카탈로그 명시. 다른 bench 적용 시 후속 PR 에서 추가.
 
 ## 10. v0.9.16 sprint-10 후속 — evidence_missing 자동 흐름
 
