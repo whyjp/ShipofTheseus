@@ -1,7 +1,60 @@
-# Phase 10 — 무한 스프린트 루프
+# Phase 10 — 무한 스프린트 루프 (v0.9.19 sprint-13: 3 axis trinity)
 
 ## 한 줄 요약
-**점수 ≥ 0.999 가 나올 때까지 무한 반복한다.** 회수 캡 없음. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
+**점수 ≥ 0.999 가 나올 때까지 무한 반복한다 + axis 별 ≥ 2 sprint 강제 (intent / plan / impl trinity).** 회수 캡 없음 — 단, *전체 budget cap 80% 사용 + axis 별 sprint ≥ 2* 충족 시 soft-converge. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
+
+## v0.9.19 sprint-13 — Sprint Trinity 3 axis 분배
+
+[`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md) (bd) 의 3 axis :
+
+| Axis | 내용 | sprint 산출물 |
+|---|---|---|
+| **intent** | 페이즈 01 mindmap richness / §k 9 sub depth / §i derived NFR 보강 | sprints/intent-NN/report.json |
+| **plan** | 페이즈 06 plan/06-plan.md 의 인터페이스/모듈/per-module use-case/TODO DAG 보강 | sprints/plan-NN/report.json |
+| **impl** | 페이즈 08 impl/08-impl-log.md 의 코드/테스트/NFR (기존 sprint-regression-loop) | sprints/impl-NN/report.json |
+
+### budget 분배 default
+
+```yaml
+budget_default_split:
+  intent: 0.20    # 20% (90 min × 0.20 = 18 min)
+  plan:   0.30    # 30% (27 min)
+  impl:   0.50    # 50% (45 min)
+```
+
+### Templated sprint trinity report.json schema
+
+```json
+{
+  "sprint_axis": "intent | plan | impl",
+  "sprint_n": 1,
+  "per_dimension": {
+    "<dim_name>": {"score": 18, "max": 20, "gap": 2}
+  },
+  "total_score": 94,
+  "threshold_target": 0.999,
+  "weakest_dimension": "<name>",
+  "lesson_type": "content_depth | enforcement_structure | content_evidence | integrated_insight",
+  "lesson_applied": "<one-line description>",
+  "budget_used_axis": 0.45,
+  "axis_sprint_count": 2
+}
+```
+
+### early stop violation (강화)
+
+```python
+def early_stop_violation(state) -> bool:
+  axis_violation = any(c < 2 for c in (
+    state.intent_sprint_count,
+    state.plan_sprint_count,
+    state.impl_sprint_count
+  ))
+  budget_violation = state.budget_used_total < 0.80
+  return axis_violation OR budget_violation
+```
+
+self_lint C-IPI 가 axis 별 sprint ≥ 2 검증, C-BSL 이 budget 80% 검증. 둘 다 PASS 만 정상 완주.
 
 ## 매 스프린트 테스트 매트릭스
 

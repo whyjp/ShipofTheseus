@@ -60,18 +60,22 @@ root((프로젝트))
 
 `self_lint C-MQG-DEPTH` = 4 axis 중 ≥ 2 axis 가 sub-sub-node ≥ 1.
 
-### D. 풍성도 임계 — 총 노드 ≥ 15
+### D. 풍성도 임계 — 총 노드 ≥ 15 (v0.9.19 sprint-13: A default 임계 ≥ 25)
 
-`self_lint C-MQG-RICHNESS` = mindmap 의 leaf node + intermediate node 합 ≥ 15.
+`self_lint C-MQG-RICHNESS` = mindmap 의 leaf node + intermediate node 합 ≥ 15. **v0.9.19 sprint-13** [`mindmap-richness-default.md`](mindmap-richness-default.md) (ba) 가 A 등급 default 격상 — 임계 ≥ 25 노드 + sub-sub-sub 1+ axis 강제. C-MRD-A-DEFAULT 가 grade 별 검증 (G4+ A 의무, G3 C 허용, B fallback PASS with lesson).
 
 ## 3. Quality 등급 (자기 검증)
 
-| 등급 | 형식 | 폭 | 깊이 | 풍성도 | 결과 |
+**v0.9.19 sprint-13 갱신** — A 등급 default 격상 ([`mindmap-richness-default.md`](mindmap-richness-default.md) ba). B 등급은 fallback PASS *with lesson*.
+
+| 등급 | 형식 | 폭 | 깊이 | 풍성도 | 결과 (sprint-13) |
 |---|---|---|---|---|:-:|
-| A (champion) | Mermaid | 4 axis × ≥4 | ≥3 axis sub-sub + ≥1 axis sub-sub-sub | ≥25 노드 | ✅ 천정 도달 후보 |
-| B (default G4) | Mermaid | 4 axis × ≥3 | ≥2 axis sub-sub | ≥15 노드 | ✅ G4 통과 |
+| **A (default G4+)** | Mermaid | 4 axis × ≥4 | ≥3 axis sub-sub + ≥1 axis sub-sub-sub | ≥25 노드 | ✅ default — *천정 도달 default* |
+| **B (fallback PASS with lesson)** | Mermaid | 4 axis × ≥3 | ≥2 axis sub-sub | ≥15 노드 | ✅ PASS — *sprint NN+1 의 mindmap 보강 lesson trigger* |
 | C (G3 fallback) | Mermaid | 4 axis × ≥2 | ≥1 axis sub-sub | ≥10 노드 | ⚠️ G3 OK, G4 fail |
 | D (regression) | ASCII | n/a | n/a | <10 | **❌ self_lint fail** |
+
+A 등급 default 격상 사유 — v0.9.13 ~ v0.9.18 cold session 회차에서 B plateau (13~18 노드) 발현, A 등급 *옵션 도달* 부재. v0.9.19 ba 가 *templated stub* + B fallback 룰로 A default 강제.
 
 v091_cold01 = D 등급. v01_cold = B 등급. 본 컨벤션이 D 등급 차단 + B 이상 강제.
 

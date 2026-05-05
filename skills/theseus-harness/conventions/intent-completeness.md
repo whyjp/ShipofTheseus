@@ -1,5 +1,14 @@
 # Intent Completeness — 9 sub-criterion 의도 본문 의무
 
+## v0.9.19 sprint-13 갱신 — intent sprint loop trigger
+
+§k 9 sub 모두 PASS 라도 [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) (bd) 의 intent axis sprint ≥ 2 의무 — 첫 sprint = baseline measure, 두 번째 sprint = lesson 적용 후 재측정. axis lesson 후보:
+- mindmap richness 추가 노드 (mindmap-richness-default A 등급 도달까지)
+- §k limitation / data-derived 분리 강화
+- §i derived NFR 추가 + 임계 정량화
+
+본 컨벤션의 9 sub 자기 충분 검증과 *직교* — sub PASS 라도 *content depth* 가 sprint NN+1 에서 보강 의무.
+
 ## 한 줄 요약
 
 **페이즈 01 의도 문서가 9 sub-criterion 모두 명시 의무** — system boundary / entities / resources / events / state variables / assumptions / **limitations** / performance measures / **data-derived facts vs introduced assumptions 분리**. v0915-cold01 외부 채점 -2pt (Conceptual 18/20) 의 직접 원인 = limitations 절 + data/introduced 분리 부재.

@@ -33,22 +33,25 @@ cold session 결과 :
 - **default = 0.999** (G3/G4 모두)
 - G5 = 0.99999 (변경 없음)
 
-### Step 2 — Budget 사용률 ≥ 80% 강제
+### Step 2 — Budget 사용률 ≥ 80% 강제 + (v0.9.19) axis 별 sprint ≥ 2 강제
 
 페이즈 10 sprint loop 종료 조건 :
 
 ```python
 def should_continue_sprint(state) -> bool:
+    # v0.9.19 sprint-13: axis 별 min 2 sprint 강제 (intent-plan-impl-sprint-trinity bd)
+    if state.intent_sprint_count < 2 OR state.plan_sprint_count < 2 OR state.impl_sprint_count < 2:
+        return True  # 어느 axis 라도 < 2 면 무조건 추가
     if state.budget_used_ratio < 0.80:
         return True  # 무조건 sprint 추가, 임계 도달 무관
     if state.all_dimensions_above_threshold():
-        return False  # 80% 사용 + 임계 도달 → soft-converge
+        return False  # 80% 사용 + 임계 도달 + axis 별 ≥ 2 → soft-converge
     if state.budget_used_ratio >= 0.95:
         return False  # 95% 임박 → 종료 (over-budget 회피)
     return True  # 80-95% 구간 + 임계 미달 → 계속
 ```
 
-**80% 미달 시 임계 도달해도 sprint 강제 추가**. 추가 sprint 의 lesson = *next weakest dim*.
+**80% 미달 또는 axis 별 sprint < 2 시 임계 도달해도 sprint 강제 추가**. 추가 sprint 의 lesson = *next weakest dim* (axis 우선 순서: intent → plan → impl).
 
 ### Step 3 — Lesson type = *content depth* (enforcement 아닌)
 
@@ -63,12 +66,12 @@ def should_continue_sprint(state) -> bool:
 
 → 추가 sprint 가 *enforcement* 가 아닌 *content* 차원의 lesson 적용 의무. v0.9.8 sprint-regression-loop §3 의 lesson dimension 매핑 강화.
 
-### Step 4 — Soft-converge handoff
+### Step 4 — Soft-converge handoff (v0.9.19: axis 별 sprint ≥ 2 추가)
 
-budget 80% 사용 + 임계 도달 시 :
+budget 80% 사용 + 임계 도달 + **axis 별 sprint ≥ 2** 시 :
 - handoff status = "PASS_AT_BUDGET_THRESHOLD"
-- handoff frontmatter 의 `budget_saturation: <ratio>` 명시
-- 80% 미달 종료 = handoff status = "EARLY_STOP_VIOLATION" (self_lint C-BSL fail)
+- handoff frontmatter 의 `budget_saturation: <ratio>` + `sprint_axis_counts: {intent: N, plan: N, impl: N}` 명시
+- 80% 미달 종료 OR 어느 axis 라도 < 2 = handoff status = "EARLY_STOP_VIOLATION" (self_lint C-BSL + C-IPI fail)
 
 ### Step 5 — 사용자 명시 ack 예외
 

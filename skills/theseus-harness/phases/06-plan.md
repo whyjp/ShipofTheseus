@@ -123,3 +123,50 @@ d- HARD-RULE 9.a 본문 의무 강화로 *plan 안에서* implementation guidanc
 ### sprint-05-c 회고
 
 sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, Truck dataclass, EventQueue heap), 의사코드 (`_dispatch_event(ev)` switch), 클래스 시그니처 (`SchedulerLoop.run(env)`, `EventQueue.push/pop`) 모두 박혀있었음. 본 sprint-05-e 룰은 그 패턴을 *명시 의무* 로 격상.
+
+## v0.9.19 sprint-13 갱신 — 폭 default 5/7/9 + per-module use-case + plan sprint loop
+
+### 폭 default 격상 ([`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md), bc)
+
+| Grade | 폭 default | 옵션 default (사용자 ack) | 비고 |
+|---|:-:|:-:|---|
+| G2 | 2 | n/a | single 또는 2 후보 |
+| G3 | **5** (← 3) | 10 | axis 카탈로그 상위 5 활용 |
+| G4 | **7** (← 4) | 12 | 5 시드 + 2 axis (FE+BE × stance) |
+| G5 | **9** (← 6) | 16 | depth 2 자식 분기 + 4 axis 추가 |
+
+budget tight 시 fallback 폭 + `fallback_reason` frontmatter 의무 ([`../conventions/budget-aware-fallback.md`](../conventions/budget-aware-fallback.md)). self_lint C-MWDB 가 검증.
+
+### per-module use-case / sequence 다이어그램 default ([`../conventions/per-module-diagram-fan-out.md`](../conventions/per-module-diagram-fan-out.md), bb)
+
+페이즈 06 plan/06-plan.md 의 모듈 수 ≥ 4 OR consumer-producer 페어 ≥ 6 → per-module 다이어그램 ≥ 모듈 수 의무. 모듈 ≤ 3 시 단일 통합 OK.
+
+```markdown
+### Templated per-module section (bb 의무)
+
+## per-module use-case 다이어그램 (모듈 ≥ 4 trigger)
+
+### use-case: ModuleA
+```mermaid
+graph LR
+  user((actor)) --> uc1[ModuleA action 1]
+  user --> uc2[ModuleA action 2]
+```
+
+### use-case: ModuleB
+```mermaid
+graph LR
+  user((actor)) --> uc3[ModuleB action 1]
+```
+
+(모듈 ≥ 4 만큼 반복)
+```
+
+self_lint C-PMDF 가 검증.
+
+### plan sprint loop ([`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md), bd)
+
+페이즈 10 sprint trinity 의 *plan axis* 가 본 페이즈 산출물을 polishing 대상. axis 별 ≥ 2 sprint 강제. 첫 sprint = baseline measure, 두 번째 sprint 의 axis lesson 후보 :
+- 모듈 분할 보강 (per-module use-case 추가)
+- 인터페이스 정의 ≥ 5 추가 (dataclass / pseudocode / 클래스 시그니처)
+- TODO DAG 의존 보강 (leaf TODO 별 테스트 TODO 추가)
