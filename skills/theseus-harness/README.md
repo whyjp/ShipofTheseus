@@ -79,6 +79,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-62 [`conventions/measurement-contract.md`](conventions/measurement-contract.md) — 페이즈 06 metric method 의무 (sample / accumulate / reconstruct + 정당화) (v0.9.20)
   d-63 [`conventions/rubric-driven-doc-skeleton.md`](conventions/rubric-driven-doc-skeleton.md) — RubricAdapter (yaml/markdown/openapi) → `_skeleton/` 빈 헤더 + fallback generic ToC (v0.9.20)
   d-64 [`conventions/rubric-targeted-quality-gates.md`](conventions/rubric-targeted-quality-gates.md) — 페이즈 09 RTG-* (rubric bullet → yes/no) + bj 와 같은 adapter 공유 (v0.9.20)
+  d-65 [`conventions/intra-phase-dacapo-loop.md`](conventions/intra-phase-dacapo-loop.md) — phase 06/08 Da Capo Loop 의사코드 (multiverse + sprint retry 통합 — Step A→B→C→D→E→F→G→A) (v0.9.21 sprint-15)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

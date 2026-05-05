@@ -240,3 +240,111 @@ reconstruct_justified_ratio: <0.0-1.0>
 - **Measurement Contract 표 ≥ 1 row** (또는 빈 표 + reason for non-metric)
 - **per-universe code spike** (각 universe meta.md, ≤ 50 LOC, contested decisions 매핑 시)
 - **plan frontmatter `audience` field** ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md) bh) — `internal-self | external-reviewer | mixed`
+
+## v0.9.21 sprint-15 — Da Capo Loop (의사코드)
+
+[`../conventions/intra-phase-dacapo-loop.md`](../conventions/intra-phase-dacapo-loop.md) (bl) — multiverse fan-out + tournament + shadow grade + threshold AND + lesson + 처음으로 돌아감. **다카포 방식**.
+
+본 phase 의 *home* loop. tournament 결과 winner_score 가 grade threshold 미달 시 *재경합 0 회* 회귀 (cold session `2026-05-05__001_synthetic_mine_throughput__...g4` 의 winner=0.853 회귀) 차단.
+
+```python
+# Phase 06 Da Capo Loop — 본 phase 본문에 *그대로 박힌 의사코드*. agent 가 이 step 순서대로 실행.
+
+def phase_06(grade, prompt, intent_artifacts):
+    threshold     = {G3: 0.97, G4: 0.999, G5: 0.99999}[grade]
+    shadow_target = {G3: 90,   G4: 95,    G5: 98     }[grade]
+    width         = {G3: 5,    G4: 7,     G5: 9      }[grade]   # bc multiverse-width-default-bump
+    max_rerun     = {G3: 2,    G4: 3,     G5: 5      }[grade]
+    artifact_dir  = '.ShipofTheseus/<프로젝트>/plan/'
+
+    # ── Step A. Initial multiverse fan-out (Da Capo *처음* 지점) ───────
+    contested = extract_contested_decisions(prompt, intent_artifacts)  # bf 3 source 파싱
+    seeds = pick_axis_priority(
+        contested,
+        priority = ['contested_decisions', 'paradigm_5_seeds'],         # bf v0.9.20
+        count    = width,
+    )
+    universes = [
+        spawn_planner_universe(seed=seeds[n], universe_id=n)             # u, ag, ae
+        for n in range(1, width + 1)
+    ]
+    # 산출: plan/candidates/universe-N/{meta.md, 06-plan.md, code-spike.py(≤50 LOC)}
+    rerun = 0
+
+    while True:
+
+        # ── Step B. Tournament — 6 차원 weighted score (bf decision_coverage 0.20) ─
+        for u in universes:
+            u.tournament_score = score_6dim(u, weights={
+                'cold_recall':       0.25,
+                'dip_strictness':    0.20,
+                'simplicity':        0.15,
+                'test_topology':     0.10,
+                'fe_be_parity':      0.10,
+                'decision_coverage': 0.20,    # bf v0.9.20 신규 차원
+            })
+        winner = argmax(universes, key='tournament_score')
+        write(f'{artifact_dir}tournament-{rerun:02d}.md', universes, winner)
+
+        # ── Step C. Shadow grader (be v0.9.20) — zero-context Sonnet ──
+        shadow = call_shadow_grader(
+            rubric       = load_generic_rubric(),                # cold-bench 정합 (bench rubric 차단)
+            artifacts    = [winner.dir / '06-plan.md',
+                            winner.dir / 'meta.md',
+                            winner.dir / 'code-spike.py'],
+            model        = 'Sonnet',
+            context_mode = 'zero-context',
+        )
+        write(f'{artifact_dir}shadow-grade-{rerun:02d}.json', shadow)
+
+        # ── Step D. 4 conjunction AND threshold (be 의 phase-내 변형) ──
+        tournament_pass = (winner.tournament_score >= threshold)
+        shadow_pass     = (shadow.predicted_score   >= shadow_target)
+        if tournament_pass AND shadow_pass:
+            promote_to_phase_artifact(winner, target=f'{artifact_dir}06-plan.md')
+            return CONVERGED(winner, rerun_count=rerun)         # → phase 07 진입
+
+        # ── Step E. Cap (max_rerun OR budget 95%) ─────────────────────
+        rerun += 1
+        if rerun >= max_rerun OR budget_used_total() >= 0.95:
+            promote_to_phase_artifact(winner, target=f'{artifact_dir}06-plan.md')
+            write_fallback_reason(
+                f'{artifact_dir}fallback-reason.md',
+                reason = f'rerun={rerun}/{max_rerun}, '
+                         f'budget={budget_used_total():.2f}, '
+                         f'winner={winner.tournament_score} < {threshold}, '
+                         f'shadow={shadow.predicted_score} < {shadow_target}',
+            )   # ah budget-aware-fallback 의무
+            return BUDGET_BOUND(winner, rerun_count=rerun)
+
+        # ── Step F. Lesson 도출 + winner 갱신 ─────────────────────────
+        weakest = pick_weakest_dim(
+            tournament    = winner.sub_scores,                  # 6 dim 중 최저
+            shadow        = shadow.weakest_category,             # be
+            evidence_gaps = winner.evidence_missing,             # ar v0.9.16
+        )
+        lesson = build_lesson(weakest, candidates=[
+            'bg directional-simplification 표 row 추가 (limitations 방향성 ↑/↓/?)',
+            'bi measurement-contract reconstruct 정당화',
+            'bb per-module-diagram 분리 (모듈 ≥ 4 시)',
+            'aa mindmap-centrality concept 보강',
+            'bf contested-decision spike 양 가지 코드 (≤50 LOC) 추가',
+            'ae interface-first 인터페이스 정의 ≥ 5 추가',
+        ])
+        winner_v2 = apply_lesson(winner, lesson)                # winner artifact 갱신
+        write(f'{artifact_dir}dacapo-rerun-{rerun:02d}.md', lesson, winner_v2)
+
+        # ── Step G. Da Capo — *처음* (Step A) 으로 돌아감 ──────────────
+        anon_prev = anonymize_winner(winner_v2)                 # ad v0.9.10 룰 (frontmatter scrub + ID 익명화)
+        fresh_seeds = pick_seeds_excluding(prev_seed=winner.seed, count=width - 1)
+        fresh = [spawn_planner_universe(seed=s, universe_id=f'rerun-{rerun}-{i}')
+                 for i, s in enumerate(fresh_seeds, 1)]
+        universes = [anon_prev] + fresh                          # blind — fresh agent 모름
+        continue                                                  # ↑ Step B 로 자동 재진입
+```
+
+self_lint 검증 (sprint-15 신규) :
+
+- **C-DCL-WIN-THRESHOLD** — `winner.tournament_score < threshold AND rerun_count == 0` 인데 `phase 07 산출물 존재` 시 fail
+- **C-DCL-RERUN-LOG** — `rerun_count >= 1` 시 `dacapo-rerun-NN.md` 갯수 == rerun_count + 각 frontmatter `lesson_applied` 본문 ≥ 1 줄
+- **C-DCL-ANON** — `rerun >= 1` 시 universe 1 개가 anonymized previous winner (ad C-TBR-ANON 정합)

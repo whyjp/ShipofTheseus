@@ -168,3 +168,133 @@ sprint-05-a 의 simulation-bench 케이스는 *페이즈 06 에서 머지 결정
 ### 폭 default 격상 sync ([`../conventions/multiverse-impl-fan-out.md`](../conventions/multiverse-impl-fan-out.md))
 
 universe 수 = 페이즈 06 plan-tree 폭 default 동기 (G3=5/G4=7/G5=9). budget tight 시 fallback 폭 + `fallback_reason`.
+
+## v0.9.21 sprint-15 — Da Capo Loop (의사코드)
+
+[`../conventions/intra-phase-dacapo-loop.md`](../conventions/intra-phase-dacapo-loop.md) (bl) — phase 06 와 *같은 loop*, phase 08 specialization. universe 별 5 서브페이즈 head-to-head → tournament → shadow grade → threshold AND → 미달 시 lesson 적용 + 08-α 부터 재실행 (universe 변경 시 재진입 룰 정합).
+
+```python
+# Phase 08 Da Capo Loop — 본 phase 본문에 *그대로 박힌 의사코드*. agent 가 이 step 순서대로 실행.
+
+def phase_08(grade, plan_winner, plan_universes):
+    threshold     = {G3: 0.97, G4: 0.999, G5: 0.99999}[grade]
+    shadow_target = {G3: 90,   G4: 95,    G5: 98     }[grade]
+    width         = {G3: 5,    G4: 7,     G5: 9      }[grade]   # ag multiverse-impl-fan-out
+    max_rerun     = {G3: 2,    G4: 3,     G5: 5      }[grade]
+    artifact_dir  = '.ShipofTheseus/<프로젝트>/'   # impl/ + code/
+
+    # ── Step A. Initial fan-out — universe 별 5 서브페이즈 (08-α/β/γ/δ/ε) ─
+    universes = []
+    for n in range(1, width + 1):
+        plan_n = plan_universes[n] if n <= len(plan_universes) else plan_winner
+        # 5 서브페이즈 직렬 — universe 변경 시 08-α 재진입 룰 (기존 sprint-05-a)
+        scope      = subagent_test_architect(plan_n)             # 08-α scope
+        red_tests  = subagent_test_writer(scope)                  # 08-β (RED 확인 의무)
+        green      = subagent_implementer(red_tests, plan_n)      # 08-γ (GREEN 확인 의무)
+        refactored = subagent_refactorer(green)                   # 08-δ (GREEN 유지)
+        impl_log   = subagent_implementer.write_log(plan_n, refactored)  # 08-ε
+        universes.append(UniverseImpl(
+            id        = n,
+            plan      = plan_n,
+            code_dir  = f'{artifact_dir}code/universe-{n}/',
+            artifacts = [scope, red_tests, green, refactored, impl_log],
+        ))
+    # 산출: code/universe-N/, impl/08-test-scope.universe-N.md, impl/08-impl-log.universe-N.md
+    rerun = 0
+
+    while True:
+
+        # ── Step B. Head-to-head tournament — 7 차원 weighted score ────
+        for u in universes:
+            run_acceptance_tests(u)   # Q-D8 verification 동일 입력
+            u.tournament_score = score_7dim(u, weights={
+                'pytest_pass_rate':  0.30,
+                'coverage':          0.20,
+                'dip_strictness':    0.15,    # cap 0.6 정합
+                'cyclomatic':        0.10,
+                'wall_clock':        0.10,
+                'ruff_violations':   0.10,
+                'loc_efficiency':    0.05,
+            })
+        winner = argmax(universes, key='tournament_score')
+        write(f'{artifact_dir}impl/tournament-impl-{rerun:02d}.md', universes, winner)
+
+        # ── Step C. Shadow grader (be v0.9.20) — winner 코드 zero-context ─
+        shadow = call_shadow_grader(
+            rubric       = load_generic_code_rubric(),           # cold-bench 정합
+            artifacts    = [winner.code_dir,
+                            f'{artifact_dir}impl/08-impl-log.universe-{winner.id}.md',
+                            f'{artifact_dir}impl/08-test-scope.universe-{winner.id}.md'],
+            model        = 'Sonnet',
+            context_mode = 'zero-context',
+        )
+        write(f'{artifact_dir}impl/shadow-grade-{rerun:02d}.json', shadow)
+
+        # ── Step D. 4 conjunction AND threshold (be 의 phase-내 변형) ──
+        tournament_pass = (winner.tournament_score >= threshold)
+        shadow_pass     = (shadow.predicted_score   >= shadow_target)
+        if tournament_pass AND shadow_pass:
+            promote_to_phase_artifact(winner, target=f'{artifact_dir}code/')
+            promote_log(winner, target=f'{artifact_dir}impl/08-impl-log.md')
+            return CONVERGED(winner, rerun_count=rerun)          # → phase 09 진입
+
+        # ── Step E. Cap (max_rerun OR budget 95%) ─────────────────────
+        rerun += 1
+        if rerun >= max_rerun OR budget_used_total() >= 0.95:
+            promote_to_phase_artifact(winner, target=f'{artifact_dir}code/')
+            write_fallback_reason(
+                f'{artifact_dir}impl/fallback-reason.md',
+                reason = f'rerun={rerun}/{max_rerun}, '
+                         f'budget={budget_used_total():.2f}, '
+                         f'winner={winner.tournament_score} < {threshold}, '
+                         f'shadow={shadow.predicted_score} < {shadow_target}',
+            )   # ah budget-aware-fallback 의무
+            return BUDGET_BOUND(winner, rerun_count=rerun)
+
+        # ── Step F. Lesson 도출 (impl-specific weakest dim) ───────────
+        weakest = pick_weakest_dim(
+            tournament    = winner.sub_scores,                  # 7 dim 중 최저
+            shadow        = shadow.weakest_category,             # be
+            evidence_gaps = winner.evidence_missing,             # ar v0.9.16
+        )
+        lesson = build_lesson(weakest, candidates=[
+            'test-first RED 보강 → 08-β 재실행 (test-after 패턴 정정 — 본 phase 안티 a)',
+            'DIP 위반 정정 → 08-γ 재실행 (포트 인터페이스 도입)',
+            'coverage 보강 → 08-β scope 확장 + 08-γ 재실행',
+            'cyclomatic 분해 → 08-δ refactor 강화',
+            'bi measurement-contract method 정정 (reconstruct → accumulate)',
+            'bg directional-simplification 본문 매핑 (limitations 코드 의무)',
+            'bh commentary-policy density (audience=external 시 docstring 의무)',
+        ])
+        write(f'{artifact_dir}impl/dacapo-rerun-{rerun:02d}.md', lesson, winner)
+
+        # ── Step G. Da Capo — *처음* (Step A) 으로 돌아감 ──────────────
+        # universe 변경 룰 정합: 08-α 부터 *전체 5 서브페이즈* 재실행 (부분 재실행 금지)
+        anon_prev = anonymize_universe_impl(winner)             # ad v0.9.10 룰
+        fresh_universes = []
+        for n in range(1, width):  # width - 1 fresh
+            plan_n = pick_plan_excluding(plan_winner, plan_universes, prev_id=winner.id)
+            scope      = subagent_test_architect(plan_n, lesson_pack=lesson)
+            red_tests  = subagent_test_writer(scope)
+            green      = subagent_implementer(red_tests, plan_n)
+            refactored = subagent_refactorer(green)
+            impl_log   = subagent_implementer.write_log(plan_n, refactored)
+            fresh_universes.append(UniverseImpl(
+                id        = f'rerun-{rerun}-{n}',
+                plan      = plan_n,
+                code_dir  = f'{artifact_dir}code/universe-rerun-{rerun}-{n}/',
+                artifacts = [scope, red_tests, green, refactored, impl_log],
+            ))
+        universes = [anon_prev] + fresh_universes                # blind — fresh agent 모름
+        continue                                                  # ↑ Step B 로 자동 재진입
+```
+
+self_lint (sprint-15 신규) :
+
+- **C-DCL-WIN-THRESHOLD** — `winner.tournament_score < threshold AND rerun_count == 0` 인데 `phase 09 산출물 존재` 시 fail
+- **C-DCL-RERUN-LOG** — `rerun_count >= 1` 시 `impl/dacapo-rerun-NN.md` 갯수 == rerun_count + `lesson_applied` 본문 ≥ 1 줄
+- **C-DCL-ANON** — `rerun >= 1` 시 universe 1 개가 anonymized previous winner
+
+### universe 변경 시 08-α 재진입 룰 정합
+
+본 Da Capo loop 의 Step G (lesson 적용 + universe 재 fan-out) 가 위쪽 "## universe 변경 시 재진입 룰" 의 *상위 호환*. lesson 도출 trigger = winner_score 미달 (이전 룰은 *plan 변경* trigger). 두 trigger 모두 *5 서브페이즈 전체 재실행* 의무. 부분 재진입 (08-β 만) 금지.
