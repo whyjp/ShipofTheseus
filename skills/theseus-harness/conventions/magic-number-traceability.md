@@ -49,4 +49,4 @@ c- 데이터 파일에 셀 있지만 코드가 *직접* 0.85 박음 (CSV 안 읽
 `graph.py`: `LOADED_FACTOR = 0.85` 하드코딩.
 `intent/04-autonomy.md`: A1-A8 8 가정 어디에도 0.85 언급 없음.
 `conceptual_model.md`: loaded_speed_factor 본문 부재.
-→ grader -2pt Conceptual modelling. sprint-18 게이트 적용 시 fail → autonomy.md 에 `A9: empty truck speed factor 1.0, loaded 0.85 — typical mining haul (industry default)` 추가 강제.
+→ grader -2pt Conceptual modelling. sprint-18 게이트 적용 시 fail → autonomy.md 에 `A<N>: <물리 가정 예시 — industry default>` 추가 강제.

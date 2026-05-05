@@ -46,7 +46,7 @@ f- **Assumptions** — 명시 가정 (homogeneous trucks / Poisson arrival 등).
 g- **Limitations** — *알려진 한계* (no breakdowns / no shift change / no error retries 등). 모델이 *못 다루는* 것.
 h- **Performance measures** — 외부에서 관찰·계량 가능 메트릭 (throughput / latency / utilization 등).
 i- **Data-derived vs introduced** — fact 카탈로그 분리:
-   - *Data-derived*: 입력 데이터/스펙에서 도출 (truck capacity = 100t from data/trucks.csv)
+   - *Data-derived*: 입력 데이터/스펙에서 도출 (<entity> <attribute> = <value> from data/<entity>s.csv)
    - *Introduced*: 분석가가 *가정 추가* (load time = TruncNormal(mean=3.0, sigma=0.5) — 분석가 가정)
 ```
 

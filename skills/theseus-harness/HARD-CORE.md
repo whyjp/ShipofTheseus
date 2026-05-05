@@ -45,6 +45,7 @@
   8- Implementation guidance per TODO (알고리즘 / DS / 라이브러리 / pseudo-code)
 - **9.b** `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 / 인터페이스 노출
 - **9.c** G3+ universe-N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff + 9.a 8 항목 inline
+- **9.d** Da Capo산출물 본문 의무: `tournament-NN.md` (6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합), `dacapo-rerun-NN.md` (lesson 본문 + Step F-G detail), `dacapo-flow.md` (bq 의무)
 
 위반 시 self_lint 페이즈 exit fail → 페이즈 재진입 (자율, 누적 ≥ 3 시만 ack).
 

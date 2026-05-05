@@ -2,6 +2,45 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.30 — 2026-05-06 (sprint-25 — 도메인 narration generic 화 + HARD-RULE 9.d 신규 (Da Capo산출물 body 의무))
+
+### 마일스톤
+
+사용자 우선순위 (2)+(3) 통합 sprint. 도메인 종속 예시 generic 화 + Da Capo산출물 body 의무 강화.
+
+### 변경 — HARD-RULE 9.d 신규 (Da Capo산출물 body 의무)
+
+HARD-CORE.md HR9 + orchestrator/SKILL.md HR9 동시 갱신. **frontmatter (bn) 외 본문 의무 신규**:
+
+- `tournament-NN.md` 본문: 6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합
+- `dacapo-rerun-NN.md` 본문: lesson 본문 + Step F-G (lesson 도출 + anonymized prev winner) detail
+- `dacapo-flow.md`: bq 의무 (Mermaid + timeline + step trace per round)
+
+HARD-CORE.md 3782 → 3969 chars (C-HC1 cap 4000 PASS).
+
+### 변경 — 도메인 narration generic 화 (4 파일)
+
+mining haul/SimPy 도메인-specific 예시를 generic 표현으로 치환:
+
+- `decision-support-framing.md`: "8 트럭 vs 12 트럭" 의사결정 예시 → "<도메인-specific 결정 지원 예시>"
+- `domain-research-stacking.md`: "truck|haul|haulage" / "loader|crush|crusher" / "ore|mining|pit" trigger regex → "<entity1>|<entity2>|..."
+- `intent-completeness.md`: "truck capacity = 100t from data/trucks.csv" → "<entity> <attribute> = <value> from data/<entity>s.csv"
+- `magic-number-traceability.md`: "A9: empty truck speed factor 1.0, loaded 0.85 — typical mining haul" → "A<N>: <물리 가정 예시 — industry default>"
+- `domain-research-stacking.md`: "MTBF / availability < 1.0 / grade variation" → "<도메인 NFR 1> / <NFR 2> / <NFR 3>"
+
+본 하네스에 *built-in 도메인 종속 예시 0* 정합 — 사용자 per-project 작성 시 generic placeholder 를 도메인 entity 로 치환.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.29 → 0.9.30.
+- self_lint 98/98 PASS.
+
+### 알려진 결손 (sprint-26+)
+
+- 잔존 mining domain 키워드 (truck/loader/crusher) 가 여전히 일부 conventions 본문에 도메인 *언급* 수준으로 남아있음 — 본 sprint 는 *예시* / *trigger regex* / *가정 패턴* 만 generic 화. *비문법적* (in narrative) 사용 잔존
+- temporal narrative ("v0.9.X 까지", "본 회차") 잔존 case-by-case cleanup
+- conventions/INDEX.md frontmatter backfill (C-IDX-2/3/4 활성화)
+
 ## v0.9.29 — 2026-05-06 (sprint-24 — conventions inline body history label cleanup)
 
 ### 마일스톤
