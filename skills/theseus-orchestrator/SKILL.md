@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.20
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing + v0.9.19 sprint-13 (mindmap A default / per-module diagram / width bump / trinity 3 axis × ≥2) + v0.9.20 sprint-14 (grader-in-sprint dual-objective / contested decisions axis / directional simplification / commentary policy / measurement contract / rubric skeleton + targeted gates).
+version: 0.9.21
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + sprint-14 v0.9.20 (grader-in-sprint dual-objective / contested decisions axis / directional simplification / commentary policy / measurement contract / rubric skeleton + targeted gates) + sprint-15 v0.9.21 (phase 06/08 Da Capo Loop 의사코드 hook — multiverse + sprint retry 통합).
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -134,6 +134,18 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >    - 종합 판정: proceed / remediate (RTG fail ≤30%) / halt.
 >    - fail RTG → sprint NN+1 lesson 자동 매핑 (be shadow grader lesson 과 합산).
 >    - self_lint C-RTG 가 검증.
+>
+> **HARD-RULE 9.o — sprint-15 / v0.9.21 신규** (phase 06/08 Da Capo Loop 의사코드 hook):
+>
+> o- **intra-phase Da Capo Loop** ([`../theseus-harness/conventions/intra-phase-dacapo-loop.md`](../theseus-harness/conventions/intra-phase-dacapo-loop.md), bl):
+>    - 페이즈 06 (plan) + 페이즈 08 (impl) 안에 *통합 의사코드 loop* 박힘 — multiverse fan-out (Step A) → tournament (Step B) → shadow grade (Step C, be 재사용) → 4 conjunction AND threshold (Step D) → cap 체크 (Step E) → lesson 도출 + winner 갱신 (Step F) → **다카포: 처음 (Step A) 으로** (Step G).
+>    - winner.tournament_score 와 shadow.predicted_score 둘 다 grade 임계 (G3=0.97/90, G4=0.999/95, G5=0.99999/98) 이상 의무 (4 conjunction AND).
+>    - max_rerun (G3=2/G4=3/G5=5) OR budget 95% 도달 시 BUDGET_BOUND + fallback_reason 의무 (ah 정합).
+>    - rerun 시 anonymized previous winner + width-1 fresh universes 재 fan-out (ad v0.9.10 룰 정합).
+>    - phase 08 의 lesson 적용 시 5 서브페이즈 (08-α/β/γ/δ/ε) *전체* 재실행 의무 (universe 변경 룰 정합, 부분 재진입 금지).
+>    - 산출물 의무: `tournament-NN.md` / `shadow-grade-NN.json` / `dacapo-rerun-NN.md` / (BUDGET_BOUND 시) `fallback-reason.md`.
+>    - self_lint C-DCL-WIN-THRESHOLD / C-DCL-RERUN-LOG / C-DCL-ANON 가 검증.
+>    - cold session `2026-05-05__001_synthetic_mine_throughput__theseus-shipoftheseus__claude-opus-4-7__g4` 의 winner=0.853 (G4 임계 0.999 미달) 재경합 0 회 회귀 직접 정정.
 
 ## 15 페이즈 진행
 
