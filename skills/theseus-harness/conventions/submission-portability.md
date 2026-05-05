@@ -1,3 +1,12 @@
+---
+id: submission-portability
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'entry script'
+indexed-in: conventions/INDEX.md
+---
+
 # Submission portability — entry script CLI flag + env var fallback (sprint-18, cd, HARD-RULE 9.ff)
 
 ## 한 줄 요약

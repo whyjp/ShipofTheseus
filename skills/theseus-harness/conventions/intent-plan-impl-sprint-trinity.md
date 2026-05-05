@@ -1,3 +1,12 @@
+---
+id: intent-plan-impl-sprint-trinity
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Intent / Plan / Impl Sprint Trinity — 3 axis sprint loop (sprint-13 / v0.9.19)
 
 ## 한 줄 요약

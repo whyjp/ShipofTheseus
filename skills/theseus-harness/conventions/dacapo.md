@@ -1,3 +1,12 @@
+---
+id: dacapo
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo 결합 인덱스 — AIDE × LLM Wiki 매핑 (얇은 메타 컨벤션)
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: idiomatic-code-quality
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'code present'
+indexed-in: conventions/INDEX.md
+---
+
 # Idiomatic Code Quality — Code quality 만점 push (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

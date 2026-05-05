@@ -1,3 +1,12 @@
+---
+id: mindmap-richness-default
+category: mindmap
+applies-to-phases: '[01]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Mindmap Richness Default — A 등급 default 격상 (sprint-13 / v0.9.19)
 
 ## 한 줄 요약

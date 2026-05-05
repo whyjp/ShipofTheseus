@@ -1,3 +1,12 @@
+---
+id: deliverable-hurdle-supremacy
+category: meta
+applies-to-phases: '[all]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'standalone'
+indexed-in: conventions/INDEX.md
+---
+
 # Deliverable Hurdle Supremacy — 결과물 허들 > 메모리 > 컨벤션
 
 ## 한 줄 요약

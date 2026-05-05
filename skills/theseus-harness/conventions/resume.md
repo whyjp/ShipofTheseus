@@ -1,3 +1,12 @@
+---
+id: resume
+category: core
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'resume'
+indexed-in: conventions/INDEX.md
+---
+
 # 리줌(Resume) 컨벤션 — 중단된 항해의 재개
 
 ## 한 줄 요약

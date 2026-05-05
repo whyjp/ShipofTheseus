@@ -1,3 +1,12 @@
+---
+id: intent-completeness
+category: interview
+applies-to-phases: '[01]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Intent Completeness — 9 sub-criterion 의도 본문 의무
 
 ## 한 줄 요약

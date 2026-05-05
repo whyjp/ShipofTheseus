@@ -1,3 +1,12 @@
+---
+id: commentary-policy
+category: interview
+applies-to-phases: '[04,08]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Commentary Policy — audience-aware 주석 정책 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

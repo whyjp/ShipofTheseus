@@ -1,3 +1,12 @@
+---
+id: impl-multiverse-strict
+category: impl
+applies-to-phases: '[08,09]'
+applies-to-grades: '[G4,G5]'
+trigger-when: 'phase 09 진입'
+indexed-in: conventions/INDEX.md
+---
+
 # Impl multiverse strict (`impl-multiverse-strict`) — phase 08 G4+ 멀티버스 의무 강제 (sprint-19, ch, HARD-RULE 9.jj)
 
 ## 한 줄 요약

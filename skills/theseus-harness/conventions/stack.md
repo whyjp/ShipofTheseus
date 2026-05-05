@@ -1,3 +1,12 @@
+---
+id: stack
+category: core
+applies-to-phases: '[04]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 스택 점검 컨벤션
 
 ## 한 줄 요약

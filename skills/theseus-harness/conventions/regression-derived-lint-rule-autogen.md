@@ -1,3 +1,12 @@
+---
+id: regression-derived-lint-rule-autogen
+category: meta
+applies-to-phases: '[11]'
+applies-to-grades: '[G4,G5]'
+trigger-when: '회귀 정정'
+indexed-in: conventions/INDEX.md
+---
+
 # Regression-Derived Lint Rule Auto-Generation — 회귀 정정 → self_lint 룰 자동 신규
 
 ## 한 줄 요약

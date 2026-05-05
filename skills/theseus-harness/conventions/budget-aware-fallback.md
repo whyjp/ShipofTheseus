@@ -1,3 +1,12 @@
+---
+id: budget-aware-fallback
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'budget tight'
+indexed-in: conventions/INDEX.md
+---
+
 # Budget-Aware Fallback — silent fallback 금지, 명시적 1 단계 다운그레이드
 
 ## 한 줄 요약

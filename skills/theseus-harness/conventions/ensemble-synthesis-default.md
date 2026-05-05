@@ -1,3 +1,12 @@
+---
+id: ensemble-synthesis-default
+category: tournament
+applies-to-phases: '[06,11]'
+applies-to-grades: '[G4,G5]'
+trigger-when: '점수차 < 0.05'
+indexed-in: conventions/INDEX.md
+---
+
 # Ensemble Synthesis Default — G4+ tournament 결과의 algorithmic union default 화
 
 ## 한 줄 요약

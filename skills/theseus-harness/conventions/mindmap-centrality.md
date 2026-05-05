@@ -1,3 +1,12 @@
+---
+id: mindmap-centrality
+category: mindmap
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Mindmap Centrality — 모든 페이즈가 reference 하는 canonical concept graph
 
 ## 한 줄 요약

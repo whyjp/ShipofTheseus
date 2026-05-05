@@ -1,3 +1,12 @@
+---
+id: parallel-cold-review
+category: interview
+applies-to-phases: '[03]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Parallel Cold Review — N 개 직교 framing 의 fresh-eye 동시 진행
 
 ## 한 줄 요약

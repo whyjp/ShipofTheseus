@@ -1,3 +1,12 @@
+---
+id: polyglot-code-quality
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Polyglot Code Quality — 언어 무관 코드 품질 게이트
 
 ## 한 줄 요약

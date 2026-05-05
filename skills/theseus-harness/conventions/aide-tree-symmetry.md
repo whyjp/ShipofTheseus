@@ -1,3 +1,12 @@
+---
+id: aide-tree-symmetry
+category: multiverse
+applies-to-phases: '[06]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'universe candidate'
+indexed-in: conventions/INDEX.md
+---
+
 # AIDE-tree symmetric depth — 모든 universe candidate 의 sequenceDiagram 강제
 
 ## 한 줄 요약

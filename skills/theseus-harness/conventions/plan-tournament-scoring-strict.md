@@ -1,3 +1,12 @@
+---
+id: plan-tournament-scoring-strict
+category: tournament
+applies-to-phases: '[06]'
+applies-to-grades: '[all]'
+trigger-when: 'tournament 산출'
+indexed-in: conventions/INDEX.md
+---
+
 # Plan tournament scoring strict (`plan-tournament-scoring-strict`) — 6-dim weighted 의무 (sprint-19, cf, HARD-RULE 9.hh)
 
 ## 한 줄 요약

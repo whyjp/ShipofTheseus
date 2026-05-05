@@ -1,3 +1,12 @@
+---
+id: autonomy
+category: core
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 자율성 컨벤션 (Autonomy First)
 
 ## 한 줄 요약

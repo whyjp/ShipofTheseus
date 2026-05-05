@@ -1,3 +1,12 @@
+---
+id: rubric-driven-doc-skeleton
+category: planning
+applies-to-phases: '[04]'
+applies-to-grades: '[all]'
+trigger-when: 'rubric ≥ 1'
+indexed-in: conventions/INDEX.md
+---
+
 # Rubric-Driven Doc Skeleton — rubric → 산출물 skeleton 자동 생성 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

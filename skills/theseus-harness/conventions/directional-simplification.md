@@ -1,3 +1,12 @@
+---
+id: directional-simplification
+category: interview
+applies-to-phases: '[05]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'critique 본문'
+indexed-in: conventions/INDEX.md
+---
+
 # Directional Simplification — simplification 의 방향성·정량 bias 진술 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

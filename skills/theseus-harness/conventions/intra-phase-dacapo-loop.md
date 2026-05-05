@@ -1,3 +1,12 @@
+---
+id: intra-phase-dacapo-loop
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Intra-Phase Da Capo Loop — multiverse + sprint retry 통합 (sprint-15 / v0.9.21)
 
 ## 한 줄 요약

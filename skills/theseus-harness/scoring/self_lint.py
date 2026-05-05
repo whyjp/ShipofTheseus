@@ -47,18 +47,82 @@ def _files(root: Path, pattern: str) -> list[Path]:
 
 
 def check_convention_one_line_summary(skill_root: Path) -> list[str]:
-    """C1 — 모든 conventions/*.md 의 첫 두 줄 검사 (INDEX.md 제외 — router 메타)."""
+    """C1 — 모든 conventions/*.md 의 첫 두 줄 검사 (INDEX.md 제외 — router 메타). sprint-27 v0.9.32 — frontmatter skip."""
     issues: list[str] = []
     for p in _files(skill_root / "conventions", "*.md"):
         if p.name == "INDEX.md":
             continue   # router 메타 파일, 컨벤션 아님
         text = _read(p)
-        head = text.splitlines()[:8]
+        lines = text.splitlines()
+        # sprint-27: skip leading YAML frontmatter (--- ... ---)
+        i = 0
+        if lines and lines[0].strip() == "---":
+            i = 1
+            while i < len(lines) and lines[i].strip() != "---":
+                i += 1
+            i += 1   # past closing ---
+            # skip blank lines after frontmatter
+            while i < len(lines) and not lines[i].strip():
+                i += 1
+        head = lines[i:i+8]
         if not head or not head[0].startswith("# "):
-            issues.append(f"{p.name}: 첫 줄이 # 제목 아님")
+            issues.append(f"{p.name}: 첫 줄이 # 제목 아님 (frontmatter skip 후)")
             continue
         if not any("## 한 줄 요약" in line for line in head):
             issues.append(f"{p.name}: '## 한 줄 요약' 섹션 누락")
+    return issues
+
+
+def check_conventions_frontmatter_drift(skill_root: Path) -> list[str]:
+    """C-IDX-2 (sprint-27 v0.9.32) — conventions/*.md frontmatter ↔ conventions/INDEX.md drift detection.
+
+    각 conventions/<id>.md 의 YAML frontmatter (id / category / applies-to-phases / applies-to-grades / trigger-when) 가
+    conventions/INDEX.md router 표 row 와 일치하는지 검증.
+    """
+    import re
+    issues: list[str] = []
+    idx_path = skill_root / "conventions" / "INDEX.md"
+    if not idx_path.exists():
+        return ["conventions/INDEX.md 누락"]
+    idx_body = _read(idx_path)
+    router = {}
+    for m in re.finditer(
+        r'^\|\s*([a-z][a-z0-9-]+)\s*\|\s*([^|]+?)\s*\|\s*(\[[^\]]+\])\s*\|\s*(\[[^\]]+\])\s*\|\s*([^|]+?)\s*\|',
+        idx_body, re.M,
+    ):
+        rid = m.group(1)
+        if rid == "id":
+            continue
+        router[rid] = {
+            "category": m.group(2).strip(),
+            "applies-to-phases": m.group(3).strip(),
+            "applies-to-grades": m.group(4).strip(),
+            "trigger-when": m.group(5).strip(),
+        }
+    for p in _files(skill_root / "conventions", "*.md"):
+        if p.name == "INDEX.md":
+            continue
+        rid = p.stem
+        if rid not in router:
+            issues.append(f"{p.name}: INDEX.md 에 router row 부재")
+            continue
+        text = _read(p)
+        if not text.startswith("---\n"):
+            issues.append(f"{p.name}: frontmatter (router metadata) 부재 — sprint-27 backfill 의무")
+            continue
+        # extract frontmatter block
+        end = text.find("\n---\n", 4)
+        if end < 0:
+            issues.append(f"{p.name}: frontmatter 종료 마커 부재")
+            continue
+        fm_block = text[4:end]
+        for key in ["id", "category", "applies-to-phases", "applies-to-grades", "trigger-when", "indexed-in"]:
+            if f"\n{key}:" not in "\n" + fm_block and not fm_block.startswith(f"{key}:"):
+                issues.append(f"{p.name}: frontmatter '{key}' 필드 부재")
+        # drift check (id-only — full value drift는 over-strict 가능)
+        m_id = re.search(r'^id:\s*(.+?)\s*$', fm_block, re.M)
+        if m_id and m_id.group(1) != rid:
+            issues.append(f"{p.name}: frontmatter id={m_id.group(1)} ≠ filename {rid}")
     return issues
 
 
@@ -2290,6 +2354,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
     ("C-HC1", "HARD-CORE.md (sprint-20 v0.9.25) — always-load 본문 ≤ 4000 chars + 의무 키워드 (HR1/HR8/HR9/Layer 3/fingerprint)", check_hard_core_size),
     ("C-IDX-1", "conventions/INDEX.md (sprint-20 v0.9.25) — 88 컨벤션 router 단일 진실 원천 + 1:1 매칭", check_conventions_index_completeness),
+    ("C-IDX-2", "conventions/*.md frontmatter (sprint-27 v0.9.32) — router metadata backfill + INDEX drift detection", check_conventions_frontmatter_drift),
 ]
 
 

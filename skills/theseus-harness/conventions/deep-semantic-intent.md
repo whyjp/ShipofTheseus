@@ -1,3 +1,12 @@
+---
+id: deep-semantic-intent
+category: interview
+applies-to-phases: '[01,04]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Deep Semantic Intent — adjective 너머 *implied operational framing* 추출
 
 ## 한 줄 요약

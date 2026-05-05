@@ -1,3 +1,12 @@
+---
+id: interface-first-parallel-impl
+category: impl
+applies-to-phases: '[06,08]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Interface-First Parallel Implementation — 페이즈 08 모듈 분리 + 병렬 sub-agent
 
 ## 한 줄 요약

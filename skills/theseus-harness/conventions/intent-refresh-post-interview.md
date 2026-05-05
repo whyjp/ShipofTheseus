@@ -1,3 +1,12 @@
+---
+id: intent-refresh-post-interview
+category: interview
+applies-to-phases: '[04]'
+applies-to-grades: '[all]'
+trigger-when: 'phase 04 종료'
+indexed-in: conventions/INDEX.md
+---
+
 # Intent refresh post-interview — 사용자 질의 후 의도 4-멀티버스 재구성
 
 ## 한 줄 요약

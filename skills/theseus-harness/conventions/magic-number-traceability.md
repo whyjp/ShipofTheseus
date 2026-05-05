@@ -1,3 +1,12 @@
+---
+id: magic-number-traceability
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'code present'
+indexed-in: conventions/INDEX.md
+---
+
 # Magic number traceability — 코드 literal → 가정 또는 데이터 출처 매핑 (sprint-18, cb, HARD-RULE 9.dd)
 
 ## 한 줄 요약

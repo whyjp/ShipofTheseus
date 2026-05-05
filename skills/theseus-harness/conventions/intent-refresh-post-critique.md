@@ -1,3 +1,12 @@
+---
+id: intent-refresh-post-critique
+category: interview
+applies-to-phases: '[05]'
+applies-to-grades: '[all]'
+trigger-when: 'phase 05 종료'
+indexed-in: conventions/INDEX.md
+---
+
 # Intent refresh post critique (`intent-refresh-post-critique`) — phase 05 후 2nd refresh + 04/05 cascade (sprint-19, ci, HARD-RULE 9.kk)
 
 ## 한 줄 요약

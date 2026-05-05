@@ -1,3 +1,12 @@
+---
+id: grades
+category: core
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 그레이드 시스템 — 작업 복잡도별 허들 구조
 
 ## 한 줄 요약

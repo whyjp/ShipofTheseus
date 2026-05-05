@@ -1,3 +1,12 @@
+---
+id: phase-lineage-viewer
+category: meta
+applies-to-phases: '[all]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'phase exit'
+indexed-in: conventions/INDEX.md
+---
+
 # Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 단일 마크다운 (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

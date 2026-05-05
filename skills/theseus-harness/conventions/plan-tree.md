@@ -1,3 +1,12 @@
+---
+id: plan-tree
+category: planning
+applies-to-phases: '[06]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 플랜 트리 (AIDE Plan Tree) 컨벤션
 
 ## 한 줄 요약

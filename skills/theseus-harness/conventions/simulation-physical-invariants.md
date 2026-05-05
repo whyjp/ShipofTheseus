@@ -1,3 +1,12 @@
+---
+id: simulation-physical-invariants
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'sim domain'
+indexed-in: conventions/INDEX.md
+---
+
 # Simulation Physical Invariants — Sim correctness 만점 push (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: premortem-friction
+category: interview
+applies-to-phases: '[02,03,07]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Premortem Friction — *한 번 더 고민* + 미래 회고로 더 나은 결론
 
 ## 한 줄 요약

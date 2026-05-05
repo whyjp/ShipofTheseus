@@ -1,3 +1,12 @@
+---
+id: sub-agents
+category: core
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 서브에이전트 재귀 분해 컨벤션
 
 ## 한 줄 요약

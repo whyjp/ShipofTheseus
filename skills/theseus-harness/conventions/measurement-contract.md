@@ -1,3 +1,12 @@
+---
+id: measurement-contract
+category: planning
+applies-to-phases: '[06,11]'
+applies-to-grades: '[all]'
+trigger-when: 'metric ≥ 1'
+indexed-in: conventions/INDEX.md
+---
+
 # Measurement Contract — metric 측정 방법 의무 명시 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

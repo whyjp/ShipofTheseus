@@ -1,3 +1,12 @@
+---
+id: sprint-score-delta-tracking
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'sprint NN+1'
+indexed-in: conventions/INDEX.md
+---
+
 # Sprint Score Delta Tracking — sprint NN+1 점수 향상 검증
 
 ## 한 줄 요약

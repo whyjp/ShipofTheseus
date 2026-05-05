@@ -1,3 +1,12 @@
+---
+id: per-module-diagram-fan-out
+category: mindmap
+applies-to-phases: '[06,08]'
+applies-to-grades: '[all]'
+trigger-when: '모듈 ≥ 4'
+indexed-in: conventions/INDEX.md
+---
+
 # Per-Module Diagram Fan-Out — usecase / sequence 모듈별 분할 (sprint-13 / v0.9.19)
 
 ## 한 줄 요약

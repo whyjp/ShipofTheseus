@@ -1,3 +1,12 @@
+---
+id: canonical-not-stub
+category: meta
+applies-to-phases: '[06,08,14]'
+applies-to-grades: '[all]'
+trigger-when: 'canonical 산출 시'
+indexed-in: conventions/INDEX.md
+---
+
 # Canonical not stub (`canonical-not-stub`) — canonical 산출물 ≥ winner universe 본문 80% 또는 shared schema (sprint-19, cg, HARD-RULE 9.ii)
 
 ## 한 줄 요약

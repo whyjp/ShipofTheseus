@@ -1,3 +1,12 @@
+---
+id: nfr-derivation
+category: quality
+applies-to-phases: '[01,09]'
+applies-to-grades: '[all]'
+trigger-when: 'NFR derived'
+indexed-in: conventions/INDEX.md
+---
+
 # NFR Derivation — Prompt 형용사로부터의 비기능 요구 자동 도출
 
 ## 한 줄 요약

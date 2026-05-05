@@ -1,3 +1,12 @@
+---
+id: decision-support-framing
+category: meta
+applies-to-phases: '[14]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'handoff Q 답'
+indexed-in: conventions/INDEX.md
+---
+
 # Decision-Support Framing — Results 차원 의 본문 의무
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: experimental-control-protocol
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: '실험 산출'
+indexed-in: conventions/INDEX.md
+---
+
 # Experimental Control Protocol — Experimental design 만점 push (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

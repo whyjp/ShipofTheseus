@@ -1,3 +1,12 @@
+---
+id: aide-tree-multi-phase
+category: multiverse
+applies-to-phases: '[02,05,08,11,13]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # AIDE-tree Multi-Phase — 페이즈 06 외 다른 페이즈에도 universe 경합 확장
 
 ## 한 줄 요약

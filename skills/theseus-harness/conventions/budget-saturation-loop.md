@@ -1,3 +1,12 @@
+---
+id: budget-saturation-loop
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Budget Saturation Loop — sprint loop budget 끝까지 사용 + deeper improvement
 
 ## 한 줄 요약
