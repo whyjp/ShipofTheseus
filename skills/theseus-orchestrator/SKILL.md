@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.21
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + sprint-14 v0.9.20 (grader-in-sprint dual-objective / contested decisions axis / directional simplification / commentary policy / measurement contract / rubric skeleton + targeted gates) + sprint-15 v0.9.21 (phase 06/08 Da Capo Loop 의사코드 hook — multiverse + sprint retry 통합).
+version: 0.9.22
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 + v0.9.22 Da Capo runtime guard 5 패치 (게이트/스키마/shadow/sentinel/flow).
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -146,6 +146,90 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >    - 산출물 의무: `tournament-NN.md` / `shadow-grade-NN.json` / `dacapo-rerun-NN.md` / (BUDGET_BOUND 시) `fallback-reason.md`.
 >    - self_lint C-DCL-WIN-THRESHOLD / C-DCL-RERUN-LOG / C-DCL-ANON 가 검증.
 >    - cold session `2026-05-05__001_synthetic_mine_throughput__theseus-shipoftheseus__claude-opus-4-7__g4` 의 winner=0.853 (G4 임계 0.999 미달) 재경합 0 회 회귀 직접 정정.
+>
+> **HARD-RULE 9.p~t — sprint-16 / v0.9.22 신규** (의사코드 → runtime guard 변환, 외부 cold session winner=0.892 회귀 정정):
+>
+> p- **Da Capo enforcement gate** ([`../theseus-harness/conventions/dacapo-enforcement.md`](../theseus-harness/conventions/dacapo-enforcement.md), ap):
+>    - phase 06 → 07 / phase 08 → 09 핸드오프 시점에 *6 조건* 의무 게이트 (frontmatter 검증).
+>    - 1- `dacapo_loop_executed: true` / 2- `step_d_*_pass` 3종 / 3- CONVERGED OR (cap 도달 + fallback-reason 본문) / 4- `dacapo-rerun-NN.md` 갯수 == rerun_count + `shadow-grade-NN.json` 갯수 == rerun_count+1 / 5- anonymized previous winner 존재 (rerun ≥ 1) / 6- `dacapo-flow.md` Mermaid + timeline 의무.
+>    - 미달 시 `intent/00-violation.md` 기록 + phase 06/08 Step A 부터 *재진입* 강제 (자율, 위반 ≥ 3회 시만 ack).
+>    - 의사코드 (bl v0.9.21) 은 *agent 행동 가이드*, 본 룰은 *orchestrator runtime guard* — 두 layer 박혀야 enforcement 완성.
+>    - self_lint C-DCL-GATE / C-DCL-FALLBACK 가 검증.
+>
+> q- **Da Capo frontmatter schema** ([`../theseus-harness/conventions/dacapo-frontmatter-schema.md`](../theseus-harness/conventions/dacapo-frontmatter-schema.md), aq):
+>    - `tournament-NN.md` / `shadow-grade-NN.json` / `dacapo-rerun-NN.md` 3 산출물 의무 frontmatter 필드 정의.
+>    - tournament 의무 : dacapo_loop_executed, rerun, rerun_count, grade, threshold, shadow_target, max_rerun, winner_id, winner_score, winner_sub_scores, weakest_dim, step_d_tournament_pass, step_d_shadow_pass, step_d_converged, step_e_cap_reached, budget_used_total, next_action, fallback_reason.
+>    - shadow-grade 의무 : context_mode, prior_context_token_count, agent_call_id, loaded_artifacts, rubric_path, predicted_score, weakest_category, category_scores.
+>    - dacapo-rerun 의무 : rerun, prev_rerun, prev_winner_id, weakest_dim_picked, lesson_type, lesson_applied, anonymized_prev_winner_id, fresh_seeds_picked.
+>    - cross-validation : 거짓 frontmatter 차단 (산술 모순 + 파일시스템 검증 5 룰).
+>    - self_lint C-DCL-FRONTMATTER / C-DCL-CROSS-VAL 가 검증.
+>
+> r- **Shadow grader zero-context integrity** ([`../theseus-harness/conventions/shadow-grader-zero-context.md`](../theseus-harness/conventions/shadow-grader-zero-context.md), ar):
+>    - Step C 의 shadow grader 가 *진짜 zero-context* 였는지 무결성 증거 5 룰.
+>    - 의무 필드 : `prior_context_token_count: 0` / `agent_call_id: <unique>` / `subagent_type: 'general-purpose'` / `loaded_artifacts: [...]` / `rubric_path: 'generic-...'`.
+>    - cross-validation : (1) shadow 점수 vs winner 점수 차이 ≥ 3pt (복사 차단) / (2) shadow weakest_category vs winner weakest_dim 다름 권장 / (3) agent_call_id 유니크 / (4) loaded_artifacts ≥ 1 / (5) rubric_path 가 generic (winner self-rubric 차단).
+>    - 외부 cold session shadow=92 vs winner=89.2 차이 2.8pt < 3pt → 복사 의심 자동 detect.
+>    - self_lint C-DCL-SHADOW-CONTEXT 가 검증.
+>
+> s- **Da Capo skip sentinel** ([`../theseus-harness/conventions/dacapo-skip-sentinel.md`](../theseus-harness/conventions/dacapo-skip-sentinel.md), as):
+>    - 3 sentinel 종류 자동 검출 + 매치 시 강제 회귀 (intent/00-violation.md 기록 + phase 재진입).
+>    - **Sentinel A** : frontmatter 모순 (winner < threshold + rerun=0 + fallback="" / step_d_converged=true 산술 모순 등).
+>    - **Sentinel B** : 디렉터리 카운트 (multiverse_width != candidates 갯수 = universe skip / sprint count < trinity 의무 = sprint skip).
+>    - **Sentinel C** : 로그 패턴 (regex — "Winner clear" / "skip dacapo" / "rerun 불필요" / "0회 충분" / "단일 탑 진행" / "fewer universes ok" 등 자율 판단 흔적).
+>    - 위반 횟수 누적 카운터 (fingerprint chain) — 3회 이상 시만 사용자 ack ([`../theseus-harness/conventions/autonomy.md`](../theseus-harness/conventions/autonomy.md) 정합).
+>    - self_lint C-DCL-SENTINEL 가 검증.
+>
+> t- **Da Capo flow trace 가시화** ([`../theseus-harness/conventions/dacapo-flow-trace.md`](../theseus-harness/conventions/dacapo-flow-trace.md), bq):
+>    - phase 06 / 08 의 universe + dacapo step 흐름을 *단일 마크다운* (`plan/dacapo-flow.md` / `impl/dacapo-flow.md`) 에 누적 갱신 (per-phase view).
+>    - 의무 본문 : Mermaid flowchart ≥ 1 (rerun 별 subgraph + universe 노드 + Step A~G 엣지 + sentinel ★ 노드) + timeline 표 (시각/rerun/step/event/universe/score).
+>    - 매 step (Step A~G + sentinel + promote + re_enter) 종료 시점에 orchestrator 가 자동 갱신 — 수동 편집 금지 (fingerprint mismatch).
+>    - 디버깅 시 5 산출물 cross-reference 비용 0 — 한 파일에서 흐름 + 사유 즉시 재구성.
+>    - self_lint C-DCL-FLOW-LOG 가 검증.
+>
+> u- **Phase lineage viewer 가시화** ([`../theseus-harness/conventions/phase-lineage-viewer.md`](../theseus-harness/conventions/phase-lineage-viewer.md), br):
+>    - 프로젝트 루트 `.ShipofTheseus/<프로젝트>/lineage.md` 단일 마크다운 — phase 00 → 14 *전체* 흐름 + universe 분기 + dacapo loop 요약 + sentinel 위반 이벤트 + fingerprint chain 표 + 페이즈 04 답안 매핑.
+>    - bq 가 *per-phase* (phase 06/08 내부 다카포 흐름), 본 컨벤션이 *project-wide* 상위 view — 두 layer 동시 사용 의무 (drill-down).
+>    - 의무 본문 : Mermaid flowchart (모든 phase 노드 + dacapo subgraph + bypass dashed 엣지 + sentinel ★ 노드) + fingerprint chain 표 (페이즈 N 산출 fingerprint == 페이즈 N+1 prev_fingerprint 일치 의무) + Da Capo 요약 표 + 페이즈 04 답안 매핑 표.
+>    - 매 페이즈 진입/종료 + dacapo loop 진행 + sentinel 매치 + 핸드오프 시점에 orchestrator 자동 갱신.
+>    - G3+ 의무, G5 빡빡 모드 (fingerprint chain mismatch 0 의무).
+>    - self_lint C-PLV 가 검증.
+>
+> **HARD-RULE 9.v~aa — sprint-16 phase 2 신규** (cold session 91/100 → 100/100 만점 push, 6 차원 갭 정정):
+>
+> v- **Domain model completeness — Conceptual modelling 18→20 (-2pt)** ([`../theseus-harness/conventions/domain-model-completeness.md`](../theseus-harness/conventions/domain-model-completeness.md), bs):
+>    - 페이즈 01 `intent/01-intent.md` §m 본문 의무 — D1 entity catalog ≥ 5 / D2 state space (모든 entity ≥ 2 state) / D3 stateDiagram-v2 ≥ 1 / D4 invariants ≥ 3 / D5 boundaries 명시.
+>    - frontmatter `conceptual_completeness_grade ∈ {A, B}` PASS, C/D fail.
+>    - self_lint C-DMC 가 검증.
+>
+> w- **Data structure invariants — Data & topology 14→15 (-1pt)** ([`../theseus-harness/conventions/data-structure-invariants.md`](../theseus-harness/conventions/data-structure-invariants.md), bt):
+>    - 페이즈 06 `plan/06-plan.md` 의 모든 데이터 구조 docstring 4 항목 의무 (Invariants / Topology / Access patterns / Bounds).
+>    - § Data Structure Invariants & Topology 표 의무 (모든 구조 ≥ 1 행).
+>    - frontmatter `with_invariants_ratio == 1.0` + `data_topology_grade ∈ {A, B}`.
+>    - self_lint C-DSI 가 검증.
+>
+> x- **Simulation physical invariants — Sim correctness 18→20 (-2pt)** ([`../theseus-harness/conventions/simulation-physical-invariants.md`](../theseus-harness/conventions/simulation-physical-invariants.md), bu):
+>    - 5 invariant 런타임 자동 assert (I1 mass conservation / I2 resource exclusivity / I3 monotonic time / I4 bounded queue / I5 no-deadlock).
+>    - bs §D4 도메인 invariant 와 1:1 매핑 의무 (`domain_mapping_ratio == 1.0`).
+>    - cold run violations == 0 의무 (위반 시 시뮬 즉시 중단 + dump frame).
+>    - self_lint C-SPI 가 검증.
+>
+> y- **Experimental control protocol — Experimental design 14→15 (-1pt)** ([`../theseus-harness/conventions/experimental-control-protocol.md`](../theseus-harness/conventions/experimental-control-protocol.md), bv):
+>    - 모든 실험 IV / DV / CV / N / seed 5 항목 의무.
+>    - N ≥ 30 replicates + t-CI95 width ≤ 5% 의무.
+>    - reproducibility_seed_explicit == true (deterministic seed 명시).
+>    - self_lint C-ECP 가 검증.
+>
+> z- **Results decision mapping — Results & interpretation 13→15 (-2pt, 가장 큰 갭)** ([`../theseus-harness/conventions/results-decision-mapping.md`](../theseus-harness/conventions/results-decision-mapping.md), bw):
+>    - 핸드오프 본문 § Results → Decisions Mapping 표 의무 — 모든 numerical result → ≥ 1 decision 1:1 매핑.
+>    - 각 decision 에 owner + deadline 의무.
+>    - negative finding 도 *기각 결정* (자원 회수 / 가설 폐기) 의무.
+>    - self_lint C-RDM 가 검증.
+>
+> aa- **Idiomatic code quality — Code quality 9→10 (-1pt)** ([`../theseus-harness/conventions/idiomatic-code-quality.md`](../theseus-harness/conventions/idiomatic-code-quality.md), bx):
+>    - au 6 객관 메트릭 (cyclomatic / function_length / nesting / duplicate / lint / format) 위에 4 idiomatic 차원 추가.
+>    - D1 naming convention (위반 ≤ 5%) / D2 preferred construct (≥ 90%) / D3 stdlib first (≥ 95%) / D4 readability heuristic (6/6 PASS).
+>    - magic_number_count == 0 의무.
+>    - self_lint C-ICQ 가 검증.
 
 ## 15 페이즈 진행
 

@@ -22,6 +22,7 @@ f- **추천 후속** — 비평가가 deferred 한 항목 + 범위 외이지만 
 g- **회귀 이력** — 페이즈 11 트리거된 스프린트들과 한 줄 해소.
 h- **시간 요약** — 최초 프롬프트 → 핸드오프 총 경과, 페이즈별 누적 (텍스트 막대 표).
 i- **웹뷰 실행 방법** — `cd .ShipofTheseus/<프로젝트>/webview && bun install && bun run dev`.
+i-2- **Phase lineage viewer cross-link** ([`../conventions/phase-lineage-viewer.md`](../conventions/phase-lineage-viewer.md), br v0.9.22) — 본 핸드오프 본문에 `.ShipofTheseus/<프로젝트>/lineage.md` cross-link 의무 (G3+). lineage.md 가 phase 00 → 14 전체 흐름 + dacapo 요약 + fingerprint chain 단일 view. 본 페이즈 종료 시점에 orchestrator 가 final_outcome=HANDOFF 박고 fingerprint chain 무결성 최종 검증.
 j- **Decision-support framing** ([`../conventions/decision-support-framing.md`](../conventions/decision-support-framing.md), v0.9.18) — 결정 질문 (Q1~QN) 마다 다음 3 항목 본문 의무 :
   - **Operational implications** — 결과가 운영에 의미하는 것 (1-2 문단)
   - **Trade-off framing** — 대안 비교 표 (≥3 차원, 예: 비용 / throughput / latency)

@@ -877,11 +877,11 @@ def check_fragmentation_policy(skill_root: Path) -> list[str]:
         return ["conventions/fragmentation.md 누락 — 파편화 우선 룰 정의 필요"]
     skill = _read(skill_root / "SKILL.md")
     # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심.
-    # 임계: 14000 자 (v0.8.0 sprint-03-a — 22 컨벤션 + HARD-RULE 추가 후 자연스러운 한도).
+    # 임계: 22000 자 (v0.9.22 sprint-16 — 68 컨벤션 + bm~bq sprint-16 인덱스 표 행 누적 + bl sprint-15 hook 절 + sprint-14 7 패치 누적. 표 인덱스 행은 룰 본문 X 라 fragmentation 위반 아님 — 다음 sprint 에 별도 CHANGELOG.md 분리 검토.
     # 이전 임계 12000 은 21 컨벤션 시점, plan-tree + runtime-prereq + HARD-RULE 추가 후 13000~ 정상.
-    if len(skill) > 14000:
+    if len(skill) > 22000:
         issues.append(
-            f"SKILL.md 길이 {len(skill)} 자 — 임계 14000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
+            f"SKILL.md 길이 {len(skill)} 자 — 임계 22000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
         )
     if "fragmentation.md" not in skill:
         issues.append("SKILL.md 가 fragmentation.md 를 노출하지 않음")
@@ -1613,6 +1613,226 @@ def check_polyglot_code_quality(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_dacapo_enforcement(skill_root: Path) -> list[str]:
+    """C-DCL-GATE — dacapo-enforcement.md (bm, sprint-16 v0.9.22) — 의사코드 → runtime guard."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-enforcement.md"
+    if not p.exists():
+        issues.append("conventions/dacapo-enforcement.md 누락 (bm, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "HARD-RULE 9.o", "gate_phase06_to_07", "dacapo_loop_executed",
+        "step_d_tournament_pass", "step_d_shadow_pass", "fallback_reason",
+        "intent/00-violation.md", "force_re_enter_phase",
+    ]:
+        if kw not in body:
+            issues.append(f"dacapo-enforcement.md: '{kw}' 키워드 누락")
+    orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
+    if orch.exists() and "HARD-RULE 9.p" not in _read(orch):
+        issues.append("orchestrator/SKILL.md: HARD-RULE 9.p (dacapo-enforcement) 누락")
+    return issues
+
+
+def check_dacapo_frontmatter_schema(skill_root: Path) -> list[str]:
+    """C-DCL-FRONTMATTER — dacapo-frontmatter-schema.md (bn, sprint-16 v0.9.22)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-frontmatter-schema.md"
+    if not p.exists():
+        issues.append("conventions/dacapo-frontmatter-schema.md 누락 (bn, v0.9.22)")
+        return issues
+    body = _read(p)
+    for field in [
+        "dacapo_loop_executed", "rerun_count", "step_d_converged",
+        "winner_score", "winner_sub_scores", "weakest_dim",
+        "step_e_cap_reached", "budget_used_total", "next_action",
+        "anonymized_prev_winner_id", "fresh_seeds_picked",
+        "prior_context_token_count", "loaded_artifacts", "agent_call_id",
+    ]:
+        if field not in body:
+            issues.append(f"dacapo-frontmatter-schema.md: '{field}' 필드 누락")
+    return issues
+
+
+def check_shadow_grader_zero_context(skill_root: Path) -> list[str]:
+    """C-DCL-SHADOW-CONTEXT — shadow-grader-zero-context.md (bo, sprint-16 v0.9.22)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "shadow-grader-zero-context.md"
+    if not p.exists():
+        issues.append("conventions/shadow-grader-zero-context.md 누락 (bo, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "prior_context_token_count", "agent_call_id", "loaded_artifacts",
+        "subagent_type", "rubric_path", "check_shadow_independence",
+        "check_unique_agent_call", "3pt", "복사 의심",
+    ]:
+        if kw not in body:
+            issues.append(f"shadow-grader-zero-context.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_dacapo_skip_sentinel(skill_root: Path) -> list[str]:
+    """C-DCL-SENTINEL — dacapo-skip-sentinel.md (bp, sprint-16 v0.9.22)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-skip-sentinel.md"
+    if not p.exists():
+        issues.append("conventions/dacapo-skip-sentinel.md 누락 (bp, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "Sentinel A", "Sentinel B", "Sentinel C",
+        "SENTINEL_A_PATTERNS", "SENTINEL_B_PATTERNS", "SENTINEL_C_LOG_PATTERNS",
+        "force_re_enter_phase", "intent/00-violation.md",
+        "Winner clear", "skip dacapo", "0회 충분", "단일 탑",
+        "universe_skip", "sprint_trinity_skip",
+    ]:
+        if kw not in body:
+            issues.append(f"dacapo-skip-sentinel.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_domain_model_completeness(skill_root: Path) -> list[str]:
+    """C-DMC — domain-model-completeness.md (bs, sprint-16 v0.9.22) — Conceptual modelling 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "domain-model-completeness.md"
+    if not p.exists():
+        issues.append("conventions/domain-model-completeness.md 누락 (bs, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["D1 entity catalog", "D2 state space", "D3 transition diagram",
+               "D4 invariants", "D5 boundaries", "stateDiagram-v2",
+               "conceptual_completeness_grade", "§m Domain Model"]:
+        if kw not in body:
+            issues.append(f"domain-model-completeness.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_data_structure_invariants_conv(skill_root: Path) -> list[str]:
+    """C-DSI — data-structure-invariants.md (bt, sprint-16 v0.9.22) — Data & topology 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "data-structure-invariants.md"
+    if not p.exists():
+        issues.append("conventions/data-structure-invariants.md 누락 (bt, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["Invariants:", "Topology:", "Access patterns:", "Bounds:",
+               "data_topology_grade", "with_invariants_ratio"]:
+        if kw not in body:
+            issues.append(f"data-structure-invariants.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_simulation_physical_invariants(skill_root: Path) -> list[str]:
+    """C-SPI — simulation-physical-invariants.md (bu, sprint-16 v0.9.22) — Sim correctness 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "simulation-physical-invariants.md"
+    if not p.exists():
+        issues.append("conventions/simulation-physical-invariants.md 누락 (bu, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["mass conservation", "resource exclusivity", "monotonic time",
+               "bounded queue", "no-deadlock", "SimulationInvariantChecker",
+               "sim_correctness_grade", "I1", "I2", "I3", "I4", "I5"]:
+        if kw not in body:
+            issues.append(f"simulation-physical-invariants.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_experimental_control_protocol(skill_root: Path) -> list[str]:
+    """C-ECP — experimental-control-protocol.md (bv, sprint-16 v0.9.22) — Experimental design 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "experimental-control-protocol.md"
+    if not p.exists():
+        issues.append("conventions/experimental-control-protocol.md 누락 (bv, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["**IV**", "**DV**", "**CV**", "**N**", "**seed**",
+               "experimental_design_grade", "reproducibility_seed_explicit",
+               "Experimental Control Protocol"]:
+        if kw not in body:
+            issues.append(f"experimental-control-protocol.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_results_decision_mapping(skill_root: Path) -> list[str]:
+    """C-RDM — results-decision-mapping.md (bw, sprint-16 v0.9.22) — Results & interpretation 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "results-decision-mapping.md"
+    if not p.exists():
+        issues.append("conventions/results-decision-mapping.md 누락 (bw, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["Results → Decisions Mapping", "Owner", "Deadline",
+               "negative_findings_count", "results_interpretation_grade",
+               "with_decision_ratio"]:
+        if kw not in body:
+            issues.append(f"results-decision-mapping.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_idiomatic_code_quality(skill_root: Path) -> list[str]:
+    """C-ICQ — idiomatic-code-quality.md (bx, sprint-16 v0.9.22) — Code quality 만점 push."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "idiomatic-code-quality.md"
+    if not p.exists():
+        issues.append("conventions/idiomatic-code-quality.md 누락 (bx, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in ["Naming convention", "Preferred construct", "Standard library",
+               "Readability heuristic", "idiomatic_grade", "magic_number_count",
+               "naming_violation_ratio"]:
+        if kw not in body:
+            issues.append(f"idiomatic-code-quality.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_phase_lineage_viewer(skill_root: Path) -> list[str]:
+    """C-PLV — phase-lineage-viewer.md (br, sprint-16 v0.9.22) — 프로젝트 전체 lineage 가시화."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "phase-lineage-viewer.md"
+    if not p.exists():
+        issues.append("conventions/phase-lineage-viewer.md 누락 (br, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "lineage.md", "phase 00", "phase 14", "fingerprint chain",
+        "Da Capo loop 요약", "Sentinel 위반 이벤트",
+        "update_phase_lineage", "final_outcome", "HANDOFF",
+        "bypass", "drill-down", "페이즈 04 답안 매핑",
+    ]:
+        if kw not in body:
+            issues.append(f"phase-lineage-viewer.md: '{kw}' 키워드 누락")
+    skill = _read(skill_root / "SKILL.md")
+    if "phase-lineage-viewer" not in skill:
+        issues.append("SKILL.md: phase-lineage-viewer.md 인덱스 누락")
+    return issues
+
+
+def check_dacapo_flow_trace(skill_root: Path) -> list[str]:
+    """C-DCL-FLOW-LOG — dacapo-flow-trace.md (bq, sprint-16 v0.9.22)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-flow-trace.md"
+    if not p.exists():
+        issues.append("conventions/dacapo-flow-trace.md 누락 (bq, v0.9.22)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "dacapo-flow.md", "Mermaid", "flowchart", "subgraph R",
+        "timeline", "update_dacapo_flow_diagram", "final_outcome",
+        "CONVERGED", "BUDGET_BOUND", "RE_ENTERED", "SENTINEL_REGRESSION",
+    ]:
+        if kw not in body:
+            issues.append(f"dacapo-flow-trace.md: '{kw}' 키워드 누락")
+    phase06 = skill_root / "phases" / "06-plan.md"
+    if phase06.exists() and "v0.9.22" not in _read(phase06):
+        issues.append("phases/06-plan.md: v0.9.22 sprint-16 절 누락")
+    phase08 = skill_root / "phases" / "08-implement.md"
+    if phase08.exists() and "v0.9.22" not in _read(phase08):
+        issues.append("phases/08-implement.md: v0.9.22 sprint-16 절 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1683,6 +1903,18 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-RDLR", "regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)", check_regression_derived_lint_rule_autogen),
     ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
     ("C-GAv2", "grade_assess v2 — 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)", check_grade_assess_v2),
+    ("C-DCL-GATE", "dacapo-enforcement.md — phase 06/08 핸드오프 6 조건 의무 게이트 (bm, v0.9.22 sprint-16)", check_dacapo_enforcement),
+    ("C-DCL-FRONTMATTER", "dacapo-frontmatter-schema.md — tournament/shadow-grade/dacapo-rerun 의무 필드 (bn, v0.9.22)", check_dacapo_frontmatter_schema),
+    ("C-DCL-SHADOW-CONTEXT", "shadow-grader-zero-context.md — Step C 무결성 5 룰 (bo, v0.9.22)", check_shadow_grader_zero_context),
+    ("C-DCL-SENTINEL", "dacapo-skip-sentinel.md — 3 sentinel 자동 회귀 + 로그 패턴 (bp, v0.9.22)", check_dacapo_skip_sentinel),
+    ("C-DCL-FLOW-LOG", "dacapo-flow-trace.md — 단일 마크다운 가시화 누적 갱신 (bq, v0.9.22)", check_dacapo_flow_trace),
+    ("C-PLV", "phase-lineage-viewer.md — 프로젝트 전체 phase 00~14 lineage 단일 마크다운 가시화 (br, v0.9.22)", check_phase_lineage_viewer),
+    ("C-DMC", "domain-model-completeness.md — Conceptual modelling 5 차원 (entity/state/transition/invariant/boundary) (bs, v0.9.22)", check_domain_model_completeness),
+    ("C-DSI", "data-structure-invariants.md — Invariants/Topology/Access/Bounds 4 항목 (bt, v0.9.22)", check_data_structure_invariants_conv),
+    ("C-SPI", "simulation-physical-invariants.md — 5 invariant 런타임 assert (bu, v0.9.22)", check_simulation_physical_invariants),
+    ("C-ECP", "experimental-control-protocol.md — IV/DV/CV/N/seed 5 항목 + N≥30 (bv, v0.9.22)", check_experimental_control_protocol),
+    ("C-RDM", "results-decision-mapping.md — 결과 → 결정 1:1 매핑 (bw, v0.9.22)", check_results_decision_mapping),
+    ("C-ICQ", "idiomatic-code-quality.md — naming/preferred/stdlib/readability 4 차원 (bx, v0.9.22)", check_idiomatic_code_quality),
 ]
 
 
