@@ -2255,6 +2255,32 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_impl_multiverse_semantics(skill_root: Path) -> list[str]:
+    """C-IMS-SEMANTICS (sprint-29 v0.9.34) — impl multiverse 가 plan multiverse 의 손자가 아님 + 입력 격리.
+
+    cold session attempt-2 회귀 정정 — 'Universes 2/3/4 lost the plan tournament before code was written'
+    / 'walkover' 패턴 차단. impl universes = plan winner 의 *코드 구현 변형* (입력 격리).
+    """
+    issues: list[str] = []
+    p = skill_root / "conventions" / "impl-multiverse-strict.md"
+    if not p.exists():
+        return ["conventions/impl-multiverse-strict.md 누락"]
+    body = _read(p)
+    for kw in [
+        "impl multiverse 의미",
+        "plan multiverse 의 손자",
+        "입력 격리",
+        "출력 격리",
+        "lost the plan tournament before code was written",
+        "walkover",
+        "impl universe ID 가 plan universe ID 상속",
+        "무한 회귀",
+    ]:
+        if kw not in body:
+            issues.append(f"impl-multiverse-strict.md: '{kw}' 키워드 누락 (sprint-29 정정)")
+    return issues
+
+
 def check_dacapo_fresh_universe(skill_root: Path) -> list[str]:
     """C-DCL-FRESH-UNIVERSE (sprint-28 v0.9.33) — Da Capo Round N+1 = NEW universes 의무.
 
@@ -2380,6 +2406,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IDX-1", "conventions/INDEX.md (sprint-20 v0.9.25) — 88 컨벤션 router 단일 진실 원천 + 1:1 매칭", check_conventions_index_completeness),
     ("C-IDX-2", "conventions/*.md frontmatter (sprint-27 v0.9.32) — router metadata backfill + INDEX drift detection", check_conventions_frontmatter_drift),
     ("C-DCL-FRESH-UNIVERSE", "intra-phase-dacapo-loop.md (sprint-28) — Round N+1 = NEW fresh universes (NOT survivors rerun, NOT 재라벨링)", check_dacapo_fresh_universe),
+    ("C-IMS-SEMANTICS", "impl-multiverse-strict.md (sprint-29) — impl multiverse = plan winner 코드 구현 변형 (NOT plan multiverse 손자)", check_impl_multiverse_semantics),
 ]
 
 
