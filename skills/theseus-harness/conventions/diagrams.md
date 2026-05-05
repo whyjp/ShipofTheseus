@@ -123,8 +123,8 @@ d- 모든 다이어그램은 마크다운 코드 펜스에 텍스트로 — PNG/
 a- 다이어그램 없이 텍스트만으로 의도/계획을 사용자에게 확인 — 누락이 보이지 않는다.
 b- 외부 이미지 링크 의존 — diff/오프라인/웹뷰 호환 모두 깨짐.
 c- 여러 모듈을 한 시퀀스에 욱여넣음 — 가독성 0. 분리.
-d- **(v0.9.19 sprint-13)** 모듈 ≥ 4 인데 *단일 통합 시퀀스만* 출력 — 가독성 0 + cold review 분할 불가능. [`per-module-diagram-fan-out.md`](per-module-diagram-fan-out.md) (bb) 의 trigger 조건 (모듈 ≥ 4 OR consumer-producer 페어 ≥ 6) 시 per-module 다이어그램 ≥ 모듈 수 의무. self_lint C-PMDF 가 검증.
-e- **(v0.9.19 sprint-13)** 모듈 ≤ 3 인데 over-fragmentation (per-module 강제 분할) — 의도 없이 비용 증가. trigger 조건 미달 시 단일 통합 OK.
+d- **** 모듈 ≥ 4 인데 *단일 통합 시퀀스만* 출력 — 가독성 0 + cold review 분할 불가능. [`per-module-diagram-fan-out.md`](per-module-diagram-fan-out.md) (bb) 의 trigger 조건 (모듈 ≥ 4 OR consumer-producer 페어 ≥ 6) 시 per-module 다이어그램 ≥ 모듈 수 의무. self_lint C-PMDF 가 검증.
+e- **** 모듈 ≤ 3 인데 over-fragmentation (per-module 강제 분할) — 의도 없이 비용 증가. trigger 조건 미달 시 단일 통합 OK.
 
 ## HARD-RULE 9.a — sequence + usecase + interface 셋 다 의무 (AND clause)
 

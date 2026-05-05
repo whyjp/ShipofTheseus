@@ -96,7 +96,7 @@ reconstruct_justified_ratio: 1.00  # 1/1 reconstruct row 정당화
 ### D. 페이즈 09 게이트 6 (NFR 임계 일치) 강화
 
 ```
-게이트 6 PASS 조건 강화 (sprint-14) :
+게이트 6 PASS 조건 강화 :
 - NFR 측정값 매핑 + 본 컨벤션의 measurement contract 표 row 1:1 일치
 - reconstruct method 인 metric 이 NFR 임계 측정에 사용 시 fail (정당화로 합리화 불가)
 - direct_measurement_ratio < 0.7 시 게이트 6 cap 0.85 (정직 bound)

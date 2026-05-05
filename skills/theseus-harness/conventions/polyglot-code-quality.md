@@ -6,7 +6,7 @@
 
 ## 1. 결손 진단
 
-[`build-and-config.md`](build-and-config.md) §8 (v0.9.1 sprint-05-a) :
+[`build-and-config.md`](build-and-config.md) §8 :
 
 ```
 페이즈 09 게이트 3 (SOLID DIP) 부속:

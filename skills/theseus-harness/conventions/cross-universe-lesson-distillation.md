@@ -108,4 +108,4 @@ c- **avoid_patterns 페이즈 08 미반영** — implementer 가 avoid_patterns 
 
 ## 7. 자기 검증
 
-본 컨벤션 자체에 적용 — 본 컨벤션이 *어떤 패배 universe 시뮬레이션* 을 통해 도출됐는지 본문에 박혀야 함. 본 회차 (v0.9.16 sprint-10) 에서는 v0915-cold01 의 단일 universe 패턴 (multiverse 발현 부족) 이 *meta-loser*. 다음 회차에서 본 컨벤션 자체 적용.
+본 컨벤션 자체에 적용 — 본 컨벤션이 *어떤 패배 universe 시뮬레이션* 을 통해 도출됐는지 본문에 박혀야 함. 본 회차 에서는 v0915-cold01 의 단일 universe 패턴 (multiverse 발현 부족) 이 *meta-loser*. 다음 회차에서 본 컨벤션 자체 적용.

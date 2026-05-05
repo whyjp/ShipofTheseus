@@ -100,7 +100,7 @@ C-DS:
 
 [`09-quality-gates.md`](../phases/09-quality-gates.md) 게이트 1 (의도 일치) 의 *증거* 차원에 본 표 활용 :
 
-> 게이트 1 PASS 조건 강화 (sprint-14) :
+> 게이트 1 PASS 조건 강화 :
 > - simplification 표 ≥ 1 row 존재
 > - direction 명시 row 가 표의 50% 이상
 > - 각 simplification 이 페이즈 06 plan/06-plan.md 의 *해당 모듈 limitations* 본문에 매핑

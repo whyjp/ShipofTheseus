@@ -118,7 +118,7 @@ def gate_phase06_to_07(artifact_dir: Path, grade: Grade) -> GateResult:
         # sprint-17 — forward projection 차단
         forward_pat = r'(anticipated|would exceed|infeasible to continue|wall makes .* infeasible|further .{0,40} infeasible|45.?min wall|budget tight 예상)'
         if re.search(forward_pat, fr_path.read_text(), re.I):
-            return REJECT('fallback_reason 에 forward projection 라벨 detected — 측정값 외 사용 금지 (sprint-17)')
+            return REJECT('fallback_reason 에 forward projection 라벨 detected — 측정값 외 사용 금지')
         # 조건 4
         rerun_logs = list((artifact_dir / 'plan').glob('dacapo-rerun-*.md'))
         if len(rerun_logs) != rerun:
@@ -162,9 +162,9 @@ def on_gate_reject(reason: str, phase: int):
 | **C-DCL-RERUN-LOG** (v0.9.21 재정의) | rerun >= 1 시 dacapo-rerun-NN.md 갯수 == rerun_count | 일치 | 불일치 |
 | **C-DCL-ANON** (v0.9.21 재정의) | rerun >= 1 시 anonymized prev winner 존재 | 존재 | 부재 |
 | **C-DCL-FALLBACK** (신규) | BUDGET_BOUND 시 fallback-reason.md 본문 ≥ 1 줄 | 존재 | 부재 또는 빈 |
-| **C-DCL-NO-FORWARD-PROJECT** (sprint-17) | fallback_reason 본문 regex (anticipated / would exceed / infeasible to continue / wall makes … infeasible) | 매치 0 | 매치 ≥ 1 |
-| **C-DCL-MIN-LOOP-ATTEMPT** (sprint-17) | step_e_cap_reached=true OR fallback claim 시 rerun_count ≥ 1 | 만족 | rerun=0 인데 cap claim |
-| **C-DCL-CAP-MEASURED** (sprint-17) | BUDGET_OVERRUN claim 시 (clock_now - start) > wall_budget 측정 일치 | 측정 일치 | 측정 미달인데 claim |
+| **C-DCL-NO-FORWARD-PROJECT** | fallback_reason 본문 regex (anticipated / would exceed / infeasible to continue / wall makes … infeasible) | 매치 0 | 매치 ≥ 1 |
+| **C-DCL-MIN-LOOP-ATTEMPT** | step_e_cap_reached=true OR fallback claim 시 rerun_count ≥ 1 | 만족 | rerun=0 인데 cap claim |
+| **C-DCL-CAP-MEASURED** | BUDGET_OVERRUN claim 시 (clock_now - start) > wall_budget 측정 일치 | 측정 일치 | 측정 미달인데 claim |
 
 [`../scoring/self_lint.py`](../scoring/self_lint.py) 의 `check_dacapo_enforcement()` 함수가 phase 06 / 08 종료 시점에 자동 호출.
 
@@ -181,9 +181,9 @@ b- **의사코드만 갱신, 게이트 누락** — sprint-15 의 실제 패턴.
 c- **violation_count 무시 ack** — 위반 3회 후에도 자율 회귀만 → 무한 회귀 가능. 3회 이상 사용자 ack 의무.
 d- **gate REJECT 후 partial 재진입** — Step F 부터만 재실행 → universe 변경 룰 위반. Step A 부터 전체 재실행 의무.
 e- **frontmatter `dacapo_loop_executed: true` 거짓 박기** — agent 가 검증 우회 위해 거짓 박을 가능. 다른 4 조건과 cross-validation (rerun_count + step_d_*_pass + dacapo-rerun-NN.md 존재) 으로 검증.
-f- **(sprint-17) forward time projection** — agent 가 "rerun N 번 더 하면 시간 부족" 으로 *예측* 해 BUDGET_BOUND 라벨. 시간은 *측정만*, 예측 금지. cold session `2026-05-05__001_mine_g4_theseus/plan/tournament-01.md` 의 `step_e_cap_reached: false` + `rerun_count: 0` + `budget_used_total: 0.20` 인데 promote universe-1 + `next_action: "...45min wall makes further universe rerun infeasible"` 의 직접 회귀 정정.
-g- **(sprint-17) min loop attempt 우회** — rerun 0 회로 BUDGET_OVERRUN 직행. 최소 1 회 실 rerun 후에만 cap 발동. C-DCL-MIN-LOOP-ATTEMPT 강제.
-h- **(sprint-17) LLM 시간 추정 사용** — `budget_used_total` 을 측정값 아닌 LLM 추정값으로 박기. 본 필드는 (clock_now - start) / wall_budget 산식으로 계산되어야 하며 LLM 이 *추측* 안 됨. 추정값 박을 시 C-DCL-CAP-MEASURED 가 측정 mismatch 로 fail.
+f- ** forward time projection** — agent 가 "rerun N 번 더 하면 시간 부족" 으로 *예측* 해 BUDGET_BOUND 라벨. 시간은 *측정만*, 예측 금지. cold session `2026-05-05__001_mine_g4_theseus/plan/tournament-01.md` 의 `step_e_cap_reached: false` + `rerun_count: 0` + `budget_used_total: 0.20` 인데 promote universe-1 + `next_action: "...45min wall makes further universe rerun infeasible"` 의 직접 회귀 정정.
+g- ** min loop attempt 우회** — rerun 0 회로 BUDGET_OVERRUN 직행. 최소 1 회 실 rerun 후에만 cap 발동. C-DCL-MIN-LOOP-ATTEMPT 강제.
+h- ** LLM 시간 추정 사용** — `budget_used_total` 을 측정값 아닌 LLM 추정값으로 박기. 본 필드는 (clock_now - start) / wall_budget 산식으로 계산되어야 하며 LLM 이 *추측* 안 됨. 추정값 박을 시 C-DCL-CAP-MEASURED 가 측정 mismatch 로 fail.
 
 ## 9. cold session 검증
 

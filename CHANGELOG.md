@@ -2,6 +2,37 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.29 — 2026-05-06 (sprint-24 — conventions inline body history label cleanup)
+
+### 마일스톤
+
+conventions docs 본문의 *standalone* parenthetical history label 일괄 제거. 10 conventions 의 inline label cleanup.
+
+### 변경 — 3 bulk regex 패턴
+
+- `\(v0\.9\.\d+ (?:신규|갱신|변경|단순화|cross-ref|정합)\)` → 제거
+- `\(v0\.9\.\d+ sprint-\d+ ...\)` → 제거
+- `\(sprint-\d+ ...\)` → 제거
+
+10 파일 갱신: cross-universe-lesson-distillation, dacapo-enforcement, dacapo-frontmatter-schema, diagrams, directional-simplification, intent-refresh-post-interview, measurement-contract, mindmap-quality-gardening, polyglot-code-quality, rubric-targeted-quality-gates. 총 ~234 chars 제거.
+
+### 보존 (intentional)
+
+- `[X.md](X.md) (v0.9.X)` — convention citation metadata (현재 룰 조합, history 아님)
+- `cold session XXX (v0.9.X)` evidence — design rationale (회귀 정정 증거)
+- `본 회차 (v0.9.X)` self-application context — meta 적용 시점 명시 (case-by-case 더 위험)
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.28 → 0.9.29.
+- self_lint 98/98 PASS.
+
+### 알려진 결손 (sprint-25+)
+
+- 21 conventions 도메인 narration (mining/SimPy/truck) generic 화 — case-by-case 신중
+- plan/dacapo phase body 의무 강화 (HARD-RULE 9.a 8 항목 외 dacapo산출물 body)
+- "본 회차 (v0.9.X)" / "v0.9.X 까지" 등 temporal narrative cleanup
+
 ## v0.9.28 — 2026-05-06 (sprint-23 — conventions docs header history cleanup)
 
 ### 마일스톤

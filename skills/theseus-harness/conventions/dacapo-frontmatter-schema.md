@@ -18,7 +18,7 @@ prev_fingerprint: sha256:<...>
 produced_at: <ISO>
 producer_agent: planner|implementer
 
-# ── Da Capo Loop 의무 필드 (v0.9.22 신규) ──────────────────
+# ── Da Capo Loop 의무 필드 ──────────────────
 dacapo_loop_executed: true                    # 의사코드 Step A~D 실행됨
 rerun: 00                                     # 0-padded, 첫 시도 = 00
 rerun_count: 0                                # 누적 다카포 횟수

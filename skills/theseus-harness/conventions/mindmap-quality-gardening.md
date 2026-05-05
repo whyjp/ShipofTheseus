@@ -68,7 +68,7 @@ root((프로젝트))
 
 **v0.9.19 sprint-13 갱신** — A 등급 default 격상 ([`mindmap-richness-default.md`](mindmap-richness-default.md) ba). B 등급은 fallback PASS *with lesson*.
 
-| 등급 | 형식 | 폭 | 깊이 | 풍성도 | 결과 (sprint-13) |
+| 등급 | 형식 | 폭 | 깊이 | 풍성도 | 결과 |
 |---|---|---|---|---|:-:|
 | **A (default G4+)** | Mermaid | 4 axis × ≥4 | ≥3 axis sub-sub + ≥1 axis sub-sub-sub | ≥25 노드 | ✅ default — *천정 도달 default* |
 | **B (fallback PASS with lesson)** | Mermaid | 4 axis × ≥3 | ≥2 axis sub-sub | ≥15 노드 | ✅ PASS — *sprint NN+1 의 mindmap 보강 lesson trigger* |
