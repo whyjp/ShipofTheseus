@@ -877,11 +877,11 @@ def check_fragmentation_policy(skill_root: Path) -> list[str]:
         return ["conventions/fragmentation.md 누락 — 파편화 우선 룰 정의 필요"]
     skill = _read(skill_root / "SKILL.md")
     # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심.
-    # 임계: 22000 자 (v0.9.22 sprint-16 — 68 컨벤션 + bm~bq sprint-16 인덱스 표 행 누적 + bl sprint-15 hook 절 + sprint-14 7 패치 누적. 표 인덱스 행은 룰 본문 X 라 fragmentation 위반 아님 — 다음 sprint 에 별도 CHANGELOG.md 분리 검토.
+    # 임계: 24500 자 (v0.9.24 sprint-18 — 74 컨벤션 + bz~cd 5 신규 sprint-18 절 추가. 표 인덱스 행은 룰 본문 X 라 fragmentation 위반 아님 — 다음 sprint 에 별도 CHANGELOG.md 분리 검토.
     # 이전 임계 12000 은 21 컨벤션 시점, plan-tree + runtime-prereq + HARD-RULE 추가 후 13000~ 정상.
-    if len(skill) > 22000:
+    if len(skill) > 24500:
         issues.append(
-            f"SKILL.md 길이 {len(skill)} 자 — 임계 22000 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
+            f"SKILL.md 길이 {len(skill)} 자 — 임계 24500 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
         )
     if "fragmentation.md" not in skill:
         issues.append("SKILL.md 가 fragmentation.md 를 노출하지 않음")
@@ -1833,6 +1833,195 @@ def check_dacapo_flow_trace(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_dacapo_no_forward_projection(skill_root: Path) -> list[str]:
+    """C-DCL-NO-FORWARD-PROJECT (sprint-17) — fallback_reason 본문에 forward time projection 라벨 차단.
+
+    LLM 의 시간 추정은 인간 작업시간 기준 → 항상 "시간내 처리 불가능" 으로 편향.
+    측정값 (clock_now - start) 외에 사용 금지. cold session 002 winner-by-projection 회귀 정정.
+    """
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-enforcement.md"
+    if not p.exists():
+        return issues
+    body = _read(p)
+    for kw in [
+        "C-DCL-NO-FORWARD-PROJECT",
+        "forward projection",
+        "측정 only",
+        "anticipated",
+    ]:
+        if kw not in body:
+            issues.append(f"dacapo-enforcement.md: sprint-17 '{kw}' 키워드 누락")
+    return issues
+
+
+def check_dacapo_min_loop_attempt(skill_root: Path) -> list[str]:
+    """C-DCL-MIN-LOOP-ATTEMPT (sprint-17) — rerun_count >= 1 의무 (cap 발동 전 최소 1 회 실 rerun)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-enforcement.md"
+    if not p.exists():
+        return issues
+    body = _read(p)
+    for kw in [
+        "C-DCL-MIN-LOOP-ATTEMPT",
+        "최소 1 회 실 rerun",
+        "min loop attempt",
+    ]:
+        if kw not in body:
+            issues.append(f"dacapo-enforcement.md: sprint-17 '{kw}' 키워드 누락")
+    return issues
+
+
+def check_diagrams_and_coverage(skill_root: Path) -> list[str]:
+    """C-DIAG-AND-COVERAGE (sprint-17) — HARD-RULE 9.a OR → AND.
+
+    sequence + usecase + interface 셋 다 의무. cold session 002 의 sequence 0 / usecase 0 / interface 7
+    로 OR 우측 만으로 9.a 통과 회귀 정정.
+    """
+    issues: list[str] = []
+    p = skill_root / "conventions" / "diagrams.md"
+    if not p.exists():
+        issues.append("conventions/diagrams.md 누락")
+        return issues
+    body = _read(p)
+    for kw in [
+        "sprint-17",
+        "OR → AND",
+        "C-DIAG-AND-COVERAGE",
+        "sequenceDiagram ≥ 1 AND",
+        "셋 다 의무",
+    ]:
+        if kw not in body:
+            issues.append(f"diagrams.md: sprint-17 '{kw}' 키워드 누락")
+    orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
+    if orch.exists():
+        orch_body = _read(orch)
+        if "AND Mermaid usecase" not in orch_body:
+            issues.append("orchestrator/SKILL.md: HARD-RULE 9.a 가 sequenceDiagram + usecase AND 셋 다 의무 갱신 누락")
+    return issues
+
+
+def check_intent_refresh_post_interview(skill_root: Path) -> list[str]:
+    """C-IRPI (sprint-17) — phase 04 → 05 사이 의도 refresh 4 framing universe + 01-additional 의무."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "intent-refresh-post-interview.md"
+    if not p.exists():
+        issues.append("conventions/intent-refresh-post-interview.md 누락 (by, sprint-17)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "domain-paradigm", "constraint-paradigm", "risk-paradigm", "outcome-paradigm",
+        "01-1-intent.md", "01-2-intent.md", "01-3-intent.md", "01-4-intent.md",
+        "01-additional.md",
+        "C-IRPI-COUNT", "C-IRPI-FRAMING", "C-IRPI-CHAIN",
+        "C-IRPI-CONSUMED", "C-IRPI-CONTRADICTION",
+        "interview_answers_consumed",
+    ]:
+        if kw not in body:
+            issues.append(f"intent-refresh-post-interview.md: '{kw}' 키워드 누락")
+    phase05 = skill_root / "phases" / "05-critique.md"
+    if phase05.exists():
+        p5 = _read(phase05)
+        if ("01-{1,2,3,4}-intent.md" not in p5) and ("01-1-intent.md" not in p5):
+            issues.append("phases/05-critique.md: refresh 4 universes 입력 갱신 누락")
+        if "01-additional.md" not in p5:
+            issues.append("phases/05-critique.md: 01-additional.md 입력 누락")
+    harness_skill = skill_root / "SKILL.md"
+    if harness_skill.exists():
+        if "intent-refresh-post-interview" not in _read(harness_skill):
+            issues.append("theseus-harness/SKILL.md: 컨벤션 카탈로그 by 행 누락")
+    orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
+    if orch.exists():
+        if "intent-refresh-post-interview" not in _read(orch):
+            issues.append("orchestrator/SKILL.md: 페이즈별 lookup 표에 intent-refresh-post-interview 누락")
+    return issues
+
+
+def check_readme_numbers_from_summary(skill_root: Path) -> list[str]:
+    """C-RNFS (sprint-18, bz) — doc 숫자 vs measurement artifact ±0.01% 일치."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "readme-numbers-from-summary.md"
+    if not p.exists():
+        issues.append("conventions/readme-numbers-from-summary.md 누락 (bz, sprint-18)")
+        return issues
+    body = _read(p)
+    for kw in ["readme-numbers-from-summary", "±0.01%", "summary.json", "drift", "grep", "C-RNFS"]:
+        if kw not in body:
+            issues.append(f"readme-numbers-from-summary.md: '{kw}' 키워드 누락")
+    phase09 = skill_root / "phases" / "09-quality-gates.md"
+    if phase09.exists() and "G-RNFS" not in _read(phase09):
+        issues.append("phases/09-quality-gates.md: G-RNFS 게이트 등록 누락")
+    return issues
+
+
+def check_reproducibility_doublecheck(skill_root: Path) -> list[str]:
+    """C-RDC (sprint-18, ca) — entry script 2회 실행 후 출력 sha256 byte-equal."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "reproducibility-doublecheck.md"
+    if not p.exists():
+        issues.append("conventions/reproducibility-doublecheck.md 누락 (ca, sprint-18)")
+        return issues
+    body = _read(p)
+    for kw in ["reproducibility-doublecheck", "byte-equal", "2회", "sha256", "C-RDC", "hash() 솔트", "PYTHONHASHSEED"]:
+        if kw not in body:
+            issues.append(f"reproducibility-doublecheck.md: '{kw}' 키워드 누락")
+    phase09 = skill_root / "phases" / "09-quality-gates.md"
+    if phase09.exists() and "G-RDC" not in _read(phase09):
+        issues.append("phases/09-quality-gates.md: G-RDC 게이트 등록 누락")
+    return issues
+
+
+def check_magic_number_traceability(skill_root: Path) -> list[str]:
+    """C-MNT (sprint-18, cb) — 코드 매직넘버 → A_i 가정 또는 데이터 파일 출처 1:1 매핑."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "magic-number-traceability.md"
+    if not p.exists():
+        issues.append("conventions/magic-number-traceability.md 누락 (cb, sprint-18)")
+        return issues
+    body = _read(p)
+    for kw in ["magic-number-traceability", "literal", "A_i 가정", "CSV/YAML", "C-MNT", "programming constants"]:
+        if kw not in body:
+            issues.append(f"magic-number-traceability.md: '{kw}' 키워드 누락")
+    phase09 = skill_root / "phases" / "09-quality-gates.md"
+    if phase09.exists() and "G-MNT" not in _read(phase09):
+        issues.append("phases/09-quality-gates.md: G-MNT 게이트 등록 누락")
+    return issues
+
+
+def check_dead_code_zero(skill_root: Path) -> list[str]:
+    """C-DCZ (sprint-18, cc) — 언어별 dead-code analyzer 위반 0 강제."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dead-code-zero.md"
+    if not p.exists():
+        issues.append("conventions/dead-code-zero.md 누락 (cc, sprint-18)")
+        return issues
+    body = _read(p)
+    for kw in ["dead-code-zero", "ruff", "F,ARG,SIM", "vulture", "C-DCZ", "위반 0"]:
+        if kw not in body:
+            issues.append(f"dead-code-zero.md: '{kw}' 키워드 누락")
+    phase09 = skill_root / "phases" / "09-quality-gates.md"
+    if phase09.exists() and "G-DCZ" not in _read(phase09):
+        issues.append("phases/09-quality-gates.md: G-DCZ 게이트 등록 누락")
+    return issues
+
+
+def check_submission_portability(skill_root: Path) -> list[str]:
+    """C-SPB (sprint-18, cd) — entry script --data-dir CLI flag + DATA_DIR env var fallback."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "submission-portability.md"
+    if not p.exists():
+        issues.append("conventions/submission-portability.md 누락 (cd, sprint-18)")
+        return issues
+    body = _read(p)
+    for kw in ["submission-portability", "--data-dir", "CLI flag", "env var", "C-SPB", "REPO_ROOT.parent.parent", "argparse"]:
+        if kw not in body:
+            issues.append(f"submission-portability.md: '{kw}' 키워드 누락")
+    phase09 = skill_root / "phases" / "09-quality-gates.md"
+    if phase09.exists() and "G-SPB" not in _read(phase09):
+        issues.append("phases/09-quality-gates.md: G-SPB 게이트 등록 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -1915,6 +2104,15 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-ECP", "experimental-control-protocol.md — IV/DV/CV/N/seed 5 항목 + N≥30 (bv, v0.9.22)", check_experimental_control_protocol),
     ("C-RDM", "results-decision-mapping.md — 결과 → 결정 1:1 매핑 (bw, v0.9.22)", check_results_decision_mapping),
     ("C-ICQ", "idiomatic-code-quality.md — naming/preferred/stdlib/readability 4 차원 (bx, v0.9.22)", check_idiomatic_code_quality),
+    ("C-DCL-NO-FORWARD-PROJECT", "dacapo-enforcement.md sprint-17 — forward time projection 차단", check_dacapo_no_forward_projection),
+    ("C-DCL-MIN-LOOP-ATTEMPT", "dacapo-enforcement.md sprint-17 — rerun ≥ 1 최소 loop attempt", check_dacapo_min_loop_attempt),
+    ("C-DIAG-AND-COVERAGE", "diagrams.md sprint-17 — HARD-RULE 9.a OR → AND (sequence + usecase + interface 셋 다)", check_diagrams_and_coverage),
+    ("C-IRPI", "intent-refresh-post-interview.md (by, sprint-17) — phase 04 → 05 refresh 4 framing universe + 01-additional", check_intent_refresh_post_interview),
+    ("C-RNFS", "readme-numbers-from-summary.md (bz, sprint-18) — doc 숫자 vs measurement artifact ±0.01% 일치", check_readme_numbers_from_summary),
+    ("C-RDC", "reproducibility-doublecheck.md (ca, sprint-18) — entry script 2회 실행 sha256 byte-equal", check_reproducibility_doublecheck),
+    ("C-MNT", "magic-number-traceability.md (cb, sprint-18) — code literal → A_i 또는 데이터 출처 1:1 매핑", check_magic_number_traceability),
+    ("C-DCZ", "dead-code-zero.md (cc, sprint-18) — 언어별 dead-code analyzer 위반 0", check_dead_code_zero),
+    ("C-SPB", "submission-portability.md (cd, sprint-18) — entry script --data-dir CLI + DATA_DIR env var fallback", check_submission_portability),
 ]
 
 

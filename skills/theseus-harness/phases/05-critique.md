@@ -3,12 +3,24 @@
 ## 한 줄 요약
 **계획 작성 전에 *의도 자체* 를 친다** — 미스초이스, 범위 함정, 더 단순한 대안, 이미 존재하는 해법. 비평 에이전트는 명시적으로 적대적이며 동의보다 유용함을 우선.
 
-## 입력
-- `intent/01-intent.md`
-- `intent/04-answers.md`
+## 입력 (sprint-17 — refresh 4 universes 우선)
+
+- **`intent/01-{1,2,3,4}-intent.md`** — sprint-17 신규, 인터뷰 후 refresh 4 framing (domain / constraint / risk / outcome). 본 페이즈 critique 의 *주요* 입력. ([`../conventions/intent-refresh-post-interview.md`](../conventions/intent-refresh-post-interview.md))
+- **`intent/01-additional.md`** — sprint-17 신규, 인터뷰가 새로 드러낸 요구 / 비목표 / 제약 단일 doc.
+- `intent/04-answers.md` — 참조 보존 (refresh 본문이 이미 흡수)
 - `intent/04-autonomy.md` — Q-D1~Q-D8 사전 위임 답 (8 줄)
 - `intent/04-verification.md` — **진입 게이트** (oh-my-ralph Verification Commands 패턴, v0.3.0). frontmatter `entry_blocked: true` 면 본 페이즈 진입 거부 — 사용자가 외부 완료 검증 명령을 제시 안 함. `commands_count > 0 || manual_only == true` 일 때만 진입 허용.
+- `intent/01-intent.md` — *stale source 참조용만* (sprint-17, refresh 가 본문 갱신 — 직접 비평 입력 아님). contradicts_initial_intent 추적용 원본 보존.
 - 레포의 기존 코드 (이미 일부를 풀고 있는 prior art 탐색).
+
+**sprint-17 진입 추가 게이트** :
+```python
+for u in [1, 2, 3, 4]:
+    if not (intent_dir / f"01-{u}-intent.md").exists():
+        raise SkillEntryError(f"intent/01-{u}-intent.md 부재 — phase 04+ refresh 미완료. intent-refresh-post-interview.md 컨벤션 의무.")
+if not (intent_dir / "01-additional.md").exists():
+    raise SkillEntryError("intent/01-additional.md 부재 — phase 04+ refresh 미완료.")
+```
 
 ## 진입 가드 (v0.3.0)
 
