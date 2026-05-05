@@ -2,6 +2,46 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.33 — 2026-05-06 (sprint-28 — Da Capo "fresh universe" 의미 명확화 + 무한 회귀 + scoring granularity)
+
+### 마일스톤
+
+cold session 003 attempt-2 (v0.9.32) 의 Da Capo 회귀 정정. agent 가 "Round 2 = top-K 생존자 head-to-head" 로 Da Capo 를 오해하여 *survivors rerun* 으로 구현 (의도: NEW universes + lessons applied).
+
+### 변경 — `intra-phase-dacapo-loop.md` 안티 패턴 5 신규 (g~k)
+
+- **g- survivors rerun (가장 빈번한 회귀)** : Round N+1 = top-K 생존자 head-to-head 재가중 채점 → 차단. 올바른 Round N+1 = `[anonymized prev winner] + [width-1 NEW fresh universes]`.
+- **h- dacapo-rerun-NN.md 역순 작성** : tournament-(NN+1).md *이후* 작성 시 NEW universe pool spec 의미 상실. 올바른 순서: tournament-NN → dacapo-rerun-NN → tournament-(NN+1).
+- **i- fresh universe 가 재라벨링** : 본문이 Round N universe 본문과 semantic diff < 30% → fail. lesson_pack 적용 + framing 변경 의무.
+- **j- max_rerun cap 으로 조기 종료** : 본 의사코드는 *budget cap 만*. max_rerun (G3=2/G4=3/G5=5) 는 *참고용 가드*. **budget 충분 시 임계 (G4=0.999/G5=0.99999) 도달까지 *무한 회귀***. 임계 미달 + budget 여유 + rerun >= max_rerun 인데 promote = 차단 (mandatory rerun ce 정합).
+- **k- scoring granularity coarse** : `0-3 4 단계 정수` / `0-10 정수` 등 coarse rating 으로 6-dim weighted (cf plan-tournament-scoring-strict) 우회 → reject. 0.0-1.0 연속값 의무. `각 criterion 0–3` 패턴 자동 reject.
+
+사용자 직접 지시 :
+- "다른 다카포도 마찬가지로 의미 를 명확하게 레슨만 가중해서 다시 하는것"
+- "0.9999 임계값 까지 재시도 무한회귀"
+- "점수 스코어링의 디테일이 높고 정확해야함"
+
+### 변경 — pseudocode comment 정정
+
+`max_rerun = {G3: 2, G4: 3, G5: 5}[grade]` 줄에 *참고용 가드 (sprint-28 — budget 충분 시 임계 도달까지 무한 회귀, budget cap 만이 진짜 종료 조건)* 주석 추가.
+
+### 변경 — self_lint
+
+- **C-DCL-FRESH-UNIVERSE 신규** : 컨벤션 본문에 anti-pattern + fresh universe 정의 명시 검증 (6 keyword: C-DCL-FRESH-UNIVERSE / survivors rerun / 재라벨링 / 역순 작성 / 무한 회귀 / scoring granularity coarse).
+- 99 → 100 checks. all_ok=True.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.32 → 0.9.33.
+- self_lint 100/100 PASS.
+
+### 알려진 결손 (sprint-29+)
+
+- C-IDX-3 (phases 본문 cross-ref ⊆ INDEX applies-to-phases)
+- C-IDX-4 (grades.md ↔ INDEX applies-to-grades 집계)
+- 코드 블록 내 mining illustrative example 잔존 deep cleanup
+- v0.9.33 cold session 외부 검증 — fresh universe 의미 발현 + 무한 회귀 작동 + 0.999 도달 시까지 polishing
+
 ## v0.9.32 — 2026-05-06 (sprint-27 — conventions frontmatter backfill (88) + C-IDX-2 drift detection)
 
 ### 마일스톤
