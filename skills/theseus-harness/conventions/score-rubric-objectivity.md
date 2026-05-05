@@ -1,3 +1,12 @@
+---
+id: score-rubric-objectivity
+category: quality
+applies-to-phases: '[09,14]'
+applies-to-grades: '[all]'
+trigger-when: 'self-rating'
+indexed-in: conventions/INDEX.md
+---
+
 # Score Rubric Objectivity — strict checklist 기반 self-rating, 자유 판단 0
 
 ## 한 줄 요약

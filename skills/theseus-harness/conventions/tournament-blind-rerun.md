@@ -1,3 +1,12 @@
+---
+id: tournament-blind-rerun
+category: tournament
+applies-to-phases: '[06,08,11]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: '임계 미달'
+indexed-in: conventions/INDEX.md
+---
+
 # Tournament Blind Rerun — 토너먼트 미달 시 blind champion-injection 재경합
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: spec-catalog
+category: quality
+applies-to-phases: '[01,09]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 스펙 카탈로그 — 도메인별 NFR 자동 제안
 
 ## 한 줄 요약

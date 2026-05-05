@@ -1,3 +1,12 @@
+---
+id: mindmap-quality-gardening
+category: mindmap
+applies-to-phases: '[01]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Mindmap Quality Gardening — Mermaid 강제 + 깊이/폭/풍성도 임계 enforcement
 
 ## 한 줄 요약

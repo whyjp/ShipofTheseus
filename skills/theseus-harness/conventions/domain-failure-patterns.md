@@ -1,3 +1,12 @@
+---
+id: domain-failure-patterns
+category: domain
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: '사용자 어댑터 매칭'
+indexed-in: conventions/INDEX.md
+---
+
 # Domain Failure Patterns — 도메인 어댑터별 근본 결손 패턴 카탈로그
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: dacapo-skip-sentinel
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'sentinel 매치'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo Skip Sentinel — 자동 위반 인식 + 강제 회귀 (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

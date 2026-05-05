@@ -1,3 +1,12 @@
+---
+id: indexing
+category: core
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 산출물 인덱싱 컨벤션 — 산출물 = DB, 비직렬성 트리, 오해 방지 허들
 
 ## 한 줄 요약

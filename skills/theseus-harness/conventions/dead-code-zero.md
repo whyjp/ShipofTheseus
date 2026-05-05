@@ -1,3 +1,12 @@
+---
+id: dead-code-zero
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'code present'
+indexed-in: conventions/INDEX.md
+---
+
 # Dead code zero (`dead-code-zero`) — ruff F,ARG,SIM 또는 vulture 위반 0 (sprint-18, cc, HARD-RULE 9.ee)
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: runtime-prereq
+category: core
+applies-to-phases: '[04,09]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 런타임 사전조건 (Runtime Prerequisite) 컨벤션
 
 ## 한 줄 요약

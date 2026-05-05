@@ -1,3 +1,12 @@
+---
+id: analytical-bound-cross-validation
+category: quality
+applies-to-phases: '[09,11]'
+applies-to-grades: '[all]'
+trigger-when: 'analytical bound 가능'
+indexed-in: conventions/INDEX.md
+---
+
 # Analytical Bound Cross-Validation — closed-form 상한 vs simulated baseline
 
 ## 한 줄 요약

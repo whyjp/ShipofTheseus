@@ -1,3 +1,12 @@
+---
+id: build-and-config
+category: core
+applies-to-phases: '[08]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 빌드·설정·문서화 컨벤션
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: shadow-grader-zero-context
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'step C'
+indexed-in: conventions/INDEX.md
+---
+
 # Shadow Grader Zero-Context Integrity — 무결성 증거 + cross-validation (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

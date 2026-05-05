@@ -1,3 +1,12 @@
+---
+id: process-flow-coherence
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'process 차원'
+indexed-in: conventions/INDEX.md
+---
+
 # Process Flow Coherence — cycle / state-machine / workflow 정합성 자기 검증
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: data-structure-invariants
+category: planning
+applies-to-phases: '[06]'
+applies-to-grades: '[all]'
+trigger-when: 'data 구조 ≥ 1'
+indexed-in: conventions/INDEX.md
+---
+
 # Data Structure Invariants — Data & topology 만점 push (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

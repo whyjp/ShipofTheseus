@@ -1,3 +1,12 @@
+---
+id: test-invariants
+category: quality
+applies-to-phases: '[09,10]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 테스트 목적 보호 — 불변 조건과 Phase V
 
 ## 한 줄 요약

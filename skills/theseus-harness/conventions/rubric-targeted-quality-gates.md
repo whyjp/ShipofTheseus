@@ -1,3 +1,12 @@
+---
+id: rubric-targeted-quality-gates
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'rubric ≥ 1'
+indexed-in: conventions/INDEX.md
+---
+
 # Rubric-Targeted Quality Gates — 카테고리별 yes/no 체크리스트 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

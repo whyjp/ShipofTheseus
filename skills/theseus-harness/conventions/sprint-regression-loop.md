@@ -1,3 +1,12 @@
+---
+id: sprint-regression-loop
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Sprint Regression Loop — *self-polishing* 임계 도달까지 반복
 
 ## 한 줄 요약

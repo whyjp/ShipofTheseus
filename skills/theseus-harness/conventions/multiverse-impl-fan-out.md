@@ -1,3 +1,12 @@
+---
+id: multiverse-impl-fan-out
+category: impl
+applies-to-phases: '[08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Multiverse Implementation Fan-Out — universe N 모두 실 코드 의무 + tournament merge
 
 ## 한 줄 요약

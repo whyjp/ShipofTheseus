@@ -1,3 +1,12 @@
+---
+id: competition
+category: meta
+applies-to-phases: '[06,08,11]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'universe 단일안 부재'
+indexed-in: conventions/INDEX.md
+---
+
 # 경쟁 병렬 컨벤션 (Competitive Parallelism)
 
 ## 한 줄 요약

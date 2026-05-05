@@ -1,3 +1,12 @@
+---
+id: contested-decision-multiverse
+category: planning
+applies-to-phases: '[06]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'universe axis 부재'
+indexed-in: conventions/INDEX.md
+---
+
 # Contested-Decision Multiverse — tournament axis 재정의 (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

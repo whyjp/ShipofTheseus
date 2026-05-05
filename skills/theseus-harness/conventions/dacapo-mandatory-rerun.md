@@ -1,3 +1,12 @@
+---
+id: dacapo-mandatory-rerun
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'step D AND pass'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo mandatory rerun (`dacapo-mandatory-rerun`) — 점수 임계 도달해도 무조건 ≥ 1 rerun (sprint-19, ce, HARD-RULE 9.gg)
 
 ## 한 줄 요약

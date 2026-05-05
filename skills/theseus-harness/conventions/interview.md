@@ -1,3 +1,12 @@
+---
+id: interview
+category: interview
+applies-to-phases: '[04]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 인터뷰 컨벤션
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: diagrams
+category: mindmap
+applies-to-phases: '[01,04,06]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 다이어그램 컨벤션
 
 ## 한 줄 요약

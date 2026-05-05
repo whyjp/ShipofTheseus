@@ -1,3 +1,12 @@
+---
+id: anti-patterns
+category: meta
+applies-to-phases: '[all]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 안티 패턴 통합 카탈로그
 
 ## 한 줄 요약

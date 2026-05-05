@@ -1,3 +1,12 @@
+---
+id: cross-universe-lesson-distillation
+category: sprint
+applies-to-phases: '[06,11]'
+applies-to-grades: '[G4,G5]'
+trigger-when: 'universe 패배 흡수'
+indexed-in: conventions/INDEX.md
+---
+
 # Cross-Universe Lesson Distillation — 패배 universe 의 lessons 우승 본문 흡수
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: domain-research-stacking
+category: domain
+applies-to-phases: '[01]'
+applies-to-grades: '[all]'
+trigger-when: '사용자 어댑터 매칭'
+indexed-in: conventions/INDEX.md
+---
+
 # Domain Research Stacking — 마인드맵 도메인 noun → 도메인 어댑터 자동 stack
 
 ## 한 줄 요약

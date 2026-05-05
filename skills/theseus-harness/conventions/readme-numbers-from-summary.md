@@ -1,3 +1,12 @@
+---
+id: readme-numbers-from-summary
+category: quality
+applies-to-phases: '[09,14]'
+applies-to-grades: '[all]'
+trigger-when: 'doc + summary'
+indexed-in: conventions/INDEX.md
+---
+
 # README numbers from summary (`readme-numbers-from-summary`) — README 숫자 vs summary.json ±0.01% 일치 (sprint-18, bz, HARD-RULE 9.bb)
 
 ## 한 줄 요약

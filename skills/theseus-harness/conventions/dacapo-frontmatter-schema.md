@@ -1,3 +1,12 @@
+---
+id: dacapo-frontmatter-schema
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'tournament 산출'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo Frontmatter Schema — tournament/shadow-grade/dacapo-rerun 의무 필드 (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

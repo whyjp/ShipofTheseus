@@ -1,3 +1,12 @@
+---
+id: convention-traceability
+category: meta
+applies-to-phases: '[all]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Convention Traceability — 컨벤션 발현 추적
 
 ## 한 줄 요약

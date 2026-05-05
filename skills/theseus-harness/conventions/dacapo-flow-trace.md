@@ -1,3 +1,12 @@
+---
+id: dacapo-flow-trace
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'dacapo step'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo Flow Trace — universe + dacapo step 단일 마크다운 다이어그램 (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

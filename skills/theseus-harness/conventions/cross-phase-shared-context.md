@@ -1,3 +1,12 @@
+---
+id: cross-phase-shared-context
+category: meta
+applies-to-phases: '[06,08,09,14]'
+applies-to-grades: '[all]'
+trigger-when: 'shared 정보 인용'
+indexed-in: conventions/INDEX.md
+---
+
 # Cross-phase shared context (`cross-phase-shared-context`) — 공통 정보 단일 위치 + 양쪽 phase 인용 의무 (sprint-19, cj, HARD-RULE 9.ll)
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: resources
+category: core
+applies-to-phases: '[10]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 리소스 기반 NFR 임계 — 천정 감지와 자동 조정
 
 ## 한 줄 요약

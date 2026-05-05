@@ -1,3 +1,12 @@
+---
+id: evidence-driven-sprint-planning
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Evidence-Driven Sprint Planning — evidence_missing → 다음 sprint lesson 자동 매핑
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: multiverse-width-default-bump
+category: planning
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Multiverse Width Default Bump — 폭 default 증량 (sprint-13 / v0.9.19)
 
 ## 한 줄 요약

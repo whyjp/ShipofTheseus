@@ -1,3 +1,12 @@
+---
+id: checkpoints
+category: core
+applies-to-phases: '[10,11]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'sprint loop'
+indexed-in: conventions/INDEX.md
+---
+
 # 체크포인트·회귀·멀티버스 컨벤션
 
 ## 한 줄 요약

@@ -1,3 +1,12 @@
+---
+id: domain-model-completeness
+category: quality
+applies-to-phases: '[01]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # Domain Model Completeness — Conceptual modelling 만점 push (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

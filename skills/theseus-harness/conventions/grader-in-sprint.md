@@ -1,3 +1,12 @@
+---
+id: grader-in-sprint
+category: sprint
+applies-to-phases: '[10]'
+applies-to-grades: '[all]'
+trigger-when: 'sprint stop'
+indexed-in: conventions/INDEX.md
+---
+
 # Grader-in-Sprint — sprint loop 의 dual-objective stop (sprint-14 / v0.9.20)
 
 ## 한 줄 요약

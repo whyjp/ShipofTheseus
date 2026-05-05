@@ -1,3 +1,12 @@
+---
+id: reproducibility-doublecheck
+category: quality
+applies-to-phases: '[09]'
+applies-to-grades: '[all]'
+trigger-when: 'entry script'
+indexed-in: conventions/INDEX.md
+---
+
 # Reproducibility doublecheck (`reproducibility-doublecheck`) — 2회 실행 byte-equal (sprint-18, ca, HARD-RULE 9.cc)
 
 ## 한 줄 요약

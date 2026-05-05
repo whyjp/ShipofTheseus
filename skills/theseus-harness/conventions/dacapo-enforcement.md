@@ -1,3 +1,12 @@
+---
+id: dacapo-enforcement
+category: tournament
+applies-to-phases: '[06,08]'
+applies-to-grades: '[G3,G4,G5]'
+trigger-when: 'phase exit'
+indexed-in: conventions/INDEX.md
+---
+
 # Da Capo Enforcement — 의사코드 → 강제 게이트 변환 (sprint-16 / v0.9.22)
 
 ## 한 줄 요약

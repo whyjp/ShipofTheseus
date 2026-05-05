@@ -1,3 +1,12 @@
+---
+id: lessons
+category: sprint
+applies-to-phases: '[10,11]'
+applies-to-grades: '[all]'
+trigger-when: 'always'
+indexed-in: conventions/INDEX.md
+---
+
 # 정체 극복 컨벤션 — 무한 재귀의 함정과 레슨 전달
 
 ## 한 줄 요약

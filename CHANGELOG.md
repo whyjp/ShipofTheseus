@@ -2,6 +2,54 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.32 — 2026-05-06 (sprint-27 — conventions frontmatter backfill (88) + C-IDX-2 drift detection)
+
+### 마일스톤
+
+**sprint-20 의 후속 deliverable** — 88 conventions/*.md 에 router metadata frontmatter 일괄 backfill. drift detection 자동화 (C-IDX-2).
+
+### 변경 — 88 conventions frontmatter backfill
+
+각 `conventions/<id>.md` 의 머리에 다음 frontmatter 박힘:
+
+```yaml
+---
+id: <name>
+category: <core|interview|mindmap|domain|planning|multiverse|tournament|impl|quality|sprint|meta>
+applies-to-phases: '[<phase numbers> 또는 [all]]'
+applies-to-grades: '[G2..G5] 또는 [all]'
+trigger-when: '<always 또는 specific 조건>'
+indexed-in: conventions/INDEX.md
+---
+```
+
+router metadata 단일 source = `conventions/INDEX.md`. backfill 스크립트가 INDEX 를 파싱하여 각 파일에 박음.
+
+### 변경 — self_lint
+
+- **C1 정정**: convention 첫 줄 `# Title` 검사 시 leading YAML frontmatter (`--- ... ---`) skip 추가.
+- **C-IDX-2 신규** (sprint-27 v0.9.32): conventions/*.md frontmatter ↔ INDEX drift detection :
+  - 각 파일이 frontmatter 보유 의무
+  - 의무 필드: id / category / applies-to-phases / applies-to-grades / trigger-when / indexed-in
+  - frontmatter `id` 가 filename stem 과 일치 검증
+  - INDEX 에 router row 부재 시 fail
+- 총 98 → 99 checks. all_ok=True.
+
+### 효과
+
+drift 자동 차단 — 컨벤션 frontmatter 와 INDEX 가 미일치하면 self_lint fail. 미래 cleanup / 신규 컨벤션 추가 시 INDEX 와 sync 강제.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.31 → 0.9.32.
+- self_lint 99/99 PASS.
+
+### 알려진 결손 (sprint-28+)
+
+- C-IDX-3 (페이즈 본문 cross-ref ⊆ INDEX applies-to-phases) — 페이즈 본문이 인용한 컨벤션이 router 매칭 검증
+- C-IDX-4 (grades.md 매트릭스 ↔ INDEX applies-to-grades 집계 일치)
+- 코드 블록 내 mining illustrative example 잔존
+
 ## v0.9.31 — 2026-05-06 (sprint-26 — temporal narrative + mining narrative deeper cleanup)
 
 ### 마일스톤
