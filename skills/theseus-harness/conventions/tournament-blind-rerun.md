@@ -79,4 +79,4 @@ c- union = competition.md 의 차원별 sub-score 룰 재사용, 도메인 X.
 
 ## 7. 자기 검증 (메타)
 
-본 컨벤션 자체에 적용 가능 : 본 conventions/tournament-blind-rerun.md 가 작성된 후, 임계 미달 (예: section count < expected) 발견 시 본 문서 자체를 anonymize → fresh agents 가 다시 작성 → 비교. 본 회차 (v0.9.10 작성) 에서는 미적용 (single-shot).
+본 컨벤션 자체에 적용 가능 : 본 conventions/tournament-blind-rerun.md 가 작성된 후, 임계 미달 (예: section count < expected) 발견 시 본 문서 자체를 anonymize → fresh agents 가 다시 작성 → 비교. 본 회차 에서는 미적용 (single-shot).

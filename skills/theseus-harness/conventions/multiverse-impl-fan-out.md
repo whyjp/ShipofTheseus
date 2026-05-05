@@ -108,4 +108,4 @@ c- 5 차원 sub-score = generic, 도메인 X.
 
 ## 7. 자기 검증 (메타)
 
-본 컨벤션 자체에 적용 시 — N universe 컨벤션 작성 fan-out (skeptic / domain / outsider 등 framing 차원 universe) 가능. 본 회차 (v0.9.12) = single-shot.
+본 컨벤션 자체에 적용 시 — N universe 컨벤션 작성 fan-out (skeptic / domain / outsider 등 framing 차원 universe) 가능. 본 회차 = single-shot.

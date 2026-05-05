@@ -2,6 +2,39 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.31 — 2026-05-06 (sprint-26 — temporal narrative + mining narrative deeper cleanup)
+
+### 마일스톤
+
+8 conventions 의 temporal 표현 (`본 회차 (v0.9.X)` / `v0.9.X 까지의` / `v0.9.X 부터`) + 잔존 mining narrative example 추가 cleanup.
+
+### 변경 — 5 bulk regex 패턴
+
+- `본 회차 \(v0\.9\.\d+(?:\s+[^)]+)?\)` → `본 회차` (self-application context 의 history label 제거)
+- `v0\.9\.\d+ 까지의 ` → `이전 `
+- `v0\.9\.\d+ 부터 ` → `현재 `
+- mining-specific Q answer narrative example → generic placeholder
+- "Q3 의 truck 답이..." → "Q3 의 답이..." (truck domain word strip in narrative)
+
+### 8 파일 갱신
+
+aide-tree-multi-phase / budget-aware-fallback / decision-support-framing / domain-research-stacking / intent-completeness / multiverse-impl-fan-out / score-rubric-objectivity / tournament-blind-rerun.
+
+### 보존 (preserve)
+
+- `vNN_cold (v0.9.X)` cold session ref (e.g., `v01_cold (v0.9.9)`) — design rationale evidence, *cleanup 대상 아님*
+- 코드 블록 내 mining 예시 (illustrative algorithmic context)
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.30 → 0.9.31.
+- self_lint 98/98 PASS.
+
+### 알려진 결손 (sprint-27+)
+
+- conventions/INDEX.md frontmatter backfill (88 conventions × router metadata) → C-IDX-2/3/4 활성화 (drift detection 자동화)
+- 더 깊은 mining narrative deep cleanup (코드 블록 내 example 잔존)
+
 ## v0.9.30 — 2026-05-06 (sprint-25 — 도메인 narration generic 화 + HARD-RULE 9.d 신규 (Da Capo산출물 body 의무))
 
 ### 마일스톤

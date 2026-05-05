@@ -116,4 +116,4 @@ c- contributions 카테고리 (NFR / architecture / limitations / decision-templ
 
 ## 8. 자기 검증
 
-본 컨벤션 자체에 적용 시 — *컨벤션 도메인 noun* (rule / convention / harness / framework) → 매칭 어댑터 = *meta-convention adapter* (만일 작성된다면). 본 회차 (v0.9.13) = single-shot, 메타 어댑터 미작성.
+본 컨벤션 자체에 적용 시 — *컨벤션 도메인 noun* (rule / convention / harness / framework) → 매칭 어댑터 = *meta-convention adapter* (만일 작성된다면). 본 회차 = single-shot, 메타 어댑터 미작성.
