@@ -26,6 +26,21 @@ a- 1- 답을 `intent/01-intent.md` 의 "무엇을" 과 diff. 의미상 어긋나
 b- `revise` → 리뷰 첨부해 페이즈 06 재실행. 시도 3 회 캡.
 c- `accept` → 페이즈 08.
 
+## v0.9.22 진입 의무 — Da Capo enforcement gate (HARD-RULE 9.p)
+
+본 페이즈 진입 *전* orchestrator 가 [`../conventions/dacapo-enforcement.md`](../conventions/dacapo-enforcement.md) (bm) 의 `gate_phase06_to_07()` 자동 호출 — 6 조건 검증 :
+
+1- `plan/tournament-NN.md` frontmatter 에 `dacapo_loop_executed: true`
+2- `step_d_tournament_pass` + `step_d_shadow_pass` + `step_d_converged` 3종 명시
+3- (step_d_converged=true) → CONVERGED OR (rerun_count >= max_rerun OR budget >= 0.95) AND `plan/fallback-reason.md` 본문 ≥ 1 줄 → BUDGET_BOUND
+4- rerun_count >= 1 시 `dacapo-rerun-NN.md` 갯수 == rerun_count + `shadow-grade-NN.json` 갯수 == rerun_count+1
+5- rerun_count >= 1 시 anonymized previous winner 존재 (ad C-TBR-ANON)
+6- `plan/dacapo-flow.md` Mermaid + timeline 의무 (at 가시화)
+
+미달 시 본 페이즈 진입 *자동 거부* + phase 06 Step A 재진입 + `intent/00-violation.md` 기록. 위반 ≥ 3회 시만 페이즈 04 사전 답안 매핑 escalation ([`../conventions/autonomy.md`](../conventions/autonomy.md) 정합 — 자율 회귀 default).
+
+또한 [`../conventions/dacapo-skip-sentinel.md`](../conventions/dacapo-skip-sentinel.md) (bp) 의 3 sentinel (frontmatter 모순 / 디렉터리 카운트 / 로그 패턴) 매치 시도 자동 회귀.
+
 ## 왜 필요한가
 
 대부분의 코딩 하네스는 계획 리뷰를 건너뛰고 구현 도중 "당연한" 단계가 사실은 미명세 인프라를 요구한다는 사실을 알게 된다. 여기서 한 번의 에이전트 호출로 잡으면 스프린트 4 회분의 바이섹트 비용을 아낀다.

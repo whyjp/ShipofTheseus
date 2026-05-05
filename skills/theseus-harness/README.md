@@ -80,6 +80,18 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-63 [`conventions/rubric-driven-doc-skeleton.md`](conventions/rubric-driven-doc-skeleton.md) — RubricAdapter (yaml/markdown/openapi) → `_skeleton/` 빈 헤더 + fallback generic ToC (v0.9.20)
   d-64 [`conventions/rubric-targeted-quality-gates.md`](conventions/rubric-targeted-quality-gates.md) — 페이즈 09 RTG-* (rubric bullet → yes/no) + bj 와 같은 adapter 공유 (v0.9.20)
   d-65 [`conventions/intra-phase-dacapo-loop.md`](conventions/intra-phase-dacapo-loop.md) — phase 06/08 Da Capo Loop 의사코드 (multiverse + sprint retry 통합 — Step A→B→C→D→E→F→G→A) (v0.9.21 sprint-15)
+  d-66 [`conventions/dacapo-enforcement.md`](conventions/dacapo-enforcement.md) — phase 06/08 핸드오프 6 조건 의무 게이트 (의사코드 → runtime guard) (v0.9.22 sprint-16)
+  d-67 [`conventions/dacapo-frontmatter-schema.md`](conventions/dacapo-frontmatter-schema.md) — tournament/shadow-grade/dacapo-rerun 의무 frontmatter + cross-validation (v0.9.22 sprint-16)
+  d-68 [`conventions/shadow-grader-zero-context.md`](conventions/shadow-grader-zero-context.md) — Step C shadow grader 무결성 5 룰 + 점수 복사 차단 (v0.9.22 sprint-16)
+  d-69 [`conventions/dacapo-skip-sentinel.md`](conventions/dacapo-skip-sentinel.md) — 3 sentinel (frontmatter / 디렉터리 / 로그) 자동 회귀 (v0.9.22 sprint-16)
+  d-70 [`conventions/dacapo-flow-trace.md`](conventions/dacapo-flow-trace.md) — 단일 마크다운 가시화 (Mermaid + timeline 누적 갱신, per-phase) (v0.9.22 sprint-16)
+  d-71 [`conventions/phase-lineage-viewer.md`](conventions/phase-lineage-viewer.md) — 프로젝트 루트 `lineage.md` (phase 00~14 전체 흐름 + dacapo 요약 + fingerprint chain, project-wide) (v0.9.22 sprint-16)
+  d-72 [`conventions/domain-model-completeness.md`](conventions/domain-model-completeness.md) — entity/state/transition/invariant/boundary 5 차원 (Conceptual modelling 만점 push) (v0.9.22 sprint-16)
+  d-73 [`conventions/data-structure-invariants.md`](conventions/data-structure-invariants.md) — Invariants/Topology/Access/Bounds 4 항목 docstring (Data & topology 만점) (v0.9.22 sprint-16)
+  d-74 [`conventions/simulation-physical-invariants.md`](conventions/simulation-physical-invariants.md) — 5 invariant 런타임 assert (Sim correctness 만점) (v0.9.22 sprint-16)
+  d-75 [`conventions/experimental-control-protocol.md`](conventions/experimental-control-protocol.md) — IV/DV/CV/N/seed 5 항목 + N≥30 (Experimental design 만점) (v0.9.22 sprint-16)
+  d-76 [`conventions/results-decision-mapping.md`](conventions/results-decision-mapping.md) — 결과 → 결정 1:1 매핑 (Results & interpretation 만점) (v0.9.22 sprint-16)
+  d-77 [`conventions/idiomatic-code-quality.md`](conventions/idiomatic-code-quality.md) — naming/preferred/stdlib/readability 4 차원 (Code quality 만점) (v0.9.22 sprint-16)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

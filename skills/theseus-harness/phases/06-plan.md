@@ -348,3 +348,132 @@ self_lint 검증 (sprint-15 신규) :
 - **C-DCL-WIN-THRESHOLD** — `winner.tournament_score < threshold AND rerun_count == 0` 인데 `phase 07 산출물 존재` 시 fail
 - **C-DCL-RERUN-LOG** — `rerun_count >= 1` 시 `dacapo-rerun-NN.md` 갯수 == rerun_count + 각 frontmatter `lesson_applied` 본문 ≥ 1 줄
 - **C-DCL-ANON** — `rerun >= 1` 시 universe 1 개가 anonymized previous winner (ad C-TBR-ANON 정합)
+
+## v0.9.22 sprint-16 — 의사코드 → runtime guard 변환
+
+v0.9.21 의사코드는 *agent 행동 가이드*. v0.9.22 가 그 위에 *orchestrator runtime guard* layer 박음. 두 layer 가 박혀야 enforcement 완성. 외부 cold session `2026-05-05__001_mine_g4` 의 winner=0.892 (G4 임계 0.999 미달) + rerun=0 + fallback="" 회귀 직접 정정.
+
+### Phase 06 → 07 핸드오프 의무 게이트 ([`../conventions/dacapo-enforcement.md`](../conventions/dacapo-enforcement.md), ap)
+
+```python
+# orchestrator 가 phase 07 진입 *전* 자동 호출. 6 조건 미달 시 phase 06 Step A 재진입.
+def gate_phase06_to_07(artifact_dir: Path, grade: Grade) -> GateResult:
+    tournament = load_latest_tournament(artifact_dir / 'plan')
+    fm = parse_frontmatter(tournament)
+
+    # 조건 1 — dacapo_loop_executed
+    if not fm.get('dacapo_loop_executed'):
+        return REJECT('dacapo_loop_executed 부재')
+
+    # 조건 2 — step_d_*_pass 3종 frontmatter 명시
+    for f in ['step_d_tournament_pass', 'step_d_shadow_pass', 'step_d_converged']:
+        if f not in fm:
+            return REJECT(f'{f} frontmatter 부재')
+
+    # 조건 3a — CONVERGED 경로
+    if fm['step_d_converged']:
+        return ACCEPT('CONVERGED')
+
+    # 조건 3b — BUDGET_BOUND 경로
+    rerun, max_rerun = fm.get('rerun_count', 0), MAX_RERUN[grade]
+    budget = fm.get('budget_used_total', 0.0)
+    if rerun >= max_rerun OR budget >= 0.95:
+        fb = artifact_dir / 'plan/fallback-reason.md'
+        if not fb.exists() OR fb.read_text().strip() == '':
+            return REJECT('BUDGET_BOUND 인데 fallback-reason.md 본문 비어있음')
+
+        # 조건 4 — rerun log 갯수
+        rerun_logs = list((artifact_dir / 'plan').glob('dacapo-rerun-*.md'))
+        shadow_logs = list((artifact_dir / 'plan').glob('shadow-grade-*.json'))
+        if len(rerun_logs) != rerun:
+            return REJECT(f'dacapo-rerun-NN.md {len(rerun_logs)} != rerun_count {rerun}')
+        if len(shadow_logs) != rerun + 1:
+            return REJECT(f'shadow-grade-NN.json {len(shadow_logs)} != rerun_count+1')
+
+        # 조건 5 — anonymized prev winner
+        if not has_anonymized_previous_winner(artifact_dir, rerun):
+            return REJECT('anonymized previous winner 부재 (ad C-TBR-ANON)')
+
+        # 조건 6 — dacapo-flow.md
+        flow = artifact_dir / 'plan/dacapo-flow.md'
+        if not flow.exists() OR '```mermaid' not in flow.read_text():
+            return REJECT('dacapo-flow.md Mermaid 부재 (at 가시화 의무)')
+
+        return ACCEPT('BUDGET_BOUND')
+
+    return REJECT('의사코드 Step F/G skip detected')
+
+
+def on_gate_reject(reason: str):
+    write_violation('intent/00-violation.md', phase=6, reason=reason)
+    if increment_violation_count() >= 3:
+        return ASK_USER('Da Capo gate 3회 fail — 진단 필요')
+    re_enter_phase(6)   # Step A 부터 재실행
+```
+
+### tournament-NN.md frontmatter 의무 ([`../conventions/dacapo-frontmatter-schema.md`](../conventions/dacapo-frontmatter-schema.md), aq)
+
+```yaml
+---
+dacapo_loop_executed: true
+rerun: 00
+rerun_count: 0
+grade: G4
+threshold: 0.999
+shadow_target: 95
+max_rerun: 3
+multiverse_width: 7
+winner_id: universe-3
+winner_score: 0.892
+winner_sub_scores: { cold_recall: 0.85, dip_strictness: 0.72, ... }
+weakest_dim: dip_strictness
+step_d_tournament_pass: false
+step_d_shadow_pass: false
+step_d_converged: false
+step_e_cap_reached: false
+budget_used_total: 0.42
+next_action: dacapo_rerun
+fallback_reason: ""
+---
+```
+
+### Step C — shadow grader zero-context 무결성 ([`../conventions/shadow-grader-zero-context.md`](../conventions/shadow-grader-zero-context.md), ar)
+
+```python
+# Step C 수정 — fresh sub-agent 호출 보증 + cross-validation
+shadow = call_shadow_grader_with_integrity(
+    rubric_path  = 'scoring/rubrics/generic-bench-rubric.md',
+    artifacts    = [winner.dir / '06-plan.md', ...],
+    model        = 'Sonnet',
+)
+# shadow-grade-NN.json 의무 필드:
+# context_mode='zero-context', prior_context_token_count=0,
+# agent_call_id=<unique>, subagent_type='general-purpose',
+# loaded_artifacts=[...], rubric_path=<generic>
+#
+# cross-validation : abs(shadow.predicted/100 - winner.tournament_score) >= 0.03 권장
+#  (외부 cold 의 92 vs 89.2 = 2.8pt 차이 — 복사 의심 자동 detect)
+```
+
+### Skip Sentinel 3종 ([`../conventions/dacapo-skip-sentinel.md`](../conventions/dacapo-skip-sentinel.md), as)
+
+phase 06 종료 시점에 자동 검출 :
+
+- **Sentinel A (frontmatter 모순)** : winner_score < threshold + rerun_count == 0 + fallback_reason == "" / step_d_converged=true 산술 모순
+- **Sentinel B (디렉터리 카운트)** : multiverse_width != candidates 갯수 = universe skip
+- **Sentinel C (로그 패턴)** : "Winner clear" / "skip dacapo" / "rerun 불필요" / "0회 충분" / "단일 탑 진행" 등 자율 판단 흔적
+
+매치 시 `intent/00-violation.md` 기록 + phase 06 Step A 재진입. 위반 ≥ 3회 시만 ack.
+
+### Da Capo flow 가시화 ([`../conventions/dacapo-flow-trace.md`](../conventions/dacapo-flow-trace.md), at)
+
+`plan/dacapo-flow.md` 단일 마크다운 누적 갱신 — Mermaid flowchart (rerun 별 subgraph + universe 노드 + Step A~G 엣지) + timeline 표 (시각/rerun/step/event/universe/score). 매 step 종료 시점에 orchestrator 자동 갱신. 디버깅 시 5 산출물 cross-reference 비용 0.
+
+self_lint 신규 (sprint-16) :
+
+- **C-DCL-GATE** — phase 06 → 07 게이트 6 조건 검증
+- **C-DCL-FRONTMATTER** — tournament/shadow-grade/dacapo-rerun frontmatter 의무 필드
+- **C-DCL-CROSS-VAL** — 거짓 frontmatter cross-validation (산술 + 파일시스템)
+- **C-DCL-SHADOW-CONTEXT** — shadow grader zero-context 5 룰
+- **C-DCL-SENTINEL** — 3 sentinel 매치 검출
+- **C-DCL-FLOW-LOG** — dacapo-flow.md Mermaid + timeline + rerun subgraph 의무

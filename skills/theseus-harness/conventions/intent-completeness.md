@@ -1,5 +1,9 @@
 # Intent Completeness — 9 sub-criterion 의도 본문 의무
 
+## 한 줄 요약
+
+**페이즈 01 의 `intent/01-intent.md` 본문이 9 sub-criterion (§a~§k) 모두 채워져 있어야 한다.** intent 가 *제목 + 한 줄* 만 박힌 채 plan 으로 넘어가는 회귀 차단. 9 sub 미완 시 페이즈 02 진입 거부 + 페이즈 01 재실행. v0.9.19 부터 intent axis sprint ≥ 2 의무 동행 — 9 sub PASS 라도 *content depth* sprint NN+1 보강.
+
 ## v0.9.19 sprint-13 갱신 — intent sprint loop trigger
 
 §k 9 sub 모두 PASS 라도 [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) (bd) 의 intent axis sprint ≥ 2 의무 — 첫 sprint = baseline measure, 두 번째 sprint = lesson 적용 후 재측정. axis lesson 후보:

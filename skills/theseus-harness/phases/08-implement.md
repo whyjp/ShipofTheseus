@@ -298,3 +298,103 @@ self_lint (sprint-15 신규) :
 ### universe 변경 시 08-α 재진입 룰 정합
 
 본 Da Capo loop 의 Step G (lesson 적용 + universe 재 fan-out) 가 위쪽 "## universe 변경 시 재진입 룰" 의 *상위 호환*. lesson 도출 trigger = winner_score 미달 (이전 룰은 *plan 변경* trigger). 두 trigger 모두 *5 서브페이즈 전체 재실행* 의무. 부분 재진입 (08-β 만) 금지.
+
+## v0.9.22 sprint-16 — 의사코드 → runtime guard 변환
+
+phase 06 와 동일 enforcement layer 가 phase 08 → 09 핸드오프에 적용. 게이트 6 조건 + frontmatter 의무 + shadow 무결성 + sentinel + flow 가시화 — 단지 산출물 위치가 `plan/` → `impl/` :
+
+| 산출물 | phase 06 | phase 08 |
+|---|---|---|
+| tournament | `plan/tournament-NN.md` | `impl/tournament-impl-NN.md` |
+| shadow grade | `plan/shadow-grade-NN.json` | `impl/shadow-grade-NN.json` |
+| dacapo rerun | `plan/dacapo-rerun-NN.md` | `impl/dacapo-rerun-NN.md` |
+| fallback reason | `plan/fallback-reason.md` | `impl/fallback-reason.md` |
+| flow trace | `plan/dacapo-flow.md` | `impl/dacapo-flow.md` |
+
+### Phase 08 → 09 핸드오프 의무 게이트 ([`../conventions/dacapo-enforcement.md`](../conventions/dacapo-enforcement.md), ap)
+
+```python
+def gate_phase08_to_09(artifact_dir: Path, grade: Grade) -> GateResult:
+    # phase 06 와 동일 6 조건 — 단지 'plan/' → 'impl/' 디렉터리 차이만
+    return _gate_dacapo_handoff(
+        artifact_dir / 'impl',
+        grade,
+        tournament_glob = 'tournament-impl-*.md',
+        rerun_glob      = 'dacapo-rerun-*.md',
+        shadow_glob     = 'shadow-grade-*.json',
+        flow_file       = 'dacapo-flow.md',
+        fallback_file   = 'fallback-reason.md',
+    )
+```
+
+추가 phase 08 고유 검증 :
+
+- universe 별 5 서브페이즈 (08-α/β/γ/δ/ε) 산출물 의무 — `code/universe-N/` + `impl/08-test-scope.universe-N.md` + `impl/08-impl-log.universe-N.md`
+- multiverse_width != `code/universe-*/` 갯수 = Sentinel B (impl_universe_skip)
+- Step G lesson 적용 후 부분 재진입 (08-β 만 재실행 등) = Sentinel A 모순 (test-first 위반)
+
+### Skip Sentinel 3종 — phase 08 specialization
+
+Sentinel B impl 변형 :
+
+```python
+SENTINEL_B_PHASE08 = [
+    # multiverse_width != code/universe-*/ 갯수
+    {
+        'name': 'impl_universe_skip',
+        'check': lambda dir, fm: (
+            fm.get('multiverse_width', 0) !=
+            len(list((dir / 'code').glob('universe-*')))
+        ),
+    },
+    # 5 서브페이즈 산출물 갯수 mismatch
+    {
+        'name': 'subphase_artifact_skip',
+        'check': lambda dir, fm: (
+            count_subphase_artifacts(dir) <
+            fm.get('multiverse_width', 0) * 5
+        ),
+    },
+    # impl-log.universe-N.md 가 plan-tree.universe-N 의 winner 와 mapping 안 됨
+    {
+        'name': 'plan_impl_universe_mismatch',
+        'check': lambda dir, fm: not all_plan_universes_have_impl(dir),
+    },
+]
+```
+
+Sentinel C 로그 패턴 phase 08 추가 :
+
+```python
+SENTINEL_C_PHASE08_PATTERNS = [
+    r'(?i)test[- ]?after\s+(is\s+)?(ok|fine|sufficient)',
+    r'(?i)skip(ping)?\s+RED\s+verification',
+    r'(?i)RED\s+(check|verification)\s+(은|이|을)?\s+(생략|skip)',
+    r'(?i)08-α\s+(재진입\s+)?(불필요|skip)',
+    r'(?i)single\s+universe\s+impl\s+(은|로|면)\s+(충분|enough)',
+    r'(?i)5\s*서브페이즈\s+(전체\s+)?재실행\s+(불필요|skip)',
+]
+```
+
+매치 시 `intent/00-violation.md` 기록 + phase 08 Step A (universe 재 fan-out + 08-α 부터) 재진입.
+
+### Da Capo flow 가시화 — phase 08
+
+`impl/dacapo-flow.md` 단일 마크다운 누적 갱신. phase 06 와 동일 구조 + universe 별 5 서브페이즈 step (08-α/β/γ/δ/ε) 노드 추가 :
+
+```mermaid
+flowchart TD
+  R0_A --> R0_U1_a[U1 08-α scope]
+  R0_U1_a --> R0_U1_b[U1 08-β RED tests]
+  R0_U1_b --> R0_U1_c[U1 08-γ GREEN impl]
+  R0_U1_c --> R0_U1_d[U1 08-δ refactor]
+  R0_U1_d --> R0_U1_e[U1 08-ε log]
+  R0_U1_e --> R0_B[Step B Tournament]
+  ... (universe 2~7 동일) ...
+```
+
+self_lint phase 08 추가 (sprint-16) :
+
+- **C-DCL-IMPL-UNIVERSE** — code/universe-*/ 갯수 == multiverse_width
+- **C-DCL-IMPL-SUBPHASE** — 각 universe 의 5 서브페이즈 산출물 모두 존재
+- **C-DCL-IMPL-FLOW** — impl/dacapo-flow.md 의 5 서브페이즈 노드 ≥ multiverse_width × 5
