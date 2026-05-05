@@ -59,3 +59,42 @@ c- 사용자 트레이드오프 1개 이상이 `05-decisions.md` 로 마무리.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## v0.9.20 sprint-14 — Directional Simplification 표 의무
+
+### 본문 의무 표 ([`../conventions/directional-simplification.md`](../conventions/directional-simplification.md), bg)
+
+`intent/05-critique.md` 신규 의무 섹션 — 각 introduced simplification 에 대해 *방향성 + 정량 + reason* 1 줄 :
+
+```markdown
+## Simplification 방향성·정량 표 (directional-simplification.md bg 의무)
+
+| ID | simplification | direction (↑/↓/?) | magnitude (±%) | reason | impact_dim |
+|---|---|---|---|---|---|
+| S-1 | (예: "shared lane → independent directions") | ↑ throughput | +5% | "real congestion ramp couples directions" | data_topology |
+| S-2 | (예: "warmup=0 in single 480 min shift") | ? | n/a | "first 30 min noise diluted" | conceptual |
+```
+
+각 row 의무 :
+- **direction** : ↑ / ↓ / ? — 해당 simplification 이 *없을 때* 결과가 어느 방향
+- **magnitude** : ±% 또는 `n/a` (정량 추정 불가 시)
+- **reason** : 1 줄 mechanism
+
+산출물 frontmatter 에 자동 sync :
+
+```yaml
+---
+simplifications:
+  - {id: S-1, direction: '↑', magnitude_pct: 5, impact_dim: data_topology}
+  - {id: S-2, direction: '?', magnitude_pct: null, impact_dim: conceptual}
+simplification_count: 2
+direction_known_ratio: 0.50
+magnitude_known_ratio: 0.50
+---
+```
+
+self_lint C-DS 가 frontmatter / 본문 / row 정합 검증.
+
+### Contested Decisions Source 산출 ([`../conventions/contested-decision-multiverse.md`](../conventions/contested-decision-multiverse.md), bf)
+
+본 페이즈의 비평 본문 중 *stress-test ⚠* 마크는 페이즈 06 의 contested decisions 추출 source 가 됨. critique 산출물 본문 안티-패턴 table 에 ⚠ severity column 의무 (페이즈 06 의 `extract_contested_decisions()` 가 본 column 을 자동 파싱).

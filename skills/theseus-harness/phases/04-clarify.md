@@ -84,6 +84,42 @@ i- **Q-D9 — Runtime Prerequisite** (v0.7.0 신규, [`../conventions/runtime-pr
 
 답을 `intent/04-autonomy.md` (9 줄 표) + Q-D8 의 verification 본문은 `intent/04-verification.md`, Q-D9 의 runtime-prereq 본문은 `intent/04-runtime-prereq.md` 에 기록. **9 답 + verification 산출물 + runtime-prereq 산출물 모두 valid 해야 페이즈 05 진입** — 페이즈 04 가 마지막 인터럽트이므로 사전 위임 + 검증 명령 + 실행 사전조건 부재 시 후속 자율 진행이 정의 안 된다.
 
+## v0.9.20 sprint-14 신규 — Q-D-AUDIENCE + rubric skeleton
+
+### Q-D-AUDIENCE — commentary policy ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md), bh)
+
+본 페이즈 9 사전 위임 (Q-D1~D9) 뒤에 추가 객관식. 페이즈 08 implementation 의 주석 density 를 swap.
+
+```
+질의 (Q-D-AUDIENCE):
+이 작업의 산출물을 *cold read* 할 청중은?
+
+자동 추정 :
+- bench / handoff / prod review / 외부 evaluator 매칭 → 옵션 2 (external-reviewer)
+- internal refactor / throwaway / spike / dev-only → 옵션 1 (internal-self)
+- 미상 → 옵션 2 (external-reviewer 안전 default)
+
+선택지:
+1. internal-self — 나(또는 같은 컨텍스트 팀) 만 읽음. 주석 minimum.
+2. external-reviewer (default) — 외부 reviewer 가 0 컨텍스트 cold read. docstring + why-comment 의무.
+3. mixed — 코어는 external, dev script 는 internal.
+```
+
+답을 `intent/04-audience.md` (1 줄 + frontmatter) 에 기록. *external-reviewer | mixed* 시 페이즈 08 implementer 프롬프트가 CLAUDE.md "Default to writing no comments" 룰을 swap (audience-aware 매트릭스 적용).
+
+### Rubric skeleton 생성 — stack-lock 직후 ([`../conventions/rubric-driven-doc-skeleton.md`](../conventions/rubric-driven-doc-skeleton.md), bj)
+
+페이즈 04 finish (Q-D9 + Q-D-AUDIENCE) 직후 자동 :
+
+1- `RubricAdapter.parse(<bench_dir>)` 호출 — `<bench>/expected/scoring_rules.yaml`, `<bench>/SCORING_GUIDE.md`, `<bench>/openapi.yaml`, `<bench>/.theseus-rubric-adapter.yaml` 중 하나 매칭.
+2- 매칭 시 `RubricSpec` → `to_skeleton()` → `.ShipofTheseus/<프로젝트>/_skeleton/<file>.md` 빈 헤더 (rubric line 인용).
+3- 미매칭 시 `fallback_skeleton()` (intent / plan / handoff 기본 ToC).
+4- skeleton 헤더가 페이즈 06 plan 의 contract + 페이즈 08 산출물의 헤더와 *1:1 매핑* 의무 (C-RDS 검증).
+
+### Q-D-RUBRIC (옵션, rubric 노출 시 자동 사전 매핑)
+
+bench / external evaluator 컨텍스트에서 rubric 노출 시 자동 사전 매핑. 사용자 질의 없이 frontmatter `rubric_source: <path>` + `rubric_categories: [<list>]` 박음. 미노출 작업 시 본 항목 비활성 (no-op).
+
 ## 성공 기준
 
 a- `04-answers.md` 가 `04-questions.md` 의 모든 항목을 커버. `TBD` 또는 `?` 표시 없음.

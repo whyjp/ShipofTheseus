@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.19",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.18 까지 47 + 발현 검증 6 메타 + sprint-12 의 4 (intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing). v0.9.19 sprint-13: 4 신규 컨벤션 (mindmap-richness-default A 등급 default + per-module-diagram-fan-out + multiverse-width-default-bump G3=5/G4=7/G5=9 + intent-plan-impl-sprint-trinity 3 axis × ≥2). 사용자 진단 (마인드맵 풍부화 / 다이어그램 모듈별 / 폭 증량 / 3 axis sprint loop) 발현 강제.",
+  "version": "0.9.20",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.19 까지 55 컨벤션 + 4 sprint-13 (mindmap A / per-module diagram / width bump / trinity 3 axis). v0.9.20 sprint-14: 7 신규 컨벤션 (be grader-in-sprint dual-objective AND / bf contested decisions axis / bg directional simplification / bh commentary policy / bi measurement contract / bj rubric-driven doc skeleton / bk rubric-targeted quality gates). cold evaluator feedback (synthetic_mine_throughput_004 90 vs ouroboros 97 7pt 갭) 분석 → 94 plateau 돌파 차원의 7 generic mechanism. mine-coupling 0%.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"

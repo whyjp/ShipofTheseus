@@ -79,3 +79,61 @@ c- `halt` → 사용자 질의. 구조적 문제.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## v0.9.20 sprint-14 — Rubric-Targeted Gates + 게이트 강화
+
+### Rubric-Targeted Gates (RTG-*) 신규 ([`../conventions/rubric-targeted-quality-gates.md`](../conventions/rubric-targeted-quality-gates.md), bk)
+
+총 게이트 = 정적 9 + derived N + **rubric-targeted R** :
+
+```python
+# rubric 매칭 시 (페이즈 04 의 RubricAdapter 와 같은 인스턴스 재사용)
+def generate_rubric_targeted_gates(rubric: RubricSpec) -> list[Gate]:
+  gates = []
+  for category in rubric.categories:
+    for bullet in category.bullets:
+      gates.append(Gate(
+        id=f"RTG-{category.name}-{bullet.idx}",
+        category=category.name,
+        bullet=bullet.text,
+        check=convert_bullet_to_yes_no(bullet),
+        artifact=infer_artifact_for_bullet(bullet),
+      ))
+  return gates
+```
+
+`quality/09-quality-gate.md` 신규 섹션 — RTG 표 :
+
+```markdown
+## Rubric-Targeted Gates (R = <N>)
+
+| RTG ID | category | bullet | artifact | result | evidence |
+|---|---|---|---|---|---|
+| RTG-conceptual-1 | conceptual | "explains warm-up choice" | conceptual_model.md §Warmup | ✅ | "L88: ## Warmup Choice" |
+| RTG-results-3 | results | "interpolates beyond measured grid" | README §8 | ❌ | "regex 0 match" |
+```
+
+종합 판정 :
+- `proceed` → 모든 RTG PASS + 정적 9 PASS + derived PASS
+- `remediate-then-proceed` → RTG fail ≤ 30% + 정적 9 PASS
+- `halt` → RTG fail > 30% OR 정적 9 fail
+
+self_lint C-RTG 검증. fail RTG 자동 → 페이즈 10 sprint NN+1 lesson source ([`../conventions/grader-in-sprint.md`](../conventions/grader-in-sprint.md) be 의 shadow grader lesson 과 합산).
+
+### 게이트 강화 (sprint-14)
+
+기존 게이트 본문 강화 :
+
+| # | 게이트 | sprint-14 강화 |
+|:-:|---|---|
+| 1 | 의도 일치 | simplification 표 ≥ 1 row + direction 명시 ≥ 50% (bg, [`../conventions/directional-simplification.md`](../conventions/directional-simplification.md)) |
+| 6 | NFR 임계 일치 | Measurement Contract row 1:1 매핑 + reconstruct 정당화 (bi, [`../conventions/measurement-contract.md`](../conventions/measurement-contract.md)). direct_ratio < 0.7 시 cap 0.85 |
+
+새 self_lint 룰 (이번 sprint 적용) :
+- C-CDM (contested decisions + universe spike) — bf
+- C-MC (measurement contract) — bi
+- C-DS (directional simplification) — bg
+- C-CP (commentary policy) — bh
+- C-GIS (grader-in-sprint) — be (페이즈 10 검증 위치, 본 페이즈 frontmatter 일부)
+- C-RDS (rubric-driven-doc-skeleton) — bj
+- C-RTG (rubric-targeted-gates) — bk
