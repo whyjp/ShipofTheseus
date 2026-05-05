@@ -2,6 +2,52 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.26 — 2026-05-06 (sprint-21 — HARD-RULE 9.a body 8 항목 강화 + 부분 history 정리)
+
+### 마일스톤
+
+**sprint-05-c 정공 재확인.** 사용자 직접 지시 — *별도 impl-design.md 신설 안 함* (plan + impl-log 응집 보존, plan 단일 source 강화). 초안 시도 (08-A doc cycle + 08-B code cycle 분화) 는 sprint-05-c 결정과 충돌하여 **즉시 폐기 + rollback** + 정공 (`HARD-RULE 9.a body 8 항목 강화`) 으로 전환.
+
+### 변경 — HARD-RULE 9.a body 8 항목 의무
+
+이전 (sprint-17): 5 항목 (파일 경로 ≥ 5 / Mermaid sequence + usecase + interface AND / TODO DAG)
+sprint-21 강화 (8 항목 의무):
+1. 파일 경로 ≥ 5
+2. Mermaid sequenceDiagram ≥ 1 AND usecase/graph ≥ 1 AND 인터페이스 정의 ≥ 3
+3. TODO DAG (T-NNN ID + 의존 + 완료 조건)
+4. **모듈 의존 다이어그램** (per-module sequenceDiagram ≥ 모듈 수)
+5. **Data structure invariants 표** (Invariants/Topology/Access/Bounds 4 항)
+6. **Test surface mapping** (invariant ↔ test signature 1:1)
+7. **Error handling / fallback policy** (모듈별)
+8. **Implementation guidance per TODO** (알고리즘 / DS / 라이브러리 / pseudo-code — implementer 가 따라가는 디자인 본문)
+
+→ plan 본문 풍부화 + impl 문서 sub-cycle 신설 0 (응집 보존). HARD-CORE.md HR9.a + orchestrator/SKILL.md HR9.a 동시 갱신.
+
+### 부분 history narration 정리 (사용자 원칙 정합)
+
+5 conventions 의 sprint/version 헤더 cleanup:
+- `diagrams.md` : `## sprint-17 — HARD-RULE 9.a OR → AND` → `## HARD-RULE 9.a — sequence + usecase + interface 셋 다 의무 (AND clause)`
+- `diagrams.md` : `## v0.9.19 sprint-13 — per-module fan-out` → `## per-module fan-out`
+- `intent-completeness.md` : `## v0.9.19 sprint-13 갱신 — intent sprint loop trigger` → `## intent sprint loop trigger`
+- `plan-tree.md` : `## v0.9.16 sprint-10 — 패배 universe 학습 전이` → `## 패배 universe 학습 전이`
+- `grades.md` : `## v0.9.17 변경 — 키워드 매칭 폐기` → `## 키워드 매칭 폐기`
+
+→ 5 헤더 sprint/version 라벨 제거 (history → CHANGELOG 단일 위치 정합). 88 컨벤션 본문 deep history 정리는 sprint-22+ 후속.
+
+### 변경 — self_lint
+
+C-DIAG-AND-COVERAGE keyword 갱신: `sprint-17` / `OR → AND` 라벨 의존 제거. 현재 룰 (`sequenceDiagram ≥ 1 AND` / `셋 다 의무`) 만 검사.
+
+### 알려진 결손 (sprint-22 후속)
+
+- 88 컨벤션 본문 deep history narration cleanup (21+ 파일에 mining/SimPy 등 도메인 예시 잔존, sprint-XX/v0.9.X 본문 라벨 잔존)
+- plan/dacapo phase 분화 검토 (impl 은 sprint-05-c 정공으로 결론, plan/dacapo 도 동일 원칙 — 별도 sub-doc 신설 0, *body 의무 강화* 정공)
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.25 → 0.9.26.
+- self_lint 98/98 PASS.
+
 ## v0.9.25 — 2026-05-06 (sprint-20 — 정보 아키텍처 재설계 + 도메인 어댑터 제거)
 
 ### 마일스톤

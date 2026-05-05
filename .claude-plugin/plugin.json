@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.25",
+  "version": "0.9.26",
   "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 88 컨벤션 / 15 페이즈 / 18 에이전트. always-load (HARD-CORE.md ≤ 4000 chars) + phase-scoped (phases/) + router-matched lazy (conventions/INDEX.md 단일 진실 원천). orchestrator entry skill 슬림화 + 페이즈별 lookup index. AIDE 멀티버스 G3=5/G4=7/G5=9 폭 + 다카포 mandatory ≥ 1 rerun + intent refresh 2 cycle + canonical inline + impl multiverse strict + cross-phase shared context. 도메인 종속 룰 0 — 본 하네스는 벤치 어뷰징 안 함.",
   "author": {
     "name": "whyjp",

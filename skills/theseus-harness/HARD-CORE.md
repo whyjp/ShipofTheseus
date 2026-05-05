@@ -34,9 +34,17 @@
 
 본 파일 = 9.a~c 본문 의무만 inline. 9.d~ll (30+ sub-rule) 은 [`conventions/INDEX.md`](conventions/INDEX.md) router 가 페이즈 진입 시 매칭 lazy load.
 
-- **9.a** `plan/06-plan.md`: 파일 경로 ≥ 5 / **Mermaid sequenceDiagram ≥ 1 AND usecase/graph ≥ 1 AND 인터페이스 정의 ≥ 3** / TODO DAG (T-NNN ID + 의존 + 완료 조건)
-- **9.b** `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 명시 / 인터페이스 노출
-- **9.c** G3+ universe-N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff 라인
+- **9.a** `plan/06-plan.md` 본문 8 항목 의무 (별도 impl-design.md 안 만듦, plan 단일 source) :
+  1- 파일 경로 ≥ 5
+  2- Mermaid sequenceDiagram ≥ 1 AND usecase/graph ≥ 1 AND 인터페이스 정의 ≥ 3
+  3- TODO DAG (T-NNN ID + 의존 + 완료 조건)
+  4- 모듈 의존 다이어그램 (per-module sequenceDiagram ≥ 모듈 수)
+  5- Data structure invariants 표 (Invariants/Topology/Access/Bounds 4 항)
+  6- Test surface mapping (invariant ↔ test signature 1:1)
+  7- Error handling / fallback policy (모듈별)
+  8- Implementation guidance per TODO (알고리즘 / DS / 라이브러리 / pseudo-code)
+- **9.b** `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 / 인터페이스 노출
+- **9.c** G3+ universe-N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff + 9.a 8 항목 inline
 
 위반 시 self_lint 페이즈 exit fail → 페이즈 재진입 (자율, 누적 ≥ 3 시만 ack).
 
