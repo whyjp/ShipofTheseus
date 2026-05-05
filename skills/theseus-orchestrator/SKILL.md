@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.19
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing + v0.9.19 sprint-13 (mindmap A default / per-module diagram / multiverse width bump / sprint trinity 3 axis × ≥2).
+version: 0.9.20
+description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. AIDE 멀티버스 (G3=5/G4=7/G5=9 폭 default) + grade_assess v2 + intent §k 9 sub + cycle coherence + domain failure patterns + decision-support framing + v0.9.19 sprint-13 (mindmap A default / per-module diagram / width bump / trinity 3 axis × ≥2) + v0.9.20 sprint-14 (grader-in-sprint dual-objective / contested decisions axis / directional simplification / commentary policy / measurement contract / rubric skeleton + targeted gates).
 ---
 
 # theseus-orchestrator — 사용자 entry skill
@@ -87,6 +87,53 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >    - early stop violation = (axis 별 < 2) OR (budget < 80%).
 >    - budget 분배 default: intent 20% / plan 30% / impl 50%.
 >    - self_lint C-IPI 가 검증.
+>
+> **HARD-RULE 9.h~n — sprint-14 / v0.9.20 신규** (cold evaluator feedback 7 패치, 94 plateau 돌파):
+>
+> h- **grader-in-sprint dual-objective** ([`../theseus-harness/conventions/grader-in-sprint.md`](../theseus-harness/conventions/grader-in-sprint.md), be):
+>    - 페이즈 10 sprint stop = `auto_pass(≥0.999) AND shadow_pass(≥target) AND axis_pass(≥2) AND budget_pass(≥0.80)` (4 conjunction).
+>    - target_score: G2=80 / G3=90 / **G4=95 default** / G5=98.
+>    - 매 sprint 종료 *직전* zero-context shadow grader (Sonnet) 1 회 호출 — 누적 conversation 0, fresh load.
+>    - sprint report.json 에 `shadow_grader_predicted_score / shadow_grader_call_id / weakest_category / lesson_candidates` 의무.
+>    - self_lint C-GIS 가 검증.
+>
+> i- **contested decision multiverse axis** ([`../theseus-harness/conventions/contested-decision-multiverse.md`](../theseus-harness/conventions/contested-decision-multiverse.md), bf):
+>    - 페이즈 06 universe axis = `prompt + cold-read + critique` 에서 추출한 contested decisions (paradigm fallback only when decisions=0).
+>    - `plan/contested-decisions.md` 신규 산출물 의무 + 각 universe meta.md 의 code spike (≤50 LOC).
+>    - tournament 채점 5 차원 → 6 차원 (decision_coverage 0.20 가중 신규, 가중 재분배).
+>    - self_lint C-CDM 가 검증.
+>
+> j- **directional simplification** ([`../theseus-harness/conventions/directional-simplification.md`](../theseus-harness/conventions/directional-simplification.md), bg):
+>    - 페이즈 05 critique 의 simplification 표 의무 (direction ↑/↓/? + magnitude ±% + reason 1 줄).
+>    - frontmatter sync (`simplification_count / direction_known_ratio / magnitude_known_ratio`).
+>    - 게이트 1 강화 (direction 명시 row ≥ 50%).
+>    - self_lint C-DS 가 검증.
+>
+> k- **commentary policy** ([`../theseus-harness/conventions/commentary-policy.md`](../theseus-harness/conventions/commentary-policy.md), bh):
+>    - 페이즈 04 Q-D-AUDIENCE 신규 (internal-self / external-reviewer (default) / mixed).
+>    - audience 별 페이즈 08 implementer 주석 density 매트릭스 swap (CLAUDE.md global default 컨텍스트 충돌 명시 정정).
+>    - external-reviewer 시 docstring + why-comment density ≥ 0.015 / LOC.
+>    - self_lint C-CP 가 검증.
+>
+> l- **measurement contract** ([`../theseus-harness/conventions/measurement-contract.md`](../theseus-harness/conventions/measurement-contract.md), bi):
+>    - 페이즈 06 plan 의 metric method 표 의무 (sample / accumulate / reconstruct + reconstruct 정당화).
+>    - frontmatter sync (`direct_measurement_ratio / reconstruct_justified_ratio`).
+>    - 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85).
+>    - 페이즈 11 plan_method vs impl 분류 입력.
+>    - self_lint C-MC 가 검증.
+>
+> m- **rubric-driven doc skeleton** ([`../theseus-harness/conventions/rubric-driven-doc-skeleton.md`](../theseus-harness/conventions/rubric-driven-doc-skeleton.md), bj):
+>    - 페이즈 04 stack-lock 직후 RubricAdapter (yaml / markdown / openapi 3 built-in) → `_skeleton/` 빈 헤더 (rubric line 인용).
+>    - rubric 미노출 시 fallback generic ToC (intent / plan / handoff 기본 헤더).
+>    - 페이즈 08 산출물 헤더가 skeleton 와 1:1 매핑 의무.
+>    - self_lint C-RDS 가 검증.
+>
+> n- **rubric-targeted quality gates** ([`../theseus-harness/conventions/rubric-targeted-quality-gates.md`](../theseus-harness/conventions/rubric-targeted-quality-gates.md), bk):
+>    - 페이즈 09 정적 9 + derived N + RTG-* (rubric bullet → yes/no 체크) 통합.
+>    - bj 와 같은 RubricAdapter 1 회 파싱, skeleton + gates 둘 다 입력.
+>    - 종합 판정: proceed / remediate (RTG fail ≤30%) / halt.
+>    - fail RTG → sprint NN+1 lesson 자동 매핑 (be shadow grader lesson 과 합산).
+>    - self_lint C-RTG 가 검증.
 
 ## 15 페이즈 진행
 

@@ -128,7 +128,7 @@ sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, 
 
 ### 폭 default 격상 ([`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md), bc)
 
-| Grade | 폭 default | 옵션 default (사용자 ack) | 비고 |
+| Grade | 폭 default | 옵션 default (사용자 명시 ack) | 비고 |
 |---|:-:|:-:|---|
 | G2 | 2 | n/a | single 또는 2 후보 |
 | G3 | **5** (← 3) | 10 | axis 카탈로그 상위 5 활용 |
@@ -170,3 +170,73 @@ self_lint C-PMDF 가 검증.
 - 모듈 분할 보강 (per-module use-case 추가)
 - 인터페이스 정의 ≥ 5 추가 (dataclass / pseudocode / 클래스 시그니처)
 - TODO DAG 의존 보강 (leaf TODO 별 테스트 TODO 추가)
+
+## v0.9.20 sprint-14 — Contested Decisions + Measurement Contract
+
+### Contested Decisions 추출 + universe axis 회전 ([`../conventions/contested-decision-multiverse.md`](../conventions/contested-decision-multiverse.md), bf)
+
+본 페이즈 진입 시 plan-tree 분기 *전에* sub-procedure :
+
+1- **추출** — `prompt + intent/03-comprehension.md + intent/05-critique.md` 에서 *contested decisions* 자동 파싱 (3 source : prompt explicit hedge / cold-read implicit 자신없음 / critique potential ⚠).
+2- **`plan/contested-decisions.md` 신규 산출물** — 표 + frontmatter (id / source / kind / branch_a / branch_b / impact_dim).
+3- **universe axis 결정** :
+   - decisions ≥ width → 상위 width decisions 의 *branch_a/branch_b* 양 가지를 universe seed
+   - decisions < width → decisions + paradigm seed (5 시드 카탈로그) 보충
+   - decisions = 0 → paradigm seed fallback (v0.9.13 default)
+4- **각 universe `meta.md` 에 code spike (≤ 50 LOC)** — 같은 인터페이스 다른 구현. prose 비교 0.
+
+### Tournament 채점 갱신 — `decision_coverage` 차원 (bf)
+
+[`../conventions/plan-tree.md`](../conventions/plan-tree.md) 5 차원 → 6 차원 (가중 재분배) :
+
+| 차원 | 가중 |
+|---|---:|
+| cold_recall | 0.25 (← 0.30) |
+| dip_strictness | 0.20 (← 0.25) |
+| simplicity | 0.15 (← 0.20) |
+| test_topology | 0.10 (← 0.15) |
+| fe_be_parity | 0.10 |
+| **decision_coverage** (신규) | **0.20** |
+
+`decision_coverage < 0.6` universe 즉시 탈락. self_lint C-CDM 검증.
+
+### Measurement Contract — 본문 의무 섹션 ([`../conventions/measurement-contract.md`](../conventions/measurement-contract.md), bi)
+
+`plan/06-plan.md` 신규 의무 섹션 — 모든 정량 metric 에 method 명시 :
+
+```markdown
+## Measurement Contract (measurement-contract.md bi 의무)
+
+| metric | 정의 | 측정 방법 | (reconstruct 시) 정당화 |
+|---|---|---|---|
+| (예시) loader_utilisation | D_LOAD busy_time / shift | accumulate (Resource hook) | n/a |
+| (예시) crusher_busy_proxy | cycles × mean_dump_time | reconstruct | "secondary control metric, primary uses accumulate" |
+```
+
+method 3 옵션 : **sample** (snapshot) / **accumulate** (event hook 누적) / **reconstruct** (다른 metric 으로 유도). reconstruct row 는 *정당화 column 의무* (1 줄 mechanism — 왜 direct 측정 불가).
+
+frontmatter sync :
+
+```yaml
+---
+metrics: [{name: ..., method: ..., justification: ...}]
+metric_count: <N>
+direct_measurement_ratio: <0.0-1.0>
+reconstruct_justified_ratio: <0.0-1.0>
+---
+```
+
+작업이 non-metric (pure refactor / UI 변경) 시 표 빈 + reason (no-op). self_lint C-MC 검증. 페이즈 09 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85). 페이즈 11 회귀 분류에 plan_method vs impl 비교가 입력.
+
+### plan 본문 의무 (HARD-RULE 9.a 강화 — sprint-14 추가)
+
+기존 (sprint-05-e) :
+- 모듈 분할 + 파일 배치 (≥ 5 파일 경로)
+- Mermaid 시퀀스 ≥ 1 OR 인터페이스 정의 ≥ 3
+- TODO DAG
+- 데이터 구조 ≥ 2 / 의사코드 ≥ 1 / 클래스 시그니처 ≥ 3
+
+**추가 (sprint-14)** :
+- **Measurement Contract 표 ≥ 1 row** (또는 빈 표 + reason for non-metric)
+- **per-universe code spike** (각 universe meta.md, ≤ 50 LOC, contested decisions 매핑 시)
+- **plan frontmatter `audience` field** ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md) bh) — `internal-self | external-reviewer | mixed`

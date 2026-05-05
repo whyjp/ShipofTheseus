@@ -41,20 +41,84 @@ budget_default_split:
 }
 ```
 
-### early stop violation (강화)
+### early stop violation (강화 — sprint-14 dual-objective AND)
 
 ```python
-def early_stop_violation(state) -> bool:
-  axis_violation = any(c < 2 for c in (
-    state.intent_sprint_count,
-    state.plan_sprint_count,
-    state.impl_sprint_count
-  ))
-  budget_violation = state.budget_used_total < 0.80
-  return axis_violation OR budget_violation
+def should_stop_sprint(state) -> bool:
+  # sprint-14 v0.9.20 — grader-in-sprint be 의 dual-objective AND
+  auto_pass    = state.auto_proxy_pass_rate >= 0.999
+  shadow_pass  = state.shadow_grader_predicted_score >= state.target_score  # default 95
+  axis_pass    = all(c >= 2 for c in state.axis_sprint_counts.values())     # bd v0.9.19
+  budget_pass  = state.budget_used_total >= 0.80                             # an v0.9.15
+  return auto_pass AND shadow_pass AND axis_pass AND budget_pass
 ```
 
-self_lint C-IPI 가 axis 별 sprint ≥ 2 검증, C-BSL 이 budget 80% 검증. 둘 다 PASS 만 정상 완주.
+**4 conjunction 만 PASS** — 어느 하나 미달 시 sprint 추가. self_lint C-IPI 가 axis 별 sprint ≥ 2, C-BSL 이 budget 80%, C-GIS 가 shadow_grader 호출 + 종료점 검증.
+
+## v0.9.20 sprint-14 — Grader-in-Sprint Dual-Objective ([`../conventions/grader-in-sprint.md`](../conventions/grader-in-sprint.md), be)
+
+### shadow grader 호출 — sprint 마다 1 회
+
+매 sprint NN 종료 *직전* zero-context shadow grader (Sonnet) 1 회 호출. 입력 = rubric (페이즈 04 의 RubricAdapter 출력 OR `scoring/rubric.md` fallback) + 본 sprint 의 변경 산출물 list. 출력 = `predicted_score / per_category_score / weakest_category / lesson_candidates` (top 3).
+
+```yaml
+shadow_grader:
+  call_phase: 페이즈 10 sprint NN 종료 직전
+  inputs:
+    - rubric: scoring/rubric.md OR <bench>/expected/scoring_rules.yaml
+    - artifacts: [plan/06-plan.md, impl/08-impl-log.md, code/, quality/09-quality-gate.md, handoff (있으면)]
+    - context_mode: zero-context  # 누적 conversation 없이 fresh load
+  output:
+    - predicted_score: 0~100
+    - per_category_score: {<category>: <score>}
+    - weakest_category: <name>
+    - weakest_category_evidence: <citation>
+    - lesson_candidates: [<top-3 specific suggestions>]
+  model: Sonnet (cheap shadow — precise score 가 아니라 delta direction)
+  cost_cap: 1 call per sprint axis × NN
+```
+
+### Sprint report.json 갱신 (sprint-14)
+
+```json
+{
+  "sprint_axis": "intent | plan | impl",
+  "sprint_n": 1,
+  "auto_proxy_pass_rate": 1.0,
+  "shadow_grader_predicted_score": 92,
+  "shadow_grader_call_id": "<uuid>",
+  "shadow_grader_per_category": {"conceptual": 18, ...},
+  "shadow_grader_weakest_category": "data_topology",
+  "shadow_grader_lesson_candidates": [...],
+  "target_score": 95,
+  "stop_decision": "continue",  // 4 AND 미달
+  "lesson_type": "content_depth",
+  "lesson_applied": "<one-line>",
+  "budget_used_axis": 0.45,
+  "axis_sprint_count": 2
+}
+```
+
+### Lesson source 통합 (3 layer)
+
+다음 sprint NN+1 의 lesson source = 3 source 합산 :
+
+1. v0.9.16 [`evidence-driven-sprint-planning.md`](../conventions/evidence-driven-sprint-planning.md) 의 `evidence_missing` (self-rating)
+2. v0.9.20 [`grader-in-sprint.md`](../conventions/grader-in-sprint.md) shadow grader `lesson_candidates`
+3. v0.9.20 [`rubric-targeted-quality-gates.md`](../conventions/rubric-targeted-quality-gates.md) fail RTG → lesson 매핑
+
+가장 자주 등장하는 weakest_category 가 sprint NN+1 의 axis lesson 우선순위.
+
+### target_score 매트릭스
+
+| Grade | shadow target |
+|---|:-:|
+| G2 | 80 |
+| G3 | 90 |
+| G4 (default) | 95 |
+| G5 | 98 |
+
+[`../conventions/grades.md`](../conventions/grades.md) 의 *automated 임계 0.999* 와 *human-rubric target* row 직교.
 
 ## 매 스프린트 테스트 매트릭스
 

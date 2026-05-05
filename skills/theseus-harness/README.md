@@ -68,6 +68,17 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-51 [`conventions/domain-failure-patterns.md`](conventions/domain-failure-patterns.md) — 페이즈 09 게이트 9: 도메인 어댑터 failure_patterns 자기 검증 (v0.9.18)
   d-52 [`conventions/decision-support-framing.md`](conventions/decision-support-framing.md) — 페이즈 14 Q 답에 operational/trade-off/opportunity-cost 본문 (v0.9.18)
   d-53 [`conventions/domain-adapters/`](conventions/domain-adapters/) — 도메인 어댑터 2개 (v0.9.13~)
+  d-54 [`conventions/mindmap-richness-default.md`](conventions/mindmap-richness-default.md) — 마인드맵 A 등급 default 격상 (≥25 노드 / 4 axis × ≥4 sub) (v0.9.19 sprint-13)
+  d-55 [`conventions/per-module-diagram-fan-out.md`](conventions/per-module-diagram-fan-out.md) — use-case / sequence 모듈별 분할 default (v0.9.19)
+  d-56 [`conventions/multiverse-width-default-bump.md`](conventions/multiverse-width-default-bump.md) — 폭 default G2=2 / G3=5 / G4=7 / G5=9 + 옵션 default G3=10/G4=12/G5=16 (v0.9.19)
+  d-57 [`conventions/intent-plan-impl-sprint-trinity.md`](conventions/intent-plan-impl-sprint-trinity.md) — sprint loop 3 axis (intent / plan / impl) × ≥ 2 (v0.9.19)
+  d-58 [`conventions/grader-in-sprint.md`](conventions/grader-in-sprint.md) — sprint stop = `auto AND shadow AND axis AND budget` (4 conjunction) + zero-context shadow grader (v0.9.20 sprint-14)
+  d-59 [`conventions/contested-decision-multiverse.md`](conventions/contested-decision-multiverse.md) — tournament axis = paradigm → contested decisions + per-universe code spike (v0.9.20)
+  d-60 [`conventions/directional-simplification.md`](conventions/directional-simplification.md) — 페이즈 05 simplification 표 의무 (direction ↑/↓/? + magnitude ±%) (v0.9.20)
+  d-61 [`conventions/commentary-policy.md`](conventions/commentary-policy.md) — Q-D-AUDIENCE flag → 페이즈 08 implementer 주석 density swap (v0.9.20)
+  d-62 [`conventions/measurement-contract.md`](conventions/measurement-contract.md) — 페이즈 06 metric method 의무 (sample / accumulate / reconstruct + 정당화) (v0.9.20)
+  d-63 [`conventions/rubric-driven-doc-skeleton.md`](conventions/rubric-driven-doc-skeleton.md) — RubricAdapter (yaml/markdown/openapi) → `_skeleton/` 빈 헤더 + fallback generic ToC (v0.9.20)
+  d-64 [`conventions/rubric-targeted-quality-gates.md`](conventions/rubric-targeted-quality-gates.md) — 페이즈 09 RTG-* (rubric bullet → yes/no) + bj 와 같은 adapter 공유 (v0.9.20)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).
