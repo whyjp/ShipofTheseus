@@ -68,11 +68,11 @@ c- **어댑터 contributions 가 prompt 와 무관** — drift. self_lint C-DRS-
 ---
 name: <domain>
 triggers:                         # 마인드맵 noun 매칭 패턴
-  - regex: "truck|haul|haulage"
+  - regex: "<entity1>|<entity2>|<entity3>"
     weight: 0.4
-  - regex: "loader|crush|crusher"
+  - regex: "<resource1>|<resource2>|<resource3>"
     weight: 0.3
-  - regex: "ore|mining|pit"
+  - regex: "<material>|<domain>|<location>"
     weight: 0.3
 match_threshold: 0.5              # weighted match score 임계 (어댑터 활성화)
 authority: "industry-standard | academic | empirical | best-practice"

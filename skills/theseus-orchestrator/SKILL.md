@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.9.29
+version: 0.9.30
 description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
 ---
 
@@ -70,6 +70,7 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   6. Test surface mapping (invariant ↔ test signature 1:1)
 >   7. Error handling / fallback policy (모듈별)
 >   8. Implementation guidance per TODO (알고리즘 / DS / 라이브러리 / pseudo-code — implementer 가 따라가는 디자인)
+> - 9.d Da Capo산출물 본문 의무 (frontmatter 외): `tournament-NN.md` (6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합), `dacapo-rerun-NN.md` (lesson 본문 + Step F-G detail), `dacapo-flow.md` (bq 의무 — Mermaid + timeline + step trace per round)
 > - 9.b `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 명시 / 인터페이스 노출
 > - 9.c G3+ universe N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff 라인 (universe-1 vs universe-2 동일 ≠ 형식적 분기)
 >
