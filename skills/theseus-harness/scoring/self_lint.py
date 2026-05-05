@@ -877,11 +877,11 @@ def check_fragmentation_policy(skill_root: Path) -> list[str]:
         return ["conventions/fragmentation.md 누락 — 파편화 우선 룰 정의 필요"]
     skill = _read(skill_root / "SKILL.md")
     # SKILL.md 가 일정 길이 초과면 룰 본문 누적 의심.
-    # 임계: 24500 자 (v0.9.24 sprint-18 — 74 컨벤션 + bz~cd 5 신규 sprint-18 절 추가. 표 인덱스 행은 룰 본문 X 라 fragmentation 위반 아님 — 다음 sprint 에 별도 CHANGELOG.md 분리 검토.
+    # 임계: 26500 자 (v0.9.24 sprint-19 — 70 컨벤션 + ce~cj 6 신규 sprint-19 절 추가. 표 인덱스 행은 룰 본문 X 라 fragmentation 위반 아님 — 다음 sprint 에 별도 CHANGELOG.md 분리 검토.
     # 이전 임계 12000 은 21 컨벤션 시점, plan-tree + runtime-prereq + HARD-RULE 추가 후 13000~ 정상.
-    if len(skill) > 24500:
+    if len(skill) > 26500:
         issues.append(
-            f"SKILL.md 길이 {len(skill)} 자 — 임계 24500 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
+            f"SKILL.md 길이 {len(skill)} 자 — 임계 26500 초과. 룰 본문이 컨벤션으로 분해되지 않은 의심 (fragmentation.md §1 위반)"
         )
     if "fragmentation.md" not in skill:
         issues.append("SKILL.md 가 fragmentation.md 를 노출하지 않음")
@@ -2022,6 +2022,108 @@ def check_submission_portability(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_dacapo_mandatory_rerun(skill_root: Path) -> list[str]:
+    """C-DCMR (sprint-19, ce) — winner score 임계 도달해도 무조건 ≥ 1 rerun (high-score promote 우회 차단)."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "dacapo-mandatory-rerun.md"
+    if not p.exists():
+        issues.append("conventions/dacapo-mandatory-rerun.md 누락 (ce, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in ["dacapo-mandatory-rerun", "mandatory_first_rerun_satisfied", "rerun_count >= 1", "예외 0", "C-DCMR", "Step F", "Step G"]:
+        if kw not in body:
+            issues.append(f"dacapo-mandatory-rerun.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_plan_tournament_scoring_strict(skill_root: Path) -> list[str]:
+    """C-PTSS (sprint-19, cf) — tournament 6-dim weighted 의무 + 1-5 cold-read coarse reject."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "plan-tournament-scoring-strict.md"
+    if not p.exists():
+        issues.append("conventions/plan-tournament-scoring-strict.md 누락 (cf, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in ["plan-tournament-scoring-strict", "6-dim weighted", "decision_coverage", "feasibility", "modular_clarity", "1-5 cold-read", "C-PTSS"]:
+        if kw not in body:
+            issues.append(f"plan-tournament-scoring-strict.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_canonical_not_stub(skill_root: Path) -> list[str]:
+    """C-CNS (sprint-19, cg) — canonical 산출물 ≥ winner 80% inline 또는 shared schema mode."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "canonical-not-stub.md"
+    if not p.exists():
+        issues.append("conventions/canonical-not-stub.md 누락 (cg, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in ["canonical-not-stub", "80%", "shared schema", "inline mode", "C-CNS", "asof_fingerprint"]:
+        if kw not in body:
+            issues.append(f"canonical-not-stub.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_impl_multiverse_strict(skill_root: Path) -> list[str]:
+    """C-IMS (sprint-19, ch) — phase 08 G4+ multiverse + tournament + dacapo-flow + 5 sub-phase TDD 7 조건 게이트."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "impl-multiverse-strict.md"
+    if not p.exists():
+        issues.append("conventions/impl-multiverse-strict.md 누락 (ch, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in ["impl-multiverse-strict", "7 조건", "impl/candidates/universe-N", "impl/tournament-impl-NN.md", "5 sub-phase TDD", "C-IMS"]:
+        if kw not in body:
+            issues.append(f"impl-multiverse-strict.md: '{kw}' 키워드 누락")
+    return issues
+
+
+def check_intent_refresh_post_critique(skill_root: Path) -> list[str]:
+    """C-IRPC (sprint-19, ci) — phase 05 후 2nd intent refresh + 04/05 cascade re-write."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "intent-refresh-post-critique.md"
+    if not p.exists():
+        issues.append("conventions/intent-refresh-post-critique.md 누락 (ci, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "intent-refresh-post-critique",
+        "01-1-intent.v2.md", "01-2-intent.v2.md", "01-3-intent.v2.md", "01-4-intent.v2.md",
+        "04-refreshed.md", "05-refreshed.md",
+        "critique_findings_consumed", "intent_v1_supersedes",
+        "C-IRPC", "사용자 ack 없음",
+    ]:
+        if kw not in body:
+            issues.append(f"intent-refresh-post-critique.md: '{kw}' 키워드 누락")
+    phase05 = skill_root / "phases" / "05-critique.md"
+    if phase05.exists():
+        p5 = _read(phase05)
+        if "intent-refresh-post-critique" not in p5:
+            issues.append("phases/05-critique.md: sprint-19 mandatory 2nd refresh 절 누락")
+        if "01-1-intent.v2.md" not in p5:
+            issues.append("phases/05-critique.md: 01-N-intent.v2.md 산출물 명시 누락")
+    return issues
+
+
+def check_cross_phase_shared_context(skill_root: Path) -> list[str]:
+    """C-CPSC (sprint-19, cj) — shared 정보 단일 위치 + asof_fingerprint 의무."""
+    issues: list[str] = []
+    p = skill_root / "conventions" / "cross-phase-shared-context.md"
+    if not p.exists():
+        issues.append("conventions/cross-phase-shared-context.md 누락 (cj, sprint-19)")
+        return issues
+    body = _read(p)
+    for kw in [
+        "cross-phase-shared-context",
+        "asof_fingerprint", "shared_context_refs",
+        "Domain entity catalog", "Module interface", "TODO DAG",
+        "drift", "DRY", "C-CPSC",
+    ]:
+        if kw not in body:
+            issues.append(f"cross-phase-shared-context.md: '{kw}' 키워드 누락")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -2113,6 +2215,12 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-MNT", "magic-number-traceability.md (cb, sprint-18) — code literal → A_i 또는 데이터 출처 1:1 매핑", check_magic_number_traceability),
     ("C-DCZ", "dead-code-zero.md (cc, sprint-18) — 언어별 dead-code analyzer 위반 0", check_dead_code_zero),
     ("C-SPB", "submission-portability.md (cd, sprint-18) — entry script --data-dir CLI + DATA_DIR env var fallback", check_submission_portability),
+    ("C-DCMR", "dacapo-mandatory-rerun.md (ce, sprint-19) — winner ≥ 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제)", check_dacapo_mandatory_rerun),
+    ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
+    ("C-CNS", "canonical-not-stub.md (cg, sprint-19) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
+    ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
+    ("C-IRPC", "intent-refresh-post-critique.md (ci, sprint-19) — phase 05 후 2nd intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
+    ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
 ]
 
 

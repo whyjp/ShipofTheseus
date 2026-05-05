@@ -46,6 +46,18 @@ if verification_fm.get("manual_only", False):
 ## 서브에이전트
 [`../agents/critic.md`](../agents/critic.md).
 
+## sprint-19 — phase 05 종료 직후 mandatory 2nd refresh cycle
+
+phase 05 critique + decisions 산출물 완성 직후, phase 06 plan 진입 *전* 에 [`../conventions/intent-refresh-post-critique.md`](../conventions/intent-refresh-post-critique.md) (ci, HARD-RULE 9.kk) 가 강제하는 6 신규 산출물 (사용자 인터랙션 0) :
+
+```
+intent/01-1-intent.v2.md   ~ intent/01-4-intent.v2.md   # 4 framing universe v2 (critique-absorbed)
+intent/04-refreshed.md                                 # 04 답변/결정/autonomy/stack 통합 v2
+intent/05-refreshed.md                                 # 05 critique/decisions 통합 v2 (v2 framing 정합)
+```
+
+phase 06 plan 진입 게이트는 6 산출물 모두 존재 + frontmatter `critique_findings_consumed`/`intent_v1_supersedes` 의무 검증.
+
 ## 산출물
 `intent/05-critique.md`:
 

@@ -98,6 +98,12 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-81 [`conventions/magic-number-traceability.md`](conventions/magic-number-traceability.md) — 코드 매직넘버 → A_i 가정 또는 데이터 파일 출처 1:1 매핑 (sprint-18, 범용)
   d-82 [`conventions/dead-code-zero.md`](conventions/dead-code-zero.md) — 언어별 dead-code analyzer (ruff F,ARG,SIM / vulture / etc) 위반 0 강제 (sprint-18, 범용)
   d-83 [`conventions/submission-portability.md`](conventions/submission-portability.md) — entry script --data-dir CLI flag + DATA_DIR env var fallback 의무 (sprint-18, 범용)
+  d-84 [`conventions/dacapo-mandatory-rerun.md`](conventions/dacapo-mandatory-rerun.md) — winner score 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제, sprint-19)
+  d-85 [`conventions/plan-tournament-scoring-strict.md`](conventions/plan-tournament-scoring-strict.md) — tournament 6-dim weighted (be 정합) 의무, 1-5 cold-read coarse reject (sprint-19)
+  d-86 [`conventions/canonical-not-stub.md`](conventions/canonical-not-stub.md) — canonical 산출물 ≥ winner 80% 또는 shared schema mode (위임 stub 금지, sprint-19)
+  d-87 [`conventions/impl-multiverse-strict.md`](conventions/impl-multiverse-strict.md) — phase 08 G4+ multiverse + tournament + dacapo-flow 의무 강제 (sprint-19)
+  d-88 [`conventions/intent-refresh-post-critique.md`](conventions/intent-refresh-post-critique.md) — phase 05 후 2nd intent refresh + 04/05 cascade re-write (sprint-19)
+  d-89 [`conventions/cross-phase-shared-context.md`](conventions/cross-phase-shared-context.md) — shared 정보 단일 위치 + asof_fingerprint 인용 의무 (sprint-19)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

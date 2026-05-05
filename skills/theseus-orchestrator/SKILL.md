@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.9.23
+version: 0.9.24
 description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
 ---
 
@@ -35,7 +35,7 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | ----- | ---------- |
 > | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/14-handoff.md` (3개) |
 > | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
-> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **`intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` (sprint-17 refresh)** + `plan/{tournament.md, candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 35+) |
+> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **`intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` (sprint-17 refresh 1)** + **`intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` (sprint-19 refresh 2)** + `plan/{tournament-NN.md (≥ 2, sprint-19 mandatory rerun), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` + **`impl/candidates/universe-N/`, `impl/tournament-impl-NN.md`, `impl/dacapo-flow.md` (sprint-19 ch impl multiverse)** + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 45+) |
 > | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
 > | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
 >
@@ -51,10 +51,11 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | --- | --- |
 > | 01 의도 | mindmap-richness-default · deep-semantic-intent · domain-model-completeness · intent-completeness · mindmap-centrality |
 > | 04 인터뷰 | commentary-policy · runtime-prereq · interview |
-> | 04 → 05 (refresh) | **intent-refresh-post-interview** (sprint-17 신규, 01-{1..4}-intent + 01-additional 의무) |
+> | 04 → 05 (refresh 1) | **intent-refresh-post-interview** (sprint-17 by, 01-{1..4}-intent + 01-additional 의무) |
+> | 05 → 06 (refresh 2) | **intent-refresh-post-critique** (sprint-19 ci, **HARD-RULE 9.kk**, 01-{1..4}-intent.v2 + 04-refreshed + 05-refreshed 의무, 사용자 ack 없음 자율) |
 > | 05 비평 | directional-simplification · premortem-friction · domain-failure-patterns · parallel-cold-review |
-> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl |
-> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out |
+> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** |
+> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, sprint-19 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** |
 > | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) |
 > | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · sprint-regression-loop · budget-saturation-loop · sprint-score-delta-tracking · evidence-driven-sprint-planning · cross-universe-lesson-distillation |
 > | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer · decision-support-framing |
