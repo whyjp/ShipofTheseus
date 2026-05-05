@@ -126,7 +126,7 @@ c- 여러 모듈을 한 시퀀스에 욱여넣음 — 가독성 0. 분리.
 d- **(v0.9.19 sprint-13)** 모듈 ≥ 4 인데 *단일 통합 시퀀스만* 출력 — 가독성 0 + cold review 분할 불가능. [`per-module-diagram-fan-out.md`](per-module-diagram-fan-out.md) (bb) 의 trigger 조건 (모듈 ≥ 4 OR consumer-producer 페어 ≥ 6) 시 per-module 다이어그램 ≥ 모듈 수 의무. self_lint C-PMDF 가 검증.
 e- **(v0.9.19 sprint-13)** 모듈 ≤ 3 인데 over-fragmentation (per-module 강제 분할) — 의도 없이 비용 증가. trigger 조건 미달 시 단일 통합 OK.
 
-## sprint-17 — HARD-RULE 9.a OR → AND (sequence + usecase + interface 셋 다 의무)
+## HARD-RULE 9.a — sequence + usecase + interface 셋 다 의무 (AND clause)
 
 이전 룰: `Mermaid 시퀀스 ≥ 1 OR 인터페이스 정의 ≥ 3` — interface 만 채우고 sequence 우회 가능.
 
@@ -143,7 +143,7 @@ sprint-17 변경 (HARD-RULE 9.a):
 - universe candidate (G3+) 도 동일 — [`aide-tree-symmetry.md`](aide-tree-symmetry.md) (ab) 정합.
 - self_lint **C-DIAG-AND-COVERAGE** : `plan/06-plan.md` + 각 `plan/candidates/universe-N/06-plan.md` 본문에 sequenceDiagram code fence + usecase code fence (`graph` 또는 `useCase` 또는 `actor` keyword) + interface 정의 ≥ 3 셋 다 검출.
 
-## v0.9.19 sprint-13 — per-module fan-out (bb 정합)
+## per-module fan-out (bb 정합)
 
 페이즈 06 plan / 페이즈 08 impl 의 use-case / sequence 다이어그램은 *단일 통합* 외에 *per-module 분할* 도 default 권장:
 - 모듈 ≥ 4 OR consumer-producer 페어 ≥ 6 → per-module 다이어그램 ≥ 모듈 수

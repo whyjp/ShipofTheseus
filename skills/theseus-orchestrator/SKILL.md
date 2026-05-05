@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.9.25
+version: 0.9.26
 description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
 ---
 
@@ -35,7 +35,7 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | ----- | ---------- |
 > | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/14-handoff.md` (3개) |
 > | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
-> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **`intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` (sprint-17 refresh 1)** + **`intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` (sprint-19 refresh 2)** + `plan/{tournament-NN.md (≥ 2, sprint-19 mandatory rerun), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` + **`impl/candidates/universe-N/`, `impl/tournament-impl-NN.md`, `impl/dacapo-flow.md` (sprint-19 ch impl multiverse)** + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 45+) |
+> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **refresh 1**: `intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` + **refresh 2**: `intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` + `plan/{tournament-NN.md (≥ 2), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` (plan body 8 항목 의무 — implementation guidance 포함, sprint-21 정공) + `impl/{candidates/universe-N/실 코드 + tests, tournament-impl-NN.md (≥ 1), shadow-grade-impl-NN.json, dacapo-rerun-impl-NN.md (≥ 1), dacapo-flow.md, 08-impl-log.md (canonical, ≥ winner 80% inline 또는 shared schema)}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 45+) |
 > | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
 > | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
 >
@@ -55,13 +55,21 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | 05 → 06 (refresh 2) | **intent-refresh-post-critique** (sprint-19 ci, **HARD-RULE 9.kk**, 01-{1..4}-intent.v2 + 04-refreshed + 05-refreshed 의무, 사용자 ack 없음 자율) |
 > | 05 비평 | directional-simplification · premortem-friction · domain-failure-patterns · parallel-cold-review |
 > | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** |
-> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, sprint-19 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** |
+> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** · dead-code-zero · magic-number-traceability · submission-portability · reproducibility-doublecheck |
 > | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) |
 > | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · sprint-regression-loop · budget-saturation-loop · sprint-score-delta-tracking · evidence-driven-sprint-planning · cross-universe-lesson-distillation |
 > | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer · decision-support-framing |
 >
 > **9.a~c 본문 의무 (페이즈 06/08 산출물 구조)** — 본 entry skill 에 직접 박힘 (실 코드 외부 repo 따라 구현 가능 의무):
-> - 9.a `plan/06-plan.md`: 파일 경로 ≥ 5 / **Mermaid sequenceDiagram ≥ 1 AND Mermaid usecase/graph ≥ 1 AND 인터페이스 정의 ≥ 3** (3 다 의무 — sprint-17, OR 우회 폐기) / TODO DAG (T-001, T-002, ... ID + 의존 + 완료 조건)
+> - 9.a `plan/06-plan.md` 본문 8 항목 의무 (별도 impl-design.md 안 만듦, plan 단일 source — plan + impl-log 응집 보존):
+>   1. 파일 경로 ≥ 5
+>   2. **Mermaid sequenceDiagram ≥ 1 AND Mermaid usecase/graph ≥ 1 AND 인터페이스 정의 ≥ 3** (셋 다 의무)
+>   3. TODO DAG (T-NNN ID + 의존 + 완료 조건)
+>   4. 모듈 의존 다이어그램 (per-module sequenceDiagram ≥ 모듈 수)
+>   5. Data structure invariants 표 (Invariants/Topology/Access/Bounds 4 항)
+>   6. Test surface mapping (invariant ↔ test signature 1:1)
+>   7. Error handling / fallback policy (모듈별)
+>   8. Implementation guidance per TODO (알고리즘 / DS / 라이브러리 / pseudo-code — implementer 가 따라가는 디자인)
 > - 9.b `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 명시 / 인터페이스 노출
 > - 9.c G3+ universe N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff 라인 (universe-1 vs universe-2 동일 ≠ 형식적 분기)
 >

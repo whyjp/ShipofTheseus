@@ -200,11 +200,18 @@ def check_phase06_sequence_diagram(skill_root: Path) -> list[str]:
 
 
 def check_phase08_script_clause(skill_root: Path) -> list[str]:
-    """C13 — phases/08-implement.md 가 sh + bat 양쪽 빌드 스크립트 강제를 본문에 명시."""
-    text = _read(skill_root / "phases" / "08-implement.md")
+    """C13 — sprint-21 v0.9.26: 08-implement.md router + 08-B-impl-code.md + agents/implementer.md 결합 본문에 sh+bat."""
+    parts = [_read(skill_root / "phases" / "08-implement.md")]
+    p2 = skill_root / "phases" / "08-B-impl-code.md"
+    if p2.exists():
+        parts.append(_read(p2))
+    impl = skill_root / "agents" / "implementer.md"
+    if impl.exists():
+        parts.append(_read(impl))
+    text = "\n".join(parts)
     issues: list[str] = []
     if ".sh" not in text or ".bat" not in text:
-        issues.append("phases/08-implement.md: sh + bat 빌드 스크립트 강제 본문 누락")
+        issues.append("phases/{08-implement.md, 08-B-impl-code.md} ∪ agents/implementer.md: sh + bat 빌드 스크립트 본문 누락")
     return issues
 
 
@@ -1895,8 +1902,6 @@ def check_diagrams_and_coverage(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     for kw in [
-        "sprint-17",
-        "OR → AND",
         "C-DIAG-AND-COVERAGE",
         "sequenceDiagram ≥ 1 AND",
         "셋 다 의무",
