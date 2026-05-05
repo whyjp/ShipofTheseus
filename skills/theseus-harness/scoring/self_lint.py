@@ -47,9 +47,11 @@ def _files(root: Path, pattern: str) -> list[Path]:
 
 
 def check_convention_one_line_summary(skill_root: Path) -> list[str]:
-    """C1 — 모든 conventions/*.md 의 첫 두 줄 검사."""
+    """C1 — 모든 conventions/*.md 의 첫 두 줄 검사 (INDEX.md 제외 — router 메타)."""
     issues: list[str] = []
     for p in _files(skill_root / "conventions", "*.md"):
+        if p.name == "INDEX.md":
+            continue   # router 메타 파일, 컨벤션 아님
         text = _read(p)
         head = text.splitlines()[:8]
         if not head or not head[0].startswith("# "):
@@ -61,13 +63,19 @@ def check_convention_one_line_summary(skill_root: Path) -> list[str]:
 
 
 def check_skill_links_all_conventions(skill_root: Path) -> list[str]:
-    """C2."""
+    """C2 — SKILL.md ∪ conventions/INDEX.md (sprint-20 v0.9.25 lazy-load 분리)."""
     skill = _read(skill_root / "SKILL.md")
+    idx_path = skill_root / "conventions" / "INDEX.md"
+    idx = _read(idx_path) if idx_path.exists() else ""
+    combined = skill + "\n" + idx
     issues: list[str] = []
     for p in _files(skill_root / "conventions", "*.md"):
-        rel = f"conventions/{p.name}"
-        if rel not in skill:
-            issues.append(f"SKILL.md 가 {rel} 를 링크하지 않음")
+        if p.name == "INDEX.md":
+            continue
+        # INDEX 의 router 표는 stem 만 포함 (`| <id> |`), SKILL 은 markdown link `conventions/<file>.md`
+        if f"conventions/{p.name}" in combined or f"| {p.stem} |" in idx:
+            continue
+        issues.append(f"SKILL.md ∪ INDEX 가 conventions/{p.name} 를 링크/등록하지 않음")
     return issues
 
 
@@ -1215,10 +1223,12 @@ def check_orchestrator_driver_hardrule(skill_root: Path) -> list[str]:
          out-of-sandbox / 페이즈 04 생략) 모두 명시.
     """
     issues: list[str] = []
-    targets = [
-        skill_root / "SKILL.md",
-        skill_root.parent / "theseus-orchestrator" / "SKILL.md",
-    ]
+    # sprint-20 v0.9.25 — HARD-RULE 본문은 HARD-CORE.md 로 분리 (SKILL.md 는 인덱스만)
+    hard_core = skill_root / "HARD-CORE.md"
+    if hard_core.exists():
+        targets = [hard_core, skill_root.parent / "theseus-orchestrator" / "SKILL.md"]
+    else:
+        targets = [skill_root / "SKILL.md", skill_root.parent / "theseus-orchestrator" / "SKILL.md"]
     must_haves = [
         "HARD-RULE",
         "timing/start.json",
@@ -1926,10 +1936,16 @@ def check_intent_refresh_post_interview(skill_root: Path) -> list[str]:
             issues.append("phases/05-critique.md: refresh 4 universes 입력 갱신 누락")
         if "01-additional.md" not in p5:
             issues.append("phases/05-critique.md: 01-additional.md 입력 누락")
+    # sprint-20 v0.9.25 — SKILL.md slim 후 INDEX.md 가 단일 router. 둘 중 하나에 있으면 OK.
     harness_skill = skill_root / "SKILL.md"
-    if harness_skill.exists():
-        if "intent-refresh-post-interview" not in _read(harness_skill):
-            issues.append("theseus-harness/SKILL.md: 컨벤션 카탈로그 by 행 누락")
+    harness_idx = skill_root / "conventions" / "INDEX.md"
+    found = False
+    for p in [harness_skill, harness_idx]:
+        if p.exists() and "intent-refresh-post-interview" in _read(p):
+            found = True
+            break
+    if not found:
+        issues.append("theseus-harness/{SKILL.md, conventions/INDEX.md}: intent-refresh-post-interview 등록 누락")
     orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
     if orch.exists():
         if "intent-refresh-post-interview" not in _read(orch):
@@ -2124,6 +2140,49 @@ def check_cross_phase_shared_context(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_hard_core_size(skill_root: Path) -> list[str]:
+    """C-HC1 (sprint-20, v0.9.25) — HARD-CORE.md 본문 ≤ 4000 chars (always-load 부풀음 영구 차단)."""
+    issues: list[str] = []
+    p = skill_root / "HARD-CORE.md"
+    if not p.exists():
+        issues.append("HARD-CORE.md 누락 (sprint-20 v0.9.25)")
+        return issues
+    body = _read(p)
+    n = len(body)
+    if n > 4000:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4000 초과 (always-load 부풀음 — lazy 분리 의미 소실)")
+    for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
+        if kw not in body:
+            issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
+    return issues
+
+
+def check_conventions_index_completeness(skill_root: Path) -> list[str]:
+    """C-IDX-1 (sprint-20, v0.9.25) — conventions/*.md ↔ conventions/INDEX.md row 1:1 매칭."""
+    issues: list[str] = []
+    idx = skill_root / "conventions" / "INDEX.md"
+    if not idx.exists():
+        issues.append("conventions/INDEX.md 누락 (sprint-20 v0.9.25)")
+        return issues
+    body = _read(idx)
+    files = {p.stem for p in (skill_root / "conventions").glob("*.md") if p.name != "INDEX.md"}
+    import re
+    table_ids = set()
+    # markdown 표 header row 만 제외 — 첫 컬럼 "id" 가 header 지표 (다른 column 명 'grades' 등은 실 convention 명과 충돌)
+    for m in re.finditer(r'^\|\s*([a-z][a-z0-9-]+)\s*\|', body, re.M):
+        token = m.group(1)
+        if token == "id":
+            continue
+        table_ids.add(token)
+    missing_in_index = files - table_ids
+    extra_in_index = table_ids - files
+    for x in sorted(missing_in_index):
+        issues.append(f"conventions/{x}.md 가 INDEX 에 누락")
+    for x in sorted(extra_in_index):
+        issues.append(f"INDEX 에 '{x}' row 있으나 conventions/{x}.md 부재")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -2221,6 +2280,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh-post-critique.md (ci, sprint-19) — phase 05 후 2nd intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
+    ("C-HC1", "HARD-CORE.md (sprint-20 v0.9.25) — always-load 본문 ≤ 4000 chars + 의무 키워드 (HR1/HR8/HR9/Layer 3/fingerprint)", check_hard_core_size),
+    ("C-IDX-1", "conventions/INDEX.md (sprint-20 v0.9.25) — 88 컨벤션 router 단일 진실 원천 + 1:1 매칭", check_conventions_index_completeness),
 ]
 
 

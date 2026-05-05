@@ -67,7 +67,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-50 [`conventions/process-flow-coherence.md`](conventions/process-flow-coherence.md) — 페이즈 09 게이트 8: cycle / state machine / workflow 정합 (v0.9.18)
   d-51 [`conventions/domain-failure-patterns.md`](conventions/domain-failure-patterns.md) — 페이즈 09 게이트 9: 도메인 어댑터 failure_patterns 자기 검증 (v0.9.18)
   d-52 [`conventions/decision-support-framing.md`](conventions/decision-support-framing.md) — 페이즈 14 Q 답에 operational/trade-off/opportunity-cost 본문 (v0.9.18)
-  d-53 [`conventions/domain-adapters/`](conventions/domain-adapters/) — 도메인 어댑터 2개 (v0.9.13~)
+  d-53 (제거됨, sprint-19+) — built-in 도메인 어댑터 0. 사용자 per-project 제공 패턴은 `domain-research-stacking.md` (aj) 프레임워크 참조 (벤치 어뷰징 회피)
   d-54 [`conventions/mindmap-richness-default.md`](conventions/mindmap-richness-default.md) — 마인드맵 A 등급 default 격상 (≥25 노드 / 4 axis × ≥4 sub) (v0.9.19 sprint-13)
   d-55 [`conventions/per-module-diagram-fan-out.md`](conventions/per-module-diagram-fan-out.md) — use-case / sequence 모듈별 분할 default (v0.9.19)
   d-56 [`conventions/multiverse-width-default-bump.md`](conventions/multiverse-width-default-bump.md) — 폭 default G2=2 / G3=5 / G4=7 / G5=9 + 옵션 default G3=10/G4=12/G5=16 (v0.9.19)
@@ -104,6 +104,8 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-87 [`conventions/impl-multiverse-strict.md`](conventions/impl-multiverse-strict.md) — phase 08 G4+ multiverse + tournament + dacapo-flow 의무 강제 (sprint-19)
   d-88 [`conventions/intent-refresh-post-critique.md`](conventions/intent-refresh-post-critique.md) — phase 05 후 2nd intent refresh + 04/05 cascade re-write (sprint-19)
   d-89 [`conventions/cross-phase-shared-context.md`](conventions/cross-phase-shared-context.md) — shared 정보 단일 위치 + asof_fingerprint 인용 의무 (sprint-19)
+  d-90 [`conventions/INDEX.md`](conventions/INDEX.md) — 88 컨벤션 router (단일 진실 원천, sprint-20)
+  d-91 [`HARD-CORE.md`](HARD-CORE.md) — always-load supremacy 본문 (≤ 4000 chars, sprint-20)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

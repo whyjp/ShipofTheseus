@@ -93,14 +93,9 @@ def check_cycle_coherence(plan: dict, sprint_evidence: dict) -> list[str]:
     return errors
 ```
 
-### Step 4 — DES domain specific (예시)
+### Step 4 — 도메인-specific 추가 검증 (사용자 per-project)
 
-DES 작업 시:
-- 모든 entity (truck) 의 cycle 시작 / 완료 카운트 평형 (start_count == complete_count + in_flight_at_end)
-- 모든 event type 발생 빈도 ≥ 1
-- queue length 시계열 *0 도달 ≥ 1* (시스템 unsaturated 증명, 또는 saturated 명시)
-
-[`domain-adapters/des-modeling.md`](domain-adapters/des-modeling.md) 의 cycle pattern 카탈로그 → process-flow-coherence 게이트가 자동 활용.
+본 하네스에 *built-in 도메인 어댑터 0* (sprint-19+, 벤치 어뷰징 회피). 사용자가 per-project 로 도메인 어댑터 (`domain-adapters/<domain>.md`) 작성 시 [`domain-research-stacking.md`](domain-research-stacking.md) (aj) 프레임워크 준수 — process-flow-coherence 게이트가 어댑터의 cycle pattern 카탈로그를 자동 활용.
 
 ## 3. self_lint 룰
 

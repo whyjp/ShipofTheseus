@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.24",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. v0.9.24 sprint-19 = Da Capo runtime polishing + plan/impl richness + 2nd refresh cycle (cold session 003 90/100 plateau 정정). 6 신규 컨벤션 (ce~cj, HARD-RULE 9.gg~ll): mandatory ≥ 1 rerun (점수 임계 도달해도 polishing 강제) + plan tournament 6-dim weighted (1-5 coarse reject) + canonical 위임 stub 금지 (≥ winner 80% inline 또는 shared schema mode) + phase 08 G4+ multiverse strict 7 조건 게이트 + phase 05 → 06 사이 mandatory 2nd intent refresh + cross-phase shared context (asof_fingerprint drift 차단). sprint-15~18 enforcement 의 마지막 빈 구멍 동시 닫음.",
+  "version": "0.9.25",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 88 컨벤션 / 15 페이즈 / 18 에이전트. always-load (HARD-CORE.md ≤ 4000 chars) + phase-scoped (phases/) + router-matched lazy (conventions/INDEX.md 단일 진실 원천). orchestrator entry skill 슬림화 + 페이즈별 lookup index. AIDE 멀티버스 G3=5/G4=7/G5=9 폭 + 다카포 mandatory ≥ 1 rerun + intent refresh 2 cycle + canonical inline + impl multiverse strict + cross-phase shared context. 도메인 종속 룰 0 — 본 하네스는 벤치 어뷰징 안 함.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
