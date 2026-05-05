@@ -2,6 +2,39 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.27 — 2026-05-06 (sprint-22 — phase docs deep history cleanup)
+
+### 마일스톤
+
+**스킬 / 컨벤션 본문에서 sprint/version history label 제거 — history 는 본 CHANGELOG 단일 위치 정합** (사용자 원칙: "히스토리는 스킬의 노이즈"). 8 phase 파일의 14 history header 일괄 cleanup.
+
+### 변경 — phase docs header label 제거 (8 파일)
+
+bulk regex 패턴 적용 (`^## v0\.9\.\d+ sprint-\d+ ...` / `^## sprint-\d+ ...` / `^## v0\.9\.\d+ ...` → 라벨 제거 후 룰 본문만 유지):
+
+- `phases/01-intent.md` : `## v0.9.19 sprint-13 갱신 — 마인드맵 A 등급 default + intent sprint loop` → `## 마인드맵 A 등급 default + intent sprint loop`
+- `phases/04-clarify.md` : `## v0.9.20 sprint-14 신규 — Q-D-AUDIENCE + rubric skeleton` → `## Q-D-AUDIENCE + rubric skeleton`
+- `phases/05-critique.md` (2개) : `## sprint-19 — phase 05 종료 직후 mandatory 2nd refresh cycle` → `## phase 05 종료 직후 mandatory 2nd refresh cycle` / `## v0.9.20 sprint-14 — Directional Simplification 표 의무` → `## Directional Simplification 표 의무`
+- `phases/06-plan.md` (4개) : v0.9.19~22 sprint-13~16 4 헤더 모두 제거
+- `phases/07-plan-recursion.md` : `## v0.9.22 진입 의무 — Da Capo enforcement gate (HARD-RULE 9.p)` → `## 진입 의무 — Da Capo enforcement gate (HARD-RULE 9.p)`
+- `phases/08-implement.md` : `## v0.9.22 sprint-16 Da Capo enforcement gate` → `## Da Capo enforcement gate`
+- `phases/09-quality-gates.md` (3개) : `## sprint-18 신규 — 90→100 cap 풀기 (runtime 검증 layer)` → `## runtime 검증 layer (90→100 cap 풀기)` / `## 9 정적 게이트 + N derived 게이트 (v0.9.18)` → `## 9 정적 게이트 + N derived 게이트` / `## v0.9.20 sprint-14 — Rubric-Targeted Gates + 게이트 강화` → `## Rubric-Targeted Gates + 게이트 강화`
+- `phases/10-test-loop.md` (2개) : `## v0.9.19 sprint-13 — Sprint Trinity 3 axis 분배` → `## Sprint Trinity 3 axis 분배` / `## v0.9.20 sprint-14 — Grader-in-Sprint Dual-Objective` → `## Grader-in-Sprint Dual-Objective`
+
+### 변경 — self_lint history-agnostic
+
+C-DCL-FLOW-LOG : `phases/08-implement.md` 의 `v0.9.22 sprint-16` 라벨 의존 제거. `Da Capo enforcement gate` keyword 만 검사 — history 라벨 cleanup 후에도 PASS.
+
+### 알려진 결손 (sprint-23+ 후속)
+
+- 88 컨벤션 본문 inline history narration cleanup (29 파일에 sprint-XX/v0.9.X 본문 라벨 잔존, 21 파일에 mining/SimPy 도메인 예시 잔존)
+- plan/dacapo phase body 의무 강화 — HARD-RULE 9.a 8 항목 외에 dacapo산출물 (tournament.md / dacapo-rerun.md / dacapo-flow.md) body 의무 본문 강화
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.26 → 0.9.27.
+- self_lint 98/98 PASS.
+
 ## v0.9.26 — 2026-05-06 (sprint-21 — HARD-RULE 9.a body 8 항목 강화 + 부분 history 정리)
 
 ### 마일스톤

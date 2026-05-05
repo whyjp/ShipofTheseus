@@ -3,7 +3,7 @@
 ## 한 줄 요약
 **점수 ≥ 0.999 가 나올 때까지 무한 반복한다 + axis 별 ≥ 2 sprint 강제 (intent / plan / impl trinity).** 회수 캡 없음 — 단, *전체 budget cap 80% 사용 + axis 별 sprint ≥ 2* 충족 시 soft-converge. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
 
-## v0.9.19 sprint-13 — Sprint Trinity 3 axis 분배
+## Sprint Trinity 3 axis 분배
 
 [`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md) (bd) 의 3 axis :
 
@@ -55,7 +55,7 @@ def should_stop_sprint(state) -> bool:
 
 **4 conjunction 만 PASS** — 어느 하나 미달 시 sprint 추가. self_lint C-IPI 가 axis 별 sprint ≥ 2, C-BSL 이 budget 80%, C-GIS 가 shadow_grader 호출 + 종료점 검증.
 
-## v0.9.20 sprint-14 — Grader-in-Sprint Dual-Objective ([`../conventions/grader-in-sprint.md`](../conventions/grader-in-sprint.md), be)
+## Grader-in-Sprint Dual-Objective ([`../conventions/grader-in-sprint.md`](../conventions/grader-in-sprint.md), be)
 
 ### shadow grader 호출 — sprint 마다 1 회
 

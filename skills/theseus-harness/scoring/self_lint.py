@@ -1845,8 +1845,11 @@ def check_dacapo_flow_trace(skill_root: Path) -> list[str]:
     if phase06.exists() and "v0.9.22" not in _read(phase06):
         issues.append("phases/06-plan.md: v0.9.22 sprint-16 절 누락")
     phase08 = skill_root / "phases" / "08-implement.md"
-    if phase08.exists() and "v0.9.22" not in _read(phase08):
-        issues.append("phases/08-implement.md: v0.9.22 sprint-16 절 누락")
+    if phase08.exists():
+        body = _read(phase08)
+        # sprint-22+ history narration cleanup — version label 의존 제거. Da Capo enforcement gate keyword 만 검사.
+        if "Da Capo enforcement gate" not in body and "다카포" not in body:
+            issues.append("phases/08-implement.md: Da Capo enforcement gate 본문 누락")
     return issues
 
 

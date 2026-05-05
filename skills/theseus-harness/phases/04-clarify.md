@@ -84,7 +84,7 @@ i- **Q-D9 — Runtime Prerequisite** (v0.7.0 신규, [`../conventions/runtime-pr
 
 답을 `intent/04-autonomy.md` (9 줄 표) + Q-D8 의 verification 본문은 `intent/04-verification.md`, Q-D9 의 runtime-prereq 본문은 `intent/04-runtime-prereq.md` 에 기록. **9 답 + verification 산출물 + runtime-prereq 산출물 모두 valid 해야 페이즈 05 진입** — 페이즈 04 가 마지막 인터럽트이므로 사전 위임 + 검증 명령 + 실행 사전조건 부재 시 후속 자율 진행이 정의 안 된다.
 
-## v0.9.20 sprint-14 신규 — Q-D-AUDIENCE + rubric skeleton
+## Q-D-AUDIENCE + rubric skeleton
 
 ### Q-D-AUDIENCE — commentary policy ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md), bh)
 

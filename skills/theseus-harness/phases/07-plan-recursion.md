@@ -26,7 +26,7 @@ a- 1- 답을 `intent/01-intent.md` 의 "무엇을" 과 diff. 의미상 어긋나
 b- `revise` → 리뷰 첨부해 페이즈 06 재실행. 시도 3 회 캡.
 c- `accept` → 페이즈 08.
 
-## v0.9.22 진입 의무 — Da Capo enforcement gate (HARD-RULE 9.p)
+## Da Capo enforcement gate (HARD-RULE 9.p)
 
 본 페이즈 진입 *전* orchestrator 가 [`../conventions/dacapo-enforcement.md`](../conventions/dacapo-enforcement.md) (bm) 의 `gate_phase06_to_07()` 자동 호출 — 6 조건 검증 :
 

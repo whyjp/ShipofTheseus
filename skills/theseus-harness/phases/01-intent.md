@@ -49,7 +49,7 @@ c- 열린 질문 0개 — 게으른 추출. 재실행.
 
 > **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.
 
-## v0.9.19 sprint-13 갱신 — 마인드맵 A 등급 default + intent sprint loop
+## 마인드맵 A 등급 default + intent sprint loop
 
 a- **마인드맵 A 등급 default** ([`../conventions/mindmap-richness-default.md`](../conventions/mindmap-richness-default.md), ba) — §9 마인드맵 산출물의 frontmatter `mindmap_quality_grade` 가 A (≥25 노드 / 4 axis × ≥4 sub / 3 axis sub-sub + 1 axis sub-sub-sub) default. B fallback PASS *with lesson* — sprint NN+1 의 mindmap 보강 trigger. C/D = 페이즈 02 진입 거부.
 
