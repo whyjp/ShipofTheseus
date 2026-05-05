@@ -54,7 +54,7 @@ def dacapo_loop(
     threshold     = {G3: 0.97,  G4: 0.999,    G5: 0.99999}[grade]
     shadow_target = {G3: 90,    G4: 95,       G5: 98     }[grade]
     width         = {G3: 5,     G4: 7,        G5: 9      }[grade]   # bc default
-    max_rerun     = {G3: 2,     G4: 3,        G5: 5      }[grade]
+    max_rerun     = {G3: 2,     G4: 3,        G5: 5      }[grade]   # 참고용 가드 (sprint-28 — budget 충분 시 임계 도달까지 *무한 회귀*, budget cap 만이 진짜 종료 조건)
     budget_cap    = 0.95   # an budget-saturation-loop 정합
 
     # ── Step A. 초기 multiverse fan-out (Da Capo 의 *처음* 지점) ───────
@@ -336,6 +336,14 @@ c- **Step F 의 lesson 이 enforcement** — "다음 sprint 에 measurement cont
 d- **rerun_count 보고 누락** — phase 06/08 종료 산출물 frontmatter 에 `rerun_count` + `final_score` + `final_shadow` 의무.
 e- **phase 06 와 phase 08 의 loop 가 동시 진행** — phase 08 은 phase 06 종료 후 시작 (페이즈 의존성). 본 컨벤션은 *phase 별 독립 loop* 만 가정.
 f- **08-α 부분 재진입** — apply_lesson(08) 가 08-β 만 재실행 → universe 변경 룰 위반. 5 서브페이즈 전체 재진입 의무.
+g- **survivors rerun (Da Capo 오해 — 가장 빈번한 회귀)** — Round N+1 = Round N 의 *top-K 생존자 head-to-head* 재가중 채점. **차단**.
+   - **올바른 의미**: Round N+1 = `[anonymized prev winner] + [width - 1 NEW fresh universes (NEVER seen, lesson_pack pre-loaded)]`. universe IDs ≠ Round N IDs.
+   - **자동 reject**: tournament-(NN+1).md universe IDs ⊆ tournament-NN.md universe IDs → fail.
+   - C-DCL-FRESH-UNIVERSE 강제.
+h- **dacapo-rerun-NN.md 역순 작성** — tournament-(NN+1).md *이후* 작성 → "Round N+1 universe spec" 의 의미 상실. **올바른 순서**: tournament-NN.md → dacapo-rerun-NN.md (NEW universe pool spec) → tournament-(NN+1).md.
+i- **fresh universe 가 재라벨링** — 본문이 Round N universe 본문과 semantic diff < 30% → fresh 위반. lesson_pack 적용 + framing 변경 의무.
+j- **max_rerun cap 으로 조기 종료 (sprint-28 정정)** — 본 의사코드는 *budget cap* 만 (`budget_used_total >= 0.95`). max_rerun (G3=2/G4=3/G5=5) 는 *조기 종료 가드 (참고용)* — budget 충분 시 임계 (G4=0.999 / G5=0.99999) 도달까지 *무한 회귀*. 임계 미달 + budget 여유 + rerun >= max_rerun 인데 promote = **차단** (mandatory rerun ce 정합).
+k- **scoring granularity coarse** — `0-3 4 단계 정수` / `0-10 정수` 등 coarse rating 으로 6-dim weighted (cf plan-tournament-scoring-strict) 우회. 0.0-1.0 연속값 의무. `각 criterion 0–3` 패턴 자동 reject (cf 정합).
 
 ## 9. 적용 페이즈
 

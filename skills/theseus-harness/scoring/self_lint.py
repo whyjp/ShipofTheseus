@@ -2255,6 +2255,30 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_dacapo_fresh_universe(skill_root: Path) -> list[str]:
+    """C-DCL-FRESH-UNIVERSE (sprint-28 v0.9.33) — Da Capo Round N+1 = NEW universes 의무.
+
+    cold session 003 attempt-2 회귀 정정 — agent 가 'Round 2 = top-K 생존자 head-to-head' 로
+    Da Capo 를 오해. 본 lint 는 컨벤션 본문에 anti-pattern + fresh universe 정의 명시 검증.
+    """
+    issues: list[str] = []
+    p = skill_root / "conventions" / "intra-phase-dacapo-loop.md"
+    if not p.exists():
+        return ["conventions/intra-phase-dacapo-loop.md 누락"]
+    body = _read(p)
+    for kw in [
+        "C-DCL-FRESH-UNIVERSE",
+        "survivors rerun",
+        "fresh universe 가 재라벨링",
+        "역순 작성",
+        "무한 회귀",
+        "scoring granularity coarse",
+    ]:
+        if kw not in body:
+            issues.append(f"intra-phase-dacapo-loop.md: '{kw}' 키워드 누락 (sprint-28 anti-pattern g/h/i/j/k)")
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -2355,6 +2379,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-HC1", "HARD-CORE.md (sprint-20 v0.9.25) — always-load 본문 ≤ 4000 chars + 의무 키워드 (HR1/HR8/HR9/Layer 3/fingerprint)", check_hard_core_size),
     ("C-IDX-1", "conventions/INDEX.md (sprint-20 v0.9.25) — 88 컨벤션 router 단일 진실 원천 + 1:1 매칭", check_conventions_index_completeness),
     ("C-IDX-2", "conventions/*.md frontmatter (sprint-27 v0.9.32) — router metadata backfill + INDEX drift detection", check_conventions_frontmatter_drift),
+    ("C-DCL-FRESH-UNIVERSE", "intra-phase-dacapo-loop.md (sprint-28) — Round N+1 = NEW fresh universes (NOT survivors rerun, NOT 재라벨링)", check_dacapo_fresh_universe),
 ]
 
 
