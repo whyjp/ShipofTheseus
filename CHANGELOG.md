@@ -2,6 +2,53 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.34 — 2026-05-06 (sprint-29 — impl multiverse 의미 명확화 + plan-impl 격리 + 무한 회귀 phase 08 적용)
+
+### 마일스톤
+
+cold session attempt-2 (v0.9.33) 의 impl phase 회귀 정정. 외부 채점 92/100 으로 상승했으나 impl multiverse semantics 회귀 잔존 — agent 가 *impl universes = plan multiverse 의 손자* 로 오해 (`Universes 2/3/4 lost the plan tournament before code was written. The implementation tournament is by walkover.`).
+
+### 변경 — `impl-multiverse-strict.md` 본문 정정
+
+**의미 명확화 신규 절** : impl universes 는 *plan winner 의 코드 구현 변형* — plan multiverse 의 손자 *아님*.
+
+| layer | 입력 | universe pool | 차원 |
+|---|---|---|---|
+| **plan multiverse** (06) | 사용자 의도 + 인터뷰 | 서로 다른 *설계 paradigm* | feasibility / invariant / decision_coverage / modular / determinism / measurement |
+| **impl multiverse** (08) | **canonical `plan/06-plan.md` 만** | 서로 다른 *코드 구현 방식* (abstraction / library / TDD / pattern) | SOLID / dead-code / magic-number / reproducibility / portability / test coverage |
+
+**격리 의무** :
+- 입력 격리 — impl universes 는 canonical 06-plan.md 만 인용. plan/candidates/universe-N/ 본문 인용 금지
+- 출력 격리 — impl universe ID 는 plan universe ID 와 *완전 독립*. plan winner 결정 후 plan multiverse 는 *이미 collapse*
+
+### 변경 — 안티 패턴 3 신규 (e/f/g)
+
+- **e** impl universes 가 plan multiverse 의 손자 (가장 빈번한 회귀): `walkover` / `lost the plan tournament before code was written` 패턴 차단. plan winner 결정 후 *NEW 4 universes* 로 fan-out
+- **f** impl universe ID 가 plan universe ID 상속: `impl/candidates/universe-1/` = plan u1 코드 → 차단. NEW namespace 의무
+- **g** mandatory ≥ 1 rerun 후 즉시 종료 (sprint-28 j 정합 phase 08 적용): "No further sprints required" 자백 → reject. budget 여유 + 임계 미달 시 *무한 회귀*
+
+### 변경 — self_lint
+
+- **C-IMS-SEMANTICS 신규**: 컨벤션 본문 8 keyword 검증 (impl multiverse 의미 / plan multiverse 의 손자 / 입력 격리 / 출력 격리 / lost the plan tournament / walkover / 상속 / 무한 회귀)
+- 100 → 101 checks. all_ok=True.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.33 → 0.9.34.
+- self_lint 101/101 PASS.
+
+### cold session attempt-2 (v0.9.33) 점수
+
+- 외부 채점 (zero-context Opus reviewer) **92/100**: Conceptual 19, Data 14, Sim 18, Experimental 13, Results 14, Code 9, Trace 5
+- v0.9.33 sprint-28 효과 부분 발현 — plan dacapo 약간 개선. impl multiverse semantics 회귀 잔존 (본 sprint 정정 대상)
+- 다음 v0.9.34 cold session 으로 본 sprint 효과 검증 권장
+
+### 알려진 결손 (sprint-30+)
+
+- v0.9.34 cold session 외부 검증
+- 코드 블록 내 mining illustrative example 잔존 deep cleanup
+- C-IDX-3 / C-IDX-4 활성화
+
 ## v0.9.33 — 2026-05-06 (sprint-28 — Da Capo "fresh universe" 의미 명확화 + 무한 회귀 + scoring granularity)
 
 ### 마일스톤
