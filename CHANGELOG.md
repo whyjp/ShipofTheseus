@@ -2,6 +2,52 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.38 — 2026-05-06 (sprint-33 — validator invoke step explicit + mining/C-IDX-3 deferral 정리)
+
+### 마일스톤
+
+sprint-33 = sprint-32 의 cold session validator 를 phase 09 본문에 *첫 동작* 으로 명시.
+
+### 변경 — `phases/09-quality-gates.md` 첫 절 신규
+
+phase 09 진입 직전 의무 호출 step 본문 명시 (HARD-RULE 9.f 본문 통합):
+
+```bash
+python skills/theseus-harness/scoring/check_cold_session.py .ShipofTheseus/<프로젝트>/
+```
+
+- exit 0 → phase 09 진입 허용
+- exit 1 → stderr violation 목록을 `intent/00-violation.md` 기록 + 해당 phase (06 또는 08) 재진입 강제
+
+본 호출은 phase 09 의 *첫 번째 sub-step*, quality-gate 본문 진행보다 우선.
+
+### 결정 — sprint-33 deferral 항목 검토 결과
+
+#### mining example deep cleanup → DONE (deferred 의도 변경)
+
+sprint-25/26 에서 표면 / inline 패턴 정리 완료. 잔존 mining 키워드 (truck/loader/crusher) 는 코드 블록 내 *illustrative algorithmic context* — generic placeholder 치환 시 *의미 손실 risk* 가 가치 보다 큼 (예: "truck.cargo ≥ 0" invariant 예시는 generic 치환 시 추상도 ↑ 가독성 ↓). **본 sprint 에서 cleanup 유지 결정** (사용자 원칙 정합 — 더 깊은 cleanup 은 의미 손실 trade-off).
+
+#### C-IDX-3 strict 활성화 → 영구 informational 유지
+
+C-IDX-3 의 false-positive 다수 (예: phases/00-naming.md 가 conventions/interview.md 인용하지만 INDEX 는 [4] 만) 는 *docs 의 광범위 cross-ref* 가 의도된 패턴 (관련 컨벤션 link, 설명 문맥) 이라 strict 활성화 시 INDEX router 를 *비현실적으로 광범위* 하게 만들거나 docs 본문을 *과도하게 link 정리* 해야 함. **본 sprint 에서 C-IDX-3 영구 informational** 유지 결정. drift 의심 시 manual run 가능 (`check_idx_phase_crossref(skill_root)` 함수 호출).
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.37 → 0.9.38.
+- self_lint 104/104 PASS (변경 없음).
+
+### 누적 (sprint-13 ~ sprint-33, 21 sprint)
+
+- v0.9.19 → v0.9.38
+- 89 conventions
+- self_lint 104/104 PASS
+- runtime layer (sprint-32) + invoke step explicit (sprint-33)
+
+### 후속 (sprint-34+)
+
+- v0.9.38 cold session 외부 검증 — validator 자동 호출 작동 + Round N+1 NEW universes 발현 + 무한 회귀 polishing 측정
+- (사용자 명시 시) 별 의제 개시
+
 ## v0.9.37 — 2026-05-06 (sprint-32 — cold-session-side runtime validator + HARD-RULE 9.f)
 
 ### 마일스톤

@@ -1,6 +1,19 @@
-# Phase 09 — 9종 품질 게이트 (v0.9.18) + sprint-18 runtime enforcement 5
+# Phase 09 — 9종 품질 게이트 + runtime enforcement
 
-## sprint-18 신규 — 90→100 cap 풀기 (runtime 검증 layer)
+## 첫 동작 — cold session validator 의무 호출 (HARD-RULE 9.f)
+
+phase 06/08 종료 → phase 09 진입 *직전* 다음 명령 의무 호출 :
+
+```bash
+python skills/theseus-harness/scoring/check_cold_session.py .ShipofTheseus/<프로젝트>/
+```
+
+- exit 0 → phase 09 진입 허용 (이하 정적/derived 게이트 진행)
+- exit 1 → stderr 의 violation 목록을 `intent/00-violation.md` 에 기록 + 해당 phase (06 또는 08) 재진입 강제
+
+본 호출은 phase 09 의 *첫 sub-step* 이며 quality-gate 본문 진행보다 우선. validator 가 detect 하는 카테고리 (mandatory_first_rerun_satisfied / Round N+1 NEW universes / sentinel regex / impl-plan 격리 / score cap by rerun / improvement_axes_remaining) 는 prose-only enforcement 의 *근본 우회 패턴* — runtime 차단으로만 효과.
+
+## runtime 검증 layer (90→100 cap 풀기)
 
 bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *runtime 검증* — 두 layer 결합 시 enforcement 닫힘. **도메인 종속 룰 의도적 제외** — 본 하네스는 벤치 어뷰징 안 함.
 
