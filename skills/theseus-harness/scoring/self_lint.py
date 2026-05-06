@@ -2255,6 +2255,30 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_conservative_margin_judging(skill_root: Path) -> list[str]:
+    """C-CMJ (sprint-30 v0.9.35) — conservative-margin-judging.md 본문 의무 keyword.
+
+    모든 internal judge (tournament/shadow/sprint stop) 보수적 prior + 0.999 마진 보존 + Da Capo 무한 회귀.
+    """
+    issues: list[str] = []
+    p = skill_root / "conventions" / "conservative-margin-judging.md"
+    if not p.exists():
+        return ["conventions/conservative-margin-judging.md 누락 (sprint-30)"]
+    body = _read(p)
+    for kw in [
+        "C-CMJ",
+        "보수적 prior",
+        "0.999 마진",
+        "improvement_axes_remaining",
+        "judge 자신감 sentinel",
+        "rerun-별 score cap",
+        "no further sprints required",
+    ]:
+        if kw not in body:
+            issues.append(f"conservative-margin-judging.md: '{kw}' 키워드 누락 (sprint-30)")
+    return issues
+
+
 def check_impl_multiverse_semantics(skill_root: Path) -> list[str]:
     """C-IMS-SEMANTICS (sprint-29 v0.9.34) — impl multiverse 가 plan multiverse 의 손자가 아님 + 입력 격리.
 
@@ -2407,6 +2431,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IDX-2", "conventions/*.md frontmatter (sprint-27 v0.9.32) — router metadata backfill + INDEX drift detection", check_conventions_frontmatter_drift),
     ("C-DCL-FRESH-UNIVERSE", "intra-phase-dacapo-loop.md (sprint-28) — Round N+1 = NEW fresh universes (NOT survivors rerun, NOT 재라벨링)", check_dacapo_fresh_universe),
     ("C-IMS-SEMANTICS", "impl-multiverse-strict.md (sprint-29) — impl multiverse = plan winner 코드 구현 변형 (NOT plan multiverse 손자)", check_impl_multiverse_semantics),
+    ("C-CMJ", "conservative-margin-judging.md (sprint-30) — 모든 internal judge 보수적 prior + 0.999 마진 보존 + 무한 회귀 동력", check_conservative_margin_judging),
 ]
 
 

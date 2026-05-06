@@ -2,6 +2,76 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.35 — 2026-05-06 (sprint-30 — conservative-margin-judging 신규 (0.999 마진 보존 + 무한 회귀 polishing 동력))
+
+### 마일스톤
+
+사용자 직접 지시 — *"내부 각 단계의 스코어링 judge 는 보수적으로 더 개선여지가 있을것이라는 접근으로 점수를 매기도록 하여 0.999 의 마진을 남겨두어 다카포-개선을 최대한 많이 회귀 루프하도록 의도"*. 모든 internal judge (tournament/shadow/sprint stop/phase exit) 가 *보수적 prior* 로 채점 → mandatory rerun (ce) + Da Capo 무한 회귀 (sprint-28 j) 의 polishing 동력 보존.
+
+### 변경 — 신규 컨벤션 `conservative-margin-judging.md`
+
+#### rerun-별 score cap (0.999 마진)
+
+```
+rerun = 0           : cap = 0.90    (1st pass — 항상 개선 여지)
+rerun = 1           : cap = 0.95
+rerun = 2           : cap = 0.99
+rerun >= 3 + budget >= 0.80 : 0.999 허용
+rerun >= 5 + budget >= 0.95 : 0.99999 (G5)
+```
+
+#### improvement_axes_remaining frontmatter 의무
+
+각 tournament-NN.md / shadow-grade-NN.json :
+
+```yaml
+improvement_axes_remaining: <int>           # 0 = converged (rerun >= 3 시만)
+improvement_axes_detail:
+  - dim: <차원>
+    weakness: "<1 줄>"
+    lesson_candidate: "<적용 lesson>"
+```
+
+rerun < 3 시 `improvement_axes_remaining: 0` 박으면 reject.
+
+#### judge 자신감 sentinel
+
+regex reject : "winner clear" / "no further improvement" / "no further sprints required" / "clearly best" / "obvious winner" / "passed on first execution".
+
+### 적용 layer (5 영역)
+
+| layer | 산출물 | cap 강제 |
+|---|---|---|
+| plan tournament | `plan/tournament-NN.md` | winner_score / sub_scores |
+| impl tournament | `impl/tournament-impl-NN.md` | 동일 |
+| shadow grader | `*/shadow-grade-NN.json` | predicted_score |
+| sprint stop | `sprints/NN/report.json` | sprint score |
+| phase exit gate | `quality/09-quality-gate.md` | category scores |
+
+### 변경 — self_lint
+
+- **C-CMJ 신규**: 컨벤션 본문 7 keyword 검증
+- 101 → 102 checks. all_ok=True.
+
+### 변경 — INDEX + README
+
+- `conventions/INDEX.md` row 신규 (89 컨벤션)
+- `theseus-harness/README.md` d-92 인덱스
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.34 → 0.9.35.
+
+### 효과 (의도)
+
+cold session attempt-2 (v0.9.33) 의 첫 pass *낙관적* 채점 (`tournament-01` u1 18/20 = 0.90, `tournament-02` 19.5 = 0.975) → mandatory rerun 1 회 후 즉시 종료 → polishing 0. 본 컨벤션 적용 시 :
+- rerun=0 cap 0.90 → tournament-01 0.90 (정합) but improvement_axes_remaining ≥ 1 의무
+- rerun=1 cap 0.95 → polishing 1 회 후 cap 도달
+- rerun=2 cap 0.99 → 2 회 후 cap 도달
+- rerun ≥ 3 + budget ≥ 80% 시만 0.999 허용 → *G4 임계 도달까지 자연스럽게 무한 회귀*
+
+→ 외부 채점 92/100 → 95+ 도달 가능성 ↑.
+
 ## v0.9.34 — 2026-05-06 (sprint-29 — impl multiverse 의미 명확화 + plan-impl 격리 + 무한 회귀 phase 08 적용)
 
 ### 마일스톤

@@ -106,6 +106,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-89 [`conventions/cross-phase-shared-context.md`](conventions/cross-phase-shared-context.md) — shared 정보 단일 위치 + asof_fingerprint 인용 의무 (sprint-19)
   d-90 [`conventions/INDEX.md`](conventions/INDEX.md) — 88 컨벤션 router (단일 진실 원천, sprint-20)
   d-91 [`HARD-CORE.md`](HARD-CORE.md) — always-load supremacy 본문 (≤ 4000 chars, sprint-20)
+  d-92 [`conventions/conservative-margin-judging.md`](conventions/conservative-margin-judging.md) — 모든 internal judge 보수적 prior + 0.999 마진 보존 + 무한 회귀 polishing 동력 (sprint-30)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).
