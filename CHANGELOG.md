@@ -2,6 +2,85 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.37 — 2026-05-06 (sprint-32 — cold-session-side runtime validator + HARD-RULE 9.f)
+
+### 마일스톤
+
+**prose enforcement 한계 돌파.** sprint-15 이후 누적된 "컨벤션 본문 anti-pattern 명시 → agent 자율 우회" 회귀 패턴을 *외부 cold session artifacts 직접 검사* layer 로 차단. orchestrator 가 phase 09 진입 *직전* 의무 호출.
+
+cold session attempt-3 (v0.9.36, mine-throughput-g4-a3) 결정적 회귀 :
+- `dacapo-rerun-01.md` 본문에 *"Cold reviewer re-rates the same universes"* — sprint-28 anti-pattern g 정확히 답습
+- *"No further dacapo round needed"* — sprint-28 anti-pattern j 답습
+- universe count = 4 (rerun ≥ 1 시 ≥ 5 expected — anonymized prev winner + width-1 fresh)
+- impl phase 부재 (mandatory_first_rerun 위반)
+
+→ 본문 anti-pattern 명시는 agent 가 *읽고도 무시*. 외부 layer 강제 필요.
+
+### 변경 — `scoring/check_cold_session.py` 신규 (sprint-32 신규 산출물)
+
+cold session artifact validator. 사용 :
+
+```bash
+python skills/theseus-harness/scoring/check_cold_session.py <project_path>
+# .ShipofTheseus/<project>/ 디렉터리 검사
+# exit 0 = PASS, exit 1 = violations
+```
+
+7 검증 항목:
+1. **plan/tournament-NN.md ≥ 2** (mandatory_first_rerun_satisfied, sprint-19 ce)
+2. **plan/dacapo-rerun-NN.md ≥ 1** + 본문 sentinel regex reject
+3. **Round N+1 universes 존재** — rerun ≥ 1 시 universe count ≥ 5 (anonymized prev winner + fresh, sprint-28 g)
+4. **impl/tournament-impl-NN.md ≥ 2** (G4+ phase 08 mandatory_first_rerun, sprint-19 ce + sprint-29)
+5. **impl/dacapo-rerun-impl-NN.md ≥ 1**
+6. **sentinel regex reject** — 10 패턴 (sprint-28/29/30 정합) :
+   - `re-?rates? same universes` / `same universes re-rated`
+   - `no further (sprints|dacapo|rounds) (required|needed)`
+   - `winner clear` / `obvious winner` / `clearly best`
+   - `passed on first execution` / `first-try pass`
+   - `walkover` / `lost the plan tournament before code was written`
+7. **impl universe ID ≠ plan universe ID** (sprint-29 f 격리)
+8. **shadow-grade-NN.json predicted_score cap by rerun** (sprint-30 — rerun=0 cap 0.90 / rerun=1 cap 0.95 / rerun=2 cap 0.99)
+9. **improvement_axes_remaining frontmatter ≥ 1** (rerun < 3 시, sprint-30)
+
+### 변경 — orchestrator HARD-RULE 9.f 신규
+
+HARD-CORE.md HR9 : *Cold session validator: phase 09 진입 직전 `scoring/check_cold_session.py <proj>` 의무. exit 1 시 phase 재진입.*
+
+orchestrator/SKILL.md HARD-RULE 9 lookup 표 동기화.
+
+### 변경 — self_lint
+
+- **C-CSV 신규** (CHECKS 등록): `scoring/check_cold_session.py` 존재 + 7 의무 함수 + 2 상수 (`SCORE_CAP_BY_RERUN` / `SENTINEL_PATTERNS`) 검증
+- **C-HC1 cap 4000 → 4200** (9.f 추가로 HARD-CORE 본문 4173 → 4081 + 9.f 1 줄 추가 합산)
+- 103 → 104 checks. all_ok=True.
+
+### 검증 — 실패 cold session 에 적용 (cold session attempt-3, v0.9.36)
+
+```
+$ python check_cold_session.py .ShipofTheseus/mine-throughput-g4-a3/
+FAIL — 6 cold session violation(s):
+  - plan/tournament-NN.md = 1 (require ≥ 2 — mandatory_first_rerun_satisfied)
+  - plan/candidates/universe-* count = 4 (rerun ≥ 1 시 ≥ 5 expected — Round N+1 = anonymized prev winner + width-1 fresh universes)
+  - tournament-01.md: 'improvement_axes_remaining' frontmatter 부재 (rerun=1 < 3 — sprint-30 의무)
+  - impl/tournament-impl-NN.md = 0 (require ≥ 2)
+  - impl/dacapo-rerun-impl-NN.md = 0 (require ≥ 1)
+  - plan/dacapo-rerun-01.md: sentinel pattern 're-rates the same universes' detected
+exit code 1
+```
+
+→ 본 validator 가 phase 09 진입 직전 호출되었다면 위 6 violations 자동 차단 → phase 06 재진입 강제 → polishing 루프 작동.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.36 → 0.9.37.
+- self_lint 104/104 PASS.
+
+### 알려진 결손 (sprint-33+)
+
+- check_cold_session.py 호출 통합 — orchestrator 자동 invoke 패턴 (현재 prose 의무, 사용자 manual run 또는 phase 09 agent 가 호출 의무 인지)
+- 코드 블록 내 mining example deep cleanup
+- C-IDX-3 strict 활성화 (docs cross-ref 정합 작업)
+
 ## v0.9.36 — 2026-05-06 (sprint-31 — C-IDX-4 활성화 + C-IDX-3 informational deferral)
 
 ### 마일스톤
