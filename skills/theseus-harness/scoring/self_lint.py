@@ -2221,8 +2221,8 @@ def check_hard_core_size(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     n = len(body)
-    if n > 4000:
-        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4000 초과 (always-load 부풀음 — lazy 분리 의미 소실)")
+    if n > 4200:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4200 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가)")
     for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
         if kw not in body:
             issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
@@ -2252,6 +2252,33 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
         issues.append(f"conventions/{x}.md 가 INDEX 에 누락")
     for x in sorted(extra_in_index):
         issues.append(f"INDEX 에 '{x}' row 있으나 conventions/{x}.md 부재")
+    return issues
+
+
+def check_cold_session_validator(skill_root: Path) -> list[str]:
+    """C-CSV (sprint-32 v0.9.37) — check_cold_session.py 스크립트 존재 + 의무 함수 구비.
+
+    cold session artifact validator (외부 cold session 의 dacapo NEW universe / mandatory rerun /
+    sentinel pattern / score cap 검증). orchestrator 가 phase 09 진입 직전 의무 호출 (HARD-RULE 9.f).
+    """
+    issues: list[str] = []
+    p = skill_root / "scoring" / "check_cold_session.py"
+    if not p.exists():
+        return ["scoring/check_cold_session.py 누락 (sprint-32)"]
+    body = _read(p)
+    for kw in [
+        "check_mandatory_first_rerun_plan",
+        "check_mandatory_first_rerun_impl",
+        "check_sentinel_patterns",
+        "check_round2_universes_new",
+        "check_impl_universe_isolation",
+        "check_score_cap",
+        "check_improvement_axes_remaining",
+        "SCORE_CAP_BY_RERUN",
+        "SENTINEL_PATTERNS",
+    ]:
+        if kw not in body:
+            issues.append(f"check_cold_session.py: '{kw}' 함수/상수 누락 (sprint-32)")
     return issues
 
 
@@ -2527,6 +2554,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     # 현재 docs 의 광범위 cross-ref 가 다수 false-positive — 후속 sprint 에서 INDEX router applies-to-phases
     # 확장 또는 STRONG/WEAK section 정합 후 활성화. 함수 자체는 호출 가능 (운영자 manual run).
     ("C-IDX-4", "INDEX applies-to-grades vocabulary (sprint-31 v0.9.36) — G1-G5/all 외 invalid grade token 차단", check_idx_grade_vocabulary),
+    ("C-CSV", "check_cold_session.py (sprint-32 v0.9.37) — cold session artifact validator (mandatory rerun + NEW universes + sentinel + cap)", check_cold_session_validator),
 ]
 
 
