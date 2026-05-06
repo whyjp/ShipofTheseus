@@ -28,6 +28,7 @@
 | checkpoints | core | [10,11] | [G3,G4,G5] | sprint loop |
 | commentary-policy | interview | [04,08] | [all] | always |
 | competition | meta | [06,08,11] | [G3,G4,G5] | universe 단일안 부재 |
+| conservative-margin-judging | meta | [06,08,09,10] | [G3,G4,G5] | any tournament/shadow/sprint scoring |
 | contested-decision-multiverse | planning | [06] | [G3,G4,G5] | universe axis 부재 |
 | contracts | core | [all] | [all] | always |
 | convention-traceability | meta | [all] | [G3,G4,G5] | always |
@@ -105,7 +106,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **88 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **89 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
