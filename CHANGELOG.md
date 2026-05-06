@@ -2,6 +2,41 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.36 — 2026-05-06 (sprint-31 — C-IDX-4 활성화 + C-IDX-3 informational deferral)
+
+### 마일스톤
+
+C-IDX-3 (phases cross-ref drift) 와 C-IDX-4 (grade vocabulary) 두 신규 lint 구현. C-IDX-4 는 strict 모드 (CHECKS 등록), C-IDX-3 는 false-positive 다수 발견되어 informational 모드 (함수 보존, CHECKS 미등록).
+
+### 변경 — `self_lint.py`
+
+- **C-IDX-4 신규** (CHECKS 등록):
+  - INDEX router 의 `applies-to-grades` 컬럼이 G1-G5/all vocabulary 만 사용
+  - G6 / G0 등 invalid grade token 차단
+  - 모든 89 컨벤션 검증
+- **C-IDX-3 함수 작성** (CHECKS 미등록 — informational):
+  - phases/NN-*.md 의 STRONG cross-ref 가 INDEX applies-to-phases 와 정합 검증
+  - "호환성 / 참조 / See also / 관련 컨벤션 / cross-ref" 섹션의 weak ref skip
+  - 그러나 현재 docs 의 광범위 cross-ref 로 false-positive 다수 — strict 등록 시 docs 광범위 수정 필요
+  - 후속 sprint 에서 (a) INDEX applies-to-phases 확장 OR (b) STRONG/WEAK 섹션 정합 후 활성화
+  - 함수 호출 가능 (manual run / debug)
+
+### 효과
+
+- C-IDX-4 PASS — INDEX router grade vocabulary 정합 검증 자동화
+- C-IDX-3 deferred — 후속 sprint 에서 docs 정합 후 활성화 (sprint-32+)
+- 102 → 103 checks. all_ok=True.
+
+### bump
+
+- plugin.json / SKILL.md frontmatter: 0.9.35 → 0.9.36.
+
+### 알려진 결손 (sprint-32+)
+
+- C-IDX-3 strict 활성화 — INDEX applies-to-phases 확장 또는 STRONG/WEAK 섹션 정합 작업 후
+- 코드 블록 내 mining example deep cleanup (sprint-31 에서 deferral, 별도 sprint 에서 case-by-case)
+- v0.9.36 cold session 외부 검증
+
 ## v0.9.35 — 2026-05-06 (sprint-30 — conservative-margin-judging 신규 (0.999 마진 보존 + 무한 회귀 polishing 동력))
 
 ### 마일스톤
