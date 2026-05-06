@@ -2255,6 +2255,97 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_idx_phase_crossref(skill_root: Path) -> list[str]:
+    """C-IDX-3 (sprint-31 v0.9.36) — phases/NN-*.md 의 STRONG cross-ref 가 INDEX applies-to-phases 정합.
+
+    *Strong* cross-ref 만 검사 (의무/진입/산출물 컨텍스트). *Weak* (see-also / 참조 / 호환성) 은 skip.
+    Markdown link inside ``호환성`` / ``참조`` / ``See also`` 섹션 = weak — drift 무시.
+    """
+    import re
+    issues: list[str] = []
+    idx_path = skill_root / "conventions" / "INDEX.md"
+    if not idx_path.exists():
+        return ["conventions/INDEX.md 누락"]
+    idx_body = _read(idx_path)
+    router_phases = {}
+    for m in re.finditer(
+        r'^\|\s*([a-z][a-z0-9-]+)\s*\|\s*[^|]+?\s*\|\s*\[([^\]]+)\]\s*\|',
+        idx_body, re.M,
+    ):
+        rid = m.group(1)
+        if rid == "id":
+            continue
+        ph_str = m.group(2).strip()
+        if "all" in ph_str:
+            router_phases[rid] = "all"
+        else:
+            router_phases[rid] = {p.strip().lstrip("0") or "0" for p in ph_str.split(",")}
+    WEAK_SECTION_RE = re.compile(r'^##+\s*(?:호환성|참조|See also|관련 컨벤션|cross-ref)', re.M | re.I)
+    for phase_file in (skill_root / "phases").glob("*.md"):
+        m = re.match(r'^(\d+)', phase_file.name)
+        if not m:
+            continue
+        nn = m.group(1).lstrip("0") or "0"
+        body = _read(phase_file)
+        # split into sections — skip refs in weak sections
+        sections = re.split(r'(?m)^##+\s+', body)
+        # first section is pre-headers (treat as strong)
+        weak_section_starts = [m.start() for m in WEAK_SECTION_RE.finditer(body)]
+        # find STRONG cross-refs only — outside weak sections
+        for ref_m in re.finditer(r'conventions/([a-z][a-z0-9-]+)\.md', body):
+            pos = ref_m.start()
+            in_weak = False
+            for ws in weak_section_starts:
+                if ws <= pos:
+                    # find next section (any ##)
+                    next_section = re.search(r'(?m)^##+\s+', body[ws + 1:])
+                    section_end = ws + 1 + next_section.start() if next_section else len(body)
+                    if pos < section_end:
+                        in_weak = True
+                        break
+            if in_weak:
+                continue
+            rid = ref_m.group(1)
+            if rid not in router_phases:
+                continue
+            phases = router_phases[rid]
+            if phases == "all":
+                continue
+            if nn not in phases:
+                issues.append(
+                    f"phases/{phase_file.name} 의 STRONG cross-ref 'conventions/{rid}.md' "
+                    f"가 INDEX applies-to-phases ({sorted(phases)}) 에 phase {nn} 부재 — drift"
+                )
+    return issues
+
+
+def check_idx_grade_vocabulary(skill_root: Path) -> list[str]:
+    """C-IDX-4 (sprint-31 v0.9.36) — INDEX applies-to-grades 가 grades.md vocabulary (G1-G5/all) 만 사용.
+
+    INDEX router 의 grade 컬럼이 G6 / G0 같은 invalid grade 토큰을 포함하지 않는지 검증.
+    """
+    import re
+    issues: list[str] = []
+    idx_path = skill_root / "conventions" / "INDEX.md"
+    if not idx_path.exists():
+        return ["conventions/INDEX.md 누락"]
+    idx_body = _read(idx_path)
+    valid_grades = {"all", "G1", "G2", "G3", "G4", "G5"}
+    for m in re.finditer(
+        r'^\|\s*([a-z][a-z0-9-]+)\s*\|\s*[^|]+?\s*\|\s*\[[^\]]+\]\s*\|\s*\[([^\]]+)\]\s*\|',
+        idx_body, re.M,
+    ):
+        rid = m.group(1)
+        if rid == "id":
+            continue
+        gr_str = m.group(2).strip()
+        tokens = {t.strip() for t in gr_str.split(",")}
+        invalid = tokens - valid_grades
+        if invalid:
+            issues.append(f"INDEX row '{rid}': invalid grade tokens {sorted(invalid)} (valid: G1-G5/all)")
+    return issues
+
+
 def check_conservative_margin_judging(skill_root: Path) -> list[str]:
     """C-CMJ (sprint-30 v0.9.35) — conservative-margin-judging.md 본문 의무 keyword.
 
@@ -2432,6 +2523,10 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-DCL-FRESH-UNIVERSE", "intra-phase-dacapo-loop.md (sprint-28) — Round N+1 = NEW fresh universes (NOT survivors rerun, NOT 재라벨링)", check_dacapo_fresh_universe),
     ("C-IMS-SEMANTICS", "impl-multiverse-strict.md (sprint-29) — impl multiverse = plan winner 코드 구현 변형 (NOT plan multiverse 손자)", check_impl_multiverse_semantics),
     ("C-CMJ", "conservative-margin-judging.md (sprint-30) — 모든 internal judge 보수적 prior + 0.999 마진 보존 + 무한 회귀 동력", check_conservative_margin_judging),
+    # C-IDX-3 (sprint-31 v0.9.36) — informational only. STRONG cross-ref drift detection 함수 보존,
+    # 현재 docs 의 광범위 cross-ref 가 다수 false-positive — 후속 sprint 에서 INDEX router applies-to-phases
+    # 확장 또는 STRONG/WEAK section 정합 후 활성화. 함수 자체는 호출 가능 (운영자 manual run).
+    ("C-IDX-4", "INDEX applies-to-grades vocabulary (sprint-31 v0.9.36) — G1-G5/all 외 invalid grade token 차단", check_idx_grade_vocabulary),
 ]
 
 
