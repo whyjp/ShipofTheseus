@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.38
-description: 재귀 멀티 에이전트 코딩 하네스 콘텐츠 source — 인덱스 전용. always-load (HARD-CORE) + phase-scoped (phases/) + router-matched lazy (conventions/INDEX.md). 88 컨벤션 / 15 페이즈 / 18 에이전트.
+version: 0.9.39
+description: 재귀 멀티 에이전트 코딩 하네스 콘텐츠 source — 인덱스 전용. always-load + phase-scoped + router lazy. 93 컨벤션 / 15 페이즈 / 18 에이전트. sprint-34 — runtime 게이트 + analyze-todos + regression + gantt + optional 4-option.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

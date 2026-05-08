@@ -1,6 +1,6 @@
 # Convention Router — 단일 진실 원천
 
-**88 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail.
+**93 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail. sprint-34 / v0.9.39 신규 4 (phase-state-machine, subagent-trigger, regression-tdd-gate, intent-optional-disambiguation) + phase-lineage-viewer 확장 (gantt + 모든 그레이드).
 
 본 표는 *현재* 활성 컨벤션의 라우팅 정보 (sprint/version history → [`../../../CHANGELOG.md`](../../../CHANGELOG.md) 단일 위치).
 
@@ -60,6 +60,7 @@
 | impl-multiverse-strict | impl | [08,09] | [G4,G5] | phase 09 진입 |
 | indexing | core | [all] | [all] | always |
 | intent-completeness | interview | [01] | [all] | always |
+| intent-optional-disambiguation | interview | [01,04] | [all] | optional marker 검출 |
 | intent-plan-impl-sprint-trinity | sprint | [10] | [G3,G4,G5] | always |
 | intent-refresh-post-critique | interview | [05] | [all] | phase 05 종료 |
 | intent-refresh-post-interview | interview | [04] | [all] | phase 04 종료 |
@@ -78,7 +79,8 @@
 | nfr-derivation | quality | [01,09] | [all] | NFR derived |
 | parallel-cold-review | interview | [03] | [G3,G4,G5] | always |
 | per-module-diagram-fan-out | mindmap | [06,08] | [all] | 모듈 ≥ 4 |
-| phase-lineage-viewer | meta | [all] | [G3,G4,G5] | phase exit |
+| phase-lineage-viewer | meta | [all] | [all] | phase exit |
+| phase-state-machine | core | [all] | [all] | phase enter / phase exit |
 | plan-tournament-scoring-strict | tournament | [06] | [all] | tournament 산출 |
 | plan-tree | planning | [06] | [G3,G4,G5] | always |
 | polyglot-code-quality | quality | [09] | [all] | always |
@@ -86,6 +88,7 @@
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |
 | regression-derived-lint-rule-autogen | meta | [11] | [G4,G5] | 회귀 정정 |
+| regression-tdd-gate | quality | [08,10,11] | [all] | every code change / dacapo step F / sprint iteration |
 | reproducibility-doublecheck | quality | [09] | [all] | entry script |
 | resources | core | [10] | [all] | always |
 | results-decision-mapping | quality | [14] | [all] | always |
@@ -101,6 +104,7 @@
 | sprint-score-delta-tracking | sprint | [10] | [G3,G4,G5] | sprint NN+1 |
 | stack | core | [04] | [all] | always |
 | sub-agents | core | [all] | [all] | always |
+| subagent-trigger | core | [06,08] | [G3,G4,G5] | phase 06 exit / phase 08 enter |
 | submission-portability | quality | [09] | [all] | entry script |
 | test-invariants | quality | [09,10] | [all] | always |
 | timing | core | [all] | [all] | always |

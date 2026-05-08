@@ -4,6 +4,28 @@
 
 **계획의 TODO DAG 를 따라 한 TODO 당 한 구현 에이전트를 띄운다.** 5 서브페이즈 (08-α/β/γ/δ/ε) test-first 분해 + multiverse fan-out (G3=5/G4=7/G5=9 폭) + intra-phase 다카포 loop + mandatory ≥ 1 rerun.
 
+## 매 sub-impl 후 sub-step — regression check 의무 호출 (sprint-34 v0.9.39)
+
+5 서브페이즈 TDD 의 *implementer* (08-γ) 가 한 universe 의 코드 산출을 끝낸 *직후* + 다카포 step F (re-evaluate) 시점에 다음 명령 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/regression_check.py run \
+    --root .ShipofTheseus/<프로젝트>/ --module <T-NNN> --phase 08 --trigger {impl,dacapo-step-f} \
+    --test-cmd "<intent/04-verification.md 의 verification_command>" \
+    --boot-cmd "<intent/04-runtime-prereq.md 의 boot_command>"
+```
+
+- exit 0 → 다음 sub-impl 진행
+- exit 1 (test/boot/lint fail) → phase 08 step C (implementer) 재진입, lesson_pack 누적
+- 직전 known-good 대비 회귀 의심 시 추가 호출:
+
+```bash
+python skills/theseus-harness/scoring/regression_check.py compare --root .ShipofTheseus/<프로젝트>/
+# exit 0 = no regression, exit 1 = G4+ phase 11 bisect 트리거
+```
+
+`state/regression_log.json` 은 append-only — phase 11 bisect 의 입력 source. 자세한 알고리즘: [`../conventions/regression-tdd-gate.md`](../conventions/regression-tdd-gate.md).
+
 ## 입력
 
 - canonical `plan/06-plan.md` ([`../conventions/canonical-not-stub.md`](../conventions/canonical-not-stub.md) cg 정합 — stub 금지). HARD-RULE 9.a 본문 의무 8 항목 (파일 경로 / sequenceDiagram / usecase / interface / TODO DAG / 모듈 의존 / data structure invariants / test surface mapping / error handling / **implementation guidance per TODO**) 가 plan 본문에 박혀 있어야 함 — *별도 impl-design.md 신설 안 함, plan 단일 source*.

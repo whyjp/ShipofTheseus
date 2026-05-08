@@ -45,7 +45,7 @@
 
 ## 자체 lint — 객관 측정 도구
 
-[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **68 룰** 로 본 저장소를 검사 (v0.9.16 시점, 회차마다 새 룰 추가, 부트스트래핑 회귀 누적). v0.9.5 까지 62 룰 + v0.9.6~v0.9.16 sprint 회차마다 신규 컨벤션별 룰 추가 (C-NFR / C-PMF / C-SRL / C-PCR / C-MMC / C-AT-SEQ / C-AT-MP / C-TBR / C-IFP / C-ABV / C-MIF / C-BAF / C-DSI / C-DRS / C-MQG / C-ESD / C-DHS / C-BSL / C-SRO / C-CT / C-SDT / C-EDP / C-CULD / C-RDLR / C-PCQ):
+[`skills/theseus-harness/scoring/self_lint.py`](skills/theseus-harness/scoring/self_lint.py) 는 **108 룰** 로 본 저장소를 검사 (v0.9.39 시점, 회차마다 새 룰 추가, 부트스트래핑 회귀 누적). v0.9.5 까지 62 룰 + v0.9.6~v0.9.16 sprint 회차마다 신규 컨벤션별 룰 추가 (C-NFR / C-PMF / C-SRL / C-PCR / C-MMC / C-AT-SEQ / C-AT-MP / C-TBR / C-IFP / C-ABV / C-MIF / C-BAF / C-DSI / C-DRS / C-MQG / C-ESD / C-DHS / C-BSL / C-SRO / C-CT / C-SDT / C-EDP / C-CULD / C-RDLR / C-PCQ):
 
 | # | 체크 |
 | - | --- |
@@ -193,5 +193,5 @@ self_score = 0.40 × lint_score + 0.40 × pytest_score + 0.20 × sample_score
 ## 참고
 
 ⓐ [`PHILOSOPHY.md`](PHILOSOPHY.md) — 신뢰 담보의 의미.
-ⓑ [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) — 본 하네스의 15 페이즈 + 41 컨벤션.
+ⓑ [`skills/theseus-harness/SKILL.md`](skills/theseus-harness/SKILL.md) — 본 하네스의 15 페이즈 + 93 컨벤션.
 ⓒ [`skills/theseus-harness/conventions/contracts.md`](skills/theseus-harness/conventions/contracts.md) — frontmatter, 단계 재진입.

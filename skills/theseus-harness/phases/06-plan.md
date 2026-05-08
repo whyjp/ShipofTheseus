@@ -3,6 +3,23 @@
 ## 한 줄 요약
 **TODO 단위의 평탄한 구현 계획을 만든다.** 각 TODO 는 한 번의 서브에이전트 호출로 끝낼 수 있을 만큼 작고, 명확한 "완료 조건" 을 갖는다.
 
+## 마지막 sub-step — TODO DAG 분석 의무 호출 (sprint-34 v0.9.39)
+
+phase 06 종료 *직전* (canonical `plan/06-plan.md` 확정 후, phase 07 진입 전) 다음 명령 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/sub_agent_dispatch.py analyze-todos \
+    --plan-md .ShipofTheseus/<프로젝트>/plan/06-plan.md --grade <G>
+```
+
+출력은 `plan/06-todo-fan-out.json` 에 보존 — phase 08 implementer 가 입력으로 사용:
+
+- exit 0 + `max_parallel ≥ 2` → phase 08 가 같은 level 의 TODO 를 *동시 fan-out* (`recommended_mode` 따라 parallel/competition)
+- exit 0 + `max_parallel = 1` → 순차 dispatch (의존 chain)
+- exit 1 (cyclic 의존 또는 `total_todos = 0` 또는 형식 비정합) → phase 06 재진입 강제, `intent/00-violation.md` 기록
+
+자세한 위상 정렬 알고리즘 + 그레이드별 모드 추천: [`../conventions/subagent-trigger.md`](../conventions/subagent-trigger.md).
+
 ## 입력
 - `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-critique.md`, `intent/05-decisions.md`
 - `naming/00-naming.md` (모듈명 확정본)

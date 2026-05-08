@@ -2,16 +2,16 @@
 id: phase-lineage-viewer
 category: meta
 applies-to-phases: '[all]'
-applies-to-grades: '[G3,G4,G5]'
+applies-to-grades: '[all]'
 trigger-when: 'phase exit'
 indexed-in: conventions/INDEX.md
 ---
 
-# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 단일 마크다운 (sprint-16 / v0.9.22)
+# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 + Gantt (sprint-16 / v0.9.22 + sprint-34 / v0.9.39 확장)
 
 ## 한 줄 요약
 
-**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 누적 가시화.** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성.
+**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 *Mermaid flowchart + Mermaid gantt* 두 view 로 누적 가시화.** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성. **sprint-34 / v0.9.39 — Mermaid `gantt` chart 추가 (timeline view) + 모든 그레이드 (G1~G5) 의무화**. 거짓 백필/위조 차단 — gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화.
 
 ## 1. bq vs br 책임 분리
 
@@ -21,6 +21,58 @@ indexed-in: conventions/INDEX.md
 | **project-wide** (신규) | **br phase-lineage-viewer** | phase 00 → 14 전체 흐름 + 페이즈 간 핸드오프 + dacapo loop 요약 + sentinel 위반 이벤트 | **`lineage.md`** (프로젝트 루트) |
 
 br 는 bq 의 *상위 view* — bq 가 phase 06/08 의 *내부* 다카포 흐름을 자세히, br 은 *모든 페이즈* 의 *외부* 흐름을 압축적으로 보여줌.
+
+## 1.5. Mermaid Gantt — timeline view (sprint-34 / v0.9.39 신규)
+
+flowchart 가 *논리 흐름* 을 보여준다면, gantt 는 *시간 분포* 를 보여준다. 두 view 의 *결합* 으로 (a) 어떤 phase 가 오래 걸렸는지 (b) dacapo loop 가 시간상 어디서 시작/종료됐는지 (c) sentinel 위반이 어느 시점에 발생했는지 즉시 식별. 데이터 source = [`phase_state.py`](../scoring/phase_state.py) 의 `state/phase_state.json` (entered_at/exited_at) — 별도 입력 없음.
+
+```mermaid
+gantt
+  title Phase Lineage — synthetic_mine_throughput_001
+  dateFormat YYYY-MM-DD HH:mm
+  axisFormat %H:%M
+
+  section Setup
+  P00 naming           :p0, 2026-05-09 13:00, 2m
+  P01 intent + 마인드맵 :p1, after p0, 6m
+
+  section Review
+  P02 의도 리뷰 :p2, after p1, 3m
+  P03 콜드 재이해 :p3, after p2, 3m
+  P04 사용자 질의 :p4, after p3, 3m
+  P05 비평 :p5, after p4, 4m
+
+  section Plan
+  P06 plan-tree :p6, after p5, 7m
+  P06 dacapo R1 :crit, dc6_r1, 13:32, 26m
+  P06 dacapo R2 :crit, dc6_r2, 13:58, 25m
+  P07 plan 재이해 :p7, 14:23, 7m
+
+  section Impl
+  P08 impl 5 sub × 7 universe :p8, 14:30, 1h42m
+  P08 dacapo R1 (impl) :crit, dc8_r1, 16:12, 1h
+  P09 게이트 :p9, 17:12, 8m
+
+  section Sprint
+  P10 sprint trinity :p10, 17:20, 1h22m
+  P11 회귀 바이섹트 (bypass) :crit, p11, 18:42, 1m
+
+  section Output
+  P12 theseus-view :p12, 18:42, 26m
+  P13 interactive-viewer :p13, 19:08, 22m
+  P14 핸드오프 :milestone, p14, 19:35, 0
+```
+
+**의무 항목**:
+- `dateFormat` / `axisFormat` 명시 — Mermaid 표준 (시간 축 정합)
+- section ≥ 3 (Setup / Plan / Impl 등 — 그레이드 별 활성 phase 그룹)
+- 모든 활성 phase 가 노드로 (G1: P01 + P14 만 / G2: P01 + P04 + P06 + P08 + P09 + P14 / G3+: 풀)
+- dacapo loop 가 발생한 phase 는 *별도 task* 로 (`crit` 클래스 + dacapo R1/R2 라벨)
+- sentinel 위반은 `crit` 클래스 + 명시 라벨 (예: "★ B universe_skip")
+- phase 14 = `milestone` task (0 분 길이)
+- 시각 = phase_state.json 의 entered_at (start) + duration_seconds → end (자동 산출)
+
+**자동 갱신** — `update_phase_lineage(event='exit', ...)` 호출 시 gantt block 도 함께 갱신. 수동 편집 금지.
 
 ## 2. lineage.md 구조
 
@@ -219,11 +271,20 @@ def check_phase_lineage_viewer(artifact_dir: Path) -> list[str]:
     if '```mermaid' not in text or 'flowchart' not in text:
         errors.append('lineage.md mermaid flowchart 부재')
 
-    # phase 00~14 모든 노드 의무 (G3+ 풀)
-    for p in range(0, 15):
+    # mermaid gantt ≥ 1 의무 (sprint-34 / v0.9.39 신규 — 모든 그레이드)
+    if 'gantt' not in text or 'dateFormat' not in text:
+        errors.append('lineage.md mermaid gantt + dateFormat 부재 (sprint-34 / v0.9.39 의무)')
+
+    # phase 노드 의무 — 그레이드 별 minimal set (sprint-34 / v0.9.39)
+    grade = (fm.get('grade') or 'G4').upper()
+    required_phases = {
+        'G1': [1, 14],
+        'G2': [1, 4, 6, 8, 9, 14],
+    }.get(grade, list(range(0, 15)))   # G3+ 풀
+    for p in required_phases:
         if f'P{p:02d}' not in text and f'Phase {p:02d}' not in text:
             # bypass (회귀 미발생) 도 표시 의무 — bypass 노드
-            errors.append(f'lineage.md Phase {p:02d} 노드 부재')
+            errors.append(f'lineage.md Phase {p:02d} 노드 부재 (grade={grade} 필수)')
 
     # fingerprint chain 의무 — 표에 모든 페이즈 행
     if '| # | 페이즈 |' not in text:
@@ -284,11 +345,22 @@ e- **수동 편집** — 사람이 손으로 행 추가 → orchestrator 자동 
 - [`autonomy.md`](autonomy.md) — 페이즈 04 답안 매핑 표가 본 lineage 의 §5 로 흡수, 자율 결정 사후 회수 정합.
 - [`dacapo-skip-sentinel.md`](dacapo-skip-sentinel.md) (bp) — sentinel 매치 시 lineage.md §4 행 + Mermaid ★ 노드 동시 추가.
 
-## 12. 그레이드 활성
+## 12. 그레이드 활성 (sprint-34 / v0.9.39 — 모든 그레이드 의무)
 
-- G1 / G2 — 비활성 (단일 phase 또는 미니 모드, lineage 의미 약)
-- **G3+ — 의무** (모든 페이즈 lineage 의무)
-- G5 — 빡빡 모드 (fingerprint chain mismatch 0 의무, sentinel 위반 ≥ 1 시 즉시 사용자 ack)
+| Grade | flowchart | gantt | fingerprint chain | dacapo summary | sentinel events | phase 04 답안 매핑 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **G1** Trivial | ✅ minimal (P01 + P14 만) | ✅ minimal | ✅ (2 행) | n/a (dacapo 없음) | optional | optional |
+| **G2** Simple | ✅ (P01 + P04 + P06 + P08 + P09 + P14) | ✅ | ✅ (6 행) | n/a | optional | ✅ |
+| **G3** Standard | ✅ (P00~P14 전체) | ✅ | ✅ (15 행) | ✅ | ✅ | ✅ |
+| **G4** Complex | G3 + universe 분기 노드 + dacapo R1/R2 | ✅ + critical task | ✅ + universe fingerprint | ✅ | ✅ | ✅ |
+| **G5** Critical | G4 + 빡빡 (fingerprint mismatch 0 / sentinel 위반 ≥ 1 시 즉시 ack) | ✅ + sentinel critical | ✅ | ✅ | 0 의무 | ✅ |
+
+**왜 G1/G2 도 의무인가** (sprint-34 변경 동기) :
+- v0.9.22 사고 — 백필/위조는 *간단한 프로젝트* 일수록 발견 안 됨 (lineage 비교 없으니까)
+- gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화 → 수동 frontmatter 위조 시 즉시 detect
+- 모든 그레이드에서 동일 운영 — 하네스 일관성
+
+minimal 모드 (G1/G2) 는 *flowchart + gantt + fingerprint chain 표 + 페이즈 04 답안 매핑* 만, dacapo summary / sentinel events 는 phase 06/08 활성 시 (G2+) 자동 추가.
 
 ## 13. 페이즈별 갱신 트리거 — phase 00 → phase 14 매핑
 

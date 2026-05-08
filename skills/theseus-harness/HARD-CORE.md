@@ -47,6 +47,7 @@
 - **9.c** G3+ universe-N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff + 9.a 8 항목 inline
 - **9.d** Da Capo산출물 본문 의무: `tournament-NN.md` (6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합), `dacapo-rerun-NN.md` (lesson 본문 + Step F-G detail), `dacapo-flow.md` (bq 의무)
 - **9.f** Cold session validator: phase 09 진입 직전 `scoring/check_cold_session.py <proj>` 의무. exit 1 시 phase 재진입.
+- **9.mm** Phase state runtime (sprint-34): 매 phase enter/exit `scoring/phase_state.py` 의무. 단조성 + forgery 차단. exit 1 = 재진입.
 
 위반 시 self_lint 페이즈 exit fail → 페이즈 재진입 (자율, 누적 ≥ 3 시만 ack).
 

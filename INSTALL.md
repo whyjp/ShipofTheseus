@@ -6,12 +6,12 @@
 
 ## 어떤 스킬이 설치되는가
 
-본 저장소는 v0.9.16 기준 2 스킬을 묶음으로 배포한다 — 1 entry + 1 source of truth:
+본 저장소는 v0.9.39 기준 2 스킬을 묶음으로 배포한다 — 1 entry + 1 source of truth:
 
 ```
 skills/
 ├── theseus-orchestrator/   # 사용자 entry — HARD-RULE + 그레이드 인덱스 (theseus-harness 동반 필수)
-└── theseus-harness/        # 콘텐츠 source — 47 컨벤션 + 15 페이즈 + 18 에이전트 + 2 도메인 어댑터 + scoring/ + templates/
+└── theseus-harness/        # 콘텐츠 source — 93 컨벤션 + 15 페이즈 + 18 에이전트 + scoring/ (15 CLI tool) + templates/
 ```
 
 > **v0.9.0 sprint-03-b 단순화** — 이전 9 SKILL.md (orchestrator + 7 phase 분해 stub + harness) 에서 7 phase stub 제거. pure delegation 이라 cost > benefit 으로 판정 (livetest #1 fail 분석). 사용자 entry namespace `/shipoftheseus:theseus-orchestrator` 동일.
@@ -126,7 +126,7 @@ cp -r ~/src/shipoftheseus/skills/* /path/to/your/project/.claude/skills/
 설치 후 (저장소 루트에서):
 
 ```bash
-# 일괄 점검 — self_lint 60+ 체크 + pytest + sample 채점 + 자기 점수 + 핑거프린트 체인
+# 일괄 점검 — self_lint 108 체크 + pytest 131 케이스 + sample 채점 + 자기 점수 + 핑거프린트 체인
 ./scripts/self-check.sh        # linux/mac
 scripts\self-check.bat         # windows
 ```
@@ -138,6 +138,25 @@ python skills/theseus-harness/scoring/self_lint.py
 python -m pytest skills/theseus-harness/scoring/ -q
 python skills/theseus-harness/scoring/score.py \
   --inputs skills/theseus-harness/templates/sample-inputs.json
+```
+
+sprint-34 신규 4 CLI tool (orchestrator/phase 본문이 자동 호출 — 수동 실행은 디버그 용):
+
+```bash
+# 1) phase state 단조성 게이트 (HARD-RULE 9.mm)
+python skills/theseus-harness/scoring/phase_state.py validate --root .ShipofTheseus/<proj>/
+
+# 2) cold session artifact 검사 (HARD-RULE 9.f, sprint-32)
+python skills/theseus-harness/scoring/check_cold_session.py .ShipofTheseus/<proj>/
+
+# 3) TODO DAG 위상 정렬 → 병렬 그룹 (phase 06 exit, sprint-34)
+python skills/theseus-harness/scoring/sub_agent_dispatch.py analyze-todos \
+    --plan-md .ShipofTheseus/<proj>/plan/06-plan.md --grade 4
+
+# 4) regression check (phase 08 매 sub-impl, sprint-34)
+python skills/theseus-harness/scoring/regression_check.py run \
+    --root .ShipofTheseus/<proj>/ --module T-001 --test-cmd "pytest -x"
+python skills/theseus-harness/scoring/regression_check.py compare --root .ShipofTheseus/<proj>/
 ```
 
 자기 점수 임계 0.99999 통과 + self_lint 모든 룰 PASS + pytest 모두 통과해야 정상.
