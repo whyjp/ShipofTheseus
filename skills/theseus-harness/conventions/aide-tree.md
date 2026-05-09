@@ -147,7 +147,7 @@ f- universe N-1 / N-2 가 N-1 의 1 줄 변형 + actor 이름만 변경 = pseudo
 - [`competition.md`](competition.md) / [`plan-tree.md`](plan-tree.md) — 페이즈 06 룰은 *불변*. 본 컨벤션은 *추가 페이즈* (multi-phase) + *대칭 강제* (symmetry) 만 정의. backward compatible.
 - [`per-module-diagram-fan-out.md`](per-module-diagram-fan-out.md) — universe 별 sequenceDiagram 의무 + 본 컨벤션 = universe 안 *모듈* fan-out (직교).
 - [`multiverse-impl-fan-out.md`](multiverse-impl-fan-out.md) — plan 차원 sequenceDiagram per-universe → impl 코드 차원으로 확장.
-- [`canonical-not-stub.md`](canonical-not-stub.md) — universe candidate sequenceDiagram + canonical inline mode 결합 시 winner sequence 가 canonical 에도 박힘.
+- phases/06,08,14 §canonical inline (sprint-37 PR-AH, prev: canonical-not-stub.md) — universe candidate sequenceDiagram + canonical inline mode 결합 시 winner sequence 가 canonical 에도 박힘.
 
 ## 8. 통합 history (sprint-37 PR-AB)
 

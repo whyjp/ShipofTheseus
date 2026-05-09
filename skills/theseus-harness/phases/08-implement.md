@@ -28,7 +28,7 @@ python skills/theseus-harness/scoring/regression_check.py compare --root .Shipof
 
 ## 입력
 
-- canonical `plan/06-plan.md` ([`../conventions/canonical-not-stub.md`](../conventions/canonical-not-stub.md) cg 정합 — stub 금지). HARD-RULE 9.a 본문 의무 8 항목 (파일 경로 / sequenceDiagram / usecase / interface / TODO DAG / 모듈 의존 / data structure invariants / test surface mapping / error handling / **implementation guidance per TODO**) 가 plan 본문에 박혀 있어야 함 — *별도 impl-design.md 신설 안 함, plan 단일 source*.
+- canonical `plan/06-plan.md` (canonical-not-stub 정합 — stub 금지, sprint-37 PR-AH inline). HARD-RULE 9.a 본문 의무 8 항목 (파일 경로 / sequenceDiagram / usecase / interface / TODO DAG / 모듈 의존 / data structure invariants / test surface mapping / error handling / **implementation guidance per TODO**) 가 plan 본문에 박혀 있어야 함 — *별도 impl-design.md 신설 안 함, plan 단일 source*.
 - `intent/01-{1..4}-intent.v2.md` + `04-refreshed.md` + `05-refreshed.md` (refresh 2 cycle 결과).
 
 ## 5 sub-phase TDD test-first 분해
@@ -106,3 +106,9 @@ b- skipped / `.only` 테스트 금지.
 c- 본인 TODO 모듈 외 편집 금지.
 d- universe 별 implementer 가 다른 universe 코드 인용 — head-to-head cycle 격리 위반.
 e- single-pass tournament + rerun=0 → mandatory_first_rerun_satisfied 위반.
+
+
+## §canonical 산출물 룰 (sprint-37 PR-AH inline, prev: canonical-not-stub.md)
+
+`impl/08-impl-log.md` (canonical) 도 phase 06 §canonical 룰 동등 적용 — winner inline ≥80% 또는 shared schema 3 섹션 의무. asof_fingerprint frontmatter 의무. "80%", "shared schema", "asof_fingerprint" 키워드 본문 박힘 강제 (self_lint C-CNS).
+

@@ -40,6 +40,7 @@
 | domain-research-stacking | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | research stacking framework — 단일 컨벤션의 §3 |
 | domain-failure-patterns | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | failure patterns framework — 단일 컨벤션의 §4 |
 | domain-model-completeness | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | model completeness (built-in) — 단일 컨벤션의 §2 (self_lint C-DMC 함수 유지) |
+| canonical-not-stub | phases/06,08,14 §canonical inline | sprint-37 PR-AH | sprint-37 PR-AH | 페이즈 본문 inline 흡수 (self_lint C-CNS 함수 phases 본문 검사로 변경) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

@@ -2252,16 +2252,25 @@ def check_plan_tournament_scoring_strict(skill_root: Path) -> list[str]:
 
 
 def check_canonical_not_stub(skill_root: Path) -> list[str]:
-    """C-CNS (sprint-19, cg) — canonical 산출물 ≥ winner 80% inline 또는 shared schema mode."""
+    """C-CNS (sprint-19 cg, sprint-37 PR-AH inline) — canonical 산출물 ≥ winner 80% inline 또는 shared schema mode.
+
+    sprint-37 PR-AH 다이어트로 conventions/canonical-not-stub.md → phases/06,08,14 §canonical inline.
+    검사 = 3 phase 본문에 §canonical 룰 키워드 박힘.
+    """
     issues: list[str] = []
-    p = skill_root / "conventions" / "canonical-not-stub.md"
-    if not p.exists():
-        issues.append("conventions/canonical-not-stub.md 누락 (cg, sprint-19)")
-        return issues
-    body = _read(p)
-    for kw in ["canonical-not-stub", "80%", "shared schema", "inline mode", "C-CNS", "asof_fingerprint"]:
-        if kw not in body:
-            issues.append(f"canonical-not-stub.md: '{kw}' 키워드 누락")
+    required_kws = ["80%", "shared schema", "asof_fingerprint"]
+    for phase_name in ["06-plan.md", "08-implement.md", "14-handoff.md"]:
+        phase_path = skill_root / "phases" / phase_name
+        if not phase_path.exists():
+            issues.append(f"phases/{phase_name} 부재")
+            continue
+        body = _read(phase_path)
+        if "§canonical" not in body and "canonical-not-stub" not in body:
+            issues.append(f"phases/{phase_name}: §canonical 산출물 룰 inline 부재 (sprint-37 PR-AH)")
+            continue
+        for kw in required_kws:
+            if kw not in body:
+                issues.append(f"phases/{phase_name}: §canonical '{kw}' 키워드 누락")
     return issues
 
 
@@ -2937,7 +2946,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-SPB", "submission-portability.md (cd, sprint-18) — entry script --data-dir CLI + DATA_DIR env var fallback", check_submission_portability),
     ("C-DCMR", "dacapo-mandatory-rerun.md (ce, sprint-19) — winner ≥ 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제)", check_dacapo_mandatory_rerun),
     ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
-    ("C-CNS", "canonical-not-stub.md (cg, sprint-19) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
+    ("C-CNS", "phases/06,08,14 §canonical inline (sprint-19 cg + sprint-37 PR-AH inline) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),

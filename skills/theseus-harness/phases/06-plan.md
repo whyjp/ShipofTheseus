@@ -494,3 +494,42 @@ self_lint 신규 (sprint-16) :
 - **C-DCL-SHADOW-CONTEXT** — shadow grader zero-context 5 룰
 - **C-DCL-SENTINEL** — 3 sentinel 매치 검출
 - **C-DCL-FLOW-LOG** — dacapo-flow.md Mermaid + timeline + rerun subgraph 의무
+
+## §canonical 산출물 룰 (sprint-37 PR-AH inline, prev: canonical-not-stub.md, sprint-19 cg, HARD-RULE 9.ii)
+
+**`plan/06-plan.md` (canonical) 는 단순 위임 stub 금지** — winner universe-N 본문의 80% 이상 *또는* shared schema + 통합 결정 본문 의무.
+
+### 알고리즘
+
+1. canonical 파일 byte size 측정.
+2. winner universe-N 본문 byte size 측정 (`plan/candidates/universe-<winner_id>/06-plan.md`).
+3. 다음 중 ≥ 1 만족 의무:
+   - **(A) Inline mode**: `canonical_size >= 0.80 × winner_size` (winner 본문 80% 이상 inline + universe-anonymisation).
+   - **(B) Shared schema mode**: canonical 본문에 § Shared Schema + § Integration Decisions + § Cross-phase Reference 3 섹션 의무 (각 ≥ 5 줄). winner universe-N 와 phase 08 가 공유하는 schema/contract 가 canonical 에 1 회 명시 + 양쪽 phase 가 인용.
+4. 두 mode 모두 미달 → fail.
+
+### 의무 frontmatter (canonical 산출물)
+
+```yaml
+canonical_mode: inline | shared-schema
+canonical_size_bytes: <int>
+winner_size_bytes: <int>
+canonical_to_winner_ratio: <float>     # inline mode 시 >= 0.80
+shared_schema_sections: 3              # shared-schema mode 시 == 3
+shared_schema_cross_refs: [...]        # phase 08 / phase 14 cross-ref 목록
+asof_fingerprint: "<source_winner_fingerprint>"   # cross-phase-shared-context (cj) 정합 — drift 차단
+```
+
+**asof_fingerprint** 의무 — canonical 의 본문 / 인용 source (winner universe-N) 의 그 시점 fingerprint 와 일치. drift 시 phase 08 진입 거부.
+
+### 안티 패턴
+
+a- canonical 본문 = "See `candidates/universe-N/06-plan.md`" 한 줄 위임 — 차단.
+b- canonical 본문 = winner 본문 그대로 복붙 (universe identifier 도 그대로) — *anonymised inline mode* 의무.
+c- shared-schema mode 인척 § 헤더만 추가 + 본문 빈 — 각 § ≥ 5 줄 강제.
+d- canonical 박지만 phase 08 가 universe-1 직접 인용 (canonical 우회) — phase 08 산출물이 canonical 만 인용 의무.
+
+### self_lint C-CNS
+
+phases/06-plan.md / phases/08-implement.md / phases/14-handoff.md 본문에 본 §canonical 룰 ("80%", "shared schema", "asof_fingerprint") 박혀 있는지 검사.
+
