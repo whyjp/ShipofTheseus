@@ -215,3 +215,49 @@ phases/09-quality-gates.md 본문에 §PNC 룰 키워드 박힘 검증. cold ses
 a- **field 정의 후 read 0** — orphan field. PNC 위반.
 b- **allow_list 남용** — 모든 field 를 allow 로 우회 = 실효 검사 0. allow_list ≤ 5% 권고.
 c- **AST 분석 skip** — string grep 으로 대체 = false positive/negative 폭증. AST 의무.
+
+
+## §Mirror — Workspace ≠ Deliverable pattern (sprint-39 PR-C inline)
+
+**4 감점 메타 패턴 B** — 내부 verification fact ↔ deliverable mirror 의 비대칭. 내부 압력 강함 / 외부 압력 빈약.
+
+### 검사 알고리즘
+
+1. 내부 산출물 (impl/ 안의 verification fact, 예: `assert ramp_closed_after_30min`) 수집
+2. deliverable (handoff/, README.md, 외부 evaluator 입력) 수집
+3. 매핑 표 생성: 모든 internal fact 가 ≥ 1 deliverable 에 mirror 의무
+4. unmirrored = 위반
+
+### 산출물 — `gate_mirror.json`
+
+```json
+{
+  "internal_facts_total": <int>,
+  "mirrored_count": <int>,
+  "unmirrored_count": <int>,
+  "violations": [
+    {
+      "fact": "ramp_closed_after_30min",
+      "internal_loc": "impl/sim.py:L89",
+      "deliverable_mirror": null,
+      "severity": "cap_results"
+    }
+  ]
+}
+```
+
+### 게이트 룰
+
+- unmirrored_count 0 의무 (cap_results — 내부 fact 가 외부 가시 0 = results 신뢰 0)
+- internal fact 분류: assert 문 + invariant 검증 + sanity check 모두 fact
+- skip 조건: project 가 deliverable 단일 (impl-only spike) 시 — frontmatter `deliverable_mode: workspace_only` 명시
+
+### self_lint C-MIR
+
+phases/09-quality-gates.md 본문에 §Mirror 룰 키워드 박힘 검증.
+
+### 안티 패턴
+
+a- **internal assert 만 있고 README mirror 0** — workspace-only 검증.
+b- **deliverable 본문이 internal fact paraphrase** — *원본 위치 인용* 의무 (file:line). paraphrase 만 = mirror 0.
+c- **external evaluator 가 internal fact 못 봄** — handoff 에 fact list 의무.
