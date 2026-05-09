@@ -98,10 +98,30 @@ dev mode 산출은 *cold session 결과 아님* — production 산출은 prebuil
 ## 성공 기준
 
 a- `webview/index.html` + `webview/data/webview.json` (또는 inline 주입) 둘 다 산출.
-b- 8 탭 데이터 로드 (해당 산출물이 있는 한). 빈 탭은 "데이터 미주입" 안내.
+b- 8 탭 데이터 로드 (해당 산출물이 있는 한). 빈 탭은 "데이터 미주입" 안내 — 단 *키 자체는 의무*.
 c- 헤더 timing 정보 표시.
 d- 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭 시 트레이스 / 노트 표시.
-e- self_lint C-PSR 통과.
+e- self_lint C-PSR + C-EFS 통과.
+f- **emit fidelity** — `emit_fidelity.py check --root <proj>` 통과 (8 탭 키 enumeration + 빈값/dummy 금지). [`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §3.3 정합. cold session 이 fail 시 phase 12 exit 차단.
+
+## emit fidelity — 8 탭 의무 키 + 빈값 정책
+
+8 탭은 *모두 webview.json 키 enumeration 의무* (해당 산출이 있든 없든). 빈값 정책 :
+
+| 탭 / 키 | 키 필요 시점 | 빈값 정책 |
+|---|---|---|
+| `state` | 항상 | object 자체 부재 fail. 진행중이면 `current_phase` 채움, 종료면 `status: complete` |
+| `timing` | 항상 | `started_at_iso` 의무. duration 은 종료 후 |
+| `plan.module_graph_mermaid` | phase 06 진입 후 (G2+) | G1 = 옵션. G2+ 면 "flowchart" 키워드 의무 |
+| `intent` | phase 01 종료 후 | `01-intent.md` 키 의무. 04/05 는 G2+ |
+| `impl` | phase 08 진입 후 (G2+) | `08-impl-log.md` 키 의무 |
+| `quality` | phase 09 종료 후 | string. dummy filler 금지 |
+| `tests.unit` | phase 10 진입 후 (G2+) | sprint 별 record. 빈 list = phase 미도달 |
+| `tests.e2e` | phase 10 진입 후 (G3+) | scenario 별 record |
+| `sprints` | phase 10 진입 후 (G2+) | sprint 별 score+outcome |
+| `runtime.prereq` / `runtime.boot_result` | phase 04-runtime + phase 09 게이트 7 | 모두 객체 의무. boot_exit 정합 |
+
+빈 list / null 은 *그 phase 미도달 시* OK. *진입했는데 빈 list* = fail. shell 의 "데이터 미주입" fallback 은 *키 자체가 부재* 일 때만 표시 — 키 있으면서 빈값 = fail.
 
 ## 흔한 실패
 

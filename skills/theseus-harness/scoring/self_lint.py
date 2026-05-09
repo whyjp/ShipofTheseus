@@ -2322,8 +2322,8 @@ def check_hard_core_size(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     n = len(body)
-    if n > 4400:
-        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4400 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가, sprint-35 4250→4400 9.nn 추가)")
+    if n > 4600:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4600 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가, sprint-35 4250→4400 9.nn 추가, sprint-35-extra 4400→4600 9.oo 추가)")
     for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
         if kw not in body:
             issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
@@ -2645,6 +2645,64 @@ def check_prebuilt_shell_runtime_json(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_emit_fidelity_samples(skill_root: Path) -> list[str]:
+    """C-EFS (sprint-35 v0.9.40 + extra) — sample/lineage.json + sample/webview.json fidelity.
+
+    `emit_fidelity.py samples` 와 동일 — sample 데이터가 컨벤션 §3.3 의 의무 키 + sprint-35-extra
+    룰 (hotspot ★ / parallel rows / multiverse subgraph / bypass :done) 모두 만족하는지 검증.
+    sample 이 ground-truth 역할이므로 깨지면 cold session 측 emit 도 동일 결함을 따라간다.
+    """
+    issues: list[str] = []
+
+    # 1. emit_fidelity.py 자체 존재 (CLI 박힘)
+    cli = skill_root / "scoring" / "emit_fidelity.py"
+    if not cli.exists():
+        issues.append("scoring/emit_fidelity.py 누락 (sprint-35-extra runnable CLI)")
+        return issues
+
+    body = _read(cli)
+    for kw in ["check_lineage_json", "check_webview_json", "cmd_check", "cmd_samples", "★"]:
+        if kw not in body:
+            issues.append(f"scoring/emit_fidelity.py: '{kw}' 키워드 누락")
+
+    # 2. sample 자체 검증 — emit_fidelity 모듈을 직접 import
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("emit_fidelity", cli)
+    if spec and spec.loader:
+        mod = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(mod)
+        except Exception as e:
+            issues.append(f"emit_fidelity.py import 실패: {e}")
+            return issues
+
+        lineage_sample = skill_root / "templates" / "lineage-viewer" / "sample" / "lineage.json"
+        webview_sample = skill_root / "templates" / "webview" / "sample" / "webview.json"
+        if lineage_sample.exists():
+            for e in mod.check_lineage_json(lineage_sample):
+                issues.append(f"sample lineage.json: {e}")
+        else:
+            issues.append("templates/lineage-viewer/sample/lineage.json 부재")
+        if webview_sample.exists():
+            for e in mod.check_webview_json(webview_sample):
+                issues.append(f"sample webview.json: {e}")
+        else:
+            issues.append("templates/webview/sample/webview.json 부재")
+
+    # 3. 컨벤션 §3.3 본문에 의무 키 표 박혀있는지
+    conv = skill_root / "conventions" / "prebuilt-shell-runtime-json.md"
+    if conv.exists():
+        conv_body = _read(conv)
+        for kw in [
+            "emit fidelity", "의무 키", "dummy filler",
+            "hotspot ★", "parallel sub-agent",
+        ]:
+            if kw not in conv_body:
+                issues.append(f"prebuilt-shell-runtime-json.md §3.3: '{kw}' 키워드 누락")
+
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -2760,6 +2818,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IOD", "intent-optional-disambiguation.md — '추가로/해도 좋음' 4-option 강제 (sprint-34)", check_intent_optional_disambiguation),
     # C-PLV (위) sprint-34 확장 — gantt + 모든 그레이드. 별도 신규 check 없음 (기존 함수 본문 갱신).
     ("C-PSR", "prebuilt-shell-runtime-json + templates/{lineage-viewer,webview}/dist/ — cold session build 0 (sprint-35)", check_prebuilt_shell_runtime_json),
+    ("C-EFS", "emit fidelity samples + emit_fidelity.py CLI — 의무 키 + sprint-35-extra 룰 (sprint-35-extra)", check_emit_fidelity_samples),
 ]
 
 

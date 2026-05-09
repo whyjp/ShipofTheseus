@@ -452,3 +452,64 @@ C-PSR (prebuilt-shell-runtime-json) 와 cross-validate — 두 룰이 같은 결
 ### 14.4 G1/G2 옵션
 
 G1 / G2 (의무 산출 수가 적은 그레이드) 는 `lineage.html` 옵션. `lineage.md` 단일이어도 통과 — 단 contributor 가 직접 viewer 를 띄우려면 [`templates/lineage-viewer/dist/`](../templates/lineage-viewer/dist/) shell 을 수동 복사 + JSON 주입 가능.
+
+## 15. emit fidelity — 채워야 비로소 게이트 통과 (sprint-35-extra)
+
+§14 가 `lineage.html` + `lineage.json` *생성* 만 다뤘다면, 본 §15 는 *완전성* 의 게이트. 빈 list / null / dummy filler 박아두면 (a) `emit_fidelity.py check` fail (b) viewer 가 빈 화면 — *이중 압력* 으로 cold session 이 키를 채우도록 강제.
+
+### 15.1 의무 키 (cold session 이 채워야 진행 가능)
+
+[`prebuilt-shell-runtime-json.md`](prebuilt-shell-runtime-json.md) §3.3 의 enumeration 그대로. 본 컨벤션이 *어디서 가져오는지* 매핑 :
+
+| 키 | 출처 phase / 산출물 | 빈값 시 |
+|---|---|---|
+| `mermaid_flowchart` | 본 컨벤션 §1 의 lineage.md flowchart 코드 펜스 | G4+ subgraph ≥ 2 의무 (multiverse + dacapo) |
+| `mermaid_gantt` | §1.5 gantt 코드 펜스 | G4+ ★ ≥ 1 (hotspot) + 동일 start row ≥ 3 (parallel) 의무 |
+| `fingerprint_chain` | scoring/phase_state.py 의 entered_at/fingerprint | 길이 = phases_completed |
+| `dacapo_summary` | §3 표 → JSON list 변환 | dacapo 발생 phase 별 1 row |
+| `phase04_answers` | intent/04-questions.md + 04-autonomy.md | Q-G1 + Q-D1~D9 |
+| `sentinel_events` | dacapo-skip-sentinel + log pattern + forgery 감지 | 0 건 시 `[]` 허용 |
+| `winner` | phase 06/08 final winner | dacapo 발생 시 의무 |
+
+### 15.2 sprint-35-extra 룰 (gantt 본문)
+
+§1.5 의 hotspot ★ / parallel rows / bypass `:done` 룰을 본 §15 가 **runnable 게이트** 로 승격. `emit_fidelity.py check --root <proj>` 가 :
+
+a- `★` 마커 0 → G4+ 시 fail (hotspot 표기 누락)
+b- 동일 start 시각의 task 가 < 3 → G4+ 시 fail (병렬 sub-agent 은폐)
+c- bypass 행에 `:crit` 사용 → fail (정상 lineage 인데 빨강으로 표시)
+d- multiverse subgraph 부재 (flowchart `subgraph` < 2) → G4+ 시 fail
+
+### 15.3 dummy filler 금지
+
+빈 배열 + null 은 *그 키가 정말 비어있을 때* (sentinel_events 0 건 등) 만 허용. 진짜 채워야 할 자리에 `"데이터 미주입"` / `"TODO"` / `"-"` / `"FIXME"` 박는 것 fail. shell 측이 *키 부재 시* fallback 으로 표시하는 건 OK — 하지만 *키가 있으면서 dummy 값* 은 fail.
+
+### 15.4 호출 시점
+
+```
+# phase 12 exit / phase 14 진입 시 orchestrator 가 자동 호출
+python skills/theseus-harness/scoring/emit_fidelity.py check --root .ShipofTheseus/<proj>
+
+# 디버깅 — 모든 키 fill 상태 JSON 덤프
+python skills/theseus-harness/scoring/emit_fidelity.py report --root .ShipofTheseus/<proj>
+```
+
+cold session 이 본 게이트 fail 하면 phase exit 차단 — emit step 다시 (sentinel: emit_incomplete).
+
+### 15.5 안티 패턴
+
+a- **의무 키 enumeration 만 박고 *값* 안 채움** — 빈 list/null 배열로 schema-conform 만 시킴. `emit_fidelity.py` 가 fill 검증.
+b- **dummy filler 로 임시 통과** — `"TODO"` 박고 다음 phase 로 진행. fail.
+c- **gantt 에서 multiverse 를 단일 row 로 압축** — phase 08 의 7 universe 를 "P08 impl 7 universe ∥, 102m" 하나로 표시. 병렬성 은폐로 fail. universe 별 row 분해 의무.
+d- **bypass phase 를 `:crit` 으로 표기** — 회귀 미발생인데 빨강. lineage 의미 왜곡, `:done` 사용.
+
+## 16. 호환 — emit_fidelity CLI 와 self_lint 매핑
+
+| 검증 layer | 도구 | 시점 |
+|---|---|---|
+| static skill self-check | `self_lint.py` C-EFS | 하네스 contributor PR 시 |
+| sample 자체 검증 | `emit_fidelity.py samples` | 위와 동일 (CI) |
+| cold session 산출 검증 | `emit_fidelity.py check --root <proj>` | phase 12 exit + phase 14 진입 |
+| 디버깅 dump | `emit_fidelity.py report --root <proj>` | 사람이 직접 |
+
+같은 fidelity 스키마가 4 위치에서 검증 — single source, multiple gates.

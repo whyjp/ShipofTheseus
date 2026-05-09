@@ -145,6 +145,83 @@ phase 12 진입 시 :
 }
 ```
 
+### 3.3 emit fidelity — 의무 키 + 빈값 sentinel (sprint-35-extra)
+
+shell 복사 + JSON 파일 *생성* 만으로는 부족하다. **각 의무 키가 *실제 데이터로 채워져야* 디버깅 가능한 산출** — 빈 list / null / dummy "데이터 미주입" 문자열은 fail. 본 절이 cold session 측 emit step 의 *완전성* 강제.
+
+**lineage.json 의무 키** (모두 G3+, †=G1/G2 옵션) :
+
+| 키 | 출처 | 빈값 정책 |
+|---|---|---|
+| `schema_version` | 컨벤션 본문 = "0.9.40" | 비어있을 시 fail |
+| `project_id` / `project_run` | phase 00 naming + state.json | 빈 문자열 fail |
+| `started_at_iso` / `ended_at_iso` / `duration_seconds` | phase_state.json | null fail (phase 14 진입 후) |
+| `grade` | phase 01 frontmatter | "G1"~"G5" 외 fail |
+| `final_phase` / `phases_completed` | state.json | 0 fail |
+| `violations_count` / `dacapo_count` | aggregate over phases | int 의무 |
+| `final_outcome` | {HANDOFF, IN_PROGRESS, BUDGET_BOUND} | enum 외 fail |
+| `mermaid_flowchart` | lineage.md `flowchart` 코드 펜스 그대로 | "flowchart" 미포함 fail. G4+ 면 `subgraph` (multiverse / dacapo) ≥ 2 의무 |
+| `mermaid_gantt` | lineage.md `gantt` 코드 펜스 그대로 | "gantt" + "dateFormat" 미포함 fail. G4+ 면 `★` ≥ 1 (hotspot) + 동일 start 의 다수 row ≥ 2 (parallel sub-agent) 의무 |
+| `fingerprint_chain` | scoring/phase_state.py 의 phase 별 fingerprint | `len = phases_completed` 정합 의무. 0 행 fail |
+| `dacapo_summary` | phase 06 + 08 dacapo trace | dacapo 발생 phase 갯수 = `len`. 발생 0 시 빈 list 허용 (G2 minimal) |
+| `phase04_answers` | intent/04-questions.md + 04-autonomy.md | Q-G1 + Q-D1~D9 모두 row 의무 (G2+) |
+| `sentinel_events` | dacapo-skip-sentinel + log pattern + forgery 감지 | 0 건 시 `[]` 허용 (정상 lineage) |
+| `winner` | phase 06/08 final winner (universe + score) | dacapo 발생 시 의무 |
+
+**webview.json 의무 키** (8 탭, [`../phases/12-webview-assembly.md`](../phases/12-webview-assembly.md) 와 정합) :
+
+| 키 | 비어있을 때 fallback | 빈값 정책 |
+|---|---|---|
+| `state` | "데이터 미주입" 표시 가능, 단 키는 의무 | object 자체 부재 fail |
+| `plan.module_graph_mermaid` | flowchart 본문 의무 | "flowchart" 미포함 fail (G2+) |
+| `intent` | dict[markdown 파일명 → 본문] | `01-intent.md` 키 의무 |
+| `impl` | dict[markdown 파일명 → 본문] | `08-impl-log.md` 키 의무 (phase 08 진입 시) |
+| `quality` | string (markdown) | phase 09 진입 시 빈 string fail |
+| `tests.unit` / `tests.e2e` | sprint 별 list | phase 10 진입 시 빈 list fail. 회귀 발생 시 `bisect` 키 채워짐 |
+| `sprints` | sprint 별 score + outcome | phase 10 진입 시 빈 list fail |
+| `runtime.prereq` / `runtime.boot_result` | Q-D9 + 게이트 7 결과 | phase 09 진입 시 부재 fail |
+
+**검증 의사코드** (orchestrator 가 phase 12 exit / phase 14 진입 시 호출) :
+
+```python
+def check_emit_fidelity(artifact_dir: Path) -> list[str]:
+    errors = []
+    lineage = json.loads((artifact_dir / 'lineage.json').read_text())
+    grade = lineage.get('grade', 'G4')
+
+    # 1. enum / int 검증
+    if lineage.get('final_outcome') not in ['HANDOFF', 'IN_PROGRESS', 'BUDGET_BOUND']:
+        errors.append('lineage.json final_outcome enum 외')
+    if lineage.get('phases_completed', 0) == 0:
+        errors.append('lineage.json phases_completed = 0')
+
+    # 2. mermaid 본문 룰
+    gantt = lineage.get('mermaid_gantt', '')
+    if 'gantt' not in gantt or 'dateFormat' not in gantt:
+        errors.append('lineage.json mermaid_gantt 본문 미작성')
+    if grade in ('G4', 'G5'):
+        # hotspot ★ ≥ 1 + 병렬 row (동일 start 시각의 task ≥ 2)
+        if '★' not in gantt:
+            errors.append('lineage.json mermaid_gantt hotspot ★ marker 부재 (G4+)')
+        # 동일 시각으로 시작하는 task 가 2 개 이상인지 정규식
+        if not _has_parallel_rows(gantt, min_count=2):
+            errors.append('lineage.json mermaid_gantt 병렬 sub-agent row 부재 (G4+, phase 08 multiverse 시연)')
+
+    # 3. fingerprint chain 길이 정합
+    chain = lineage.get('fingerprint_chain', [])
+    if len(chain) != lineage.get('phases_completed', 0):
+        errors.append(f'fingerprint_chain 길이 ≠ phases_completed ({len(chain)} vs {lineage.get("phases_completed")})')
+
+    # 4. webview.json 8 탭
+    webview = json.loads((artifact_dir / 'webview' / 'data' / 'webview.json').read_text())
+    for k in ['state', 'plan', 'intent', 'impl', 'quality', 'tests', 'sprints', 'runtime']:
+        if k not in webview:
+            errors.append(f'webview.json: 의무 키 {k} 부재')
+    return errors
+```
+
+**dummy filler 금지** — `"데이터 미주입"` / `"TODO"` / `"-"` 문자열을 진짜 데이터로 박는 것 fail. shell 측이 *키 부재 시* fallback 으로 표시하는 건 OK.
+
 ## 4. self_lint C-PSR (Prebuilt Shell Runtime)
 
 ```python

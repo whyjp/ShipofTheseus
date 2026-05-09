@@ -51,5 +51,13 @@
     {"question": "Q-D8", "label": "verification", "answer": "pytest + invariants", "phase_impact": "페이즈 09 게이트"},
     {"question": "Q-D9", "label": "runtime-prereq", "answer": "OK", "phase_impact": "페이즈 04-verification"}
   ],
-  "sentinel_events": []
+  "sentinel_events": [
+    {
+      "time": "13:42",
+      "phase": "06",
+      "sentinel": "B universe_skip",
+      "match": "width=7, candidates=3",
+      "recovery": "phase 06 Step A 재진입 (rerun 01)"
+    }
+  ]
 }
