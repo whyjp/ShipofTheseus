@@ -261,3 +261,53 @@ phases/09-quality-gates.md 본문에 §Mirror 룰 키워드 박힘 검증.
 a- **internal assert 만 있고 README mirror 0** — workspace-only 검증.
 b- **deliverable 본문이 internal fact paraphrase** — *원본 위치 인용* 의무 (file:line). paraphrase 만 = mirror 0.
 c- **external evaluator 가 internal fact 못 봄** — handoff 에 fact list 의무.
+
+
+## §Primary — Proxy-as-Primary pattern (sprint-39 PR-D inline)
+
+**4 감점 메타 패턴 C** — 형제 metric reformulation 을 1차 측정으로 통과 (e.g., `truck_util = 1 − queue/shift`). 직접 측정 아닌 derived metric 의 proxy.
+
+### 검사 알고리즘
+
+1. 06.b directives.json 의 `primary` type directive 추출
+2. 각 primary directive 의 *measurement source* 추적 (산출물 frontmatter `measurement.formula`)
+3. formula 안의 sibling metric 인용 감지 (다른 metric 변수 참조)
+4. sibling overlap 계산: 같은 raw signal 사용 비율
+5. sibling overlap > 50% 시 warn (proxy 의심)
+
+### 산출물 — `gate_primary.json`
+
+```json
+{
+  "primary_directives_total": <int>,
+  "direct_measured": <int>,
+  "proxy_via_sibling": <int>,
+  "violations": [
+    {
+      "directive": "D-009 (primary)",
+      "metric": "truck_util",
+      "formula": "1 - queue/shift",
+      "sibling_overlap": 0.6,
+      "severity": "cap_correctness"
+    }
+  ]
+}
+```
+
+### 게이트 룰
+
+- sibling_overlap > 50% 0 건 의무 (cap_correctness — primary metric 이 proxy = correctness 신뢰 0)
+- direct measurement 정의: signal 이 *시뮬 또는 실측* 직접 출력 (formula 0 또는 단순 단위 변환)
+- skip 조건: primary directive 0 인 작업 (functional-only)
+- override: 사용자 ack 시 sibling_overlap > 50% 허용 — `gate_primary_acked: true` frontmatter (06.f path-policy 정합)
+
+### self_lint C-PRI
+
+phases/09-quality-gates.md 본문에 §Primary 룰 키워드 박힘 검증.
+
+### 안티 패턴
+
+a- **truck_util = 1 - queue/shift** 류 — sibling (queue, shift) 이 truck_util 의 *raw signal* 과 같음. proxy.
+b- **direct measurement 정의 모호** — formula = "throughput / capacity" 인데 capacity 가 derived = chain proxy.
+c- **primary 라벨 없이 "1차" 주장** — 06.b directive 의 type 정합 의무.
+d- **override 남용** — ack 후 violation 누적 = bench cheat. ack ≤ 1 권고.
