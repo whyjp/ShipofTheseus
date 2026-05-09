@@ -987,7 +987,8 @@ def check_no_user_interrupt_post_phase04(skill_root: Path) -> list[str]:
     """
     issues: list[str] = []
     forbidden_patterns = ["AskUserQuestion", "사용자 ack", "ask_user", "ack_per_autonomy"]
-    allow_markers = ["인터럽트 없음", "사전 위임", "Q-D", "ack 호출 절대 없음", "자동 매핑", "자동 적용"]
+    allow_markers = ["인터럽트 없음", "사전 위임", "Q-D", "ack 호출 절대 없음", "자동 매핑", "자동 적용",
+                     "06.f", "path-policy", "Path-policy", "user-confirm gate", "산출물 경로"]
 
     for phase_file in _files(skill_root / "phases", "*.md"):
         # 04 는 인터럽트 정상
@@ -2274,6 +2275,24 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_path_policy(skill_root: Path) -> list[str]:
+    """C-PPC (sprint-38 PR-B) — phase 06.f path-policy + user-confirm gate.
+
+    산출물 생성 전 ① 경로 후보 ≥ 2 ② 줄거리 ③ AskUserQuestion ④ 사용자 ack 4 단계 의무.
+    phases/06-plan.md §06.f 본문에 룰 박힘 검증.
+    """
+    issues: list[str] = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    if not p06.exists():
+        return ["phases/06-plan.md 부재"]
+    body = _read(p06)
+    for kw in ["§06.f", "Path-policy", "AskUserQuestion", "후보 ≥ 2",
+               "all_acked", "user_confirmed_at", "phase 07 진입 거부"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.f '{kw}' 키워드 누락 (sprint-38 PR-B)")
+    return issues
+
+
 def check_impl_multiverse_strict(skill_root: Path) -> list[str]:
     """C-IMS (sprint-19, ch) — phase 08 G4+ multiverse + tournament + dacapo-flow + 5 sub-phase TDD 7 조건 게이트."""
     issues: list[str] = []
@@ -2947,6 +2966,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-DCMR", "dacapo-mandatory-rerun.md (ce, sprint-19) — winner ≥ 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제)", check_dacapo_mandatory_rerun),
     ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
     ("C-CNS", "phases/06,08,14 §canonical inline (sprint-19 cg + sprint-37 PR-AH inline) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
+    ("C-PPC", "phases/06-plan.md §06.f (sprint-38 PR-B) — path-policy + user-confirm gate (경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack)", check_path_policy),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
