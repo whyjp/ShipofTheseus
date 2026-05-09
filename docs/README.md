@@ -35,3 +35,4 @@
 - [`2026-05-03-skill-self-review.md`](reviews/2026-05-03-skill-self-review.md) — sprint-01 자기 리뷰, 거울 매트릭스
 - [`2026-05-09-bench-001-mine-throughput-v0944.md`](reviews/2026-05-09-bench-001-mine-throughput-v0944.md) — **simulation-bench 001 v0.9.44 = 95/100 (94 plateau 첫 돌파)** + 5 gap 분석 + sprint-40 PR 분할 권고
 - [`2026-05-09-bench-001-mine-throughput-v0944-meshup.md`](reviews/2026-05-09-bench-001-mine-throughput-v0944-meshup.md) — **메쉬업 결론** (외부 1차 + simulation-bench 측 7-axis 회고 + 사용자 신규 발견 = 메타-허들 미동작 / skill_version 0.9.40 stale / Phase 13 통째 skip / gate_*.json 0). 컨벤션 선언 ≠ 런타임 집행이 점수 5pt 보다 더 중대한 *구조적* 단점.
+- [`2026-05-10-bench-001-mine-throughput-v0945-regression.md`](reviews/2026-05-10-bench-001-mine-throughput-v0945-regression.md) — **v0.9.45 -5pt 회귀 분석** (95→90). sprint-40 산출물 0 emit + 다카포 임계 미달 (57/60) + sprint loop = 1 자율 stop. ouroboros 패러다임 부재 진단 → **sprint-41 Hurdle-as-CLI** 제안 (CLI 4 종 + HARD-RULE 9.qq~9.tt + self_lint 4 룰).
