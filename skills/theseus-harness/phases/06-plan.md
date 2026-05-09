@@ -1,7 +1,45 @@
-# Phase 06 — 계획 (TODO 형)
+# Phase 06 — 계획 (6 sub-phase 분해, sprint-38)
 
 ## 한 줄 요약
+
 **TODO 단위의 평탄한 구현 계획을 만든다.** 각 TODO 는 한 번의 서브에이전트 호출로 끝낼 수 있을 만큼 작고, 명확한 "완료 조건" 을 갖는다.
+
+## sprint-38 sub-phase 분해 — 6 sub-phase
+
+phase 06 monolithic → 6 sub-phase (sprint-38 트랙 2 본체 강화):
+
+| sub-phase | 책임 | 산출물 | self_lint |
+|---|---|---|---|
+| **06.a** Research-injection | 외부 ref / 도구 / 라이브러리 / 도큐 인용 (≥ 3) + 결론 (≤ 3) | `plan/06-research.md` | C-RES |
+| **06.b** Intent-decoding | prompt directive 매트릭스 (6 type × 3 layer + source_quote/loc) | `plan/06-directives.json` | C-IDC |
+| **06.c** Classification | 모듈/관심사/책임 ≥ 3 layer 분할 + orphan 모듈 0 | `plan/06-classification.md` | C-CLS |
+| **06.d** Sub-tree TODO | TODO 트리 max_depth ≥ 3 + leaf 매핑 의무 + dispatch 1:1 | `plan/06-todo-tree.md` | C-STT |
+| **06.e** Post-decision Premortem | 격언 동·서 + 시뮬레이션 + derived improvements ≥ 1 | `plan/06-premortem.md` | C-PMT |
+| **06.f** Path-policy + user-confirm gate | 산출물 경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack | `plan/06-path-policy.md` | C-PPC |
+
+### sub-phase 간 의존
+
+```
+06.a Research → 06.b Intent-decoding → 06.c Classification → 06.d Sub-tree TODO
+                                                                   ↓
+                                                           06.e Premortem
+                                                                   ↓
+                                                           06.f Path-policy ack
+                                                                   ↓
+                                                       phase 07 진입
+```
+
+각 sub-phase 가 직전 sub-phase 의 산출물을 frontmatter `prev_fingerprint` 로 인용 (contracts.md fingerprint chain 정합).
+
+### canonical 흐름
+
+phase 06 canonical (`plan/06-plan.md`) = 6 sub-phase 산출물 *통합* (각 sub-phase 본문 inline + cross-link). canonical-not-stub (sprint-37 PR-AH §canonical inline) 정합.
+
+### 본문 구조 안내
+
+본 phase 06-plan.md 의 *기존 단원* (input / 서브에이전트 / 산출물 / 시퀀스 다이어그램 / 플랜 트리 / 필수 섹션 / 기본 스택 / TODO 사이즈 룰 / 성공 기준 / Da Capo / Contested Decisions / multiverse / dacapo-flow 가시화) 는 6 sub-phase 의 *세부 구현* — 각 sub-phase 가 어떤 단원을 활용하는지 §06.a~§06.f 본문 참조.
+
+---
 
 ## 마지막 sub-step — TODO DAG 분석 의무 호출 (sprint-34 v0.9.39)
 
