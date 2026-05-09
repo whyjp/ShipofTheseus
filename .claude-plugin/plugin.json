@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.43",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 84 컨벤션 / 15 페이즈 / 18 에이전트. AIDE 멀티버스 + 다카포 + sprint trinity. sprint-38 신규: phase 06 6 sub-phase 분해 (Research/Intent-decoding/Classification/Sub-tree TODO/Premortem/Path-policy) + phase 07 3 sub-phase + phase 08.f prompt-trace + self_lint 125 (+9 신규).",
+  "version": "0.9.44",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 84 컨벤션 / 15 페이즈 / 18 에이전트. sprint-39 신규: phase 09 4 패턴 inline (PNC/Mirror/Primary/Literal) — 94 plateau 4 감점 메타 패턴 자동 검출. self_lint 129 (+4 신규). 트랙 3 마감.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
