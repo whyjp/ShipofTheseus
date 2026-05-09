@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
 version: 0.9.42
-description: 재귀 멀티 에이전트 코딩 하네스 콘텐츠 source — 인덱스 전용. always-load + phase-scoped + router lazy. 77 컨벤션 / 15 페이즈 / 18 에이전트. sprint-37 — convention diet (90 → 77, 14 통합 + 3 inline) + 본체 강화 패러다임 전환.
+description: 재귀 멀티 에이전트 코딩 하네스 콘텐츠 source — 인덱스 전용. always-load + phase-scoped + router lazy. 84 컨벤션 / 15 페이즈 / 18 에이전트. sprint-37 — convention diet (-13 net: 14 통합 + 3 inline) + 본체 강화 패러다임 전환.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
