@@ -2,6 +2,75 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.46 — 2026-05-10 (sprint-41 — Hurdle-as-CLI 트랙 5)
+
+### 마일스톤
+
+sprint-40 v0.9.45 마감 직후 0510 회차 (theseus-orchestrator-g4) 외부 검증 = **90/100 (-5pt 회귀)**. sprint-40 13 산출물 모두 0 emit + tournament-impl winner 57/60 = 0.95 자율 round 2 = 0 + sprint cap = 1 자율 stop. *컨벤션 선언 ≠ 런타임 집행* 갭이 sprint-40 *문서 layer 강화* 만으로 닫히지 않은 직접 evidence.
+
+본 sprint = 사용자 직접 지적 — *"이쯤이면 충분해" 자율 종료 습성* + *ouroboros MCP 처럼 CLI/프로그램 기반 룰베이스 허들 강화* — 의 1:1 구조 정정. 컨벤션 본문의 모든 임계 / 다카포 / 게이트를 **CLI 스크립트** 로 코드화 + orchestrator 가 phase 진입/종료 시 *명령형 호출 의무*. exit 1 = phase advance 차단.
+
+### 변경 — 트랙 5 7 PR (PR-A ~ PR-G)
+
+| PR | scope | 산출 | self_lint |
+|---|---|---|---|
+| PR-A | sprint-41 plan.md + 0510 회귀 분석 docs | 2 docs | 0 |
+| PR-B | **dacapo_threshold.py** + HARD-RULE 9.qq | scoring/dacapo_threshold.py + test (8/8 PASS) | (C-DCT 후속) |
+| PR-C | **cold_session_artefacts.py** + HARD-RULE 9.rr | scoring/cold_session_artefacts.py + test (7/7 PASS) | (C-CSA 후속) |
+| PR-D | **sprint_loop_cap.py** + HARD-RULE 9.ss + UTF-8 stdout fix | scoring/sprint_loop_cap.py + test (5/5 PASS) | (C-SLC 후속) |
+| PR-E | **runtime_guard_chain.py** + HARD-RULE 9.tt + contracts.md b 명료화 | scoring/runtime_guard_chain.py + test (10/10 PASS) | (C-RGC 후속) |
+| PR-F | **generate_sprint40_artefacts.py** + pre-cold-session-bootup.md 강화 | scoring/generate_sprint40_artefacts.py + test (6/6 PASS) | 0 |
+| PR-G | sprint 마감 v0.9.46 + CHANGELOG (본 entry) | SKILL.md / orchestrator / plugin.json / CHANGELOG | 0 |
+
+### CLI 5 종 신규 (skills/theseus-harness/scoring/)
+
+| CLI | 역할 | exit code semantics |
+|---|---|---|
+| `dacapo_threshold.py` | tournament-NN.md winner 점수 추출 → ratio < 0.999 시 round N+1 강제 | 0 = 임계 통과 / 1 = round N+1 의무 |
+| `cold_session_artefacts.py` | sprint-40 13 산출물 (gate_v6/v8/readme_summary/methodology/4 패턴/modeling_shortcuts/cascaded_subq/webview_exit/iv_exit/iv_dashboard) 존재 + valid + verdict 검증 | 0 = 모두 통과 / 1 = 결손 (stderr list) |
+| `sprint_loop_cap.py` | 4 layer (auto/internal/tournament/external) 모두 ≥ 임계 일 때만 stop | 0 = stop 허용 / 1 = continue 의무 |
+| `runtime_guard_chain.py` | skill_version + phase 단조성 + sub-CLI hook 통합 dispatch | 0 = phase advance 허용 / 1 = 차단 |
+| `generate_sprint40_artefacts.py` | 13 산출물 빈 골격 (verdict: pending) 자동 emit | 0 = emit 성공 / 1 = 디스크 실패 |
+
+### HARD-RULE 9 신규 (orchestrator SKILL.md)
+
+- **9.qq** — phase 06/08 종료 직전 `dacapo_threshold.py` 자동 호출 (round N+1 자동 강제)
+- **9.rr** — phase 09 진입 직전 `cold_session_artefacts.py` 자동 호출 (자동 평가 ≠ 산출물 통과 분리)
+- **9.ss** — phase 10 sprint loop 종료 직전 `sprint_loop_cap.py` 자동 호출 (4 layer 종합)
+- **9.tt** — 매 phase 진입/종료 시 `runtime_guard_chain.py` 자동 호출 (sprint-41 핵심 enforcement)
+
+### contracts.md 명료화 (sprint-41 PR-E)
+
+§재진입 규칙 b — *"minor 이상"* → *"(major, minor, patch) tuple ≥ tuple"* 명료화. 0.x.y 라인에서 patch 가 sprint 마다 증가 → 전체 tuple 비교 의무. runtime_guard_chain.py:check_skill_version 가 enforcement.
+
+### self_lint 신규 후보 (+4, 136 → 140)
+
+C-DCT / C-CSA / C-SLC / C-RGC — 후속 sprint 에서 self_lint.py 통합 (본 sprint 는 CLI 도입 우선).
+
+### 테스트 — 36/36 PASS
+
+5 suite 통합:
+- test_dacapo_threshold (8) + test_cold_session_artefacts (7) + test_sprint_loop_cap (5) + test_runtime_guard_chain (10) + test_generate_sprint40_artefacts (6) = 36
+
+각 CLI 의 *0510 회귀 패턴* 직접 회귀 테스트 포함 (e.g., 57/60 → exit 1, sprint-40 13 산출물 부재 → exit 1, Auto 100% + Tournament 0.95 → continue).
+
+### 마감 사실
+
+- 7 PR 모두 main 머지 (commit-immediate + push-immediate 패턴)
+- self_lint 후속 +4 (136 → 140 예정)
+- 컨벤션 86 (sprint-40 동일)
+- HARD-RULE 9.qq / 9.rr / 9.ss / 9.tt 신규 (4)
+- 외부 검증 — 사용자가 fresh G4 cold session 으로 v0.9.46 강제 적용 후 진행
+
+### 메모리 신규 후보
+
+- `project_sprint41_v0946.md` (sprint 마감)
+- `feedback_hurdle_as_cli_paradigm.md` (ouroboros 패러다임 정착 원칙)
+
+### 후속
+
+- **sprint-42 검토 후보** — self_lint.py 에 C-DCT / C-CSA / C-SLC / C-RGC 4 룰 통합 + orchestrator runtime guard 의 phase-state-machine.md 분리 정착
+
 ## v0.9.45 — 2026-05-10 (sprint-40 — 컨벤션 런타임 활성 + 4 게이트 layer 도입 트랙 4)
 
 ### 마일스톤
