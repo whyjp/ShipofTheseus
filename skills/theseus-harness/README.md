@@ -18,7 +18,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-1 [`conventions/interview.md`](conventions/interview.md) — 두괄식·1질의·숫자 5개·확증 회귀·PRD 처리 허들
   d-2 phases/00 §timing + phases/14 §timing 핸드오프 요약 (sprint-37 PR-AI inline) — 산출물 헤더 시간 메타·라이브 보고
   d-3 [`conventions/diagrams.md`](conventions/diagrams.md) — 마인드맵→유즈케이스→시퀀스 진화
-  d-4 [`conventions/stack.md`](conventions/stack.md) — 언어/컴파일러/패키지 매니저 사전 점검·자율 업데이트
+  d-4 phases/04 §stack (sprint-37 PR-AJ inline) — 언어/컴파일러/패키지 매니저 사전 점검·자율 업데이트
   d-5 [`conventions/build-and-config.md`](conventions/build-and-config.md) — sh+bat·TOML·docs/·폐기·병렬·메모리·ruff 통합
   d-6 [`conventions/contracts.md`](conventions/contracts.md) — frontmatter·단계 재진입
   d-7 [`conventions/models.md`](conventions/models.md) — 에이전트 역할별 Opus/Sonnet/Haiku 매핑

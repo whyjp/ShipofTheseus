@@ -33,7 +33,7 @@ clarifier 가 phase 01 mindmap + 사용자 답변 본문에서 옵셔널 마커 
 a- `intent/04-questions.md` — 질의 리스트. 각 항목: 질문 텍스트, 왜 중요한지, 보기 후보(객관식이면).
 b- `intent/04-answers.md` — 사용자 답을 시각과 함께 기록.
 c- `intent/04-resource-profile.md` — 리소스 프로파일 합의 + 추정 천정. [`../conventions/resources.md`](../conventions/resources.md).
-d- `intent/04-stack.md` — 언어/컴파일러/패키지 매니저 합의. [`../conventions/stack.md`](../conventions/stack.md).
+d- `intent/04-stack.md` — 언어/컴파일러/패키지 매니저 합의. 본 페이즈 §stack 룰 (sprint-37 PR-AJ inline) 참조.
 e- NFR 임계 확정값은 `intent/01-intent.md` 의 "성능/스펙" 표를 in-place 갱신 (`proposed: true` → 사용자 답).
 f- `intent/04-autonomy.md` — [`../conventions/autonomy.md`](../conventions/autonomy.md) 의 사전 위임 카탈로그 Q-D1 ~ Q-D9 답 9 줄. **이게 페이즈 05 진입 조건** — 답이 빠지면 페이즈 05 시작 불가.
 g- `intent/04-verification.md` — Q-D8 답에 따른 *외부 완료 검증* 산출물 (oh-my-ralph Verification Commands 패턴). bash 검증 스니펫 + acceptance criteria `[SC-N]` 매핑 + 선택적 manual 절차. **답이 1/2 면 `Verification Commands` 블록 비어있으면 페이즈 05 진입 거부**, 답이 3 (`manual_only: true`) 이면 페이즈 09 게이트의 `e2e_pass` 차원 cap 0.95 + 핸드오프 경고.
@@ -94,7 +94,7 @@ a- Q-D1 — 회귀 권고 자동 적용 정책 (페이즈 11)
 b- Q-D2 — 경쟁 resolve 자동 적용 정책 (competition.md)
 c- Q-D3 — 천정 도달 시 자동 임계 조정 정책 (resources.md)
 d- Q-D4 — 정체 누적 시 정책 (sprint-narrative.md §4)
-e- Q-D5 — 자율 패키지 업데이트 정책 (stack.md)
+e- Q-D5 — 자율 패키지 업데이트 정책 (본 페이즈 §stack)
 f- Q-D6 — 자율 결정 보고 빈도
 g- Q-D7 — 체크포인트 회귀 + 멀티버스 정책 (checkpoints.md)
 h- **Q-D8 — Verification Commands** (oh-my-ralph 차용, v0.3.0). 사용자가 *외부 완료 검증* 명령을 제시해야 페이즈 05 진입. 답이 1/2 면 `intent/04-verification.md` 의 bash 블록 채움, 답이 3 (`manual_only: true`) 이면 페이즈 09 의 `e2e_pass` 차원 cap 0.95 + 핸드오프 경고.
@@ -150,3 +150,64 @@ b- 객관식인데 알파벳 라벨 — 컨벤션 위반. 수정 후 재질의.
 c- 두괄식 누락 — 사용자가 끝까지 읽어야 핵심이 나오는 질문은 무효.
 
 > **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.
+
+## §stack — 스택 점검 룰 (sprint-37 PR-AJ inline, prev: stack.md)
+
+**언어·컴파일러·패키지 매니저를 본 페이즈 안에서 사용자와 합의 + 로컬 설치 버전 점검 + 필요 시 자율 업데이트.** 맞지 않는 환경 위에서 시작한 스프린트는 회귀의 첫 번째 원인이 된다 — 미리 잡는다.
+
+### 점검 대상 (사용자 명시 없을 때 기본값)
+
+| 영역 | 기본 | 점검 명령 | 권고 최소 버전 |
+| --- | ---- | -------- | ------------ |
+| 백엔드 언어 | Go | `go version` | 1.21+ |
+| 백엔드 의존 | Go modules | `go env GOMODCACHE` | — |
+| FE 런타임 | bun | `bun --version` | 1.0+ |
+| FE 빌드 | vite (bun 통합) | — | — |
+| E2E | Playwright | `npx playwright --version` | 1.40+ |
+| 컨테이너 (선택) | docker | `docker --version` | 24.0+ |
+| 셸 스크립트 | bash + bat | `bash --version` (linux/mac), `cmd /c ver` (win) | — |
+| 설정 형식 | TOML | `python -c "import tomllib"` (3.11+) 또는 `go-toml` | — |
+
+### 동작 절차
+
+1- clarifier 가 위 표를 토대로 점검 질의를 생성.
+2- 지휘자가 각 항목을 [`../conventions/interview.md`](../conventions/interview.md) 컨벤션으로 사용자에게 묻는다 — 1회 1질의, 객관식 5개 이하.
+3- 사용자 답을 받으면 *로컬* 에서 `go version`, `bun --version` 등을 실행해 실제 설치 상태 확인.
+4- 권고 버전 미만이면 Q-D5 답에 따라 자율 업데이트 (asdf/nvm/goenv) 또는 현재 버전으로 진행. ack 없음.
+
+### 자율 업데이트 가드
+
+a- **사용자 사전 동의 필요** — `intent/05-decisions.md` 또는 명시 응답.
+b- **시스템-와이드 변경 금지** — 가능하면 사용자 홈 디렉터리 (asdf/nvm/goenv) 안에서.
+c- **롤백 명령 표기** — 업데이트 직후 어떻게 되돌릴지 한 줄로.
+d- **운영 시스템에서는 절대 자율 업데이트 안 함** — 개발 환경 한정.
+
+### 산출물 — `intent/04-stack.md`
+
+```markdown
+# 스택 합의
+
+| 영역 | 합의 | 로컬 버전 | 권고 최소 | 상태 |
+| --- | ---- | -------- | -------- | ---- |
+| 백엔드 언어 | Go | 1.22.1 | 1.21 | OK |
+| FE 런타임 | bun | 1.1.30 | 1.0 | OK |
+| Playwright | npm | 1.45.0 | 1.40 | OK |
+
+## 업데이트 이력
+- 2026-05-01 17:50:12 — Go 1.20.5 → 1.22.1 (asdf 자율, 사용자 사전 동의)
+```
+
+### 빌드/실행 스크립트 (페이즈 08 implementer 생성)
+
+a- `scripts/build.sh` (linux/mac) + `scripts/build.bat` (windows) — 빌드 명령.
+b- `scripts/test.sh` + `scripts/test.bat` — 테스트 매트릭스 실행.
+c- `scripts/dev.sh` + `scripts/dev.bat` — 로컬 개발 모드.
+d- `scripts/setup.sh` + `scripts/setup.bat` — 의존 설치 + 환경 점검.
+e- 모든 스크립트 첫 줄에 `set -euo pipefail` (sh) 또는 `setlocal enabledelayedexpansion` (bat).
+
+### 설정 파일 정책
+
+a- **TOML 기본** — `config.toml` (실값), `config.toml.example` (예시).
+b- **`.env`** 는 비밀값. `.env.example` 항상 동반.
+c- `.gitignore` 에 `config.toml`, `.env` 추가.
+d- `config.toml.example`, `.env.example` 은 커밋 — 누락 시 페이즈 09 fail.

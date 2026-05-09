@@ -95,14 +95,13 @@
 | shadow-grader-zero-context | tournament | [06,08] | [G3,G4,G5] | step C |
 | simulation-physical-invariants | quality | [09] | [all] | sim domain |
 | spec-catalog | quality | [01,09] | [all] | always |
-| stack | core | [04] | [all] | always |
 | sub-agents | core | [all] | [all] | always |
 | subagent-trigger | core | [06,08] | [G3,G4,G5] | phase 06 exit / phase 08 enter |
 | submission-portability | quality | [09] | [all] | entry script |
 | test-invariants | quality | [09,10] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **78 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **77 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
