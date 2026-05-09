@@ -9,7 +9,7 @@
 - `intent/04-answers.md`
 - `intent/05-critique.md`, `intent/05-decisions.md`
 - `naming/00-naming.md` (모듈명 확정본)
-- (선택) `lesson_pack` — 페이즈 10 의 정체 감지로 force_replan 트리거된 경우. 이전 회차의 점수 시계열 / 정체 차원 / 효과 없었던 전략 / rewrite 권고가 담긴다. [`../conventions/lessons.md`](../conventions/lessons.md). lesson_pack 이 첨부됐으면 본 계획은 *이전 분할을 단순 답습하지 말 것* — 정체 차원에 영향 주는 모듈 경계를 다른 방식으로 재설계 (포트 재정의 / 모듈 분할 변경 / DIP 강화 / 다른 도메인 분해).
+- (선택) `lesson_pack` — 페이즈 10 의 정체 감지로 force_replan 트리거된 경우. 이전 회차의 점수 시계열 / 정체 차원 / 효과 없었던 전략 / rewrite 권고가 담긴다. [`../conventions/sprint-narrative.md`](../conventions/sprint-narrative.md) §4 (sprint-37 PR-AF 통합). lesson_pack 이 첨부됐으면 본 계획은 *이전 분할을 단순 답습하지 말 것* — 정체 차원에 영향 주는 모듈 경계를 다른 방식으로 재설계 (포트 재정의 / 모듈 분할 변경 / DIP 강화 / 다른 도메인 분해).
 
 ## 산출물
 

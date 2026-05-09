@@ -93,7 +93,7 @@ h- `intent/04-runtime-prereq.md` — Q-D9 답에 따른 *실행 가능 사전조
 a- Q-D1 — 회귀 권고 자동 적용 정책 (페이즈 11)
 b- Q-D2 — 경쟁 resolve 자동 적용 정책 (competition.md)
 c- Q-D3 — 천정 도달 시 자동 임계 조정 정책 (resources.md)
-d- Q-D4 — 정체 누적 시 정책 (lessons.md)
+d- Q-D4 — 정체 누적 시 정책 (sprint-narrative.md §4)
 e- Q-D5 — 자율 패키지 업데이트 정책 (stack.md)
 f- Q-D6 — 자율 결정 보고 빈도
 g- Q-D7 — 체크포인트 회귀 + 멀티버스 정책 (checkpoints.md)

@@ -34,6 +34,9 @@
 | mindmap-richness-default | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 풍성도 layer (A 등급 default + templated stub) — 단일 컨벤션의 §4 |
 | sprint-regression-loop | regression | sprint-37 PR-AE | sprint-37 PR-AE | sprint loop layer (페이즈 10) — 단일 컨벤션의 §2 |
 | regression-derived-lint-rule-autogen | regression | sprint-37 PR-AE | sprint-37 PR-AE | lint autogen layer (페이즈 11) — 단일 컨벤션의 §3 (self_lint C-RDLR 함수 유지) |
+| sprint-score-delta-tracking | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 시간 axis (delta-tracking) — 단일 컨벤션의 §2 (self_lint C-SDT 함수 유지) |
+| cross-universe-lesson-distillation | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 공간 axis (패배 universe 약점 흡수) — 단일 컨벤션의 §3 (self_lint C-CULD 함수 유지) |
+| lessons | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 단계 axis (정체 감지 + lesson_pack + rewrite) — 단일 컨벤션의 §4 (self_lint C20 함수 유지) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

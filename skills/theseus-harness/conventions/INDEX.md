@@ -32,7 +32,7 @@
 | contracts | core | [all] | [all] | always |
 | convention-traceability | meta | [all] | [G3,G4,G5] | always |
 | cross-phase-shared-context | meta | [06,08,09,14] | [all] | shared 정보 인용 |
-| cross-universe-lesson-distillation | sprint | [06,11] | [G4,G5] | universe 패배 흡수 |
+| sprint-narrative | sprint | [06,10,11] | [all] | always (lessons / stagnation) / sprint NN+1 (delta) / universe 패배 (cross-universe) |
 | dacapo | tournament | [06,08] | [G3,G4,G5] | always |
 | dacapo-enforcement | tournament | [06,08] | [G3,G4,G5] | phase exit |
 | dacapo-flow-trace | tournament | [06,08] | [G3,G4,G5] | dacapo step |
@@ -65,7 +65,6 @@
 | interface-first-parallel-impl | impl | [06,08] | [all] | always |
 | interview | interview | [04] | [all] | always |
 | intra-phase-dacapo-loop | tournament | [06,08] | [G3,G4,G5] | always |
-| lessons | sprint | [10,11] | [all] | always |
 | magic-number-traceability | quality | [09] | [all] | code present |
 | measurement-contract | planning | [06,11] | [all] | metric ≥ 1 |
 | mindmap-quality | mindmap | [all] | [all] | always |
@@ -99,7 +98,6 @@
 | shadow-grader-zero-context | tournament | [06,08] | [G3,G4,G5] | step C |
 | simulation-physical-invariants | quality | [09] | [all] | sim domain |
 | spec-catalog | quality | [01,09] | [all] | always |
-| sprint-score-delta-tracking | sprint | [10] | [G3,G4,G5] | sprint NN+1 |
 | stack | core | [04] | [all] | always |
 | sub-agents | core | [all] | [all] | always |
 | subagent-trigger | core | [06,08] | [G3,G4,G5] | phase 06 exit / phase 08 enter |
@@ -108,7 +106,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **84 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **82 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
