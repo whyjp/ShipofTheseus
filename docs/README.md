@@ -27,3 +27,11 @@
 
 - [`theseus-orchestrator`](skills/theseus-orchestrator.md) — 사용자 entry point, 15 페이즈 자율 driver
 - [`theseus-harness`](skills/theseus-harness.md) — 콘텐츠 source of truth (47 컨벤션 + 18 에이전트 + 채점기 + 템플릿)
+
+## 외부 벤치 리포트 / 자기 리뷰
+
+[`reviews/`](reviews/) — 본 하네스 산출물에 대한 외부·자체 리뷰:
+
+- [`2026-05-03-skill-self-review.md`](reviews/2026-05-03-skill-self-review.md) — sprint-01 자기 리뷰, 거울 매트릭스
+- [`2026-05-09-bench-001-mine-throughput-v0944.md`](reviews/2026-05-09-bench-001-mine-throughput-v0944.md) — **simulation-bench 001 v0.9.44 = 95/100 (94 plateau 첫 돌파)** + 5 gap 분석 + sprint-40 PR 분할 권고
+- [`2026-05-09-bench-001-mine-throughput-v0944-meshup.md`](reviews/2026-05-09-bench-001-mine-throughput-v0944-meshup.md) — **메쉬업 결론** (외부 1차 + simulation-bench 측 7-axis 회고 + 사용자 신규 발견 = 메타-허들 미동작 / skill_version 0.9.40 stale / Phase 13 통째 skip / gate_*.json 0). 컨벤션 선언 ≠ 런타임 집행이 점수 5pt 보다 더 중대한 *구조적* 단점.
