@@ -901,3 +901,91 @@ d- **layer 책임 중복** — SoC 위반. 책임 1:1 layer 매핑.
 - 06.b → 06.c: directives 의 def layer 가 모듈 매핑 입력.
 - 06.c → 06.d: classification 의 모듈 트리가 sub-tree TODO 의 leaf 단위.
 - 06.c → 06.f: classification.md 도 06.f deliverable list 포함.
+
+
+## §06.d Sub-tree TODO (sprint-38 PR-F)
+
+**phase 06 의 네 번째 sub-phase** — 분류 노드별 TODO, 깊이 ≥ 3, subagent dispatch 단위와 1:1 일치.
+
+### 트리거
+
+phase 06.c (Classification) 직후. 06.c 의 layer × 모듈 트리가 sub-tree TODO 의 root.
+
+### 산출물 — `plan/06-todo-tree.md`
+
+```markdown
+---
+phase: "06.d"
+prev_fingerprint: "P06C-..."
+fingerprint: "P06D-..."
+created_at: "<ISO>"
+todo_count: <int>
+leaf_todo_count: <int>
+max_depth: <int>             # ≥ 3
+unmatched_leaf: 0            # 의무 0
+---
+
+# Phase 06.d Sub-tree TODO
+
+## TODO 트리
+
+```
+T-001 [Layer 1: domain core]
+├── T-001.a [모듈 truck.py]
+│   ├── T-001.a.1 [상태 IDLE → TRAVELING]  ← leaf, ≥ depth 3
+│   │     - 모듈: code/<...>/truck.py
+│   │     - directive: D-001 (must), D-007 (canonical)
+│   │     - exec layer: TruckScheduler.dispatch()
+│   ├── T-001.a.2 [상태 TRAVELING → LOADING]  ← leaf
+│   │     - 모듈: ...
+│   │     - directive: ...
+│   └── T-001.a.3 [상태 LOADING → DUMPING]  ← leaf
+├── T-001.b [모듈 loader.py]
+│   ├── ...
+└── ...
+```
+
+## leaf TODO 의무 매핑
+
+각 leaf TODO 에 ≥ 1 module + ≥ 1 directive 매핑 의무. unmatched_leaf 0.
+
+## subagent dispatch 1:1
+
+각 leaf TODO = 1 subagent 호출 단위 (phase 07 dispatch table 의 row).
+```
+
+### 의무 체크
+
+a- **max_depth ≥ 3** — flat (depth 1) 또는 얕은 (depth 2) TODO 트리는 sub-tree 의 의미 0.
+b- **unmatched_leaf 0** — 모든 leaf TODO 가 ≥ 1 module + ≥ 1 directive 매핑.
+c- **subagent dispatch 1:1** — leaf TODO 갯수 = phase 07 dispatch row 갯수.
+d- **TODO ID 명명** — `T-NNN.a.b.c` 형식 (depth 명시).
+
+### self_lint C-STT
+
+```python
+def check_sub_tree_todo(skill_root: Path) -> list[str]:
+    """C-STT (sprint-38 PR-F) — phase 06.d sub-tree TODO."""
+    issues = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    body = p06.read_text(encoding="utf-8")
+    for kw in ["§06.d", "Sub-tree TODO", "max_depth", "unmatched_leaf: 0",
+              "leaf TODO 의무 매핑", "subagent dispatch 1:1"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.d '{kw}' 키워드 누락 (sprint-38 PR-F)")
+    return issues
+```
+
+### 안티 패턴
+
+a- **max_depth ≤ 2** — sub-tree 의미 0. ≥ 3 강제.
+b- **unmatched_leaf ≥ 1** — orphan TODO. directive/module 매핑 의무.
+c- **leaf TODO 갯수 ≠ phase 07 dispatch row** — 1:1 정합 위반.
+d- **TODO ID 명명 무시** — `T-001` 만 있고 sub-ID 없음 = depth 1 회귀.
+
+### 호환성
+
+- 06.c → 06.d: layer × 모듈 트리가 TODO 트리 root.
+- 06.b → 06.d: directives 의 exec layer 가 leaf TODO 의 *책임* 매핑.
+- 06.d → 07.a: leaf TODO = dispatch table 의 row.
+- 06.d → 06.f: todo-tree.md 도 06.f deliverable.
