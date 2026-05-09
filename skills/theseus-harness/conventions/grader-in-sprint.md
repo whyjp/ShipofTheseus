@@ -213,7 +213,7 @@ a- shadow grader 호출 0 — auto_pass 만으로 종료 (v0.9.15-v0.9.19 defaul
 b- shadow grader = self-rating 동일 모델 + 동일 컨텍스트 — *zero-context* 강제 위반. agent re-spawn (Sonnet fresh) 의무.
 c- shadow predicted_score 가 target 미달인데 budget 95% 도달했다고 fast-stop — `EARLY_STOP_VIOLATION` 마킹.
 d- shadow grader 출력의 lesson_candidates 무시 → 다음 sprint lesson 이 stale evidence_missing 만 — `evidence-driven-sprint-planning.md` 자동 매핑 우회.
-e- shadow predicted_score 를 자기 self-estimate 로 *덮어쓰기* — honest 라벨링 (sprint-score-delta-tracking) 위반.
+e- shadow predicted_score 를 자기 self-estimate 로 *덮어쓰기* — honest 라벨링 (sprint-narrative.md §2 delta tracking, sprint-37 PR-AF 통합) 위반.
 
 ## 7. 적용 페이즈
 

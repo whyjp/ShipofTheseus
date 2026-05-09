@@ -3,7 +3,7 @@
 점수 정체(stagnation) 감지기 — 무한 재귀 함정의 객관 측정 도구.
 
 스프린트 점수 시계열과 차원별 sub-score 시계열을 받아, 정체 여부와
-정체 차원, 권장 행동 (rewrite vs extend) 을 판단한다. lessons.md 의
+정체 차원, 권장 행동 (rewrite vs extend) 을 판단한다. sprint-narrative.md §4 의
 정의에 1:1 매핑.
 
 사용:
@@ -40,7 +40,7 @@ def detect(
     dim_eps: float = 0.005,
     dim_threshold: float = 0.95,
 ) -> dict:
-    """lessons.md 의 정체 감지 알고리즘 — 종합 + 차원별."""
+    """sprint-narrative.md §4 의 정체 감지 알고리즘 — 종합 + 차원별."""
     n = len(sprint_scores)
     overall = False
     overall_recent: list[float] = []
@@ -107,7 +107,7 @@ def build_lesson_pack(
     autonomy_level: int = 1,
 ) -> dict:
     """
-    lessons.md 의 lesson_pack 구조를 만들어 반환.
+    sprint-narrative.md §4 의 lesson_pack 구조를 만들어 반환.
     implementer/planner 호출 시 프롬프트에 첨부.
     """
     last_score = history[-1]["score"] if history else None

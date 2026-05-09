@@ -124,7 +124,7 @@ mindmap
     품질
       sprint-regression-loop_호환
       budget-saturation-loop_호환
-      sprint-score-delta-tracking_연결
+      sprint-narrative §2_연결
       content_depth_lesson_의무
       bd_ID_v0.9.19
 ```
@@ -133,7 +133,7 @@ mindmap
 
 - [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) — *impl 단위만* → 본 컨벤션이 axis 3 으로 확장
 - v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) — early stop violation 임계 강화 (axis 별 min 2 추가)
-- v0.9.16 [`sprint-score-delta-tracking.md`](sprint-score-delta-tracking.md) — axis 별 lesson type honest tracking
+- v0.9.16 [`sprint-narrative §2.md`](sprint-narrative §2.md) — axis 별 lesson type honest tracking
 - v0.9.16 [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) — axis 별 evidence_missing 자동 매핑
 
 ## 5. axis 별 lesson 매핑
@@ -157,7 +157,7 @@ c- budget 분배 default = generic split
 ## 7. 안티 패턴
 
 a- intent / plan axis sprint 0, impl 단위만 진행 — *axis 단일성 회귀*, C-IPI fail
-b- intent sprint 의 lesson type 이 enforcement (예: §k 9 sub *형식 row 추가* 만, content depth 0pt) — sprint-score-delta-tracking honest 위반
+b- intent sprint 의 lesson type 이 enforcement (예: §k 9 sub *형식 row 추가* 만, content depth 0pt) — sprint-narrative §2 honest 위반
 c- budget 분배 무시 — impl 90% 점유 → intent / plan 형식적 1 sprint 만
 d- min_per_axis = 1 default 회귀 — *최소 2 회* 가 본 컨벤션 핵심
 

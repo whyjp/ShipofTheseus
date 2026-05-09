@@ -35,7 +35,7 @@ e- **권고** — 다음 셋 중 하나:
 페이즈 04 의 [`../conventions/autonomy.md`](../conventions/autonomy.md) Q-D1 답에 따라 회귀 권고를 *자동 적용*. 인터뷰 종료 후 사용자에게 추가 ack 호출 절대 없음:
 
 a- Q-D1 답 = `1` (모든 권고 자동) → bisect 의 `recommendation` (revert / re-architect / accept) 그대로 자동 적용.
-b- Q-D1 답 = `2` (revert 만 자동) → recommendation 이 revert 면 자동, 그 외는 lessons.md 의 정체로 판정해 Q-D4 매핑.
+b- Q-D1 답 = `2` (revert 만 자동) → recommendation 이 revert 면 자동, 그 외는 sprint-narrative.md §4 의 정체로 판정해 Q-D4 매핑.
 c- Q-D1 답 = `3` (모두 정지) → 본 스킬 의도 위반 — 페이즈 04 에서 비권장으로 표시, 그래도 사용자가 선택했다면 정지.
 
 [`../conventions/timing.md`](../conventions/timing.md) 의 라이브 보고에 한 줄:

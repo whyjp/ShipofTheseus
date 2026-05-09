@@ -195,7 +195,7 @@ mindmap
         D-A_~_D-D_4_decisions
       multiverse-width-default-bump_호환
       multiverse-impl-fan-out_호환
-      cross-universe-lesson-distillation_상위호환
+      sprint-narrative_§3_상위호환
       bf_ID_v0.9.20
 ```
 
@@ -204,7 +204,7 @@ mindmap
 - v0.9.6 [`plan-tree.md`](plan-tree.md) — 5 시드 + 6 분기 axis 가 *fallback* 으로 격하 (decisions 추출 0 시만)
 - v0.9.6 §토너먼트 채점 — 5 차원 → 6 차원 (decision_coverage 신규, 가중 재분배)
 - v0.9.12 [`multiverse-impl-fan-out.md`](multiverse-impl-fan-out.md) — universe N 모두 실 코드 의무 + 본 컨벤션의 spike 가 *seed* 로 사용
-- v0.9.16 [`cross-universe-lesson-distillation.md`](cross-universe-lesson-distillation.md) — 패배 universe 의 *spike 차이집합* 도 우승 본문에 흡수 의무 (decision-axis lesson 포함)
+- [`sprint-narrative.md`](sprint-narrative.md) §3 (sprint-37 PR-AF 통합) — 패배 universe 의 *spike 차이집합* 도 우승 본문에 흡수 의무 (decision-axis lesson 포함)
 - v0.9.19 [`multiverse-width-default-bump.md`](multiverse-width-default-bump.md) — 폭 default 와 contested decisions 갯수 매칭 룰
 
 ## 5. 본 컨벤션이 *케이스 종속이 아닌* 이유

@@ -546,7 +546,7 @@ def check_rewrite_trigger_multidimensional(repo_root: Path, skill_root: Path) ->
     targets = [
         ("PHILOSOPHY.md",                      repo_root / "PHILOSOPHY.md"),
         ("SKILL.md",                           skill_root / "SKILL.md"),
-        ("conventions/lessons.md",             skill_root / "conventions" / "lessons.md"),
+        ("conventions/sprint-narrative.md",    skill_root / "conventions" / "sprint-narrative.md"),
         ("conventions/checkpoints.md",         skill_root / "conventions" / "checkpoints.md"),
         ("agents/regression-analyst.md",       skill_root / "agents" / "regression-analyst.md"),
         ("phases/11-regression-bisect.md",     skill_root / "phases" / "11-regression-bisect.md"),
@@ -759,7 +759,7 @@ def check_no_rule_duplication(skill_root: Path) -> list[str]:
         ("두괄식 + 한 번에 하나",                                   "interview.md"),
         ("Q-D1: 회귀(페이즈 11)",                                   "autonomy.md"),
         ("닥터 스트레인지의 14,000,605",                              "checkpoints.md"),
-        ("종합 정체 (window=3, eps=0.005)",                          "lessons.md"),
+        ("종합 정체 (window=3, eps=0.005)",                          "sprint-narrative.md"),
         ("천정 도달 (avg ≥ 추정 천정의 90%)",                        "resources.md"),
         ("phase 05~13 본문에 사용자 인터럽트 호출 *없음*",             "autonomy.md"),
         # fragmentation.md / dacapo.md / indexing.md / SKILL.md / README 는 매핑이 본업 — 제외
@@ -1031,11 +1031,11 @@ def check_resources_ceiling_wired(skill_root: Path) -> list[str]:
 
 
 def check_lessons_stagnation_wired(skill_root: Path) -> list[str]:
-    """C20 — lessons.md 와 stagnation.py 가 phase 10, implementer, planner 에 박힘."""
+    """C20 (sprint-37 PR-AF 통합) — sprint-narrative.md §4 (lessons + stagnation) 와 stagnation.py 가 phase 10, implementer, planner 에 박힘."""
     issues: list[str] = []
-    lessons = skill_root / "conventions" / "lessons.md"
+    lessons = skill_root / "conventions" / "sprint-narrative.md"
     if not lessons.exists():
-        return ["conventions/lessons.md 누락 — 정체 극복 룰 정의 필요"]
+        return ["conventions/sprint-narrative.md 누락 — 정체 극복 룰 정의 필요 (sprint-37 PR-AF 통합)"]
     stag = skill_root / "scoring" / "stagnation.py"
     if not stag.exists():
         issues.append("scoring/stagnation.py 누락 — 정체 감지 도구 필요")
@@ -1556,21 +1556,21 @@ def check_convention_traceability(skill_root: Path) -> list[str]:
 
 
 def check_sprint_score_delta_tracking(skill_root: Path) -> list[str]:
-    """C-SDT — sprint-score-delta-tracking.md + budget-saturation-loop cross-ref (v0.9.16 sprint-10 #2)."""
+    """C-SDT (sprint-10 v0.9.16, sprint-37 PR-AF 통합) — sprint-narrative.md §2 (delta tracking) + budget-saturation-loop cross-ref."""
     issues: list[str] = []
-    sdt_path = skill_root / "conventions" / "sprint-score-delta-tracking.md"
+    sdt_path = skill_root / "conventions" / "sprint-narrative.md"
     bsl_path = skill_root / "conventions" / "budget-saturation-loop.md"
     if not sdt_path.exists():
-        issues.append("conventions/sprint-score-delta-tracking.md 누락")
+        issues.append("conventions/sprint-narrative.md 누락 (sprint-37 PR-AF 통합)")
         return issues
     sdt = _read(sdt_path)
     bsl = _read(bsl_path)
     required = ["delta", "lesson_applied", "EXPECTED_DELTA", "label honesty"]
     for kw in required:
         if kw not in sdt:
-            issues.append(f"sprint-score-delta-tracking.md: '{kw}' 키워드 누락")
-    if "sprint-score-delta-tracking" not in bsl:
-        issues.append("budget-saturation-loop.md: sprint-score-delta-tracking cross-ref 누락")
+            issues.append(f"sprint-narrative.md: '{kw}' 키워드 누락 (§2 delta)")
+    if "sprint-narrative" not in bsl:
+        issues.append("budget-saturation-loop.md: sprint-narrative cross-ref 누락")
     return issues
 
 
@@ -1598,13 +1598,13 @@ def check_evidence_driven_sprint_planning(skill_root: Path) -> list[str]:
 
 
 def check_cross_universe_lesson_distillation(skill_root: Path) -> list[str]:
-    """C-CULD — cross-universe-lesson-distillation.md + plan-tree / ensemble cross-ref (v0.9.16 sprint-10 #4)."""
+    """C-CULD (sprint-10 v0.9.16, sprint-37 PR-AF 통합) — sprint-narrative.md §3 (cross-universe) + plan-tree / ensemble cross-ref."""
     issues: list[str] = []
-    culd_path = skill_root / "conventions" / "cross-universe-lesson-distillation.md"
+    culd_path = skill_root / "conventions" / "sprint-narrative.md"
     pt_path = skill_root / "conventions" / "plan-tree.md"
     ens_path = skill_root / "conventions" / "ensemble-synthesis-default.md"
     if not culd_path.exists():
-        issues.append("conventions/cross-universe-lesson-distillation.md 누락")
+        issues.append("conventions/sprint-narrative.md 누락 (sprint-37 PR-AF 통합)")
         return issues
     culd = _read(culd_path)
     pt = _read(pt_path)
@@ -1612,11 +1612,11 @@ def check_cross_universe_lesson_distillation(skill_root: Path) -> list[str]:
     required = ["Patterns to Avoid", "avoid_patterns", "extract_loser_weakness", "weakest_dim"]
     for kw in required:
         if kw not in culd:
-            issues.append(f"cross-universe-lesson-distillation.md: '{kw}' 키워드 누락")
-    if "cross-universe-lesson-distillation" not in pt:
-        issues.append("plan-tree.md: cross-universe-lesson-distillation cross-ref 누락")
-    if "cross-universe-lesson-distillation" not in ens:
-        issues.append("ensemble-synthesis-default.md: cross-universe-lesson-distillation cross-ref 누락")
+            issues.append(f"sprint-narrative.md: '{kw}' 키워드 누락 (§3 cross-universe)")
+    if "sprint-narrative" not in pt and "cross-universe" not in pt:
+        issues.append("plan-tree.md: sprint-narrative §3 cross-ref 누락")
+    if "sprint-narrative" not in ens and "cross-universe" not in ens:
+        issues.append("ensemble-synthesis-default.md: sprint-narrative §3 cross-ref 누락")
     return issues
 
 
@@ -2908,9 +2908,9 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-RB1", "phase11 회귀 원인 4 분류 plan/impl/data/external defect (sprint-05-e Q1)", check_phase11_regression_classification),
     ("C-IG1", "phase06 implementation guidance 본문 의무 (sprint-05-e Q3)", check_phase06_implementation_guidance),
     ("C-CT", "convention-traceability.md (v0.9.16 sprint-10 #1 발현 검증)", check_convention_traceability),
-    ("C-SDT", "sprint-score-delta-tracking.md + budget-saturation cross-ref (v0.9.16 sprint-10 #2)", check_sprint_score_delta_tracking),
+    ("C-SDT", "sprint-narrative.md §2 (delta tracking) + budget-saturation cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AF 통합)", check_sprint_score_delta_tracking),
     ("C-EDP", "evidence-driven-sprint-planning.md + SRO/BSL cross-ref (v0.9.16 sprint-10 #3)", check_evidence_driven_sprint_planning),
-    ("C-CULD", "cross-universe-lesson-distillation.md + plan-tree/ensemble cross-ref (v0.9.16 sprint-10 #4)", check_cross_universe_lesson_distillation),
+    ("C-CULD", "sprint-narrative.md §3 (cross-universe) + plan-tree/ensemble cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AF 통합)", check_cross_universe_lesson_distillation),
     ("C-RDLR", "regression.md §3 lint autogen + phase 11 cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AE 통합)", check_regression_derived_lint_rule_autogen),
     ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
     ("C-GAv2", "grade_assess v2 — 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)", check_grade_assess_v2),

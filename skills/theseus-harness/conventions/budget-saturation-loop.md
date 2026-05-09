@@ -131,7 +131,7 @@ cold session retro 적용 시 :
 
 본 컨벤션 (budget 강제) 만으로는 *준비-vs-동작 갭* 검출 불가. v0.9.16 sprint-10 가 보완:
 
-- **[`sprint-score-delta-tracking.md`](sprint-score-delta-tracking.md)** — 매 sprint 의 lesson 적용 후 점수 delta 측정 + lesson type 라벨링 정직성 검증. 본 컨벤션의 lesson type 4 분류 (content_depth / enforcement / content_evidence / integrated_insight) 가 *honest* 인지 사후 측정.
+- **[`sprint-narrative.md`](sprint-narrative.md) §2 (delta tracking, sprint-37 PR-AF 통합)** — 매 sprint 의 lesson 적용 후 점수 delta 측정 + lesson type 라벨링 정직성 검증. 본 컨벤션의 lesson type 4 분류 (content_depth / enforcement / content_evidence / integrated_insight) 가 *honest* 인지 사후 측정.
 - **[`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md)** — score-rubric-objectivity 의 `evidence_missing` 가 다음 sprint 의 lesson source 로 *자동 매핑*. budget < 80% + evidence 결손 시 sprint NN+1 진입 룰 본 컨벤션 §2 Step 1 와 합성.
 
 세 컨벤션 합성 = 진짜 self-iterating 0.999 루프 (budget *quantity* + score *quality* + 결손 *automatic flow*).

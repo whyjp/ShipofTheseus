@@ -127,6 +127,6 @@ bench 8 차원 × 3 universe 시 :
 
 3 컨벤션의 sub-component 합성 = 본 컨벤션. 메타-ensemble 시연.
 
-## 9. v0.9.16 sprint-10 — 차이집합 합성 추가 ([`cross-universe-lesson-distillation.md`](cross-universe-lesson-distillation.md))
+## 9. sprint-10 v0.9.16 (sprint-37 PR-AF 통합) — 차이집합 합성 추가
 
-본 컨벤션이 *합집합* (우승 + 다른 우주의 강점) 만 정의. v0.9.16 [`cross-universe-lesson-distillation.md`](cross-universe-lesson-distillation.md) 가 *차이집합* (패배 우주의 약점 → 회피) 추가 — ensemble 의 union 차원이 *합집합 + 교집합 + 차이집합* 3 차원 합성으로 격상. 두 컨벤션 합성 시 multiverse 의 *모든 학습* 이 다음 페이즈로 전이.
+본 컨벤션이 *합집합* (우승 + 다른 우주의 강점) 만 정의. [`sprint-narrative.md`](sprint-narrative.md) §3 (sprint-37 PR-AF 통합) 가 *차이집합* (패배 우주의 약점 → 회피) 추가 — ensemble 의 union 차원이 *합집합 + 교집합 + 차이집합* 3 차원 합성으로 격상. 두 컨벤션 합성 시 multiverse 의 *모든 학습* 이 다음 페이즈로 전이.

@@ -24,7 +24,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-7 [`conventions/models.md`](conventions/models.md) — 에이전트 역할별 Opus/Sonnet/Haiku 매핑
   d-8 [`conventions/competition.md`](conventions/competition.md) — 격리 병렬 경쟁 + 자동 resolve
   d-9 [`conventions/autonomy.md`](conventions/autonomy.md) — 페이즈 04 외 자율 결정
-  d-10 [`conventions/lessons.md`](conventions/lessons.md) — 정체 감지·레슨팩·통째 재작성 강제
+  d-10 [`conventions/sprint-narrative.md`](conventions/sprint-narrative.md) — sprint loop 학습 전이 3 axis (시간 §2 delta + 공간 §3 cross-universe + 단계 §4 lessons/stagnation) — sprint-37 PR-AF 통합 (sprint-02 + v0.9.16 sprint-10 #2 + #4)
   d-11 [`conventions/spec-catalog.md`](conventions/spec-catalog.md) — 도메인별 NFR 자동 카탈로그
   d-12 [`conventions/resources.md`](conventions/resources.md) — 리소스 기반 임계 + 천정 자동 조정
   d-13 [`conventions/checkpoints.md`](conventions/checkpoints.md) — 체크포인트·멀티버스 (닥터 스트레인지)
@@ -55,9 +55,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-40 [`conventions/budget-saturation-loop.md`](conventions/budget-saturation-loop.md) — budget ≥80% 사용 강제 + content depth lesson (v0.9.15)
   d-41 [`conventions/score-rubric-objectivity.md`](conventions/score-rubric-objectivity.md) — strict checklist self-rating, evidence 1:1 (v0.9.15)
   d-42 [`conventions/convention-traceability.md`](conventions/convention-traceability.md) — 페이즈 산출물 frontmatter applied_conventions 의무 + 활용률 추적 (v0.9.16 발현 검증 #1)
-  d-43 [`conventions/sprint-score-delta-tracking.md`](conventions/sprint-score-delta-tracking.md) — sprint NN+1 점수 delta + lesson type 라벨링 정직성 (v0.9.16 #2)
   d-44 [`conventions/evidence-driven-sprint-planning.md`](conventions/evidence-driven-sprint-planning.md) — evidence_missing → 다음 sprint lesson 자동 매핑 (v0.9.16 #3)
-  d-45 [`conventions/cross-universe-lesson-distillation.md`](conventions/cross-universe-lesson-distillation.md) — 패배 universe 약점 우승 본문 흡수 + 차이집합 합성 (v0.9.16 #4)
   d-47 [`conventions/polyglot-code-quality.md`](conventions/polyglot-code-quality.md) — 언어 무관 메트릭 + 9 언어 표준 도구 카탈로그 (v0.9.16 #6)
   d-48 [`conventions/anti-patterns.md`](conventions/anti-patterns.md) — A1~A10 공통 안티 패턴 카탈로그 (v0.9.16 sprint-11 fragmentation 분리)
   d-49 [`conventions/intent-completeness.md`](conventions/intent-completeness.md) — 페이즈 01 §k 9 sub-criterion (limitations + data-derived 분리 등) (v0.9.18 sprint-12)
@@ -121,7 +119,7 @@ j- [`templates/`](templates/) — intent / plan / sprint-report / naming / unive
 a- **AIDE 멀티버스가 진짜 차별 동력** — 페이즈 06 plan-tree + v0.9.10 multi-phase 확장 (5+ 페이즈) + ensemble synthesis default + tournament blind rerun. 닥터 스트레인지처럼 *결정 이전에 다 가본다*.
 b- **의존성 역전(DIP) 이 SOLID 중 최우선** — 위반은 단독 hard fail (cap 0.6).
 c- **관심사 분리(SoC) 가 단위 테스트 기반** — 모듈 경계를 기능보다 먼저.
-d- **장인의 도자기처럼** 깊은 품질 위반 (DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적) *어느 차원* 이라도 깊이 임계 초과면 모듈을 깨고 페이즈 06 부터 다시 빚는다 (페이즈 11 `re-architect`). 트리거 매핑은 [`conventions/lessons.md`](conventions/lessons.md) + [`conventions/checkpoints.md`](conventions/checkpoints.md) 의 11 분류.
+d- **장인의 도자기처럼** 깊은 품질 위반 (DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적) *어느 차원* 이라도 깊이 임계 초과면 모듈을 깨고 페이즈 06 부터 다시 빚는다 (페이즈 11 `re-architect`). 트리거 매핑은 [`conventions/sprint-narrative.md`](conventions/sprint-narrative.md) §4 + [`conventions/checkpoints.md`](conventions/checkpoints.md) 의 11 분류.
 e- **모든 산출물은 파일** — `.ShipofTheseus/<프로젝트>/` 트리에 카테고리별로 떨어진다. fingerprint chain 으로 단계 재진입.
 f- **무한 스프린트 루프 + budget 80% 사용 강제** (v0.9.15) — 임계 도달해도 budget ≥ 80% 까지 sprint 추가, 추가 sprint 의 lesson type = *content depth* (enforcement 아님).
 g- **Layer 3 결과물 허들 supremacy** (v0.9.14) — standalone 컨텍스트 시 코드 + 실행 + 측정값 의무. 메모리 / 컨벤션 override 불가, 사용자 명시 ack (Q-D-DELIVERABLE-MODE = 3) 만 면제.

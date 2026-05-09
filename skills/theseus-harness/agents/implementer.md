@@ -11,7 +11,7 @@
 a- 본인이 책임지는 단일 TODO (ID, 제목, 모듈, 레이어, 의존, 완료 조건, 테스트, 목 표면).
 b- `의존` TODO 들의 "완료 조건" — 의지 가능한 표면 알 수 있게.
 c- `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-decisions.md` 경로 — 마이크로 모호함 자가 해소.
-d- **`lesson_pack`** ([`../conventions/lessons.md`](../conventions/lessons.md) 의 형식) — 이전 스프린트 점수 시계열, 정체 감지 결과, 이전에 *효과 없었던* 시도 목록, 금지 전략, `rewrite_rule.preserve` (true=기존 코드 보존 / false=처음부터 다시), `rewrite_rule.start_from`. **이 객체가 비어 있으면 본 에이전트는 동작 거부 — 지휘자 호출 형식 오류로 fail.**
+d- **`lesson_pack`** ([`../conventions/sprint-narrative.md`](../conventions/sprint-narrative.md) §4 의 형식, sprint-37 PR-AF 통합) — 이전 스프린트 점수 시계열, 정체 감지 결과, 이전에 *효과 없었던* 시도 목록, 금지 전략, `rewrite_rule.preserve` (true=기존 코드 보존 / false=처음부터 다시), `rewrite_rule.start_from`. **이 객체가 비어 있으면 본 에이전트는 동작 거부 — 지휘자 호출 형식 오류로 fail.**
 
 ## lesson_pack 처리 룰 (정체 극복)
 

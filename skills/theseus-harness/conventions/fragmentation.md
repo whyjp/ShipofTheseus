@@ -17,7 +17,7 @@ indexed-in: conventions/INDEX.md
 a- **단일 헤비 스킬의 함정** — SKILL.md 가 비대해지면 (1) 사용자/에이전트의 컨텍스트 부담 증가, (2) 부분 갱신 어려움, (3) 한 룰 변경이 다른 룰을 흔드는 결합 발생.
 b- **DIP 의 자기 적용** — 본 하네스가 사용자 프로젝트에 강제하는 SoC/DIP 를 *본 하네스 자체* 에 적용. 컨벤션·페이즈·에이전트·스코어링·템플릿이 *서로 추상* 에 의존, 콘크리트 결합 금지.
 c- **회차별 진화** — 자기 평가 회차마다 새 컨벤션이 추가될 수 있어야 함 ([`../../BOOTSTRAP.md`](../../BOOTSTRAP.md)). 단일 파일에 누적하면 매 회차 전체를 다시 읽어야 함.
-d- **선택적 사용** — 사용자가 본 하네스의 일부만 채택하고 싶을 때 (예: lessons.md 만, 또는 checkpoints.md 만) 분해되어 있어야 가능.
+d- **선택적 사용** — 사용자가 본 하네스의 일부만 채택하고 싶을 때 (예: sprint-narrative.md §4 만, 또는 checkpoints.md 만) 분해되어 있어야 가능.
 
 ## 파편화 룰
 
@@ -39,7 +39,7 @@ f- `contracts.md` — frontmatter / 핑거프린트 / 단계 재진입.
 g- `models.md` — 에이전트 모델 매핑.
 h- `competition.md` — 페이즈 단위 경쟁.
 i- `autonomy.md` — 사전 위임 카탈로그 + 인터뷰 후 인터럽트 0.
-j- `lessons.md` — 정체 감지 + 레슨 전달.
+j- `sprint-narrative.md` — 학습 전이 3 axis (delta + cross-universe + lessons/stagnation, sprint-37 PR-AF 통합).
 k- `spec-catalog.md` — 도메인별 NFR 카탈로그.
 l- `resources.md` — 리소스 프로파일 + 천정 자동 조정.
 m- `checkpoints.md` — 체크포인트 회귀 + 멀티버스 (이번 회차).

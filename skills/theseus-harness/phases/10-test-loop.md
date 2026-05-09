@@ -177,14 +177,14 @@ while True:
     if score >= 0.999:
         return "pass"
 
-    # 1- 회귀 우선 — 페이즈 11 (lessons.md 의 정체와 별 트리거)
+    # 1- 회귀 우선 — 페이즈 11 (sprint-narrative.md §4 의 정체와 별 트리거)
     if len(prev_scores) >= 2 and score < prev_scores[-2] - 0.05:
         run_phase_11 → `sprints/{sprint:02d}/bisect.md`
         # autonomy.md Q-D1 사전 위임 답 자동 적용 — 인터럽트 없음
         apply_q_d1_policy(bisect_recommendation, autonomy_policy["Q-D1"])
         report_live("회귀 권고 자동 적용 (Q-D1.<답>)")
 
-    # 2- 정체 감지 — lessons.md / scoring/stagnation.py
+    # 2- 정체 감지 — sprint-narrative.md §4 / scoring/stagnation.py
     history_json = build_history(prev_scores, dim_history)
     stag = stagnation.detect(prev_scores, dim_history, threshold=0.999)
     lesson_pack = stagnation.build_lesson_pack(
@@ -261,7 +261,7 @@ while True:
 
 핵심:
 
-a- **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/lessons.md`](../conventions/lessons.md) 의 형식.
+a- **레슨 전달 강제** — implementer/planner 호출에 `lesson_pack` (history + 이전 시도 + 금지 전략 + rewrite 룰) 항상 첨부. [`../conventions/sprint-narrative.md`](../conventions/sprint-narrative.md) §4 의 형식 (sprint-37 PR-AF 통합).
 b- **정체 감지 자동** — `scoring/stagnation.py` 가 매 스프린트 종료 후 시계열 분석. 종합 정체 → 페이즈 06 재시작, 차원 정체 → 해당 모듈 통째 재작성.
 c- **부분 수정 금지 강제** — 정체로 트리거된 rewrite 는 `preserve=false` 명시. 구현자가 기존 코드를 *보강* 하면 정체 지속.
 d- **3 회 누적 rewrite 도 정체면 Q-D4 사전 위임 답** 자동 매핑 (인터럽트 없음, 자동 적용) — 무한 자율의 합리적 한계.

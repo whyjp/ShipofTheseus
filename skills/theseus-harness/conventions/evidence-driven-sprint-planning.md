@@ -98,7 +98,7 @@ delta: 0.018                         # expected [0.005, 0.020] 범위 안 — ho
 evidence_now_present: true           # 해당 evidence_missing 항목 해소
 ```
 
-`candidate_match: false` = `LABEL_VIOLATION` (sprint-score-delta-tracking 정합).
+`candidate_match: false` = `LABEL_VIOLATION` (sprint-narrative.md §2 delta tracking 정합, sprint-37 PR-AF 통합).
 
 ## 3. self_lint 룰
 
