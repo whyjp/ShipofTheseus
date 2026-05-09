@@ -32,6 +32,8 @@ indexed-in: conventions/INDEX.md
 3. 매핑된 README 숫자 vs summary.json 값 ±0.01% 이내 일치 검증.
 4. 매핑 실패 숫자 → frontmatter `external_source: <url|path>` 명시 의무 (외부 source 인용 시).
 5. drift ≥ 1 → fail. README 갱신 또는 summary.json 갱신 + entry script 재실행 강제.
+6. **(sprint-40 PR-E) JSON evidence emit 의무** — `quality/gate_readme_summary_consistency.json` 별 산출물 필수. 본문 attestation 만으로 통과 불가 (V6 evidence-bound 와 동일 패러다임).
+7. **(sprint-40 PR-E) Atomic regen** — `harness/measure_run.py` invoke (또는 entry script 재실행) 시점부터 README 갱신까지 *atomic step* 강제. 두 산출물 사이에 다른 phase 진입 금지 — drift 발생 가능성 0 보장.
 
 ## frontmatter (handoff/14-handoff.md)
 
@@ -40,11 +42,35 @@ readme_numbers_total: <int>
 readme_numbers_drift_count: 0
 summary_keys_referenced: [baseline.mean_throughput, ramp_closed.median, ...]
 unmapped_numbers_with_source: []      # external 인용 시 (path 또는 url)
+readme_summary_consistency_evidence_json: "quality/gate_readme_summary_consistency.json"  # sprint-40 PR-E 신규
+atomic_regen_block_passed: true       # sprint-40 PR-E 신규 — measure_run + README 갱신 atomic
 ```
 
 ## self_lint C-RNFS
 
 컨벤션 파일 존재 + 페이즈 09 게이트 본문에 "readme-numbers" + 알고리즘 step ≥ 4 명시.
+
+## self_lint C-RDS (sprint-40 PR-E 신규 — README↔summary drift strict)
+
+phase 09 진입 시 :
+- `quality/gate_readme_summary_consistency.json` 존재 확인
+- 본 JSON 의 `verdict == "pass"` + `drift_count == 0` 확인
+- `atomic_regen_block_passed == true` 확인
+- 미달 시 phase 09 진입 거부 + atomic regen step 자동 실행 (measure_run → summary.json → README 자동 regen)
+
+본 lint 가 *컨벤션 선언 ≠ 런타임 집행* 갭 (메모리 [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md)) 의 G-2 layer 닫음.
+
+## simulation-bench 001 v0.9.44 g4-v2 검증 (sprint-40 PR-E 직접 대응)
+
+본 회차 README §7 baseline 12 126.7 t / ramp_closed 12 050.0 t. summary.json 12 116.7 / 12 023.3. Drift 0.08% (> 0.01% strict 임계 8 배). zero-context Opus reviewer -1pt Results & interpretation.
+
+원인 추적 (메쉬업 분석 §2.3 정합):
+- 첫 README 작성 시 console 값 (run #1) 박힘
+- harness/measure_run.py 가 *별 process* 로 또 한 번 invoke → outputs/summary.json 덮어씀
+- 두 번째 invoke 의 hash() salt 다름 → 0.08% drift
+- README 가 *atomic regen* 안 되어 첫 값 그대로
+
+**sprint-40 PR-E + PR-B 합성** — V6 cross-process evidence (PR-B) + atomic regen (PR-E) 동시 적용 시 drift 발생 자체 차단.
 
 ## 안티 패턴
 
