@@ -11,7 +11,7 @@
 |---|---|---|
 | **intent** | 페이즈 01 mindmap richness / §k 9 sub depth / §i derived NFR 보강 | sprints/intent-NN/report.json |
 | **plan** | 페이즈 06 plan/06-plan.md 의 인터페이스/모듈/per-module use-case/TODO DAG 보강 | sprints/plan-NN/report.json |
-| **impl** | 페이즈 08 impl/08-impl-log.md 의 코드/테스트/NFR (기존 sprint-regression-loop) | sprints/impl-NN/report.json |
+| **impl** | 페이즈 08 impl/08-impl-log.md 의 코드/테스트/NFR (regression §2 sprint loop) | sprints/impl-NN/report.json |
 
 ### budget 분배 default
 

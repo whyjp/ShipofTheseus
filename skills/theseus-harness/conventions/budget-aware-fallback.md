@@ -56,7 +56,7 @@ agent 가 G4 컨벤션 default 미준수 + frontmatter `fallback` 미박힘 → 
 | parallel-cold-review.md | 4 framing | 3 framing | 2 framing |
 | plan-tree.md | 3-4 universes | 2-3 universes | 1 universe |
 | multiverse-impl-fan-out.md | code/universe-N/ all | winner only + plan-only others | single universe |
-| sprint-regression-loop.md | 무한 sprint until threshold | 3 sprint cap | 1 sprint cap |
+| regression.md (§2 sprint loop) | 무한 sprint until threshold | 3 sprint cap | 1 sprint cap |
 | aide-tree.md (§2 multi-phase) | 06+02+05+08+11+13 multiverse | 06 only | n/a |
 | interface-first-parallel-impl.md | sub-agent per module | single agent + module structure | single agent flat |
 

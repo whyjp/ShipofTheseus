@@ -39,7 +39,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-22 [`conventions/runtime-prereq.md`](conventions/runtime-prereq.md) — Q-D9 + 게이트 7
   d-23 [`conventions/nfr-derivation.md`](conventions/nfr-derivation.md) — prompt 형용사 → NFR 자동 도출 (v0.9.6)
   d-24 [`conventions/premortem-friction.md`](conventions/premortem-friction.md) — 콜드리뷰 한 번 더 고민 + 미래 회고 (v0.9.7)
-  d-25 [`conventions/sprint-regression-loop.md`](conventions/sprint-regression-loop.md) — self-polishing 임계 도달까지 반복 (v0.9.8)
+  d-25 [`conventions/regression.md`](conventions/regression.md) — sprint loop (§2 페이즈 10 self-polishing 임계 도달까지) + lint autogen (§3 페이즈 11 회귀 정정 → self_lint 룰 자동 신규) — sprint-37 PR-AE 통합 (v0.9.8 + v0.9.16)
   d-26 [`conventions/parallel-cold-review.md`](conventions/parallel-cold-review.md) — N framing fan-out 페이즈 03 다양성 (v0.9.8)
   d-27 [`conventions/mindmap-quality.md`](conventions/mindmap-quality.md) — canonical concept graph: §2 구조 (4 axis + 페이즈 reference) + §3 형식 (Mermaid 강제 + 4 임계) + §4 풍성도 (A 등급 default + templated stub) — sprint-37 PR-AD 통합 (v0.9.9 + v0.9.13 + v0.9.19)
   d-28 [`conventions/aide-tree.md`](conventions/aide-tree.md) — multi-phase multiverse 확장 (breadth, 02/05/06/08/11/13) + universe candidate sequenceDiagram 대칭 강제 (depth) — sprint-37 PR-AB 통합
@@ -58,7 +58,6 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-43 [`conventions/sprint-score-delta-tracking.md`](conventions/sprint-score-delta-tracking.md) — sprint NN+1 점수 delta + lesson type 라벨링 정직성 (v0.9.16 #2)
   d-44 [`conventions/evidence-driven-sprint-planning.md`](conventions/evidence-driven-sprint-planning.md) — evidence_missing → 다음 sprint lesson 자동 매핑 (v0.9.16 #3)
   d-45 [`conventions/cross-universe-lesson-distillation.md`](conventions/cross-universe-lesson-distillation.md) — 패배 universe 약점 우승 본문 흡수 + 차이집합 합성 (v0.9.16 #4)
-  d-46 [`conventions/regression-derived-lint-rule-autogen.md`](conventions/regression-derived-lint-rule-autogen.md) — 페이즈 11 4 분류 정정 후 self_lint 룰 자동 신규 (v0.9.16 #5)
   d-47 [`conventions/polyglot-code-quality.md`](conventions/polyglot-code-quality.md) — 언어 무관 메트릭 + 9 언어 표준 도구 카탈로그 (v0.9.16 #6)
   d-48 [`conventions/anti-patterns.md`](conventions/anti-patterns.md) — A1~A10 공통 안티 패턴 카탈로그 (v0.9.16 sprint-11 fragmentation 분리)
   d-49 [`conventions/intent-completeness.md`](conventions/intent-completeness.md) — 페이즈 01 §k 9 sub-criterion (limitations + data-derived 분리 등) (v0.9.18 sprint-12)

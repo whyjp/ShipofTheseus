@@ -1621,21 +1621,21 @@ def check_cross_universe_lesson_distillation(skill_root: Path) -> list[str]:
 
 
 def check_regression_derived_lint_rule_autogen(skill_root: Path) -> list[str]:
-    """C-RDLR — regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)."""
+    """C-RDLR (sprint-10 v0.9.16, sprint-37 PR-AE 통합) — regression.md §3 lint autogen + phase 11 cross-ref."""
     issues: list[str] = []
-    rdlr_path = skill_root / "conventions" / "regression-derived-lint-rule-autogen.md"
+    rdlr_path = skill_root / "conventions" / "regression.md"
     p11_path = skill_root / "phases" / "11-regression-bisect.md"
     if not rdlr_path.exists():
-        issues.append("conventions/regression-derived-lint-rule-autogen.md 누락")
+        issues.append("conventions/regression.md 누락 (sprint-37 PR-AE 통합)")
         return issues
     rdlr = _read(rdlr_path)
     p11 = _read(p11_path)
     required = ["lint_rule_proposal", "rule_id", "regression_lint_registry", "C-RDR"]
     for kw in required:
         if kw not in rdlr:
-            issues.append(f"regression-derived-lint-rule-autogen.md: '{kw}' 키워드 누락")
-    if "regression-derived-lint-rule-autogen" not in p11:
-        issues.append("phases/11-regression-bisect.md: regression-derived-lint-rule-autogen cross-ref 누락")
+            issues.append(f"regression.md: '{kw}' 키워드 누락 (§3 lint autogen)")
+    if "regression" not in p11:
+        issues.append("phases/11-regression-bisect.md: regression cross-ref 누락")
     return issues
 
 
@@ -2911,7 +2911,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-SDT", "sprint-score-delta-tracking.md + budget-saturation cross-ref (v0.9.16 sprint-10 #2)", check_sprint_score_delta_tracking),
     ("C-EDP", "evidence-driven-sprint-planning.md + SRO/BSL cross-ref (v0.9.16 sprint-10 #3)", check_evidence_driven_sprint_planning),
     ("C-CULD", "cross-universe-lesson-distillation.md + plan-tree/ensemble cross-ref (v0.9.16 sprint-10 #4)", check_cross_universe_lesson_distillation),
-    ("C-RDLR", "regression-derived-lint-rule-autogen.md + phase 11 cross-ref (v0.9.16 sprint-10 #5)", check_regression_derived_lint_rule_autogen),
+    ("C-RDLR", "regression.md §3 lint autogen + phase 11 cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AE 통합)", check_regression_derived_lint_rule_autogen),
     ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
     ("C-GAv2", "grade_assess v2 — 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)", check_grade_assess_v2),
     ("C-DCL-GATE", "dacapo-enforcement.md — phase 06/08 핸드오프 6 조건 의무 게이트 (bm, v0.9.22 sprint-16)", check_dacapo_enforcement),

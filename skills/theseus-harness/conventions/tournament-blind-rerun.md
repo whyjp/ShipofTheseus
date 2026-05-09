@@ -15,10 +15,10 @@ indexed-in: conventions/INDEX.md
 
 ## 1. 결손 진단
 
-기존 [`competition.md`](competition.md) + [`sprint-regression-loop.md`](sprint-regression-loop.md) :
+기존 [`competition.md`](competition.md) + [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) :
 
 - competition.md = single tournament 후 winner 선정.
-- sprint-regression-loop.md = sprint-level 임계 미달 시 *project-wide* lesson 적용.
+- regression.md §2 sprint loop = sprint-level 임계 미달 시 *project-wide* lesson 적용.
 
 → **phase-level tournament 의 임계 미달 시 *그 페이즈만* 재경합** 메커니즘 부재. winner 가 임계 미달이어도 phase 14 진입 또는 sprint loop 의 weakest dim 보강. winner 자체가 *우연한 1등* 이었을 가능성 미검증.
 

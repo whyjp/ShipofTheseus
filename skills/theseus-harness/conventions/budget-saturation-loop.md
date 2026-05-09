@@ -11,11 +11,11 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**페이즈 10 sprint loop 의 default 임계 = 0.999** (모든 그레이드). 조기 종료 금지 — minimum budget 사용률 ≥ 80% 강제. 매 sprint 의 lesson = weakest dim 의 *content depth* 추가 (단순 enforcement 아닌). v0.9.8 sprint-regression-loop 의 *조기 종료 회피* 룰 + 임계 정정.
+**페이즈 10 sprint loop 의 default 임계 = 0.999** (모든 그레이드). 조기 종료 금지 — minimum budget 사용률 ≥ 80% 강제. 매 sprint 의 lesson = weakest dim 의 *content depth* 추가 (단순 enforcement 아닌). [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) 의 *조기 종료 회피* 룰 + 임계 정정.
 
 ## 1. 결손 진단
 
-v0.9.8 [`sprint-regression-loop.md`](sprint-regression-loop.md) 의 룰 :
+v0.9.8 [`regression.md`](regression.md) §2 sprint loop 의 룰 :
 - 모든 dim `score/max ≥ threshold` → CONVERGED, 종료
 - threshold = grades.md 의 0.97 (G3) / 0.999 (G4) / 0.99999 (G5)
 
@@ -73,7 +73,7 @@ def should_continue_sprint(state) -> bool:
 | **content evidence** (예: analytical bound 정량 cross-check) | self-estimate +0.5pt |
 | **integrated insight** (예: scenario cross-reference 추가) | self-estimate +0.5pt |
 
-→ 추가 sprint 가 *enforcement* 가 아닌 *content* 차원의 lesson 적용 의무. v0.9.8 sprint-regression-loop §3 의 lesson dimension 매핑 강화.
+→ 추가 sprint 가 *enforcement* 가 아닌 *content* 차원의 lesson 적용 의무. [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) §3 의 lesson dimension 매핑 강화.
 
 ### Step 4 — Soft-converge handoff
 

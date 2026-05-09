@@ -110,7 +110,7 @@ producer_agent: clarifier
 | optional-decisions.md 부재 (phase 04 종료 시) | **ABORT** — 마커 검출 ≥ 1 인데 산출 부재 시 |
 | 마커 검출 0 + optional-decisions.md 부재 | OK — 본 컨벤션 적용 대상 아님 |
 | 답이 *2. cheap-only* 이고 phase 06 plan-tree 가 *cheap universe* 미생성 | WARN — phase 06 재진입, contested-axis 로 cheap vs full universe 분기 |
-| 답이 *3. defer* 이고 sprint NN+1 까지 미인용 | WARN — sprint-regression-loop 가 검출, lesson 누적 |
+| 답이 *3. defer* 이고 sprint NN+1 까지 미인용 | WARN — regression §2 sprint loop 가 검출, lesson 누적 |
 
 ABORT 처리 통일 — `intent/00-violation.md` 기록 + 자율 재진입.
 

@@ -86,7 +86,7 @@
 | premortem-friction | interview | [02,03,07] | [G3,G4,G5] | always |
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |
-| regression-derived-lint-rule-autogen | meta | [11] | [G4,G5] | 회귀 정정 |
+| regression | meta | [10,11] | [G3,G4,G5] | always (sprint loop) / 회귀 정정 (lint autogen) |
 | regression-tdd-gate | quality | [08,10,11] | [all] | every code change / dacapo step F / sprint iteration |
 | reproducibility-doublecheck | quality | [09] | [all] | entry script |
 | resources | core | [10] | [all] | always |
@@ -99,7 +99,6 @@
 | shadow-grader-zero-context | tournament | [06,08] | [G3,G4,G5] | step C |
 | simulation-physical-invariants | quality | [09] | [all] | sim domain |
 | spec-catalog | quality | [01,09] | [all] | always |
-| sprint-regression-loop | sprint | [10] | [G3,G4,G5] | always |
 | sprint-score-delta-tracking | sprint | [10] | [G3,G4,G5] | sprint NN+1 |
 | stack | core | [04] | [all] | always |
 | sub-agents | core | [all] | [all] | always |
@@ -109,7 +108,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **85 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **84 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

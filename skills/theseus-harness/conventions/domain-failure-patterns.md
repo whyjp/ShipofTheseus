@@ -11,7 +11,7 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**사용자 제공 도메인 어댑터 (per-project) 의 schema 에 `failure_patterns:` 항목 추가하는 *프레임워크*** — 도메인 별 *근본 결손 패턴* 카탈로그 누적. 페이즈 09 가 작업 도메인 추정 후 해당 어댑터의 failure pattern 자체 검증. 회차마다 어댑터에 누적되어 *우로보로스 자기 강화* (regression-derived-lint-rule-autogen v0.9.16 정합). **본 하네스에 built-in 어댑터 0** (sprint-19+, 벤치 어뷰징 회피).
+**사용자 제공 도메인 어댑터 (per-project) 의 schema 에 `failure_patterns:` 항목 추가하는 *프레임워크*** — 도메인 별 *근본 결손 패턴* 카탈로그 누적. 페이즈 09 가 작업 도메인 추정 후 해당 어댑터의 failure pattern 자체 검증. 회차마다 어댑터에 누적되어 *우로보로스 자기 강화* ([`regression.md`](regression.md) §3 lint autogen, sprint-37 PR-AE 통합). **본 하네스에 built-in 어댑터 0** (sprint-19+, 벤치 어뷰징 회피).
 
 ## 1. 결손 진단
 
@@ -57,7 +57,7 @@ gate_failure_patterns:
 
 ### Step 3 — 회차마다 어댑터 누적
 
-매 sprint 회차 / cold session 후 *발견된 신규 failure pattern* 을 *사용자 어댑터* 에 추가. v0.9.16 [`regression-derived-lint-rule-autogen.md`](regression-derived-lint-rule-autogen.md) 와 정합 — 회귀 정정 commit 시 동일 차원 차단 룰 신규. 본 하네스 자체에는 built-in 어댑터 0 — 누적 = 사용자 책임.
+매 sprint 회차 / cold session 후 *발견된 신규 failure pattern* 을 *사용자 어댑터* 에 추가. [`regression.md`](regression.md) §3 lint autogen 과 정합 — 회귀 정정 commit 시 동일 차원 차단 룰 신규. 본 하네스 자체에는 built-in 어댑터 0 — 누적 = 사용자 책임.
 
 ### Step 4 — 도메인 추정 알고리즘
 
@@ -104,7 +104,7 @@ def lint_domain_failure_patterns(skill_root: Path) -> list[str]:
 
 a- failure_patterns schema = generic frontmatter (id / name / detection / severity / remediation), 도메인 X.
 b- 도메인 어댑터는 *카탈로그 누계* — 도메인이 추가되면 어댑터 추가 (anti-patterns.md A1~A10 동일 패턴).
-c- 회차 누적 = regression-derived-lint-rule-autogen 의 generic 메커니즘 활용.
+c- 회차 누적 = regression §3 lint autogen 의 generic 메커니즘 활용.
 d- 도메인 매칭 0 = skip + 명시 — 모든 작업에 안전.
 
 ## 5. 안티 패턴
