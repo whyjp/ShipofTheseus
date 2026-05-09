@@ -93,6 +93,13 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.ss — Sprint loop 4-layer 종료 조건 CLI (sprint-41 PR-D 신규)**:
+>   - phase 10 sprint iteration 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/sprint_loop_cap.py --project-root <root> --current-iteration N --max-iterations 10` 자동 호출 의무.
+>   - exit 1 시 sprint iteration 자동 +1 + 미달 layer 의 fix-TODO 자동 생성.
+>   - **4 layer 종합** — Auto (evaluation_report pass_rate) + Internal (quality/09 verdict==proceed) + Tournament (plan/impl dacapo_threshold both pass) + External (zero_context_review ≥ 0.95). 각 layer 임계 0.999 (external 0.95 자율 / 0.99 강제).
+>   - max_iterations 도달 시 `sprint_loop_terminated_by_max_iter: true` + 미달 layer list 정직 기록.
+>   - **자동 평가 ≠ 휴먼 품질 ≠ 다카포** 3 layer 분리 원칙 — *단순 iteration count cap* 아님.
+>   - **증거 회피 사례** — 0510 회차 *"Given 100% on evaluator, sprint cap = 1 (re-validation only)"* 자율 결정. Auto 100% 만 보고 stop, Tournament 0.95 + External 0.90 미고려. 본 9.ss CLI = 차단.
 > - **9.rr — Cold session 산출물 file-existence 강제 CLI (sprint-41 PR-C 신규)**:
 >   - phase 09 진입 직전 orchestrator 가 `python skills/theseus-harness/scoring/cold_session_artefacts.py --project-root <root> --grade <grade> --domain <domain>` 자동 호출 의무.
 >   - exit 1 시 결손 산출물 emit 후 phase 09 재진입 — agent 자율 통과 금지.
