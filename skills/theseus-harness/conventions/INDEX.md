@@ -1,6 +1,6 @@
 # Convention Router — 단일 진실 원천
 
-**84 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail.
+**85 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail.
 
 본 표는 *현재* 활성 컨벤션의 라우팅 정보 (sprint/version history → [`../../../CHANGELOG.md`](../../../CHANGELOG.md) 단일 위치).
 
@@ -84,6 +84,7 @@
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |
 | regression | meta | [10,11] | [G3,G4,G5] | always (sprint loop) / 회귀 정정 (lint autogen) |
 | regression-tdd-gate | quality | [08,10,11] | [all] | every code change / dacapo step F / sprint iteration |
+| cross-process-anti-patterns | quality | [09] | [all] | V6 evidence-bound gate |
 | reproducibility-doublecheck | quality | [09] | [all] | entry script |
 | resources | core | [10] | [all] | always |
 | results-decision-mapping | quality | [14] | [all] | always |
@@ -101,7 +102,7 @@
 | test-invariants | quality | [09,10] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **84 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **85 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

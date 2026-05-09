@@ -20,7 +20,7 @@ bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *ru
 | 게이트 | 컨벤션 | 알고리즘 (요약) |
 |---|---|---|
 | **G-RNFS** ([`../conventions/readme-numbers-from-summary.md`](../conventions/readme-numbers-from-summary.md)) | bz · 9.bb | doc grep `\b[0-9]+\.[0-9]+\b` + measurement artifact key 매핑 → ±0.01% 일치 |
-| **G-RDC** ([`../conventions/reproducibility-doublecheck.md`](../conventions/reproducibility-doublecheck.md)) | ca · 9.cc | entry script 2회 실행 + sha256 byte-equal assert (PYTHONHASHSEED 회귀 차단) |
+| **G-RDC** ([`../conventions/reproducibility-doublecheck.md`](../conventions/reproducibility-doublecheck.md)) | ca · 9.cc | entry script 2회 실행 + sha256 byte-equal assert (PYTHONHASHSEED 회귀 차단). **sprint-40 강화 — *별도 subprocess invocation* 의무 + `quality/gate_v6_reproducibility.json` evidence 필수 emit. 본문 attestation 만으로는 통과 불가 (§V6-Evidence-Bound 본문 절 참조).** [`../conventions/cross-process-anti-patterns.md`](../conventions/cross-process-anti-patterns.md) 카탈로그 grep 자동 검사. |
 | **G-MNT** ([`../conventions/magic-number-traceability.md`](../conventions/magic-number-traceability.md)) | cb · 9.dd | 모든 code literal → A_i 가정 또는 데이터 파일 출처 1:1 매핑 (programming constants 0/1/2/60/100/1024/3600 제외) |
 | **G-DCZ** ([`../conventions/dead-code-zero.md`](../conventions/dead-code-zero.md)) | cc · 9.ee | 언어별 dead-code analyzer 위반 0 (Python: `ruff check --select F,ARG,SIM` 또는 `vulture`. 다른 언어는 [`../conventions/polyglot-code-quality.md`](../conventions/polyglot-code-quality.md) au 표 참조) |
 | **G-SPB** ([`../conventions/submission-portability.md`](../conventions/submission-portability.md)) | cd · 9.ff | entry script grep — `Path(__file__).parent.parent` 등 path 하드코딩 detect → fail. `--data-dir` CLI + `DATA_DIR` env fallback 의무 |
@@ -365,3 +365,99 @@ d- **regex pattern 사용자 ack 0** (06.f path-policy 정합) + 자동 fail —
 ## sprint-39 4 패턴 통합 (트랙 3 마감)
 
 §PNC (A) + §Mirror (B) + §Primary (C) + §Literal (D) — phase 09 cold session 자동 검출 4 패턴. self_lint C-PNC / C-MIR / C-PRI / C-LIT 4 룰 동시 통과 의무.
+
+
+## §V6-Evidence-Bound — Cross-process reproducibility evidence (sprint-40 PR-B 강화)
+
+**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차의 `quality/09-quality-gate.md` §V6 — 본문에 *"Two consecutive python run_experiment.py invocations produce bit-identical summary.json aggregates"* attestation 만 박힘, 실제 두 번 invoke 한 sha256 0. zero-context Opus reviewer 가 README ↔ summary.json 0.08% drift 를 catch 한 후에야 D-6/V6 회귀 (`hash(scenario_id)` salt randomization in `numpy.random.SeedSequence`) 발견. **본 절 = 그 회피 패턴 차단.**
+
+### 검사 알고리즘 (G-RDC 실행 본문)
+
+1. **별 subprocess invocation × 2** — 같은 process 안의 두 함수 호출 *아님*. `subprocess.run([python, entry_script], ...)` × 2.
+   ```python
+   # phase 09 게이트 본문이 의무 실행
+   result1 = subprocess.run([sys.executable, entry_script, ...], capture_output=True, env={**os.environ, "PYTHONHASHSEED": "0"})
+   shutil.copy(out_dir / "summary.json", gate_dir / "summary.run1.json")
+   result2 = subprocess.run([sys.executable, entry_script, ...], capture_output=True, env={**os.environ, "PYTHONHASHSEED": "0"})
+   shutil.copy(out_dir / "summary.json", gate_dir / "summary.run2.json")
+   ```
+2. **sha256 byte-equal** — `hashlib.sha256(open(f, "rb").read()).hexdigest()` × 2 비교.
+3. **anti-pattern grep** ([`../conventions/cross-process-anti-patterns.md`](../conventions/cross-process-anti-patterns.md)) — src/ 안에서 다음 regex 모두 빈 결과 의무 :
+   - `SeedSequence\([^)]*hash\(`
+   - `np\.random\.seed\(.*hash\(`
+   - `random\.seed\(.*hash\(`
+   - `os\.urandom\(.*\)\s*[+]\s*\d`  (entropy mix into seed)
+4. **PYTHONHASHSEED=0 강제** — entry script 실행 시 환경 변수 명시 의무.
+
+### 산출물 — `quality/gate_v6_reproducibility.json`
+
+```json
+{
+  "schema_version": "0.9.45",
+  "intra_process": {
+    "test_id": "tests/test_distributions.py::test_replication_rng_deterministic",
+    "passed": true
+  },
+  "cross_process": {
+    "pythonhashseed": "0",
+    "invoke_1": {
+      "stdout_sha256": "...",
+      "summary_sha256": "...",
+      "summary_path": "quality/v6/summary.run1.json"
+    },
+    "invoke_2": {
+      "stdout_sha256": "...",
+      "summary_sha256": "...",
+      "summary_path": "quality/v6/summary.run2.json"
+    },
+    "summary_byte_equal": true
+  },
+  "anti_pattern_grep": {
+    "scanned_globs": ["src/**/*.py"],
+    "patterns_checked": 4,
+    "violations": []
+  },
+  "verdict": "pass"
+}
+```
+
+### 게이트 룰
+
+- `cross_process.summary_byte_equal == true` 의무
+- `anti_pattern_grep.violations == []` 의무
+- `pythonhashseed == "0"` 명시 의무 (env 강제 + frontmatter 박힘)
+- 미달 시 phase 09 verdict = `halt` → phase 10 sprint loop 진입 (regression bisect)
+- *본문 attestation 만* (json 부재) = silent fail = phase 09 진입 거부
+
+### 산출물 경로
+
+```
+.ShipofTheseus/<프로젝트>/quality/
+├── 09-quality-gate.md                       # 본문 (frontmatter 에 sha256 박힘)
+├── gate_v6_reproducibility.json             # 본 절 산출물 (필수)
+└── v6/
+    ├── summary.run1.json                    # subprocess 1 의 outputs/summary.json 복사본
+    └── summary.run2.json                    # subprocess 2 의 outputs/summary.json 복사본
+```
+
+### self_lint C-V6X (sprint-40 PR-B 신규)
+
+phase 09 진입 시 :
+- `quality/gate_v6_reproducibility.json` 존재 확인
+- 본 JSON 의 `verdict == "pass"` 확인
+- `cross_process.summary_byte_equal == true` 확인
+- `anti_pattern_grep.violations` 비어 있음 확인
+- 미달 시 phase 09 진입 거부
+
+### 안티 패턴
+
+a- **본문에 "byte-identical" 텍스트만 박고 JSON 부재** — sprint-40 회피 패턴 직접 차단.
+b- **같은 process 안의 두 함수 호출로 cross-process 위장** — `subprocess.run` 별 호출 의무.
+c- **PYTHONHASHSEED 미설정** — Python `hash()` salt 비결정성 발현. 환경 변수 의무.
+d- **anti-pattern grep skip** — D-6 회귀 (hash(scenario_id) → SeedSequence) 의 직접 카탈로그. skip 시 sprint-40 보강이 무력화.
+
+### 메모리 정합
+
+- [`feedback_pseudocode_to_enforcement.md`](../../../memory/feedback_pseudocode_to_enforcement.md) — 의사코드 → enforcement 본 절이 *runtime guard* 역할.
+- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — 컨벤션 선언 ≠ 런타임 집행. 본 §V6-Evidence-Bound 가 런타임 활성.
+- [`project_bench_001_v0944.md`](../../../memory/project_bench_001_v0944.md) — D-6/V6 회귀 root cause 의 1:1 대응 lint.
