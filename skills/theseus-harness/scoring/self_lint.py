@@ -2275,6 +2275,24 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_research_injection(skill_root: Path) -> list[str]:
+    """C-RES (sprint-38 PR-C) — phase 06.a research-injection.
+
+    외부 ref / 도구 / 라이브러리 / 도큐 인용 (≥ 3) + 결론 추출 (≤ 3).
+    skip 조건: prompt 외부 ref 0 + cold session full-context.
+    """
+    issues: list[str] = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    if not p06.exists():
+        return ["phases/06-plan.md 부재"]
+    body = _read(p06)
+    for kw in ["§06.a", "Research-injection", "research_mode",
+               "Sources (≥ 3", "Conclusions (≤ 3", "skipped"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.a '{kw}' 키워드 누락 (sprint-38 PR-C)")
+    return issues
+
+
 def check_path_policy(skill_root: Path) -> list[str]:
     """C-PPC (sprint-38 PR-B) — phase 06.f path-policy + user-confirm gate.
 
@@ -2967,6 +2985,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
     ("C-CNS", "phases/06,08,14 §canonical inline (sprint-19 cg + sprint-37 PR-AH inline) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
     ("C-PPC", "phases/06-plan.md §06.f (sprint-38 PR-B) — path-policy + user-confirm gate (경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack)", check_path_policy),
+    ("C-RES", "phases/06-plan.md §06.a (sprint-38 PR-C) — research-injection (인용 ≥ 3 + 결론 ≤ 3)", check_research_injection),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
