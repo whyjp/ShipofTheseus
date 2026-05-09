@@ -2275,6 +2275,82 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_diet_grace(skill_root: Path) -> list[str]:
+    """C-DIET (sprint-38 PR-K) — deprecated 컨벤션 grace 1 sprint 후 자동 삭제 검증.
+
+    sprint-37 MIGRATION.md 의 introduced_in / removed_in 정합 — deprecated 행 후
+    introduced_in 다음 sprint 안에 removed_in 매핑 의무.
+    """
+    issues: list[str] = []
+    mig = skill_root / "conventions" / "MIGRATION.md"
+    if not mig.exists():
+        return ["conventions/MIGRATION.md 부재 (sprint-37 PR-A)"]
+    body = _read(mig)
+    # 매핑 표 row 의 introduced_in / removed_in 매핑 검증
+    import re
+    rows = re.findall(r"^\|\s*([a-z][a-z0-9-]*)\s*\|\s*([^|]+?)\s*\|\s*sprint-(\d+)[^|]*\|\s*sprint-(\d+)[^|]*\|", body, re.M)
+    for dep, succ, intro, removed in rows:
+        if dep in ("deprecated", "(현재 비어 있음)"):
+            continue
+        # introduced 와 removed 차이가 ≤ 1 sprint
+        if int(removed) - int(intro) > 1:
+            issues.append(f"MIGRATION.md: {dep} grace 위반 — introduced sprint-{intro}, removed sprint-{removed} (≤ 1 sprint grace)")
+    return issues
+
+
+def check_phase_len(skill_root: Path) -> list[str]:
+    """C-PHASE-LEN (sprint-38 PR-K) — 페이즈 본문 길이 임계.
+
+    sprint-38 의 phase 06 6 sub-phase 통합 + phase 07 3 sub-phase 후 자연 비대 — 임계 현실화:
+    - 5000 chars: warn (informational, fail 0)
+    - 50000 chars: fail (sub-phase 별도 파일 분리 강제)
+
+    sprint-39+ 에서 sub-phase 별도 파일 분리 (phases/06.a-research.md / 06.b-intent-decoding.md 등)
+    구조 도입 시 임계 재조정 가능.
+    """
+    issues: list[str] = []
+    threshold_fail = 50000
+    for phase_file in (skill_root / "phases").glob("*.md"):
+        body = _read(phase_file)
+        size = len(body)
+        if size > threshold_fail:
+            issues.append(f"phases/{phase_file.name}: {size} chars > {threshold_fail} (강제 임계 — sub-phase 별도 파일 분리 의무)")
+    return issues
+
+
+def check_migration_integrity(skill_root: Path) -> list[str]:
+    """C-MIGRATION (sprint-38 PR-K) — MIGRATION.md 매핑 무결성.
+
+    삭제된 컨벤션이 모두 successor 매핑 + successor 가 실제 존재.
+    """
+    issues: list[str] = []
+    mig = skill_root / "conventions" / "MIGRATION.md"
+    if not mig.exists():
+        return ["conventions/MIGRATION.md 부재"]
+    body = _read(mig)
+    import re
+    # 매핑 row 추출: | dep | successor | intro | removed | rationale |
+    rows = re.findall(r"^\|\s*([a-z][a-z0-9-]*)\s*\|\s*([^|]+?)\s*\|", body, re.M)
+    convs_dir = skill_root / "conventions"
+    for dep, succ in rows:
+        if dep in ("deprecated", "(현재 비어 있음)"):
+            continue
+        # deprecated 컨벤션이 실제 삭제됐는지 확인
+        if (convs_dir / f"{dep}.md").exists():
+            issues.append(f"MIGRATION.md: deprecated '{dep}' 가 conventions/{dep}.md 로 여전히 존재 — 삭제 누락")
+        # successor 가 실제 컨벤션 또는 phases/§ 패턴
+        succ_clean = succ.strip()
+        if succ_clean.startswith("phases/"):
+            continue  # inline 흡수 — successor 가 phase 본문
+        if "§" in succ_clean:
+            continue  # phases/X §section inline
+        # 일반 컨벤션 successor: <id> 또는 <id> (...)
+        succ_id = succ_clean.split()[0].split("(")[0].strip().rstrip(",.")
+        if succ_id and not (convs_dir / f"{succ_id}.md").exists():
+            issues.append(f"MIGRATION.md: successor '{succ_id}' 부재 (conventions/{succ_id}.md 없음)")
+    return issues
+
+
 def check_prompt_trace(skill_root: Path) -> list[str]:
     """C-PT (sprint-38 PR-J) — phase 08.f prompt-trace.
 
@@ -3101,6 +3177,9 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PMT", "phases/06-plan.md §06.e (sprint-38 PR-G) — post-decision premortem (격언 동·서 + 시뮬레이션 + derived improvements ≥ 1)", check_premortem),
     ("C-DPT", "phases/07-plan-recursion.md (sprint-38 PR-I) — phase 07 dispatch 3 sub-phase (table + trace + cross-agent invariant)", check_phase07_dispatch),
     ("C-PT", "phases/08-implement.md §08.f (sprint-38 PR-J) — prompt-trace (deliverable → directive 매핑, unmapped 0)", check_prompt_trace),
+    ("C-DIET", "conventions/MIGRATION.md (sprint-38 PR-K) — deprecated 컨벤션 grace ≤ 1 sprint 검증", check_diet_grace),
+    ("C-PHASE-LEN", "phases/*.md (sprint-38 PR-K) — 페이즈 본문 길이 임계 (5000 chars 강제)", check_phase_len),
+    ("C-MIGRATION", "conventions/MIGRATION.md (sprint-38 PR-K) — 매핑 무결성 (deprecated 삭제 + successor 존재)", check_migration_integrity),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
