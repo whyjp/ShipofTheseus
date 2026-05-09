@@ -103,3 +103,89 @@ c- **diversity score 미측정** — composite 산출물에 metric 누락 = self
 - ... 등
 
 이 자기 검증의 결과가 v0.9.8 후속 PR 의 입력.
+
+## 9. L2 도메인 critique 카탈로그 (sprint-40 PR-F 신규)
+
+### 동기
+
+simulation-bench 001 v0.9.44 g4-v2 회차의 `intent/05-critique.md` — 3 cold reviewers (DES domain / SE / OR) 모두 *generic* framing. 그 결과 :
+- queue proxy fidelity (`len()+busy` vs expected wait) dimension 부재
+- noise scaling (per edge vs per metre) dimension 부재
+
+reviewer 가 -2pt Sim correctness flag. **본 §9 = 도메인-tagged L2 패턴 카탈로그 자동 attach.**
+
+### L2 패턴 카탈로그 (도메인별)
+
+| 도메인 | L2 패턴 (cold reviewer prompt 자동 attach) |
+|---|---|
+| **DES** | ⓐ dispatch policy fidelity (heuristic vs M/M/c upper bound) · ⓑ noise scaling (per atomic event vs per duration) · ⓒ warmup justification (transient quantification) · ⓓ queue depth estimator (len vs expected wait) · ⓔ stochastic process truncation policy |
+| **ML** | ⓐ optimizer convergence assumption · ⓑ regularization choice rationale · ⓒ validation split independence · ⓓ overfitting detection method · ⓔ inference batch determinism |
+| **API** | ⓐ retry policy idempotency · ⓑ timeout cascade · ⓒ rate-limit fairness · ⓓ cache invalidation correctness · ⓔ partial failure handling |
+| **데이터 ETL** | ⓐ schema drift handling · ⓑ late-arrival policy · ⓒ batch size vs latency tradeoff · ⓓ dedup correctness · ⓔ partition rebalancing |
+| **분석** | ⓐ confound variable identification · ⓑ outlier handling protocol · ⓒ multiple comparison correction · ⓓ effect size vs p-value distinction · ⓔ generalization scope |
+
+### Cold reviewer prompt 자동 expansion
+
+phase 05 critique 시 4 framing 별 prompt 에 *도메인 L2 카탈로그* 자동 attach :
+
+```
+[DES domain expert framing prompt]
+... (기존 framing 본문) ...
+
+추가 의무 — DES L2 패턴 5 항목 모두 평가:
+ⓐ dispatch policy fidelity: <code 위치> 의 dispatch 가 [heuristic / defensible coarse / gold-standard]?
+ⓑ noise scaling: per atomic event 또는 per duration unit?
+ⓒ warmup justification: quantitative evidence 박혀 있는가?
+ⓓ queue depth estimator: len() 만 vs expected wait?
+ⓔ stochastic process truncation: lower bound + upper bound 명시?
+
+각 항목당 1줄 verdict + 위반 시 modeling-shortcuts.json 신규 entry 후보 추출.
+```
+
+### 산출물 보강 — `intent/05-critique.md`
+
+기존 cold reviewer 본문 끝에 :
+
+```yaml
+l2_catalogue_applied: true
+domain: DES
+l2_patterns_evaluated: 5
+l2_violations: ["MS-001 dispatch heuristic", "MS-002 noise per-edge"]
+modeling_shortcuts_candidates_added: 2  # → modeling-shortcuts.json 으로 forward
+```
+
+### 알고리즘
+
+```python
+DOMAIN_L2 = {
+    'DES': [
+        ('dispatch_fidelity', 'dispatch / tiebreak / routing'),
+        ('noise_scaling', 'noise / random / lognormal'),
+        ('warmup_justification', 'warmup / transient / steady-state'),
+        ('queue_depth_estimator', 'queue / wait / FIFO'),
+        ('stochastic_truncation', 'truncation / cutoff / bounds'),
+    ],
+    # ...
+}
+
+def attach_l2_catalogue(framing_prompt: str, domain: str) -> str:
+    catalogue = DOMAIN_L2.get(domain, [])
+    if not catalogue:
+        return framing_prompt
+    suffix = "\n\n추가 의무 — {domain} L2 패턴 {n} 항목 모두 평가:\n".format(domain=domain, n=len(catalogue))
+    for slug, kw in catalogue:
+        suffix += f"- {slug} (keywords: {kw})\n"
+    return framing_prompt + suffix
+```
+
+### self_lint C-PCR-L2 (sprint-40 PR-F 신규 — Parallel Cold Review L2)
+
+phase 05 종료 시 :
+- `intent/05-critique.md` 의 `l2_catalogue_applied == true` 확인
+- `l2_patterns_evaluated >= len(DOMAIN_L2[domain])` 확인
+- `modeling_shortcuts_candidates_added` 와 [`modeling-shortcuts.md`](modeling-shortcuts.md) 의 `intent/modeling_shortcuts.json` entry 수 일치 확인
+
+### 메모리 정합
+
+- [`feedback_94_plateau_general_harness.md`](../../../memory/feedback_94_plateau_general_harness.md) — 6pt 질적 layer 갭의 *Sim correctness L2 깊이* 차원 직접 보강.
+- [`project_bench_001_v0944.md`](../../../memory/project_bench_001_v0944.md) — DES L2 5 항목으로 두 휴리스틱 (queue + noise) flag 자동 detect.
