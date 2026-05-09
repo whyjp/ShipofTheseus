@@ -2275,6 +2275,23 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_classification(skill_root: Path) -> list[str]:
+    """C-CLS (sprint-38 PR-E) — phase 06.c classification.
+
+    모듈/관심사/책임 ≥ 3 layer 분할 + orphan 모듈 0 + 모든 directive ≥ 1 모듈 매핑.
+    """
+    issues: list[str] = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    if not p06.exists():
+        return ["phases/06-plan.md 부재"]
+    body = _read(p06)
+    for kw in ["§06.c", "Classification", "Layer 분할 (≥ 3)",
+               "orphan_module_count: 0", "Orphan 모듈"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.c '{kw}' 키워드 누락 (sprint-38 PR-E)")
+    return issues
+
+
 def check_intent_decoding(skill_root: Path) -> list[str]:
     """C-IDC (sprint-38 PR-D) — phase 06.b intent-decoding directives.json schema.
 
@@ -3007,6 +3024,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PPC", "phases/06-plan.md §06.f (sprint-38 PR-B) — path-policy + user-confirm gate (경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack)", check_path_policy),
     ("C-RES", "phases/06-plan.md §06.a (sprint-38 PR-C) — research-injection (인용 ≥ 3 + 결론 ≤ 3)", check_research_injection),
     ("C-IDC", "phases/06-plan.md §06.b (sprint-38 PR-D) — intent-decoding directives.json (6 type × 3 layer)", check_intent_decoding),
+    ("C-CLS", "phases/06-plan.md §06.c (sprint-38 PR-E) — classification (≥ 3 layer + orphan 모듈 0)", check_classification),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
