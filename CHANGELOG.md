@@ -2,6 +2,64 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.42 — 2026-05-09 (sprint-37 — convention diet + 본체 강화 패러다임 전환)
+
+### 마일스톤
+
+사용자 직접 지시 — *"구멍 메우기 식 컨벤션 누적 중지 → 다이어트 + 본체 강화 + 구현-층 깊이 + 산출물 prompt 의존 + 산출물 경로 user-confirm 게이트"*. simulation-bench 회차에서 94 plateau 재확인. 누적 패치 → 다이어트+본체 패러다임 전환의 구조적 출발.
+
+본 sprint = **트랙 1 (다이어트)** 까지. 트랙 2 (본체 강화 + 구현-층) sprint-38 / 트랙 3 (4 패턴 inline) sprint-39 분리.
+
+### 변경 — 다이어트 11 PR (90 → 77 컨벤션, -13)
+
+| PR | scope | 통폐합 | 라인 |
+|---|---|---|---|
+| PR-A | 분석 보고서 + MIGRATION.md 골격 | 0 | 0 |
+| PR-AA | intent-refresh-post-interview + intent-refresh-post-critique → intent-refresh | 2→1 | -7 |
+| PR-AB | aide-tree-multi-phase + aide-tree-symmetry → aide-tree | 2→1 | -28 |
+| PR-AC | viewer-auto-refresh + viewer-runtime-lifecycle → viewer-runtime | 2→1 | -15 |
+| PR-AD | mindmap-centrality + mindmap-quality-gardening + mindmap-richness-default → mindmap-quality | 3→1 | -156 |
+| PR-AE | sprint-regression-loop + regression-derived-lint-rule-autogen → regression | 2→1 | -34 |
+| PR-AF | sprint-score-delta-tracking + cross-universe-lesson-distillation + lessons → sprint-narrative | 3→1 | -111 |
+| PR-AG | domain-research-stacking + domain-failure-patterns + domain-model-completeness → domain-pack | 3→1 | -119 |
+| PR-AH | canonical-not-stub → phases/06,08,14 §canonical inline | 1→0 | (inline) |
+| PR-AI | timing → phases/00,14 §timing inline | 1→0 | (inline) |
+| PR-AJ | stack → phases/04 §stack inline | 1→0 | (inline) |
+| PR-AK | self_lint 통합 + version bump v0.9.42 + CHANGELOG (본 entry) | — | — |
+
+**누적**: 14 컨벤션 통합 (8 컨벤션 7 통합본 + 1 통합본 = 7 신규) + 3 inline = -13 컨벤션 (90 → 77), 본문 -470 라인.
+
+### 변경 — 신규 산출물
+
+- `skills/theseus-harness/conventions/MIGRATION.md` — 다이어트 매핑 표 (deprecated → successor + introduced_in / removed_in / rationale)
+- `skills/theseus-harness/conventions/intent-refresh.md` (1차+2차 phase param 분기)
+- `skills/theseus-harness/conventions/aide-tree.md` (breadth + depth 두 축)
+- `skills/theseus-harness/conventions/viewer-runtime.md` (frontend 폴링 + backend lifecycle 두 layer)
+- `skills/theseus-harness/conventions/mindmap-quality.md` (구조 + 형식 + 풍성도 세 layer)
+- `skills/theseus-harness/conventions/regression.md` (sprint loop + lint autogen 두 layer)
+- `skills/theseus-harness/conventions/sprint-narrative.md` (시간 + 공간 + 단계 세 axis)
+- `skills/theseus-harness/conventions/domain-pack.md` (model + research-stacking + failure-patterns 세 layer)
+
+### 변경 — 갱신
+
+- `skills/theseus-harness/scoring/self_lint.py` — C-IRPI / C-IRPC / C-VAR / C-VRL / C-CNS / C-RDLR / C-SDT / C-CULD / C20 / C-DMC 함수 모두 통합본 가리키게 + 키워드 검사 정합 (10 함수)
+- `skills/theseus-harness/SKILL.md` + `.claude-plugin/plugin.json` — 0.9.40 → 0.9.42, 90 → 77 카운트
+- `skills/theseus-orchestrator/SKILL.md` — phase lookup 표 통합본 §섹션 표시 (5 페이즈 행)
+- `skills/theseus-harness/agents/{intent-extractor, implementer, planner, regression-analyst}.md` — cross-ref 통합본
+- `skills/theseus-harness/phases/{00, 04, 05, 06, 08, 09, 10, 11, 14}.md` — cross-ref + §canonical / §timing / §stack inline
+- 주요 cross-ref 컨벤션 30+ 갱신
+
+### 마감 사실
+
+- 본 sprint 의 가장 큰 발견 = plan.md §3.1.4 inline 4 후보 과소평가 — runtime infra + self_lint 룰 동반 컨벤션은 inline 단순 흡수 불가. 카테고리 C 로 재분류
+- self_lint hardcode 컨벤션 파일명 검사 = 통합본 path + 키워드 정합으로 깨끗 처리 가능 (PR-AA / PR-AC / PR-AD / PR-AE / PR-AF / PR-AG / PR-AH 모두 동일 패턴)
+- 본 다이어트의 후속 sprint-38 (트랙 2 — 본체 강화 + 구현-층 깊이) / sprint-39 (트랙 3 — 4 패턴 inline) 진행 전 본 sprint 의 통합본 cold session 검증 권고
+
+### 메모리 신규 (영구화)
+
+- `feedback_convention_diet_paradigm.md` — 누적 패치 → 다이어트+본체 패러다임 전환
+- `feedback_deliverable_path_user_confirm.md` — 산출물 경로 + user-confirm 게이트
+
 ## v0.9.40 — 2026-05-09 (sprint-35 — prebuilt shell + JSON injection)
 
 ### 마일스톤
