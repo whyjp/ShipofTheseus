@@ -86,20 +86,92 @@
     if (saved) activateTab(saved);
   }
 
-  // ── data load ──────────────────────────────────────────────────
-  function loadData() {
+  // ── data load + auto-refresh (sprint-36) ──────────────────────
+  var POLL_INTERVAL_MS = 5000;
+  var refreshState = { mode: 'idle', lastEtag: null, lastModified: null, pollTimer: null, fetchInFlight: false };
+
+  function setStatus(state, label) {
+    var pill = document.querySelector('[data-bind="refresh_status"]');
+    if (pill) {
+      pill.setAttribute('data-state', state);
+      var t = pill.querySelector('.tv-status-text');
+      if (t) t.textContent = label;
+    }
+    var btn = document.querySelector('.tv-btn-refresh');
+    if (btn) btn.setAttribute('data-state', state);
+    refreshState.mode = state;
+  }
+  function loadInline() {
     if (window.__WEBVIEW__ && typeof window.__WEBVIEW__ === 'object') {
-      return Promise.resolve(window.__WEBVIEW__);
+      return Promise.resolve({ data: window.__WEBVIEW__, source: 'inline' });
     }
-    if (typeof fetch !== 'function') {
-      return Promise.reject(new Error('no fetch + no window.__WEBVIEW__'));
-    }
-    return fetch('./data/webview.json', { cache: 'no-store' })
+    return Promise.reject(new Error('no inline'));
+  }
+  function loadHttp() {
+    if (typeof fetch !== 'function') return Promise.reject(new Error('no fetch'));
+    var headers = {};
+    if (refreshState.lastEtag)     headers['If-None-Match']     = refreshState.lastEtag;
+    if (refreshState.lastModified) headers['If-Modified-Since'] = refreshState.lastModified;
+    return fetch('./data/webview.json?_t=' + Date.now(), { cache: 'no-store', headers: headers })
       .then(function (r) {
+        if (r.status === 304) return { data: null, source: 'http-304' };
         if (!r.ok) throw new Error('webview.json fetch failed: ' + r.status);
-        return r.json();
+        var et = r.headers.get('ETag');
+        var lm = r.headers.get('Last-Modified');
+        return r.json().then(function (j) {
+          if (et) refreshState.lastEtag     = et;
+          if (lm) refreshState.lastModified = lm;
+          return { data: j, source: 'http' };
+        });
       });
   }
+  function loadData(opts) {
+    opts = opts || {};
+    if (!opts.skipInline && window.__WEBVIEW__) return loadInline();
+    return loadHttp();
+  }
+  function startPolling() {
+    if (refreshState.pollTimer) clearInterval(refreshState.pollTimer);
+    refreshState.pollTimer = setInterval(function () {
+      if (document.hidden) return;
+      pollOnce();
+    }, POLL_INTERVAL_MS);
+  }
+  function pollOnce() {
+    if (refreshState.fetchInFlight) return;
+    refreshState.fetchInFlight = true;
+    setStatus('updating', '갱신 중');
+    return loadHttp()
+      .then(function (res) {
+        if (res.source === 'http-304') { setStatus('live', 'live'); return; }
+        if (res.data) {
+          window.__webviewData__ = res.data;
+          renderAll(res.data);
+          setStatus('live', 'live · updated');
+        }
+      })
+      .catch(function () { setStatus('offline', 'offline · F5'); })
+      .finally(function () { refreshState.fetchInFlight = false; });
+  }
+  function manualRefresh() {
+    if (refreshState.fetchInFlight) return;
+    setStatus('updating', '수동 갱신');
+    loadData({ skipInline: true })
+      .then(function (res) {
+        if (res.data) {
+          window.__webviewData__ = res.data;
+          renderAll(res.data);
+          setStatus(refreshState.pollTimer ? 'live' : 'manual', refreshState.pollTimer ? 'live · manual' : 'manual');
+        }
+      })
+      .catch(function () { setStatus('offline', 'fetch 차단 — F5'); });
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && refreshState.pollTimer) pollOnce();
+  });
+  document.addEventListener('click', function (ev) {
+    if (ev.target.closest && ev.target.closest('[data-action="manual-refresh"]')) manualRefresh();
+  });
 
   // ── helpers ────────────────────────────────────────────────────
   function setText(selector, value, fallback) {
@@ -466,25 +538,41 @@
     ]));
   }
 
+  function renderAll(d) {
+    renderHeader(d);
+    renderProgress(d);
+    renderModuleGraph(d);
+    renderMdList('design', (d.intent || {}));
+    renderMdList('impl', Object.assign({}, d.impl || {}, d.quality ? { 'quality.md': d.quality } : {}));
+    renderUnitTests(d.tests && d.tests.unit);
+    renderE2E(d.tests && d.tests.e2e);
+    renderSprints(d.sprints);
+    renderRuntime(d);
+  }
+
   // ── boot ───────────────────────────────────────────────────────
   initTheme();
   restoreTab();
 
   loadData()
-    .then(function (d) {
-      window.__webviewData__ = d;
-      renderHeader(d);
-      renderProgress(d);
-      renderModuleGraph(d);
-      renderMdList('design', (d.intent || {}));
-      renderMdList('impl', Object.assign({}, d.impl || {}, d.quality ? { 'quality.md': d.quality } : {}));
-      renderUnitTests(d.tests && d.tests.unit);
-      renderE2E(d.tests && d.tests.e2e);
-      renderSprints(d.sprints);
-      renderRuntime(d);
+    .then(function (res) {
+      window.__webviewData__ = res.data;
+      renderAll(res.data);
+      if (res.source === 'inline') {
+        if (typeof fetch === 'function' && location.protocol !== 'file:') {
+          startPolling();
+          setStatus('live', 'live');
+        } else {
+          setStatus('manual', 'manual only');
+        }
+      } else {
+        startPolling();
+        setStatus('live', 'live');
+      }
     })
     .catch(function (err) {
       console.error('[theseus-view]', err);
       renderError((err && err.message) || String(err));
+      setStatus('offline', 'offline');
     });
 })();

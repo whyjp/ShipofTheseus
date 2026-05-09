@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.9.41",
+  "project_id": "synthetic_mine_throughput_001",
+  "current_phase": "final 14",
+  "final_phase": 14,
+  "status": "complete",
+  "domain": "DES",
+  "domain_label": "DES (시뮬레이션 — 광산 처리량)",
+  "matched": true,
+  "skip": false,
+  "skip_reason": null,
+  "summary_kpis": [
+    { "label": "Throughput", "value": "850 t/h", "trend": "+5.2% vs ramp_closed", "direction": "up" },
+    { "label": "Bottleneck", "value": "crusher", "trend": "1× capacity edge", "direction": "" },
+    { "label": "Scenarios", "value": "3 / 3 PASS", "trend": "all invariants ok", "direction": "up" },
+    { "label": "Sim time", "value": "8 h", "trend": "real 1.24s elapsed", "direction": "" }
+  ],
+  "scenarios": [
+    { "name": "baseline",        "status": "pass", "key_metric": "850 t/h",  "note": "default — open ramp" },
+    { "name": "ramp_closed",     "status": "pass", "key_metric": "720 t/h",  "note": "ramp 폐쇄 — bypass route only" },
+    { "name": "crusher_double",  "status": "pass", "key_metric": "1240 t/h", "note": "crusher 2× capacity (sensitivity)" }
+  ],
+  "widgets": [
+    {
+      "id": "topology",
+      "type": "topology",
+      "title": "Mine Layout — cap-1 edges 강조",
+      "mermaid": "flowchart LR\n  classDef cap1 fill:#fee2e2,stroke:#dc2626\n  classDef bypass fill:#fef9c3,stroke:#d97706\n  pit((Pit)) --> hauler[Hauler]:::cap1\n  hauler --> crusher{Crusher}:::cap1\n  crusher --> conveyor[Conveyor]\n  conveyor --> stockpile[(Stockpile)]\n  hauler -.bypass.-> stockpile:::bypass"
+    },
+    {
+      "id": "throughput-bar",
+      "type": "metric_chart",
+      "title": "Scenario Throughput (tph)",
+      "kind": "bar",
+      "x_label": "scenario",
+      "y_label": "tonnes / hour",
+      "data": [
+        { "label": "baseline",       "value": 850 },
+        { "label": "ramp_closed",    "value": 720 },
+        { "label": "crusher_double", "value": 1240 }
+      ]
+    },
+    {
+      "id": "queue-timeline",
+      "type": "metric_chart",
+      "title": "Average Queue Length over Sim Time (baseline)",
+      "kind": "line",
+      "x_label": "sim time (min)",
+      "y_label": "queue len",
+      "data": [
+        { "label": "0",   "value": 0 },
+        { "label": "60",  "value": 2.1 },
+        { "label": "120", "value": 3.4 },
+        { "label": "180", "value": 4.8 },
+        { "label": "240", "value": 5.2 },
+        { "label": "300", "value": 4.6 },
+        { "label": "360", "value": 4.1 },
+        { "label": "420", "value": 3.8 },
+        { "label": "480", "value": 3.5 }
+      ]
+    },
+    {
+      "id": "bottleneck-table",
+      "type": "table",
+      "title": "Bottleneck Analysis",
+      "columns": ["Edge", "Util %", "Avg Queue", "Verdict"],
+      "rows": [
+        ["pit→hauler",        "78.2%", "1.1", "헬시"],
+        ["hauler→crusher",    "98.4%", "5.2", "BOTTLENECK"],
+        ["crusher→conveyor",  "82.1%", "1.8", "헬시"],
+        ["conveyor→stockpile","41.0%", "0.3", "헬시"]
+      ]
+    },
+    {
+      "id": "summary",
+      "type": "markdown",
+      "title": "발견 요약",
+      "body": "## 핵심 발견\n\n- **`crusher` 가 단일 병목** — utilization 98.4%, avg queue 5.2 (다른 edges 대비 ≥ 3×)\n- **ramp 비-병목** — 폐쇄 시 throughput 15.3% 감소만, 우회 경로 흡수 가능\n- **crusher_double 시나리오** — throughput 45.9% 증가, 투자 우선순위 1순위\n\n## 한계\n\n- 스케줄링 정책 단순 FIFO — 실제 운영에서 priority/preemption 시 결과 다를 수 있음\n- 단일 8h shift — 멀티 shift 누적 효과 미반영"
+    }
+  ],
+  "raw_artifacts": [
+    { "name": "topology.png",  "path": "plots/topology.png",  "type": "image" },
+    { "name": "animation.gif", "path": "plots/animation.gif", "type": "image" },
+    { "name": "drilldown.html","path": "plots/drilldown.html","type": "html"  }
+  ],
+  "narrative": "# Synthetic Mine Throughput · 결과 해석\n\n광산 시뮬레이션 (DES) — `crusher` 가 단일 병목으로 식별됐다. ramp 폐쇄에도 throughput 감소가 미미한 점은 우회 경로가 충분히 흡수하고 있음을 시사한다.\n\n## 의사결정 권장\n\n1. **crusher capacity ↑** — 가장 큰 ROI. crusher_double 시 throughput +45.9%.\n2. **ramp 인프라 투자 보류** — 비-병목으로 확인. 자본 재배치 권장.\n3. **shift 누적 시뮬레이션** — 본 결과는 단일 shift. 멀티 shift / breakdown 시나리오 추가 권장.\n\n*본 viewer 의 데이터는 `dashboard.json` 단일 source. cold session 이 갱신 → 페이지 자동 polling 으로 5초 내 반영.*"
+}

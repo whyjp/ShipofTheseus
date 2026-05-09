@@ -14,10 +14,19 @@
         <h1 class="lv-title">Phase&nbsp;Lineage</h1>
         <span class="lv-subtitle">cold session 결과 디버그 뷰어</span>
       </div>
-      <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
-        <span class="lv-theme-icon-light" aria-hidden="true">&#9728;</span>
-        <span class="lv-theme-icon-dark" aria-hidden="true">&#9790;</span>
-      </button>
+      <div class="lv-header-actions">
+        <span class="lv-status-pill" data-bind="refresh_status" title="자동 새로고침 상태">
+          <span class="lv-status-dot"></span><span class="lv-status-text">대기</span>
+        </span>
+        <button class="lv-btn-refresh" data-action="manual-refresh" type="button" title="수동 새로고침">
+          <span aria-hidden="true">↻</span>
+          <span class="lv-btn-label">새로고침</span>
+        </button>
+        <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
+          <span class="lv-theme-icon-light" aria-hidden="true">&#9728;</span>
+          <span class="lv-theme-icon-dark" aria-hidden="true">&#9790;</span>
+        </button>
+      </div>
     </div>
 
     <div class="lv-meta">

@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.9.41",
+  "project_id": null,
+  "current_phase": "pre-bootup",
+  "final_phase": null,
+  "status": "waiting",
+  "domain": null,
+  "domain_label": "도메인 미매칭 (cold session 미시작)",
+  "matched": false,
+  "skip": false,
+  "skip_reason": null,
+  "summary_kpis": [],
+  "scenarios": [],
+  "widgets": [],
+  "raw_artifacts": [],
+  "narrative": "# 대기 중\n\ncold session 이 시작되면 phase 별 산출이 본 viewer 에 자동 반영됩니다.\n\n- 자동 polling 5 초 — HTTP server 환경\n- 수동 새로고침 button — file:// 환경에서도 작동\n"
+}

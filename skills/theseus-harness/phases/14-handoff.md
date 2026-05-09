@@ -21,7 +21,9 @@ e- **알려진 갭** — rubric 이 1.0 미만 ≥ 0.9 로 매긴 항목과 한 
 f- **추천 후속** — 비평가가 deferred 한 항목 + 범위 외이지만 가치 있는 후속.
 g- **회귀 이력** — 페이즈 11 트리거된 스프린트들과 한 줄 해소.
 h- **시간 요약** — 최초 프롬프트 → 핸드오프 총 경과, 페이즈별 누적 (텍스트 막대 표).
-i- **웹뷰 실행 방법** — `cd .ShipofTheseus/<프로젝트>/webview && bun install && bun run dev`.
+i- **웹뷰 실행 방법** — sprint-36 부터 prebuilt shell + viewer-runtime 으로 전환. cold session 진행 중 viewer 가 이미 떠 있다 (phase 00 pre-bootup). 종료 시 `bash .ShipofTheseus/<프로젝트>/viewer-runtime/viewer-down.sh` (또는 PowerShell `viewer-down.ps1`) 호출 의무 — PID 누수 차단. dev mode 가 필요한 경우 `cd webview && bun install && bun run dev` 옵션. URL 은 `viewer-runtime/viewer.lock.json` 의 `viewers[].url`.
+
+i-3- **Viewer teardown 의무** (sprint-36) — orchestrator 가 본 phase 14 종료 시 `python skills/theseus-harness/scoring/pre_bootup.py teardown --root .ShipofTheseus/<프로젝트>` 호출. lock 의 PID 종료 + lock 정리. 누수 시 다음 cold session 의 port 충돌 야기.
 i-2- **Phase lineage viewer cross-link** ([`../conventions/phase-lineage-viewer.md`](../conventions/phase-lineage-viewer.md), br v0.9.22) — 본 핸드오프 본문에 `.ShipofTheseus/<프로젝트>/lineage.md` cross-link 의무 (G3+). lineage.md 가 phase 00 → 14 전체 흐름 + dacapo 요약 + fingerprint chain 단일 view. 본 페이즈 종료 시점에 orchestrator 가 final_outcome=HANDOFF 박고 fingerprint chain 무결성 최종 검증.
 j- **Decision-support framing** ([`../conventions/decision-support-framing.md`](../conventions/decision-support-framing.md), v0.9.18) — 결정 질문 (Q1~QN) 마다 다음 3 항목 본문 의무 :
   - **Operational implications** — 결과가 운영에 의미하는 것 (1-2 문단)

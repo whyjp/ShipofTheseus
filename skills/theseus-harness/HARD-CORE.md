@@ -50,6 +50,7 @@
 - **9.mm** Phase state runtime (sprint-34): 매 phase enter/exit `scoring/phase_state.py` 의무. 단조성 + forgery 차단. exit 1 = 재진입.
 - **9.nn** Prebuilt shell + JSON emit (sprint-35): cold session 은 webview / lineage viewer 를 *build 0* — `templates/{webview,lineage-viewer}/dist/` 복사 + JSON injection 만. C-PSR 검증.
 - **9.oo** Emit fidelity (sprint-35-extra): lineage.json/webview.json 의무 키 enum + 빈/dummy 금지 + gantt ★/parallel≥3/bypass:done 룰. `emit_fidelity.py check` + C-EFS.
+- **9.pp** Pre-bootup + viewer lifecycle (sprint-36): phase 00 enter 직전 `pre_bootup.py bootstrap` (3 viewer + 빈 골격 + HTTP server up). phase 14 종료 시 `teardown` 의무 (PID 누수 차단). interactive-viewer prebuilt + dashboard.json schema-driven (5 widget 타입). 3 viewer auto-refresh 5s polling + visibility + manual. C-PCB/C-VAR/C-VRL/C-IVP.
 
 위반 시 self_lint 페이즈 exit fail → 페이즈 재진입 (자율, 누적 ≥ 3 시만 ack).
 

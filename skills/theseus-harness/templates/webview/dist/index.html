@@ -16,6 +16,13 @@
       </div>
       <div class="tv-header-actions">
         <span class="tv-mode" data-bind="emit_mode">prebuilt</span>
+        <span class="tv-status-pill" data-bind="refresh_status" title="자동 새로고침 상태">
+          <span class="tv-status-dot"></span><span class="tv-status-text">대기</span>
+        </span>
+        <button class="tv-btn-refresh" data-action="manual-refresh" type="button" title="수동 새로고침">
+          <span aria-hidden="true">↻</span>
+          <span class="tv-btn-label">새로고침</span>
+        </button>
         <button class="tv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
           <span class="tv-theme-icon-light" aria-hidden="true">&#9728;</span>
           <span class="tv-theme-icon-dark" aria-hidden="true">&#9790;</span>
