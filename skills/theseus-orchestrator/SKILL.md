@@ -93,6 +93,13 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.rr — Cold session 산출물 file-existence 강제 CLI (sprint-41 PR-C 신규)**:
+>   - phase 09 진입 직전 orchestrator 가 `python skills/theseus-harness/scoring/cold_session_artefacts.py --project-root <root> --grade <grade> --domain <domain>` 자동 호출 의무.
+>   - exit 1 시 결손 산출물 emit 후 phase 09 재진입 — agent 자율 통과 금지.
+>   - **자동 평가 53/53 (100%) ≠ 산출물 통과** 명확 분리. phase 09 진입 *전* 의 게이트.
+>   - 13 산출물 (gate_v6 / gate_v8 / gate_readme_summary / gate_methodology_completeness / gate_pnc/mirror/primary/literal / modeling_shortcuts / cascaded_subq / webview/exit_gate / iv/exit_gate / iv/dashboard) 모두 *존재 + valid JSON + verdict pass* 의무.
+>   - **증거 회피 사례** — 0510 회차 skill_version 0.9.45 frontmatter 박힘에도 13 산출물 모두 부재 + phase 09 GREEN 자율 통과. 본 9.rr CLI = 차단.
+>   - 본 CLI = ouroboros 패러다임 직접 적용 — 컨벤션 본문 = 명세, CLI = 집행.
 > - **9.qq — Tournament 다카포 임계 강제 CLI (sprint-41 PR-B 신규)**:
 >   - phase 06 (plan tournament) + phase 08 (impl tournament) 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md <path>` 자동 호출 의무.
 >   - exit 1 (winner ratio < 0.999) 시 round N+1 자동 진행 — agent 자율 skip 금지. 본 CLI 의 verdict 가 phase advance gatekeeper.
