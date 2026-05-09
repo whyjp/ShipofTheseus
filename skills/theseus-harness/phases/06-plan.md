@@ -719,3 +719,105 @@ e- **research skip 자백** ("외부 ref 없으니 06.a 생략") + research_mode
 - [`domain-pack.md`](../conventions/domain-pack.md) §3 (research-stacking) — 사용자 어댑터 contributions 가 06.a 의 source 후보로 사용 가능.
 - 06.a → 06.b: research conclusions 가 directives 의 *evidence layer* 입력.
 - 06.a → 06.f: research.md 자체도 path-policy 의 deliverable list 에 포함 (plan/06-research.md 경로 ack 의무).
+
+
+## §06.b Intent-decoding (sprint-38 PR-D — 핵심 sub-phase)
+
+**phase 06 의 두 번째 sub-phase** — prompt directive 매트릭스 추출. 06.b 의 산출물 (`directives.json`) 은 후속 모든 sub-phase + phase 08.f prompt-trace 의 *source*.
+
+### 트리거
+
+phase 06.a (Research) 직후. 06.a 산출물 (`plan/06-research.md`) + intent/01-{1..4}-intent.v2.md + 04-refreshed.md + 05-refreshed.md 입력으로 directive 추출.
+
+### 산출물 — `plan/06-directives.json`
+
+```json
+{
+  "schema_version": "0.9.43",
+  "extracted_at": "<ISO>",
+  "prev_fingerprint": "P06A-...",
+  "fingerprint": "P06B-...",
+  "directives": [
+    {
+      "id": "D-001",
+      "type": "must",
+      "source_quote": "<원문 인용 한 줄>",
+      "source_loc": "<intent/04-answers.md:L42 또는 prompt:L18>",
+      "layers": {
+        "def": "<정의 layer — 어디에 정의되는가>",
+        "exec": "<실행 layer — 어떻게 실행되는가>",
+        "visibility": "<가시성 layer — 결과가 어디에 노출>"
+      },
+      "rubric_axis": "<채점 차원 매핑 (있을 시)>"
+    }
+  ],
+  "directive_count": <int>,
+  "by_type": {
+    "must": <int>,
+    "should": <int>,
+    "avoid": <int>,
+    "primary": <int>,
+    "canonical": <int>,
+    "no_proxy": <int>
+  }
+}
+```
+
+### Directive 6 type 분류
+
+| type | 의미 | 예시 |
+|---|---|---|
+| **must** | 반드시 충족 | "Latency p99 < 100ms" |
+| **should** | 권장, 미달 시 lesson | "Code coverage ≥ 80%" |
+| **avoid** | 명시 회피 | "no third-party tracking" |
+| **primary** | 1차 측정/지표 (proxy 불가) | "throughput = trucks/hour, not queue length" |
+| **canonical** | 단일 source 강제 | "schema in plan/06-plan.md, not impl/" |
+| **no_proxy** | proxy metric 차단 | "measure latency, not request count" |
+
+### 3 layer 매핑
+
+각 directive 마다 *3 layer* 모두 매핑 의무 (orphan layer 0):
+
+- **def**: 어느 산출물에 정의되는가 (e.g., "intent/01-intent.md §i", "plan/06-plan.md §interface")
+- **exec**: 어떻게 실행되는가 (e.g., "code/<module>.py 의 <function>", "phase 08-γ implementer")
+- **visibility**: 결과가 어디에 노출되는가 (e.g., "impl/08-impl-log.md", "handoff/14-handoff.md", "외부 evaluator")
+
+### 의무 체크
+
+a- **모든 directive 에 source_quote** — orphan directive 0. fabricated directive 차단.
+b- **모든 directive 에 source_loc** — 검증 가능성 (file:line 또는 prompt:position).
+c- **모든 directive 에 3 layer 매핑** — def/exec/visibility 모두 명시.
+d- **directive_count == sum(by_type.values())** — 카운트 정합.
+e- **rubric_axis 매핑** — 외부 rubric 있을 시 의무 (rubric 채점 차원과 1:1).
+
+### self_lint C-IDC
+
+```python
+def check_intent_decoding(skill_root: Path) -> list[str]:
+    """C-IDC (sprint-38 PR-D) — phase 06.b intent-decoding directives.json schema."""
+    issues = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    body = p06.read_text(encoding="utf-8")
+    for kw in ["§06.b", "Intent-decoding", "directives.json",
+              "must", "should", "avoid", "primary", "canonical", "no_proxy",
+              "source_quote", "source_loc",
+              "def", "exec", "visibility"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.b '{kw}' 키워드 누락 (sprint-38 PR-D)")
+    return issues
+```
+
+### 안티 패턴
+
+a- **directive 본문이 prompt 인용 0** (paraphrase 만) — fabricated. source_quote + source_loc 의무.
+b- **type 6 분류 외** (e.g., "informational") — 6 분류 한도 내 강제. 외부 type 추가 시 schema_version bump 의무.
+c- **layer 매핑 부분만** — 3 layer (def/exec/visibility) 모두 의무. orphan layer 0.
+d- **directive 수가 ≥ 50** — directive 수 폭증 = intent 해체 부족. ≤ 30 권고 (단, must + primary + canonical 합 ≥ 5 의무).
+e- **rubric_axis 부재** — 외부 rubric 작업 시 모든 directive 의 rubric_axis 매핑 의무. rubric 부재 작업 시 skip.
+
+### 호환성
+
+- 06.b → 06.c: directives 의 *def layer* 가 모듈/관심사 분류의 입력.
+- 06.b → 06.d: directives 의 *exec layer* 가 sub-tree TODO 의 leaf 책임 매핑.
+- 06.b → 08.f (prompt-trace): directives 의 *visibility layer* 가 deliverable ↔ directive 매핑 source.
+- 06.b → 06.f path-policy: directives.json 자체가 06.f deliverable list 에 포함.

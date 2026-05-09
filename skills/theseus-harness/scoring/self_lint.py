@@ -2275,6 +2275,26 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_intent_decoding(skill_root: Path) -> list[str]:
+    """C-IDC (sprint-38 PR-D) — phase 06.b intent-decoding directives.json schema.
+
+    prompt directive 매트릭스 추출 — 6 type (must/should/avoid/primary/canonical/no_proxy) ×
+    3 layer (def/exec/visibility) + source_quote + source_loc 의무.
+    """
+    issues: list[str] = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    if not p06.exists():
+        return ["phases/06-plan.md 부재"]
+    body = _read(p06)
+    for kw in ["§06.b", "Intent-decoding", "directives.json",
+               "must", "should", "avoid", "primary", "canonical", "no_proxy",
+               "source_quote", "source_loc",
+               "def", "exec", "visibility"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.b '{kw}' 키워드 누락 (sprint-38 PR-D)")
+    return issues
+
+
 def check_research_injection(skill_root: Path) -> list[str]:
     """C-RES (sprint-38 PR-C) — phase 06.a research-injection.
 
@@ -2986,6 +3006,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-CNS", "phases/06,08,14 §canonical inline (sprint-19 cg + sprint-37 PR-AH inline) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
     ("C-PPC", "phases/06-plan.md §06.f (sprint-38 PR-B) — path-policy + user-confirm gate (경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack)", check_path_policy),
     ("C-RES", "phases/06-plan.md §06.a (sprint-38 PR-C) — research-injection (인용 ≥ 3 + 결론 ≤ 3)", check_research_injection),
+    ("C-IDC", "phases/06-plan.md §06.b (sprint-38 PR-D) — intent-decoding directives.json (6 type × 3 layer)", check_intent_decoding),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
