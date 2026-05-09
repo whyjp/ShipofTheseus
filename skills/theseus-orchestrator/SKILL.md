@@ -93,6 +93,13 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.qq — Tournament 다카포 임계 강제 CLI (sprint-41 PR-B 신규)**:
+>   - phase 06 (plan tournament) + phase 08 (impl tournament) 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md <path>` 자동 호출 의무.
+>   - exit 1 (winner ratio < 0.999) 시 round N+1 자동 진행 — agent 자율 skip 금지. 본 CLI 의 verdict 가 phase advance gatekeeper.
+>   - 2 round 후에도 ratio < threshold → ensemble synthesis 시도 ([`../theseus-harness/conventions/ensemble-synthesis-default.md`](../theseus-harness/conventions/ensemble-synthesis-default.md) 정합).
+>   - 3 round 후에도 미달 → frontmatter `dacapo_threshold_reached_after_3_rounds: false` + phase 09 verdict cap 0.95 (정직 기록).
+>   - **증거 회피 사례** — 0510 회차 `tournament-impl-01.md` winner 57/60 = 0.95 → round 2 = 0 자율 lock. 본 9.qq CLI = 차단 (exit 1 → orchestrator 재진입 의무).
+>   - 본 CLI = ouroboros MCP 패러다임 직접 적용 — 컨벤션 본문 = 명세, CLI = 집행. 자율 skip 불가.
 >
 > **위반 처리** — 컨벤션 미달 = self_lint 페이즈 exit fail → 페이즈 재진입 (자율, ≥ 3 회 위반 시만 ack). cold session evidence (sprint-17 슬림화 도입 동기 — v0.9.18~v0.9.22 동안 본 영역이 118 → 287 lines 비대화 + 신규 컨벤션 fabrication 표적화 사고) → `intent/00-violation.md` 추적.
 
