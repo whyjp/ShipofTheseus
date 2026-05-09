@@ -46,9 +46,7 @@
 | deliverable-hurdle-supremacy | meta | [all] | [G3,G4,G5] | standalone |
 | diagrams | mindmap | [01,04,06] | [all] | always |
 | directional-simplification | interview | [05] | [G3,G4,G5] | critique 본문 |
-| domain-failure-patterns | domain | [09] | [all] | 사용자 어댑터 매칭 |
-| domain-model-completeness | quality | [01] | [all] | always |
-| domain-research-stacking | domain | [01] | [all] | 사용자 어댑터 매칭 |
+| domain-pack | domain | [01,09] | [all] | always (model completeness) / 사용자 어댑터 매칭 (research stacking + failure patterns) |
 | ensemble-synthesis-default | tournament | [06,11] | [G4,G5] | 점수차 < 0.05 |
 | evidence-driven-sprint-planning | sprint | [10] | [G3,G4,G5] | always |
 | experimental-control-protocol | quality | [09] | [all] | 실험 산출 |
@@ -106,7 +104,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **82 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **80 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

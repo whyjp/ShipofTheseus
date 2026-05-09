@@ -23,7 +23,7 @@ class SimulationInvariantChecker:
     매 event 처리 후 5 invariant 자동 assert.
     위반 시 RuntimeError + dump frame + last 100 events.
 
-    bs domain-model-completeness §D4 invariant 와 1:1 매핑 의무 —
+    domain-pack §2 D4 invariant 와 1:1 매핑 의무 (sprint-37 PR-AG 통합) —
     domain 차원 invariant 가 sim 차원으로 자동 변환.
     """
 
@@ -155,6 +155,6 @@ d- **bs §D4 매핑 누락** — domain invariant ≠ sim invariant 분리 → d
 ## 7. 호환성
 
 - [`analytical-bound-cross-validation.md`](analytical-bound-cross-validation.md) (af) — closed-form 상한 검증 + 본 컨벤션 런타임 invariant = 두 layer.
-- [`domain-model-completeness.md`](domain-model-completeness.md) (bs) — §D4 도메인 invariant 가 본 컨벤션의 입력.
+- [`domain-pack.md`](domain-pack.md) §2 (sprint-37 PR-AG 통합) — D4 도메인 invariant 가 본 컨벤션의 입력.
 - [`data-structure-invariants.md`](data-structure-invariants.md) (bt) — 데이터 구조 invariant + 본 컨벤션 시뮬 invariant = 정적 vs 동적.
 - [`test-invariants.md`](test-invariants.md) (n) — 테스트 invariant + 본 컨벤션 = 테스트 시점 vs 시뮬 런타임.

@@ -1782,18 +1782,18 @@ def check_dacapo_skip_sentinel(skill_root: Path) -> list[str]:
 
 
 def check_domain_model_completeness(skill_root: Path) -> list[str]:
-    """C-DMC — domain-model-completeness.md (bs, sprint-16 v0.9.22) — Conceptual modelling 만점 push."""
+    """C-DMC (sprint-16 v0.9.22, sprint-37 PR-AG 통합) — domain-pack.md §2 (model completeness) — Conceptual modelling 만점 push."""
     issues: list[str] = []
-    p = skill_root / "conventions" / "domain-model-completeness.md"
+    p = skill_root / "conventions" / "domain-pack.md"
     if not p.exists():
-        issues.append("conventions/domain-model-completeness.md 누락 (bs, v0.9.22)")
+        issues.append("conventions/domain-pack.md 누락 (sprint-37 PR-AG 통합)")
         return issues
     body = _read(p)
     for kw in ["D1 entity catalog", "D2 state space", "D3 transition diagram",
                "D4 invariants", "D5 boundaries", "stateDiagram-v2",
                "conceptual_completeness_grade", "§m Domain Model"]:
         if kw not in body:
-            issues.append(f"domain-model-completeness.md: '{kw}' 키워드 누락")
+            issues.append(f"domain-pack.md: '{kw}' 키워드 누락 (§2 model completeness)")
     return issues
 
 
@@ -2920,7 +2920,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-DCL-SENTINEL", "dacapo-skip-sentinel.md — 3 sentinel 자동 회귀 + 로그 패턴 (bp, v0.9.22)", check_dacapo_skip_sentinel),
     ("C-DCL-FLOW-LOG", "dacapo-flow-trace.md — 단일 마크다운 가시화 누적 갱신 (bq, v0.9.22)", check_dacapo_flow_trace),
     ("C-PLV", "phase-lineage-viewer.md — 프로젝트 전체 phase 00~14 lineage 단일 마크다운 가시화 (br, v0.9.22)", check_phase_lineage_viewer),
-    ("C-DMC", "domain-model-completeness.md — Conceptual modelling 5 차원 (entity/state/transition/invariant/boundary) (bs, v0.9.22)", check_domain_model_completeness),
+    ("C-DMC", "domain-pack.md §2 (model completeness) — Conceptual modelling 5 차원 (entity/state/transition/invariant/boundary) (sprint-16 v0.9.22 + sprint-37 PR-AG 통합)", check_domain_model_completeness),
     ("C-DSI", "data-structure-invariants.md — Invariants/Topology/Access/Bounds 4 항목 (bt, v0.9.22)", check_data_structure_invariants_conv),
     ("C-SPI", "simulation-physical-invariants.md — 5 invariant 런타임 assert (bu, v0.9.22)", check_simulation_physical_invariants),
     ("C-ECP", "experimental-control-protocol.md — IV/DV/CV/N/seed 5 항목 + N≥30 (bv, v0.9.22)", check_experimental_control_protocol),

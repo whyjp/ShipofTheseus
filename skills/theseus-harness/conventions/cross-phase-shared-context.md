@@ -29,7 +29,7 @@ Phase 06 plan 진입 시 + Phase 08 impl 진입 시 + Phase 09 quality gate. 모
 
 | 정보 | 단일 위치 | 인용해야 할 phase |
 |---|---|---|
-| **Domain entity catalog** (D1, [`domain-model-completeness.md`](domain-model-completeness.md) bs) | `intent/01-intent.md` §m 또는 `intent/01-shared-context.md` (sprint-19 신규 위치 후보) | 06 plan, 08 impl, 14 handoff |
+| **Domain entity catalog** (D1, [`domain-pack.md`](domain-pack.md) §2, sprint-37 PR-AG 통합) | `intent/01-intent.md` §m 또는 `intent/01-shared-context.md` (sprint-19 신규 위치 후보) | 06 plan, 08 impl, 14 handoff |
 | **Module interface signatures** | `plan/06-plan.md` § Module interfaces (canonical, canonical-not-stub cg 의무) | 08 impl |
 | **Data structure invariants table** ([`data-structure-invariants.md`](data-structure-invariants.md) bt) | `plan/06-plan.md` § Data Structure Invariants & Topology | 08 impl, 09 quality gate |
 | **TODO DAG** | `plan/06-plan.md` § TODO DAG (T-001..T-NNN) | 08 impl (impl-log T-NN 매핑), 14 handoff |

@@ -133,5 +133,5 @@ d- **Access patterns 누락** — read/write 빈도 + 누가 mutate vs read 만 
 ## 7. 호환성
 
 - [`measurement-contract.md`](measurement-contract.md) (bi) — bounds 가 metric 의 "max possible value" 입력 (saturation 검증).
-- [`domain-model-completeness.md`](domain-model-completeness.md) (bs) — D4 도메인 invariant + 본 컨벤션 데이터 구조 invariant = 두 layer (domain semantic vs data-structural).
+- [`domain-pack.md`](domain-pack.md) §2 (sprint-37 PR-AG 통합) — D4 도메인 invariant + 본 컨벤션 데이터 구조 invariant = 두 layer (domain semantic vs data-structural).
 - [`interface-first-parallel-impl.md`](interface-first-parallel-impl.md) (ae) — 인터페이스 ≥ 5 정의 + 본 컨벤션의 topology 표 = 외부 인터페이스 + 내부 데이터 관계.
