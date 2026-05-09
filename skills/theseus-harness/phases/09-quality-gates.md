@@ -360,7 +360,7 @@ phases/09-quality-gates.md 본문에 §Literal 룰 키워드 박힘 검증.
 a- **fallback 존재로 letter 위반 무시** — letter-strict. fallback 보장 != letter 통과.
 b- **regex 추출 자동화 skip** + 수동 grep — false negative 폭증.
 c- **avoid 의 의도가 *행동 패턴*** (e.g., "no synchronous wait") 인데 regex 로 매치 안 됨 — 행동 패턴은 별도 분류 (sprint-40 검토 후보).
-d- **regex pattern 사용자 ack 0** + 자동 fail — false positive 폭증. ack 게이트 통과 후 enforce.
+d- **regex pattern 사용자 ack 0** (06.f path-policy 정합) + 자동 fail — false positive 폭증. ack 게이트 통과 후 enforce.
 
 ## sprint-39 4 패턴 통합 (트랙 3 마감)
 
