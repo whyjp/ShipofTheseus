@@ -2,11 +2,15 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
-## v0.9.45 — 2026-05-10 (sprint-40 — 100/100 도전 + 메타-허들 활성 트랙 4)
+## v0.9.45 — 2026-05-10 (sprint-40 — 컨벤션 런타임 활성 + 4 게이트 layer 도입 트랙 4)
 
 ### 마일스톤
 
-sprint-39 마감 후 simulation-bench 001 v0.9.44 g4-v2 외부 검증 = **95/100 (94 plateau 첫 돌파)**. 그러나 동시에 *메타-허들 미동작* 발견 (skill_version 0.9.40 stale + viewer 산출물 0 emit + sprint-39 4 게이트 JSON 0 emit). 본 sprint = **메타 4 + 점수 회복 4 PR 통합 (M-1~4 + G-1~4)** → 100/100 재도전 준비.
+sprint-39 마감 후 외부 검증 (simulation-bench 001 g4-v2) 이 본 하네스의 *구조적 결손* 두 축을 동시 노출 :
+- **컨벤션 선언 ≠ 런타임 집행** — skill_version minor silent skip / viewer 산출물 file-existence 미강제 / sprint-39 4 게이트 JSON 자동 emit 미연결. 메모리 [`feedback_convention_runtime_gap.md`] 의 직접 발현.
+- **enforcement layer 의 5 layer 결손** — V6 evidence-bound / numeric drift atomic / heuristic 4-tier 분류 / methodology completeness / phase 13 G4+ invoke step.
+
+본 sprint = 두 축을 8 PR 로 통합 — **범용 (any project), 치밀 (evidence-bound), 밀도 (4-tier 골격)**. 메모리 [`feedback_harness_strengthening_methodology.md`] 의 *"본 하네스 강화 = prompt → 게이트 흐름의 *구조* 변경"* 정합 — 도메인-bench 종속 패치 0.
 
 ### 변경 — 트랙 4 8 PR (PR-A ~ PR-H)
 
@@ -60,17 +64,17 @@ sprint-39 마감 후 simulation-bench 001 v0.9.44 g4-v2 외부 검증 = **95/100
 - **9.oo** — Phase 12 invoke step 강제 (모든 grade)
 - **9.pp** — pre-cold-session-bootup 자동 호출 강제
 
-### 점수 회복 추정 (95 → 99~100/100)
+### 구조 가치 (범용 / 치밀 / 밀도)
 
-| PR | 메타 효과 | 점수 효과 (직접) | 누적 점수 추정 |
-|---|---|---:|---:|
-| 시작 | — | — | 95 |
-| PR-B | M-1 활성 + V6 evidence | +1 (V6 catch + drift 해소) | 96 |
-| PR-C/D | M-2 / M-3 viewer 산출 강제 + invoke | 0 (점수 외, 신뢰 회복) | 96 |
-| PR-E | M-4 게이트 JSON + G-2 numeric drift | +1 (Results 14→15) | 97 |
-| PR-F | G-3 modeling shortcuts + L2 catalogue | +1~2 (Sim correctness 18→19~20) | 98~99 |
-| PR-G | G-4 warmup quantification | +1 (Experimental design 14→15) | 99~100 |
-| **총** | 메타 4 활성 + 점수 회복 4 | **+4~5pt** | **99~100** |
+| PR | 구조 변경 (도메인 독립) | 본 하네스 적용 범위 |
+|---|---|---|
+| PR-B | `skill_version` minor gate (silent skip 차단) + V6 evidence-bound (subprocess × 2 + sha256 + 7 anti-pattern grep) | 모든 결정성 파이프라인 (Python hash() salt 등 일반 패턴) |
+| PR-C/D | viewer 산출물 file-existence 3 단 게이트 + Phase 12/13 invoke step + pre-bootup 자동 호출 | 모든 G3+ 회차 (observability claim ↔ artifact 정합) |
+| PR-E | sprint-39 4 게이트 JSON 골격 자동 emit + numeric drift atomic regen (±0.01%) | 모든 deliverable + summary.json 페어 (도메인 무관) |
+| PR-F | modeling shortcuts 4-tier (gold-standard / defensible-coarse / heuristic / placeholder) + cascading sub-Q (interview keyword 매핑) + L2 도메인 critique 카탈로그 (DES/ML/API/ETL 5 도메인) | 모든 도메인 모델링 (heuristic-vs-optimal axis 추가) |
+| PR-G | methodology-completeness 4 골격 (transient/sample/determinism/horizon) — *도메인-agnostic* enforcement, sub-checklist 는 nfr-derivation 분리 | 모든 도메인 매칭 회차 |
+
+**구조 가치 = enforcement layer 의 닫힘** — *"의사코드 → enforcement"* (메모리 [`feedback_pseudocode_to_enforcement.md`]) 패러다임의 5 layer 정착. 외부 점수 영향은 *결과* 이지 *목표* 아님 — 본 sprint 의 본질은 *컨벤션 선언* 과 *런타임 집행* 의 갭 폐쇄.
 
 (G-5 conceptual exemplary-rubric = sprint-41+ 신규 *질적 게이트* 패러다임 — 본 sprint 범위 외.)
 
