@@ -112,3 +112,83 @@ e- single-pass tournament + rerun=0 → mandatory_first_rerun_satisfied 위반.
 
 `impl/08-impl-log.md` (canonical) 도 phase 06 §canonical 룰 동등 적용 — winner inline ≥80% 또는 shared schema 3 섹션 의무. asof_fingerprint frontmatter 의무. "80%", "shared schema", "asof_fingerprint" 키워드 본문 박힘 강제 (self_lint C-CNS).
 
+
+
+## §08.f Prompt-trace lint (sprint-38 PR-J — 신규 sub-phase)
+
+**phase 08 의 6번째 sub-phase (08-α/β/γ/δ/ε + 08.f).** 모든 deliverable 산출물 → originating directive 역추적 의무. 미추적 산출물 = warn or fail.
+
+### 트리거
+
+phase 08-ε (impl-log) 직후, phase 09 진입 *전*. impl/* 의 모든 deliverable 가 06.b directives.json 의 어느 directive 충족인지 매핑.
+
+### 산출물 — `impl/08-prompt-trace.md`
+
+```markdown
+---
+phase: "08.f"
+prev_fingerprint: "P08E-..."
+fingerprint: "P08F-..."
+deliverables_count: <int>
+mapped_count: <int>
+unmapped_count: 0           # 의무 0
+---
+
+# Phase 08.f Prompt-trace
+
+## Deliverable → Directive 매핑
+
+| Deliverable | Module | Directives 충족 | Source |
+|---|---|---|---|
+| `code/truck.py` | truck | D-001 (must), D-007 (canonical) | 06-directives.json:D-001,D-007 |
+| `code/loader.py` | loader | D-002 (must), D-009 (primary) | 06-directives.json:D-002,D-009 |
+| `code/tests/test_truck.py` | test | D-001 (must) verification | 06-directives.json:D-001 |
+
+## Unmapped deliverables
+
+(부재 — unmapped_count: 0)
+
+## Directive coverage
+
+| Directive | Type | Deliverables 매핑 |
+|---|---|---|
+| D-001 | must | code/truck.py, code/tests/test_truck.py |
+| D-002 | must | code/loader.py |
+| D-007 | canonical | code/truck.py |
+```
+
+### 의무 체크
+
+a- **unmapped_count: 0** — 모든 deliverable 이 ≥ 1 directive 매핑.
+b- **모든 must directive 가 ≥ 1 deliverable** — must directive 가 deliverable 매핑 0 = 구현 누락.
+c- **모든 canonical directive 가 정확히 1 deliverable** — canonical 정의 위치 단일.
+d- **모든 primary directive 가 ≥ 1 deliverable + ≥ 1 measurement** — proxy 우회 차단.
+
+### self_lint C-PT
+
+```python
+def check_prompt_trace(skill_root: Path) -> list[str]:
+    """C-PT (sprint-38 PR-J) — phase 08.f prompt-trace."""
+    issues = []
+    p08 = skill_root / "phases" / "08-implement.md"
+    body = p08.read_text(encoding="utf-8")
+    for kw in ["§08.f", "Prompt-trace", "deliverables_count",
+              "unmapped_count: 0", "Deliverable → Directive 매핑",
+              "Directive coverage"]:
+        if kw not in body:
+            issues.append(f"phases/08-implement.md: §08.f '{kw}' 키워드 누락 (sprint-38 PR-J)")
+    return issues
+```
+
+### 안티 패턴
+
+a- **unmapped_count ≥ 1** — orphan deliverable. 의도 외 코드 가능성 또는 directive 추가 누락.
+b- **must directive deliverable 매핑 0** — 구현 누락. phase 08 재진입.
+c- **canonical directive 가 ≥ 2 deliverable** — single source 위반.
+d- **primary directive 의 measurement 부재** — proxy metric 우회.
+
+### 호환성
+
+- 06.b → 08.f: directives.json 의 visibility layer 가 deliverable ↔ directive 매핑 source.
+- 08.f → 09 quality gate: prompt-trace 가 phase 09 의 *intent-impl 정합* 차원 입력.
+- 08.f → 14 handoff: prompt-trace 의 directive coverage 표가 handoff 의 *완료 보고* 입력.
