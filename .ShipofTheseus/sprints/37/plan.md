@@ -272,17 +272,25 @@ Phase 08 (TDD 5 sub) 유지 + 추가
 
 ## 8. 진행 단계 (본 sprint)
 
-1. ☐ MIGRATION.md 초안 — 90 → N 매핑 표
-2. ☐ 통폐합 대상 컨벤션 파일 삭제 / deprecated tag
-3. ☐ 페이즈 본문 inline 흡수 (각 페이즈 §enter / §exit / §subagent-dispatch / §mindmap / §dacapo / §regression boilerplate)
-4. ☐ INDEX.md 갱신
-5. ☐ HARD-CORE.md 갱신
-6. ☐ self_lint.py 갱신 (C-IDX-1 / C-DIET / C-PHASE-LEN / C-MIGRATION)
-7. ☐ CHANGELOG.md v0.9.42 entry
-8. ☐ SKILL.md + plugin.json bump
-9. ☐ self_lint 회귀 0 검증
-10. ☐ self-eat 검증 — 본 sprint 가 본 룰 (다이어트 + 본체 흡수) 자체에 부합
-11. ☐ PR 생성
+PR 분할안 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3 참조.
+
+| 단계 | PR | 산출 |
+|---|---|---|
+| 1 | ☑ PR-A | 다이어트 분석 보고서 + MIGRATION.md 골격 (기준선) |
+| 2 | ☐ PR-AA | intent-refresh 2→1 |
+| 3 | ☐ PR-AB | aide-tree 2→1 |
+| 4 | ☐ PR-AC | viewer-auto-refresh + viewer-runtime-lifecycle 2→1 |
+| 5 | ☐ PR-AD | mindmap 3→1 |
+| 6 | ☐ PR-AE | regression 2→1 |
+| 7 | ☐ PR-AF | sprint-narrative 3→1 |
+| 8 | ☐ PR-AG | domain 3→1 |
+| 9 | ☐ PR-AH | canonical-not-stub inline → phases/06,08,14 |
+| 10 | ☐ PR-AI | timing inline → phases/00,14 |
+| 11 | ☐ PR-AJ | stack inline → phases/04 |
+| 12 | ☐ PR-AK | self_lint 통합 (C-IDX-1 카운트 + C-MIGRATION 신규 + C-PHASE-LEN 신규) + INDEX.md 정합 + CHANGELOG v0.9.42 + version bump |
+
+**누적 효과** (PR-AA~AJ): -13 컨벤션 (90→77), -1,555 라인.
+**카테고리 C / D 변경 금지** : runtime infra 동반 / core 룰. 본 sprint 범위 외.
 
 ---
 
