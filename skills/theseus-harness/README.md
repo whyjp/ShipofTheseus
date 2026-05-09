@@ -112,6 +112,9 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-95 [`conventions/regression-tdd-gate.md`](conventions/regression-tdd-gate.md) — commit-level test+boot+lint 재실행 + regression_log.json append-only ([`scoring/regression_check.py`](scoring/regression_check.py), sprint-34)
   d-96 [`conventions/intent-optional-disambiguation.md`](conventions/intent-optional-disambiguation.md) — '추가로 / 해도 좋음' 옵셔널 마커 검출 시 4-option 강제 + `intent/04-optional-decisions.md` (sprint-34)
   d-97 [`conventions/prebuilt-shell-runtime-json.md`](conventions/prebuilt-shell-runtime-json.md) — cold session 의 webview / lineage viewer build 0 — `templates/{lineage-viewer,webview}/dist/` prebuilt shell 복사 + JSON injection (sprint-35)
+  d-98 [`conventions/pre-cold-session-bootup.md`](conventions/pre-cold-session-bootup.md) — phase 00 이전 3 viewer 부팅 + 빈 골격 JSON + viewer-runtime up. cold session 시작과 viewer 부팅 분리 (sprint-36)
+  d-99 [`conventions/viewer-auto-refresh.md`](conventions/viewer-auto-refresh.md) — 3 viewer 공통 5초 polling + Page Visibility + 수동 button + ETag 304. observability 본질 상승 (sprint-36)
+  d-100 [`conventions/viewer-runtime-lifecycle.md`](conventions/viewer-runtime-lifecycle.md) — start/stop script + viewer.lock.json (PID/port). cross-platform. PID 누수 차단 (sprint-36)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

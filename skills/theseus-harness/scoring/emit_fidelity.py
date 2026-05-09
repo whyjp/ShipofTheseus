@@ -86,10 +86,11 @@ def _count_subgraphs(flowchart_text: str) -> int:
     return len(re.findall(r"\bsubgraph\s+\w+", flowchart_text))
 
 
-def check_lineage_json(path: Path, grade: str | None = None) -> list[str]:
+def check_lineage_json(path: Path, grade: str | None = None, mode: str = "filled") -> list[str]:
     """lineage.json 의무 키 + 본문 룰 검증.
 
     grade 미지정 시 lineage.json 의 grade 필드 사용. 둘 다 없으면 G4 fallback.
+    mode = "filled" (기본, cold session 진행/종료 후) | "skeleton" (pre-bootup 시점, 빈값 허용).
     """
     errors: list[str] = []
     if not path.exists():
@@ -100,7 +101,7 @@ def check_lineage_json(path: Path, grade: str | None = None) -> list[str]:
     except json.JSONDecodeError as e:
         return [f"lineage.json 파싱 실패: {e}"]
 
-    # 1. top-level 의무 키 enumeration
+    # 1. top-level 의무 키 enumeration — skeleton 도 모든 키 *enumeration* 의무
     for key in LINEAGE_REQUIRED_TOP:
         if key not in data:
             errors.append(f"lineage.json: 의무 키 '{key}' 부재")
@@ -109,7 +110,17 @@ def check_lineage_json(path: Path, grade: str | None = None) -> list[str]:
     if g not in GRADE_ENUM:
         errors.append(f"lineage.json grade '{g}' enum 외 ({GRADE_ENUM})")
 
-    # 2. enum / 빈값 / dummy 검증
+    if mode == "skeleton":
+        # skeleton: 빈값/dummy 허용. enum 만 약하게 검증 + flowchart/gantt 코드 펜스 골격은 필요.
+        flow = data.get("mermaid_flowchart", "")
+        gantt = data.get("mermaid_gantt", "")
+        if "flowchart" not in flow:
+            errors.append("lineage.json (skeleton) mermaid_flowchart 'flowchart' 키워드 부재")
+        if "gantt" not in gantt or "dateFormat" not in gantt:
+            errors.append("lineage.json (skeleton) mermaid_gantt 'gantt' + 'dateFormat' 부재")
+        return errors
+
+    # filled mode 이하 — sprint-35 정책 그대로
     fo = data.get("final_outcome")
     if fo not in FINAL_OUTCOME_ENUM:
         errors.append(f"lineage.json final_outcome '{fo}' enum 외 ({FINAL_OUTCOME_ENUM})")
@@ -199,7 +210,70 @@ WEBVIEW_REQUIRED_TOP = [
 ]
 
 
-def check_webview_json(path: Path, grade: str | None = None) -> list[str]:
+# ─────────────────────────────────────────────────────────────────────
+# dashboard.json (interactive-viewer) 의무 키 (sprint-36)
+# ─────────────────────────────────────────────────────────────────────
+
+DASHBOARD_REQUIRED_TOP = [
+    "schema_version", "project_id", "current_phase",
+    "domain", "domain_label", "matched", "skip",
+    "summary_kpis", "scenarios", "widgets", "raw_artifacts", "narrative",
+]
+WIDGET_TYPES = {"kpi_grid", "topology", "metric_chart", "table", "markdown"}
+
+
+def check_dashboard_json(path: Path, mode: str = "filled") -> list[str]:
+    """dashboard.json (interactive-viewer) 검증. sprint-36 신규.
+
+    mode = "skeleton" 일 때는 빈 list / 도메인 미매칭 모두 허용.
+    """
+    errors: list[str] = []
+    if not path.exists():
+        return [f"dashboard.json 부재: {path}"]
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        return [f"dashboard.json 파싱 실패: {e}"]
+
+    # 1. enumeration
+    for key in DASHBOARD_REQUIRED_TOP:
+        if key not in data:
+            errors.append(f"dashboard.json: 의무 키 '{key}' 부재")
+
+    if mode == "skeleton":
+        # skeleton: 모든 list 비어있어도 됨, domain null 허용
+        return errors
+
+    # filled mode
+    if data.get("skip"):
+        # skip 시 skip_reason 필수
+        if not data.get("skip_reason"):
+            errors.append("dashboard.json skip=true 인데 skip_reason 부재")
+        return errors
+
+    # 비-skip = 도메인 매칭됨 → 산출 의무
+    if not data.get("widgets"):
+        errors.append("dashboard.json widgets 빈 list (skip 도 아님)")
+    else:
+        for i, w in enumerate(data["widgets"]):
+            if not isinstance(w, dict):
+                errors.append(f"dashboard.json widgets[{i}] dict 아님")
+                continue
+            if "type" not in w:
+                errors.append(f"dashboard.json widgets[{i}] type 부재")
+            elif w["type"] not in WIDGET_TYPES:
+                errors.append(f"dashboard.json widgets[{i}] type '{w['type']}' 카탈로그 외 ({WIDGET_TYPES})")
+            if not w.get("title"):
+                errors.append(f"dashboard.json widgets[{i}] title 부재")
+
+    if not data.get("summary_kpis"):
+        errors.append("dashboard.json summary_kpis 빈 list (도메인 매칭 시 ≥ 1 의무)")
+
+    return errors
+
+
+def check_webview_json(path: Path, grade: str | None = None, mode: str = "filled") -> list[str]:
     errors: list[str] = []
     if not path.exists():
         return [f"webview.json 부재: {path}"]
@@ -211,10 +285,17 @@ def check_webview_json(path: Path, grade: str | None = None) -> list[str]:
 
     g = (grade or "G4").upper()
 
-    # 1. 8 탭 키 enumeration
+    # 1. 8 탭 키 enumeration — skeleton 도 enumeration 의무
     for key in WEBVIEW_REQUIRED_TOP:
         if key not in data:
             errors.append(f"webview.json: 의무 키 '{key}' 부재")
+
+    if mode == "skeleton":
+        # skeleton: 빈 list/null 허용. timing.started_at_iso 만 의무 (pre-bootup 시각).
+        timing = data.get("timing", {})
+        if not isinstance(timing, dict) or not timing.get("started_at_iso"):
+            errors.append("webview.json (skeleton) timing.started_at_iso 부재")
+        return errors
 
     # 2. timing
     timing = data.get("timing", {})
@@ -276,28 +357,37 @@ def check_webview_json(path: Path, grade: str | None = None) -> list[str]:
 def cmd_check(args: argparse.Namespace) -> int:
     root = Path(args.root)
     grade = args.grade
+    mode = args.mode or "filled"
 
     errors: list[str] = []
     lineage_path = root / "lineage.json"
     webview_path = root / "webview" / "data" / "webview.json"
+    dashboard_path = root / "interactive-viewer" / "dashboard.json"
 
     if lineage_path.exists():
-        errors.extend(check_lineage_json(lineage_path, grade=grade))
+        errors.extend(check_lineage_json(lineage_path, grade=grade, mode=mode))
     else:
         errors.append(f"lineage.json 부재: {lineage_path}")
 
     if webview_path.exists():
-        errors.extend(check_webview_json(webview_path, grade=grade))
+        errors.extend(check_webview_json(webview_path, grade=grade, mode=mode))
     else:
         errors.append(f"webview/data/webview.json 부재: {webview_path}")
 
+    if dashboard_path.exists():
+        errors.extend(check_dashboard_json(dashboard_path, mode=mode))
+    else:
+        # dashboard 는 phase 13 산출이라 phase 13 이전 미존재 허용. skeleton 모드면 의무.
+        if mode == "skeleton":
+            errors.append(f"interactive-viewer/dashboard.json 부재 (skeleton 의무): {dashboard_path}")
+
     if errors:
-        print(f"emit fidelity FAIL — {len(errors)} 위반:", file=sys.stderr)
+        print(f"emit fidelity FAIL ({mode}) — {len(errors)} 위반:", file=sys.stderr)
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
         return 1
 
-    print("emit fidelity PASS", file=sys.stderr)
+    print(f"emit fidelity PASS ({mode})", file=sys.stderr)
     return 0
 
 
@@ -305,17 +395,25 @@ def cmd_report(args: argparse.Namespace) -> int:
     root = Path(args.root)
     lineage_path = root / "lineage.json"
     webview_path = root / "webview" / "data" / "webview.json"
+    dashboard_path = root / "interactive-viewer" / "dashboard.json"
+    mode = args.mode or "filled"
 
     report = {
+        "mode": mode,
         "lineage": {
             "path": str(lineage_path),
             "exists": lineage_path.exists(),
-            "errors": check_lineage_json(lineage_path, grade=args.grade) if lineage_path.exists() else ["부재"],
+            "errors": check_lineage_json(lineage_path, grade=args.grade, mode=mode) if lineage_path.exists() else ["부재"],
         },
         "webview": {
             "path": str(webview_path),
             "exists": webview_path.exists(),
-            "errors": check_webview_json(webview_path, grade=args.grade) if webview_path.exists() else ["부재"],
+            "errors": check_webview_json(webview_path, grade=args.grade, mode=mode) if webview_path.exists() else ["부재"],
+        },
+        "dashboard": {
+            "path": str(dashboard_path),
+            "exists": dashboard_path.exists(),
+            "errors": check_dashboard_json(dashboard_path, mode=mode) if dashboard_path.exists() else ["부재"],
         },
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -326,19 +424,23 @@ def cmd_samples(args: argparse.Namespace) -> int:
     here = Path(__file__).resolve().parent.parent
     lineage_sample = here / "templates" / "lineage-viewer" / "sample" / "lineage.json"
     webview_sample = here / "templates" / "webview" / "sample" / "webview.json"
+    dashboard_sample = here / "templates" / "interactive-viewer" / "sample" / "dashboard.json"
 
     errors: list[str] = []
     le = check_lineage_json(lineage_sample)
     we = check_webview_json(webview_sample)
     errors.extend([f"lineage sample: {e}" for e in le])
     errors.extend([f"webview sample: {e}" for e in we])
+    if dashboard_sample.exists():
+        de = check_dashboard_json(dashboard_sample)
+        errors.extend([f"dashboard sample: {e}" for e in de])
 
     if errors:
         print(f"sample fidelity FAIL — {len(errors)} 위반:", file=sys.stderr)
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
         return 1
-    print("sample fidelity PASS (lineage + webview)", file=sys.stderr)
+    print("sample fidelity PASS (lineage + webview + dashboard)", file=sys.stderr)
     return 0
 
 
@@ -349,11 +451,13 @@ def main(argv: list[str] | None = None) -> int:
     p_check = sub.add_parser("check", help="cold session 산출물 검증")
     p_check.add_argument("--root", required=True, help=".ShipofTheseus/<proj> 디렉토리")
     p_check.add_argument("--grade", default=None, help="G1~G5 (lineage.json 의 grade 필드 우선)")
+    p_check.add_argument("--mode", default="filled", choices=["filled", "skeleton"], help="filled (기본, cold session 진행 후) | skeleton (pre-bootup, 빈값 허용)")
     p_check.set_defaults(func=cmd_check)
 
     p_report = sub.add_parser("report", help="JSON report 덤프")
     p_report.add_argument("--root", required=True)
     p_report.add_argument("--grade", default=None)
+    p_report.add_argument("--mode", default="filled", choices=["filled", "skeleton"])
     p_report.set_defaults(func=cmd_report)
 
     p_samples = sub.add_parser("samples", help="하네스 sample/ 자체 검증")

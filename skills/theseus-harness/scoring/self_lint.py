@@ -2322,8 +2322,8 @@ def check_hard_core_size(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     n = len(body)
-    if n > 4600:
-        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4600 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가, sprint-35 4250→4400 9.nn 추가, sprint-35-extra 4400→4600 9.oo 추가)")
+    if n > 4900:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4900 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가, sprint-35 4250→4400 9.nn 추가, sprint-35-extra 4400→4600 9.oo 추가, sprint-36 4600→4900 9.pp 추가)")
     for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
         if kw not in body:
             issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
@@ -2645,6 +2645,123 @@ def check_prebuilt_shell_runtime_json(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_pre_cold_session_bootup(skill_root: Path) -> list[str]:
+    """C-PCB (sprint-36 v0.9.41) — pre-cold-session-bootup.md + scoring/pre_bootup.py."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "pre-cold-session-bootup.md"
+    if not conv.exists():
+        return ["conventions/pre-cold-session-bootup.md 부재 (sprint-36)"]
+    body = _read(conv)
+    for kw in ["phase 00 enter 직전", "skeleton", "lineage_skeleton",
+               "webview_skeleton", "interactive_skeleton", "viewer-runtime"]:
+        if kw not in body:
+            issues.append(f"pre-cold-session-bootup.md: '{kw}' 키워드 누락")
+    cli = skill_root / "scoring" / "pre_bootup.py"
+    if not cli.exists():
+        issues.append("scoring/pre_bootup.py 부재 (sprint-36)")
+        return issues
+    pbody = _read(cli)
+    for fn in ["cmd_bootstrap", "cmd_teardown", "cmd_emit_skeleton",
+               "lineage_skeleton", "webview_skeleton", "interactive_skeleton"]:
+        if f"def {fn}" not in pbody:
+            issues.append(f"pre_bootup.py 함수 {fn} 부재")
+    # phase 00 본문에 pre-bootup step 명시
+    p00 = skill_root / "phases" / "00-naming.md"
+    if p00.exists() and "pre_bootup.py bootstrap" not in _read(p00):
+        issues.append("phases/00-naming.md: 'pre_bootup.py bootstrap' step 누락")
+    # phase 14 본문에 teardown 명시
+    p14 = skill_root / "phases" / "14-handoff.md"
+    if p14.exists() and "pre_bootup.py teardown" not in _read(p14):
+        issues.append("phases/14-handoff.md: 'pre_bootup.py teardown' step 누락")
+    return issues
+
+
+def check_viewer_auto_refresh(skill_root: Path) -> list[str]:
+    """C-VAR (sprint-36) — 3 viewer 모두 polling + visibility + manual button."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "viewer-auto-refresh.md"
+    if not conv.exists():
+        return ["conventions/viewer-auto-refresh.md 부재 (sprint-36)"]
+    cbody = _read(conv)
+    for kw in ["polling", "Page Visibility", "manual-refresh",
+               "If-None-Match", "If-Modified-Since", "5초", "status pill"]:
+        if kw not in cbody:
+            issues.append(f"viewer-auto-refresh.md: '{kw}' 키워드 누락")
+    # 3 viewer 의 app.js 에 polling 패턴 박혀있는지
+    for vname, rel in [
+        ("lineage-viewer",     "templates/lineage-viewer/dist/assets/app.js"),
+        ("webview",            "templates/webview/dist/assets/app.js"),
+        ("interactive-viewer", "templates/interactive-viewer/dist/assets/app.js"),
+    ]:
+        p = skill_root / rel
+        if not p.exists():
+            issues.append(f"{rel} 부재")
+            continue
+        body = _read(p)
+        for kw in ["POLL_INTERVAL_MS", "pollOnce", "visibilitychange",
+                   "manual-refresh", "If-None-Match"]:
+            if kw not in body:
+                issues.append(f"{vname}/app.js: '{kw}' 키워드 부재 (auto-refresh)")
+    return issues
+
+
+def check_viewer_runtime_lifecycle(skill_root: Path) -> list[str]:
+    """C-VRL (sprint-36) — viewer-runtime-lifecycle.md + scoring/viewer_runtime.py + scripts."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "viewer-runtime-lifecycle.md"
+    if not conv.exists():
+        return ["conventions/viewer-runtime-lifecycle.md 부재 (sprint-36)"]
+    cbody = _read(conv)
+    for kw in ["viewer.lock.json", "PID", "SIGTERM", "SIGKILL", "stale lock"]:
+        if kw not in cbody:
+            issues.append(f"viewer-runtime-lifecycle.md: '{kw}' 키워드 누락")
+    cli = skill_root / "scoring" / "viewer_runtime.py"
+    if not cli.exists():
+        issues.append("scoring/viewer_runtime.py 부재 (sprint-36)")
+        return issues
+    pbody = _read(cli)
+    for fn in ["cmd_up", "cmd_down", "cmd_status", "_is_pid_alive",
+               "_kill_pid", "_find_free_port"]:
+        if f"def {fn}" not in pbody:
+            issues.append(f"viewer_runtime.py 함수 {fn} 부재")
+    rt = skill_root / "templates" / "viewer-runtime"
+    for f in ["viewer-up.sh", "viewer-up.ps1", "viewer-down.sh", "viewer-down.ps1", "README.md"]:
+        if not (rt / f).exists():
+            issues.append(f"templates/viewer-runtime/{f} 부재")
+    return issues
+
+
+def check_interactive_viewer_prebuilt(skill_root: Path) -> list[str]:
+    """C-IVP (sprint-36) — interactive-viewer prebuilt shell + dashboard.json schema."""
+    issues: list[str] = []
+    dist = skill_root / "templates" / "interactive-viewer" / "dist"
+    sample = skill_root / "templates" / "interactive-viewer" / "sample" / "dashboard.json"
+    for rel in ["index.html", "assets/styles.css", "assets/app.js",
+                "assets/mermaid.min.js", "assets/marked.min.js"]:
+        if not (dist / rel).exists():
+            issues.append(f"templates/interactive-viewer/dist/{rel} 부재")
+    if not sample.exists():
+        issues.append("templates/interactive-viewer/sample/dashboard.json 부재")
+    # shell 본문에 데이터 채널 + CDN 0
+    idx = dist / "index.html"
+    if idx.exists():
+        t = _read(idx)
+        if "window.__DASHBOARD__" not in t and "dashboard.json" not in t:
+            issues.append("interactive-viewer/dist/index.html 데이터 채널 부재")
+        for cdn in ["unpkg.com", "cdn.jsdelivr.net", "cdnjs.cloudflare"]:
+            if cdn in t:
+                issues.append(f"interactive-viewer/dist/index.html: CDN '{cdn}' 사용")
+    # phase 13 본문 갱신
+    p13 = skill_root / "phases" / "13-interactive-viewer.md"
+    if p13.exists():
+        b = _read(p13)
+        for kw in ["prebuilt shell", "dashboard.json schema", "schema-driven",
+                   "kpi_grid", "topology", "metric_chart"]:
+            if kw not in b:
+                issues.append(f"phases/13-interactive-viewer.md: '{kw}' 키워드 누락 (sprint-36)")
+    return issues
+
+
 def check_emit_fidelity_samples(skill_root: Path) -> list[str]:
     """C-EFS (sprint-35 v0.9.40 + extra) — sample/lineage.json + sample/webview.json fidelity.
 
@@ -2819,6 +2936,10 @@ CHECKS: list[tuple[str, str, callable]] = [
     # C-PLV (위) sprint-34 확장 — gantt + 모든 그레이드. 별도 신규 check 없음 (기존 함수 본문 갱신).
     ("C-PSR", "prebuilt-shell-runtime-json + templates/{lineage-viewer,webview}/dist/ — cold session build 0 (sprint-35)", check_prebuilt_shell_runtime_json),
     ("C-EFS", "emit fidelity samples + emit_fidelity.py CLI — 의무 키 + sprint-35-extra 룰 (sprint-35-extra)", check_emit_fidelity_samples),
+    ("C-PCB", "pre-cold-session bootup — phase 00 이전 viewer 부팅 + 빈 골격 (sprint-36)", check_pre_cold_session_bootup),
+    ("C-VAR", "viewer auto-refresh — 3 viewer 폴링 + visibility + manual (sprint-36)", check_viewer_auto_refresh),
+    ("C-VRL", "viewer runtime lifecycle — start/stop + PID lock (sprint-36)", check_viewer_runtime_lifecycle),
+    ("C-IVP", "interactive-viewer prebuilt shell + dashboard.json schema (sprint-36)", check_interactive_viewer_prebuilt),
 ]
 
 

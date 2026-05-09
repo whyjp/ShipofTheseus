@@ -85,6 +85,9 @@
 | plan-tree | planning | [06] | [G3,G4,G5] | always |
 | polyglot-code-quality | quality | [09] | [all] | always |
 | prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit |
+| pre-cold-session-bootup | meta | [all] | [all] | phase 00 enter 직전 |
+| viewer-auto-refresh | meta | [all] | [all] | 3 viewer 공통 |
+| viewer-runtime-lifecycle | meta | [all] | [all] | cold session start/end |
 | premortem-friction | interview | [02,03,07] | [G3,G4,G5] | always |
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive Viewer · theseus-harness</title>
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <header class="iv-header">
+    <div class="iv-header-row">
+      <div class="iv-title-block">
+        <span class="iv-eyebrow">theseus-harness</span>
+        <h1 class="iv-title">Interactive&nbsp;Viewer</h1>
+        <span class="iv-subtitle">프로젝트 결과 observability · 도메인 dashboard</span>
+      </div>
+      <div class="iv-header-actions">
+        <span class="iv-status-pill" data-bind="refresh_status" title="자동 새로고침 상태">
+          <span class="iv-status-dot"></span><span class="iv-status-text">대기</span>
+        </span>
+        <button class="iv-btn-refresh" data-action="manual-refresh" type="button" title="수동 새로고침">
+          <span aria-hidden="true">↻</span>
+          <span class="iv-btn-label">새로고침</span>
+        </button>
+        <button class="iv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
+          <span class="iv-theme-icon-light" aria-hidden="true">&#9728;</span>
+          <span class="iv-theme-icon-dark" aria-hidden="true">&#9790;</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="iv-meta">
+      <div class="iv-meta-hero">
+        <span class="iv-meta-hero-id" data-bind="project_id">—</span>
+        <span class="iv-meta-hero-domain">
+          <span class="iv-domain-badge" data-bind="domain_label">도메인 미매칭</span>
+        </span>
+      </div>
+      <div class="iv-meta-grid">
+        <div class="iv-meta-item">
+          <span class="iv-meta-label">Phase</span>
+          <span class="iv-meta-value" data-bind="current_phase">—</span>
+        </div>
+        <div class="iv-meta-item">
+          <span class="iv-meta-label">Status</span>
+          <span class="iv-meta-value" data-bind="status">—</span>
+        </div>
+        <div class="iv-meta-item">
+          <span class="iv-meta-label">Last update</span>
+          <span class="iv-meta-value lv-mono" data-bind="last_update">—</span>
+        </div>
+        <div class="iv-meta-item">
+          <span class="iv-meta-label">Schema</span>
+          <span class="iv-meta-value lv-mono" data-bind="schema_version">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="iv-main">
+    <section class="iv-section iv-skip-banner" data-section="skip" hidden>
+      <div class="iv-skip-content">
+        <h2 class="iv-skip-title">페이즈 13 skip — 도메인 미매칭</h2>
+        <p class="iv-skip-note" data-bind="skip_reason">사유 미기록</p>
+      </div>
+    </section>
+
+    <section class="iv-section" data-section="kpis">
+      <header class="iv-section-head">
+        <span class="iv-section-num">01</span>
+        <div class="iv-section-text">
+          <h2 class="iv-section-title">Summary KPIs</h2>
+          <p class="iv-section-note">프로젝트 결과의 핵심 지표 — 도메인별 default + 사용자 정의.</p>
+        </div>
+      </header>
+      <div class="iv-kpi-grid" data-target="kpi_grid">
+        <div class="iv-empty">데이터 미주입 — phase 08 이후 자동 갱신</div>
+      </div>
+    </section>
+
+    <section class="iv-section" data-section="widgets">
+      <header class="iv-section-head">
+        <span class="iv-section-num">02</span>
+        <div class="iv-section-text">
+          <h2 class="iv-section-title">Domain Widgets</h2>
+          <p class="iv-section-note">도메인 카탈로그가 매칭한 default dashboard. JSON schema-driven (topology / metric_chart / table / markdown).</p>
+        </div>
+      </header>
+      <div class="iv-widget-stack" data-target="widget_stack">
+        <div class="iv-empty">데이터 미주입</div>
+      </div>
+    </section>
+
+    <section class="iv-section" data-section="scenarios">
+      <header class="iv-section-head">
+        <span class="iv-section-num">03</span>
+        <div class="iv-section-text">
+          <h2 class="iv-section-title">Scenario Compare</h2>
+          <p class="iv-section-note">시나리오별 결과 비교 — DES / ML / API 도메인의 multi-run 비교.</p>
+        </div>
+      </header>
+      <div class="iv-table-frame">
+        <table class="iv-table" data-table="scenarios">
+          <thead><tr><th>Scenario</th><th>Status</th><th>Key Metric</th><th>Note</th></tr></thead>
+          <tbody><tr><td colspan="4" class="iv-empty">데이터 미주입</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="iv-section" data-section="raw_artifacts">
+      <header class="iv-section-head">
+        <span class="iv-section-num">04</span>
+        <div class="iv-section-text">
+          <h2 class="iv-section-title">Raw Artifacts</h2>
+          <p class="iv-section-note">PNG / GIF / HTML 정적 산출물 — 도메인별 viewer 가 임베드 못하는 경우 fallback.</p>
+        </div>
+      </header>
+      <div class="iv-artifact-grid" data-target="artifact_grid">
+        <div class="iv-empty">데이터 미주입</div>
+      </div>
+    </section>
+
+    <section class="iv-section" data-section="narrative">
+      <header class="iv-section-head">
+        <span class="iv-section-num">05</span>
+        <div class="iv-section-text">
+          <h2 class="iv-section-title">Narrative</h2>
+          <p class="iv-section-note">결과 해석 / 핵심 발견 / 한계. markdown 본문.</p>
+        </div>
+      </header>
+      <div class="iv-narrative" data-target="narrative_body">
+        <div class="iv-empty">데이터 미주입</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="iv-footer">
+    <span>theseus-harness · interactive-viewer · prebuilt shell v0.9.41</span>
+    <span class="iv-footer-sep">·</span>
+    <span>데이터 source: <code>window.__DASHBOARD__</code> 우선, fallback <code>./dashboard.json</code></span>
+    <span class="iv-footer-sep">·</span>
+    <span>auto-refresh: <code data-bind="refresh_mode">대기</code></span>
+  </footer>
+
+  <script src="./assets/mermaid.min.js"></script>
+  <script src="./assets/marked.min.js"></script>
+  <script src="./assets/app.js?v=0.9.41-1"></script>
+</body>
+</html>
