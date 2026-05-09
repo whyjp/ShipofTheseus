@@ -117,7 +117,7 @@ mindmap
 ## 4. 호환성
 
 - v0.9.6 [`diagrams.md`](diagrams.md) — 단일 시퀀스 anti-pattern 명시 + per-module fan-out cross-ref
-- v0.9.10 [`aide-tree-symmetry.md`](aide-tree-symmetry.md) — universe 별 sequenceDiagram 의무 + 본 컨벤션 = universe 안 *모듈* fan-out (직교)
+- [`aide-tree.md`](aide-tree.md) §3 (sprint-37 PR-AB 통합) — universe 별 sequenceDiagram 의무 + 본 컨벤션 = universe 안 *모듈* fan-out (직교)
 - v0.9.12 [`multiverse-impl-fan-out.md`](multiverse-impl-fan-out.md) — universe 단위 fan-out + 본 컨벤션 모듈 단위 fan-out (universe × 모듈 = 2D fan-out)
 
 ## 5. 본 컨벤션이 *케이스 종속이 아닌* 이유

@@ -68,10 +68,10 @@ c- Union candidate 가 *기존 winner 와 동급* 이면 union 채택 (covers mo
 | 페이즈 | tournament 활성 | blind rerun 활성 |
 |---|:-:|:-:|
 | 06 plan-tree | ✅ default | ✅ G4+ |
-| 02 doc-review (multi-reviewer) | ⚠️ aide-tree-multi-phase 도입 시 | ✅ |
-| 05 critique (multi-critic) | ⚠️ aide-tree-multi-phase 도입 시 | ✅ |
-| 08 impl strategy | ⚠️ aide-tree-multi-phase 도입 시 | ✅ |
-| 11 regression bisect (multi-hypothesis) | ⚠️ aide-tree-multi-phase 도입 시 | ✅ |
+| 02 doc-review (multi-reviewer) | ⚠️ aide-tree §2 (multi-phase) 활성 시 | ✅ |
+| 05 critique (multi-critic) | ⚠️ aide-tree §2 (multi-phase) 활성 시 | ✅ |
+| 08 impl strategy | ⚠️ aide-tree §2 (multi-phase) 활성 시 | ✅ |
+| 11 regression bisect (multi-hypothesis) | ⚠️ aide-tree §2 (multi-phase) 활성 시 | ✅ |
 
 ## 5. 안티 패턴
 
