@@ -2,6 +2,116 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.39 — 2026-05-09 (sprint-34 — runtime 단조성 + sub-todo 병렬 + regression + gantt + optional 4-option)
+
+### 마일스톤
+
+사용자 직접 지시 — *5 개선안 일괄 적용*. 본 sprint = "기존 자산 80% 기반 위에 정확한 갭만 채우기" 패턴. 기존 컨벤션 *재발명* 없음, 신규 4 + 기존 1 확장.
+
+1. **runtime entry-time 단조성 게이트** — v0.9.22 forgery (페이즈 01-06 백필 + frontmatter created_at 9-12 분 위조) 를 *runtime* 시점에 차단. `check_cold_session.py` (sprint-32, post-hoc) 와 layer 직교.
+2. **sub-todo level 병렬 트리거** — 모듈 단위 `should_subdivide` (sub-agents.md) 위에 *T-NNN 단위* fine-grained TODO DAG 위상 정렬.
+3. **commit-level TDD 재실행 게이트** — phase 08 5 sub-phase TDD (페이즈 단위) 위에 매 sub-impl + dacapo step F + sprint iter 단위 재실행.
+4. **lineage Mermaid gantt + 모든 그레이드** — `phase-lineage-viewer.md` (br) 확장. flowchart 만 → flowchart + gantt. G3+ 만 → G1~G5 모두.
+5. **optional 의도 4-option 강제** — "추가로 / 해도 좋음 / additional" 옵셔널 마커 검출 시 silent drop 차단 (포함-필수 / cheap-only / defer / drop).
+
+### 변경 — 신규 컨벤션 4 (`conventions/`)
+
+#### `phase-state-machine.md` (sprint-34 신규, core, [all] phases × [all] grades)
+
+- `state/phase_state.json` 라이프사이클 (init/enter/exit/validate/status)
+- 단조성 — entered_at strict-greater than 직전 모든 timestamps
+- frontmatter `created_at` cross-check — [entered_at, exited_at] 윈도 검증
+- v0.9.22 forgery 패턴 직접 차단
+
+#### `subagent-trigger.md` (sprint-34 신규, core, [06,08] × [G3,G4,G5])
+
+- TODO DAG (HARD-RULE 9.a item 3) → Kahn 위상 정렬 → level 단위 병렬 그룹
+- 모드 추천: G2=sequential / G3=조건부 parallel / G4=parallel / G5=competition
+- cyclic 검출 시 phase 06 자동 회귀
+- `sub-agents.md` (모듈) 와 layer 직교 (TODO 단위 fine-grained)
+
+#### `regression-tdd-gate.md` (sprint-34 신규, quality, [08,10,11] × [all])
+
+- `state/regression_log.json` append-only 누적 (test + boot + lint 3 단계)
+- 직전 known-good vs 최신 비교 → regression 검출
+- phase 11 bisect 의 입력 source
+- phase 08 5 sub-phase TDD (페이즈 단위) 와 layer 직교 (commit 단위)
+
+#### `intent-optional-disambiguation.md` (sprint-34 신규, interview, [01,04] × [all])
+
+- 옵셔널 마커 카탈로그 (한국어 9 + 영어 8 패턴)
+- clarifier 가 검출 시 4-option 강제 (1. material / 2. cheap-only / 3. defer / 4. drop)
+- `intent/04-optional-decisions.md` (G2+ 의무 산출물 신규)
+- silent drop ("추가로 X 도" → "X 안 해도 됨") 회귀 차단
+
+### 변경 — 기존 컨벤션 확장 1
+
+#### `phase-lineage-viewer.md` (br, v0.9.22 + sprint-34 확장)
+
+- `applies-to-grades`: `[G3,G4,G5]` → `[all]` (G1/G2 도 minimal 활성)
+- §1.5 Mermaid `gantt` chart 절 신규 — `state/phase_state.json` 의 entered_at/exited_at 자동 시각화
+- §7 self_lint C-PLV — gantt + dateFormat 검증 추가
+- §12 그레이드 활성 표 신규 — G1 (P01+P14 minimal), G2 (P01+P04+P06+P08+P09+P14), G3+ (풀)
+- 동기 — 백필/위조는 *간단한 프로젝트* 일수록 발견 안 됨, 모든 그레이드 lineage 의무
+
+### 변경 — `scoring/` 신규 3 + 확장 1
+
+- **`scoring/phase_state.py` 신규** — 5 subcommand (init/enter/exit/validate/status), 단조성 + frontmatter cross-check, 9/9 pytest PASS
+- **`scoring/sub_agent_dispatch.py` 확장** — `analyze-todos` subcommand, Kahn 위상 정렬 + 그레이드별 모드 추천, 5/5 신규 pytest PASS
+- **`scoring/regression_check.py` 신규** — 3 subcommand (run/last/compare), shell=True 크로스플랫폼, 8/8 pytest PASS
+
+총 신규 22 pytest. 전체 131/131 PASS.
+
+### 변경 — `self_lint.py` 신규 4 checks + 1 확장
+
+- **C-PSM 신규** — phase-state-machine.md + phase_state.py 의무 함수 + 키워드
+- **C-STT 신규** — subagent-trigger.md + analyze-todos 의무 함수 + 키워드 (`Kahn` 포함)
+- **C-RTG 신규** — regression-tdd-gate.md + regression_check.py 의무 함수 + 키워드
+- **C-IOD 신규** — intent-optional-disambiguation.md 키워드 + interview.md cross-link + 4-option 라벨
+- **C-PLV 확장** — gantt + dateFormat + axisFormat + phase_state.py + G1/G2 minimal 키워드 추가
+
+108 → 108 checks (5 신규 — C-PLV 는 본문 갱신만), all_ok=True.
+
+### 변경 — `conventions/INDEX.md`
+
+89 → 93 컨벤션 router 행:
+- `intent-optional-disambiguation` 신규 (interview / [01,04] / [all] / optional marker 검출)
+- `phase-state-machine` 신규 (core / [all] / [all] / phase enter / phase exit)
+- `regression-tdd-gate` 신규 (quality / [08,10,11] / [all] / every code change)
+- `subagent-trigger` 신규 (core / [06,08] / [G3,G4,G5] / phase 06 exit)
+- `phase-lineage-viewer` grades `[G3,G4,G5]` → `[all]`
+
+### 변경 — orchestrator HARD-RULE 9 lookup
+
+- 모든 phase enter/exit → `phase-state-machine` (sprint-34 신규)
+- phase 01 / 04 → `intent-optional-disambiguation` 추가
+- phase 06 → `subagent-trigger` 추가
+- phase 08 → `subagent-trigger` + `regression-tdd-gate` 추가
+- phase 10 → `regression-tdd-gate` 추가
+- phase 11 → `regression-tdd-gate` 신규 entry
+- phase 14 → `phase-lineage-viewer (sprint-34 gantt + 모든 그레이드)` 갱신
+
+### bump
+
+- plugin.json: 0.9.38 → 0.9.39 + description 슬림 (200 char 한도 정합)
+- skills/theseus-harness/SKILL.md frontmatter: 0.9.38 → 0.9.39 + description 슬림
+- skills/theseus-orchestrator/SKILL.md frontmatter: 0.9.38 → 0.9.39
+- skills/theseus-harness/README.md d-93 ~ d-96 신규 + d-90 INDEX 행 count 갱신
+
+### 누적 (sprint-13 ~ sprint-34, 22 sprint)
+
+- v0.9.19 → v0.9.39
+- 89 → 93 conventions
+- self_lint 104/104 → 108/108 PASS
+- pytest 109 → 131 PASS (신규 22)
+
+### 후속 (sprint-35+)
+
+- v0.9.39 cold session 외부 검증 — 신규 4 컨벤션 + gantt + optional 4-option 실제 발현 측정
+- phase-state-machine.py orchestrator runtime 통합 — phase 진입/종료마다 자동 호출 (HARD-CORE.md 9.mm 후보)
+- regression_check.py — phase 04 Q-D8 verification commands 자동 매핑 (현재 수동 `--test-cmd`)
+- (사용자 명시 시) 별 의제 개시
+
 ## v0.9.38 — 2026-05-06 (sprint-33 — validator invoke step explicit + mining/C-IDX-3 deferral 정리)
 
 ### 마일스톤

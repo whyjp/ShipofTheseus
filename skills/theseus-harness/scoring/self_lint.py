@@ -1869,7 +1869,7 @@ def check_idiomatic_code_quality(skill_root: Path) -> list[str]:
 
 
 def check_phase_lineage_viewer(skill_root: Path) -> list[str]:
-    """C-PLV — phase-lineage-viewer.md (br, sprint-16 v0.9.22) — 프로젝트 전체 lineage 가시화."""
+    """C-PLV — phase-lineage-viewer.md (br, sprint-16 v0.9.22 + sprint-34 / v0.9.39 gantt 확장)."""
     issues: list[str] = []
     p = skill_root / "conventions" / "phase-lineage-viewer.md"
     if not p.exists():
@@ -1881,12 +1881,113 @@ def check_phase_lineage_viewer(skill_root: Path) -> list[str]:
         "Da Capo loop 요약", "Sentinel 위반 이벤트",
         "update_phase_lineage", "final_outcome", "HANDOFF",
         "bypass", "drill-down", "페이즈 04 답안 매핑",
+        # sprint-34 / v0.9.39 — gantt 확장 + 모든 그레이드
+        "gantt", "dateFormat", "axisFormat", "phase_state.py",
+        "G1", "G2", "minimal",
     ]:
         if kw not in body:
             issues.append(f"phase-lineage-viewer.md: '{kw}' 키워드 누락")
     skill = _read(skill_root / "SKILL.md")
     if "phase-lineage-viewer" not in skill:
         issues.append("SKILL.md: phase-lineage-viewer.md 인덱스 누락")
+    return issues
+
+
+def check_phase_state_machine(skill_root: Path) -> list[str]:
+    """C-PSM — phase-state-machine.md + scoring/phase_state.py (sprint-34 / v0.9.39)."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "phase-state-machine.md"
+    py = skill_root / "scoring" / "phase_state.py"
+    if not conv.exists():
+        issues.append("conventions/phase-state-machine.md 누락 (sprint-34)")
+        return issues
+    if not py.exists():
+        issues.append("scoring/phase_state.py 누락 (sprint-34)")
+        return issues
+    cbody = _read(conv)
+    pbody = _read(py)
+    for kw in [
+        "단조성", "frontmatter", "forgery", "phase_state.json",
+        "schema_version", "monotonic", "check_cold_session",
+    ]:
+        if kw not in cbody:
+            issues.append(f"phase-state-machine.md: '{kw}' 키워드 누락")
+    for fn in [
+        "cmd_init", "cmd_enter", "cmd_exit", "cmd_validate", "cmd_status",
+        "validate_state", "_read_frontmatter_created_at",
+    ]:
+        if f"def {fn}" not in pbody:
+            issues.append(f"scoring/phase_state.py: 의무 함수 {fn} 부재")
+    if "SCHEMA_VERSION" not in pbody:
+        issues.append("scoring/phase_state.py: SCHEMA_VERSION 상수 부재")
+    return issues
+
+
+def check_subagent_trigger(skill_root: Path) -> list[str]:
+    """C-STT — subagent-trigger.md + sub_agent_dispatch.py analyze-todos (sprint-34 / v0.9.39)."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "subagent-trigger.md"
+    py = skill_root / "scoring" / "sub_agent_dispatch.py"
+    if not conv.exists():
+        issues.append("conventions/subagent-trigger.md 누락 (sprint-34)")
+        return issues
+    cbody = _read(conv)
+    pbody = _read(py)
+    for kw in [
+        "analyze-todos", "TODO DAG", "위상 정렬", "병렬 그룹",
+        "max_parallel", "cyclic", "Kahn",
+    ]:
+        if kw not in cbody:
+            issues.append(f"subagent-trigger.md: '{kw}' 키워드 누락")
+    for fn in ["parse_todos", "topological_levels", "analyze_todos", "cmd_analyze_todos"]:
+        if f"def {fn}" not in pbody:
+            issues.append(f"sub_agent_dispatch.py: 함수 {fn} 부재 (sprint-34 신규)")
+    return issues
+
+
+def check_regression_tdd_gate(skill_root: Path) -> list[str]:
+    """C-RTG — regression-tdd-gate.md + scoring/regression_check.py (sprint-34 / v0.9.39)."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "regression-tdd-gate.md"
+    py = skill_root / "scoring" / "regression_check.py"
+    if not conv.exists():
+        issues.append("conventions/regression-tdd-gate.md 누락 (sprint-34)")
+        return issues
+    if not py.exists():
+        issues.append("scoring/regression_check.py 누락 (sprint-34)")
+        return issues
+    cbody = _read(conv)
+    pbody = _read(py)
+    for kw in [
+        "regression_log.json", "append-only", "commit-level", "회귀 검출",
+        "dacapo step F", "sprint iteration",
+    ]:
+        if kw not in cbody:
+            issues.append(f"regression-tdd-gate.md: '{kw}' 키워드 누락")
+    for fn in ["evaluate_entry", "detect_regression", "cmd_run", "cmd_last", "cmd_compare"]:
+        if f"def {fn}" not in pbody:
+            issues.append(f"regression_check.py: 함수 {fn} 부재")
+    return issues
+
+
+def check_intent_optional_disambiguation(skill_root: Path) -> list[str]:
+    """C-IOD — intent-optional-disambiguation.md (sprint-34 / v0.9.39)."""
+    issues: list[str] = []
+    conv = skill_root / "conventions" / "intent-optional-disambiguation.md"
+    if not conv.exists():
+        issues.append("conventions/intent-optional-disambiguation.md 누락 (sprint-34)")
+        return issues
+    body = _read(conv)
+    for kw in [
+        "옵셔널 마커", "Q-OPT", "optional-decisions.md",
+        "cheap-only", "추가로", "additional", "역해석", "silent drop",
+    ]:
+        if kw not in body:
+            issues.append(f"intent-optional-disambiguation.md: '{kw}' 키워드 누락")
+    if "interview.md" not in body:
+        issues.append("intent-optional-disambiguation.md: interview.md cross-link 누락")
+    if "1. 포함" not in body or "4. drop" not in body:
+        issues.append("intent-optional-disambiguation.md: 4-option 라벨 본문 누락")
     return issues
 
 
@@ -2221,8 +2322,8 @@ def check_hard_core_size(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     n = len(body)
-    if n > 4200:
-        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4200 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가)")
+    if n > 4250:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4250 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가)")
     for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
         if kw not in body:
             issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
@@ -2555,6 +2656,12 @@ CHECKS: list[tuple[str, str, callable]] = [
     # 확장 또는 STRONG/WEAK section 정합 후 활성화. 함수 자체는 호출 가능 (운영자 manual run).
     ("C-IDX-4", "INDEX applies-to-grades vocabulary (sprint-31 v0.9.36) — G1-G5/all 외 invalid grade token 차단", check_idx_grade_vocabulary),
     ("C-CSV", "check_cold_session.py (sprint-32 v0.9.37) — cold session artifact validator (mandatory rerun + NEW universes + sentinel + cap)", check_cold_session_validator),
+    # ─── sprint-34 / v0.9.39 신규 5 checks ───────────────────────────────────────────────
+    ("C-PSM", "phase-state-machine.md + scoring/phase_state.py — runtime 단조성 게이트 (백필/위조 차단, sprint-34)", check_phase_state_machine),
+    ("C-STT", "subagent-trigger.md + sub_agent_dispatch.py analyze-todos — TODO DAG 위상 정렬 (sprint-34)", check_subagent_trigger),
+    ("C-RTG", "regression-tdd-gate.md + scoring/regression_check.py — commit-level test+boot+lint 재실행 (sprint-34)", check_regression_tdd_gate),
+    ("C-IOD", "intent-optional-disambiguation.md — '추가로/해도 좋음' 4-option 강제 (sprint-34)", check_intent_optional_disambiguation),
+    # C-PLV (위) sprint-34 확장 — gantt + 모든 그레이드. 별도 신규 check 없음 (기존 함수 본문 갱신).
 ]
 
 

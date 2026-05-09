@@ -16,11 +16,11 @@ if "%~1"=="--check-stack-only" (
   exit /b 0
 )
 
-echo ==^> self_lint (35 체크)
+echo ==^> self_lint (108 체크, sprint-34 v0.9.39)
 python skills\theseus-harness\scoring\self_lint.py || exit /b 1
 
 echo.
-echo ==^> pytest 99 케이스
+echo ==^> pytest 131 케이스 (sprint-34 신규 22)
 python -m pytest skills\theseus-harness\scoring\ -q || exit /b 1
 
 echo.

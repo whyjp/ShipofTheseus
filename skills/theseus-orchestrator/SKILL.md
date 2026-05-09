@@ -1,6 +1,6 @@
 ---
 name: theseus-orchestrator
-version: 0.9.38
+version: 0.9.39
 description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
 ---
 
@@ -49,16 +49,18 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >
 > | 페이즈 | 컨벤션 (lookup) |
 > | --- | --- |
-> | 01 의도 | mindmap-richness-default · deep-semantic-intent · domain-model-completeness · intent-completeness · mindmap-centrality |
-> | 04 인터뷰 | commentary-policy · runtime-prereq · interview |
+> | 모든 phase enter/exit | **phase-state-machine** (sprint-34 신규, runtime 단조성 게이트 + frontmatter forgery 차단) |
+> | 01 의도 | mindmap-richness-default · deep-semantic-intent · domain-model-completeness · intent-completeness · mindmap-centrality · **intent-optional-disambiguation** (sprint-34, optional marker 검출 시) |
+> | 04 인터뷰 | commentary-policy · runtime-prereq · interview · **intent-optional-disambiguation** (sprint-34, Q-OPT-NN + optional-decisions.md) |
 > | 04 → 05 (refresh 1) | **intent-refresh-post-interview** (sprint-17 by, 01-{1..4}-intent + 01-additional 의무) |
 > | 05 → 06 (refresh 2) | **intent-refresh-post-critique** (sprint-19 ci, **HARD-RULE 9.kk**, 01-{1..4}-intent.v2 + 04-refreshed + 05-refreshed 의무, 사용자 ack 없음 자율) |
 > | 05 비평 | directional-simplification · premortem-friction · domain-failure-patterns · parallel-cold-review |
-> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** |
-> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** · dead-code-zero · magic-number-traceability · submission-portability · reproducibility-doublecheck |
+> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** · **subagent-trigger** (sprint-34, phase 06 exit 시 analyze-todos 호출) |
+> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** · dead-code-zero · magic-number-traceability · submission-portability · reproducibility-doublecheck · **subagent-trigger** (sprint-34) · **regression-tdd-gate** (sprint-34, 매 sub-impl + dacapo step F) |
 > | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) |
-> | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · sprint-regression-loop · budget-saturation-loop · sprint-score-delta-tracking · evidence-driven-sprint-planning · cross-universe-lesson-distillation |
-> | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer · decision-support-framing |
+> | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · sprint-regression-loop · budget-saturation-loop · sprint-score-delta-tracking · evidence-driven-sprint-planning · cross-universe-lesson-distillation · **regression-tdd-gate** (sprint-34, sprint iteration trigger) |
+> | 11 회귀 바이섹트 | regression-derived-lint-rule-autogen · **regression-tdd-gate** (sprint-34, regression_log binary search) |
+> | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer (**sprint-34 gantt + 모든 그레이드**) · decision-support-framing |
 >
 > **9.a~c 본문 의무 (페이즈 06/08 산출물 구조)** — 본 entry skill 에 직접 박힘 (실 코드 외부 repo 따라 구현 가능 의무):
 > - 9.a `plan/06-plan.md` 본문 8 항목 의무 (별도 impl-design.md 안 만듦, plan 단일 source — plan + impl-log 응집 보존):

@@ -3,6 +3,24 @@
 ## 한 줄 요약
 **의도 문서의 모호함을 사용자와 직접 해소하는 유일한 페이즈.** [`../conventions/interview.md`](../conventions/interview.md) 컨벤션을 예외 없이 따른다 — 두괄식·1회 1질의·객관식 *보기* 4개 이하 (`AskUserQuestion` 옵션 한도). **누적 질문 *수* 는 무한** — 4 는 옵션 수 한도지 질문 갯수 한도가 아니다 (의도 모호하면 자유롭게 추가 질의).
 
+## 첫 동작 — optional marker 검출 + Q-OPT-NN 발사 (sprint-34 v0.9.39)
+
+clarifier 가 phase 01 mindmap + 사용자 답변 본문에서 옵셔널 마커 (`추가로` / `해도\s*좋` / `있으면\s*좋` / `가능하면` / `필요\s*시` / `additional` / `optional` / `if\s+possible` / `could\s+be\s+nice` / `nice[\s-]to[\s-]have` / `bonus` 등) 매치 시 *반드시* 4-option `Q-OPT-NN` 발사 — silent drop 차단:
+
+```
+1. 포함 — material  (반드시 포함, scope 핵심)
+2. 포함 — cheap-only (구현 비용 낮을 때만, scope creep 시 drop)
+3. 다음 페이즈로 defer (현 sprint 미포함, sprint NN+1 검토)
+4. drop (명시적으로 scope 외)
+```
+
+답안은 `intent/04-optional-decisions.md` (G2+ 의무 산출) 에 1~4 라벨 + `confirmed_at` timestamp + 원 발화 인용 박힘.
+
+- 마커 검출 ≥ 1 AND Q-OPT 발사 0 → phase 04 재진입 강제
+- 마커 검출 0 AND optional-decisions.md 부재 → OK (본 sub-step 비활성)
+
+자세한 마커 카탈로그 + 4-option 형식 + sentinel: [`../conventions/intent-optional-disambiguation.md`](../conventions/intent-optional-disambiguation.md).
+
 ## 입력
 - `intent/01-intent.md`
 - `intent/03-comprehension.md` (재이해에서 표류한 지점)

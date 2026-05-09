@@ -133,3 +133,90 @@ def test_merge_all_dip_violation_halts():
     rc, out = _run_merge(results, mode="competition")
     assert rc != 0
     assert out.get("halt") is True
+
+
+# ─── analyze-todos 테스트 (sprint-34 / v0.9.39) ──────
+
+def _run_analyze(plan_text: str, grade: int = 4) -> tuple[int, dict]:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(plan_text)
+        path = Path(f.name)
+    proc = subprocess.run(
+        [sys.executable, str(DISPATCH), "analyze-todos", "--plan-md", str(path), "--grade", str(grade)],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    return proc.returncode, json.loads(proc.stdout)
+
+
+PLAN_FIXTURE_PARALLEL = """
+## TODO 목록
+
+- **T-001 — auth skeleton**
+  - 의존: []
+  - 완료 조건: package
+- **T-010 — test harness**
+  - 의존: []
+- **T-020 — login flow**
+  - 의존: [T-001, T-010]
+- **T-021 — signup flow**
+  - 의존: [T-001, T-010]
+- **T-080 — E2E hardening**
+  - 의존: [T-020, T-021]
+"""
+
+
+def test_analyze_topological_levels():
+    rc, out = _run_analyze(PLAN_FIXTURE_PARALLEL, grade=4)
+    assert rc == 0
+    assert out["total_todos"] == 5
+    # level 0: T-001, T-010 (deps 비어 있음 — 병렬)
+    assert sorted(out["groups"][0]) == ["T-001", "T-010"]
+    # level 1: T-020, T-021 (T-001 + T-010 의존, 둘이 병렬)
+    assert sorted(out["groups"][1]) == ["T-020", "T-021"]
+    # level 2: T-080
+    assert out["groups"][2] == ["T-080"]
+    assert out["max_parallel"] == 2
+    assert out["levels"] == 3
+    assert out["recommended_mode"] == "parallel"
+
+
+def test_analyze_grade2_sequential():
+    rc, out = _run_analyze(PLAN_FIXTURE_PARALLEL, grade=2)
+    assert rc == 0
+    assert out["recommended_mode"] == "sequential"
+
+
+def test_analyze_grade5_competition_when_wide():
+    plan = """
+- **T-001 — a**
+  - 의존: []
+- **T-002 — b**
+  - 의존: []
+- **T-003 — c**
+  - 의존: []
+"""
+    rc, out = _run_analyze(plan, grade=5)
+    assert rc == 0
+    assert out["max_parallel"] == 3
+    assert out["recommended_mode"] == "competition"
+
+
+def test_analyze_no_todos_fails():
+    rc, out = _run_analyze("# 빈 plan\n본문\n", grade=4)
+    assert rc == 1
+    assert out["total_todos"] == 0
+
+
+def test_analyze_detects_cycle():
+    plan = """
+- **T-001 — a**
+  - 의존: [T-002]
+- **T-002 — b**
+  - 의존: [T-001]
+"""
+    rc, out = _run_analyze(plan, grade=4)
+    assert rc == 1
+    assert "T-001" in out["cyclic"]
+    assert "T-002" in out["cyclic"]
+    assert "cyclic" in out["fan_out_recommendation"]
+

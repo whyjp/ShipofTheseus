@@ -18,11 +18,11 @@ if [[ "${1:-}" == "--check-stack-only" ]]; then
   exit 0
 fi
 
-echo "==> self_lint (컨벤션 / 교차 링크 / 버전 / 컴파일 / 인코딩 가드 — 35 체크)"
+echo "==> self_lint (108 체크, sprint-34 v0.9.39 — 신규 C-PSM/C-STT/C-RTG/C-IOD)"
 python skills/theseus-harness/scoring/self_lint.py
 
 echo
-echo "==> pytest (score.py 12 + self_lint 4 = 16 케이스)"
+echo "==> pytest (131 케이스, sprint-34 신규 22 — phase_state 9 + analyze-todos 5 + regression_check 8)"
 python -m pytest skills/theseus-harness/scoring/ -q
 
 echo
