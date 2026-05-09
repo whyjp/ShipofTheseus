@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.39",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 93 컨벤션 / 15 페이즈 / 18 에이전트. AIDE 멀티버스 + 다카포 + sprint trinity. sprint-34 신규: phase_state runtime 게이트 + analyze-todos + regression_check + lineage gantt + optional 4-option.",
+  "version": "0.9.40",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 90 컨벤션 / 15 페이즈 / 18 에이전트. AIDE 멀티버스 + 다카포 + sprint trinity. sprint-35 신규: prebuilt shell + JSON injection (cold session 의 webview/lineage build 0, bun 의존 제거, vendored mermaid+marked).",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"

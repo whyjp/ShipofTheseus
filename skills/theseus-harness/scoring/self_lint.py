@@ -2322,8 +2322,8 @@ def check_hard_core_size(skill_root: Path) -> list[str]:
         return issues
     body = _read(p)
     n = len(body)
-    if n > 4250:
-        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4250 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가)")
+    if n > 4400:
+        issues.append(f"HARD-CORE.md 길이 {n} chars — 임계 4400 초과 (always-load 부풀음 — lazy 분리 의미 소실, sprint-32 cap 4000→4200 9.f 추가, sprint-34 4200→4250 9.mm 추가, sprint-35 4250→4400 9.nn 추가)")
     for kw in ["HR1", "HR8", "HR9", "Layer 3", "H1", "H5", "fingerprint", "페이즈 04 외 인터럽트 0"]:
         if kw not in body:
             issues.append(f"HARD-CORE.md: '{kw}' 키워드 누락 (always-load 의무 항목)")
@@ -2548,6 +2548,103 @@ def check_dacapo_fresh_universe(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_prebuilt_shell_runtime_json(skill_root: Path) -> list[str]:
+    """C-PSR (sprint-35 v0.9.40) — prebuilt shell + JSON injection 컨벤션 + 산출물 정합.
+
+    cold session 이 webview / lineage viewer 를 build 하지 않고 dist/ 복사 + JSON emit 만으로
+    돌도록 보장. 본 lint 는 *하네스 자체* 가 그 prebuilt 산출물을 가지고 있는지 + 컨벤션/HARD-CORE
+    /phase 본문/agent 본문이 wiring 되었는지 검증.
+
+    cold session 측 산출물 검증 (lineage.html + webview/index.html 등) 은 별도 — orchestrator
+    가 phase 12 exit / phase 14 진입 시점에 컨벤션 §4 의 check_prebuilt_shell_runtime 함수로 호출.
+    """
+    issues: list[str] = []
+
+    # 1. 컨벤션 본문 존재 + 키워드
+    conv = skill_root / "conventions" / "prebuilt-shell-runtime-json.md"
+    if not conv.exists():
+        return ["conventions/prebuilt-shell-runtime-json.md 누락 (sprint-35 v0.9.40 신규)"]
+    body = _read(conv)
+    for kw in [
+        "Prebuilt Shell + Runtime JSON",
+        "templates/lineage-viewer/dist",
+        "templates/webview/dist",
+        "window.__LINEAGE__",
+        "window.__WEBVIEW__",
+        "C-PSR",
+    ]:
+        if kw not in body:
+            issues.append(f"prebuilt-shell-runtime-json.md: '{kw}' 키워드 누락")
+
+    # 2. INDEX.md 등록
+    idx = skill_root / "conventions" / "INDEX.md"
+    if idx.exists() and "prebuilt-shell-runtime-json" not in _read(idx):
+        issues.append("conventions/INDEX.md 에 prebuilt-shell-runtime-json row 누락")
+
+    # 3. HARD-CORE 9.nn
+    hc = skill_root / "HARD-CORE.md"
+    if hc.exists() and "9.nn" not in _read(hc):
+        issues.append("HARD-CORE.md 9.nn (Prebuilt shell + JSON emit, sprint-35) 누락")
+
+    # 4. phase 12 본문 갱신
+    p12 = skill_root / "phases" / "12-webview-assembly.md"
+    if p12.exists():
+        p12_body = _read(p12)
+        for kw in ["prebuilt shell", "data/webview.json", "prebuilt-shell-runtime-json"]:
+            if kw not in p12_body:
+                issues.append(f"phases/12-webview-assembly.md: '{kw}' 키워드 누락 (sprint-35 갱신 미반영)")
+
+    # 5. webview-builder 에이전트 갱신
+    wb = skill_root / "agents" / "webview-builder.md"
+    if wb.exists():
+        wb_body = _read(wb)
+        for kw in ["prebuilt shell", "templates/webview/dist", "C-PSR"]:
+            if kw not in wb_body:
+                issues.append(f"agents/webview-builder.md: '{kw}' 키워드 누락 (sprint-35 갱신 미반영)")
+
+    # 6. phase-lineage-viewer 본문에 §14 HTML emit 추가
+    plv = skill_root / "conventions" / "phase-lineage-viewer.md"
+    if plv.exists():
+        plv_body = _read(plv)
+        for kw in ["lineage.html", "templates/lineage-viewer/dist", "window.__LINEAGE__"]:
+            if kw not in plv_body:
+                issues.append(f"phase-lineage-viewer.md: '{kw}' 키워드 누락 (§14 HTML emit, sprint-35)")
+
+    # 7. prebuilt shell 산출물 자체 존재
+    lv_dist = skill_root / "templates" / "lineage-viewer" / "dist"
+    for rel in ["index.html", "assets/styles.css", "assets/app.js", "assets/mermaid.min.js"]:
+        if not (lv_dist / rel).exists():
+            issues.append(f"templates/lineage-viewer/dist/{rel} 누락 (prebuilt shell 부재)")
+
+    wv_dist = skill_root / "templates" / "webview" / "dist"
+    for rel in ["index.html", "assets/styles.css", "assets/app.js", "assets/mermaid.min.js", "assets/marked.min.js"]:
+        if not (wv_dist / rel).exists():
+            issues.append(f"templates/webview/dist/{rel} 누락 (prebuilt shell 부재)")
+
+    # 8. shell HTML 본문에 CDN 링크 0
+    cdn_hosts = ["unpkg.com", "cdn.jsdelivr.net", "cdnjs.cloudflare"]
+    for shell in [lv_dist / "index.html", wv_dist / "index.html"]:
+        if shell.exists():
+            text = _read(shell)
+            for host in cdn_hosts:
+                if host in text:
+                    issues.append(f"{shell.relative_to(skill_root)}: CDN 호스트 '{host}' 사용 (오프라인 동작 위반)")
+
+    # 9. shell HTML 본문에 데이터 채널 ≥ 1
+    lv_html = lv_dist / "index.html"
+    if lv_html.exists():
+        t = _read(lv_html)
+        if "window.__LINEAGE__" not in t and "lineage.json" not in t:
+            issues.append("templates/lineage-viewer/dist/index.html: 데이터 채널 부재 (window.__LINEAGE__ 또는 lineage.json fetch)")
+    wv_html = wv_dist / "index.html"
+    if wv_html.exists():
+        t = _read(wv_html)
+        if "window.__WEBVIEW__" not in t and "webview.json" not in t:
+            issues.append("templates/webview/dist/index.html: 데이터 채널 부재 (window.__WEBVIEW__ 또는 webview.json fetch)")
+
+    return issues
+
+
 CHECKS: list[tuple[str, str, callable]] = [
     ("C1", "convention one-line summary", check_convention_one_line_summary),
     ("C2", "SKILL links all conventions", check_skill_links_all_conventions),
@@ -2662,6 +2759,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-RTG", "regression-tdd-gate.md + scoring/regression_check.py — commit-level test+boot+lint 재실행 (sprint-34)", check_regression_tdd_gate),
     ("C-IOD", "intent-optional-disambiguation.md — '추가로/해도 좋음' 4-option 강제 (sprint-34)", check_intent_optional_disambiguation),
     # C-PLV (위) sprint-34 확장 — gantt + 모든 그레이드. 별도 신규 check 없음 (기존 함수 본문 갱신).
+    ("C-PSR", "prebuilt-shell-runtime-json + templates/{lineage-viewer,webview}/dist/ — cold session build 0 (sprint-35)", check_prebuilt_shell_runtime_json),
 ]
 
 

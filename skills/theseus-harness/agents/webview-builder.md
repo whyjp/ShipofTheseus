@@ -1,78 +1,87 @@
 # 에이전트 — 웹뷰 빌더 (theseus-view)
-> **권장 모델: Sonnet** — 표준 bun + react 스캐폴드 채우기. ([`../conventions/models.md`](../conventions/models.md))
+> **권장 모델: Sonnet** — 표준 prebuilt shell 복사 + JSON 합본 산출. ([`../conventions/models.md`](../conventions/models.md))
 
 ## 한 줄 요약
-**theseus-view (스킬 진행 추적) 만 책임 — `.ShipofTheseus/<프로젝트>/webview/` 에 bun 기반 be4fe + fe 인터랙티브 웹뷰를 생성한다.** 모듈 구성도, 설계 의도, 구현 의도, 단위 테스트, E2E, 스프린트 타임라인 6 탭을 항상 만든다 — 스프린트 결과가 비어 있어도 빈 상태로 탭은 노출.
+**theseus-view (스킬 진행 추적) 만 책임 — `templates/webview/dist/` 의 prebuilt shell 을 `.ShipofTheseus/<프로젝트>/webview/` 로 *복사* + 8 탭 데이터를 단일 `data/webview.json` 으로 emit.** v0.9.40 부터 cold session 안에서 build 하지 않는다 ([`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md)).
 
-**프로젝트 결과 시각화는 페이즈 13 의 interactive-viewer-builder 에 위임** — 본 에이전트는 메타-스킬 대시보드(페이즈 진행도, 산출물 트리, 게이트 결과) 만 담당한다.
+**프로젝트 결과 시각화는 페이즈 13 의 interactive-viewer-builder 에 위임** — 본 에이전트는 메타-스킬 대시보드 (페이즈 진행도, 산출물 트리, 게이트 결과) 만 담당.
 
 ## 입력
 - `.ShipofTheseus/<프로젝트>/` 의 모든 산출물.
-- 시작 스캐폴드: [`../templates/webview/`](../templates/webview/).
+- prebuilt shell : [`../templates/webview/dist/`](../templates/webview/dist/).
+- (옵션) dev mode src : [`../templates/webview/`](../templates/webview/) 의 `src/`, `server.ts`, `package.json`, `vite.config.ts`.
 
 ## 동작
 
-1- 스캐폴드 복사 → `.ShipofTheseus/<프로젝트>/webview/`.
-2- `package.json` 의 `name` 을 프로젝트명으로 교체.
-3- `server.ts` (be4fe, Hono 기반) 가 다음 엔드포인트를 노출:
-  a- `GET /api/intent` — `intent/*.md` 파싱 결과.
-  b- `GET /api/plan` — `plan/06-plan.md` 의 TODO DAG (노드/엣지 JSON).
-  c- `GET /api/impl` — `impl/08-impl-log.md` + `quality/09-quality-gate.md`.
-  d- `GET /api/sprints` — 모든 `sprints/NN/inputs.json` + `report.md` 합본.
-  e- `GET /api/timing` — `timing/start.json` + 현재 시각 + 누적 경과 (라이브).
-  f- `GET /api/tests/unit` — Go `go test -json` + `bun test --reporter=json` 정규화.
-  g- `GET /api/tests/e2e` — Playwright JSON reporter 결과.
-  h- `GET /api/events` (SSE) — 파일 변경 감시 → 클라이언트 라이브 갱신.
-4- fe (`src/App.tsx`) 가 6 탭을 항상 렌더 — 데이터 없으면 "아직 산출물 없음" 안내.
-5- TimingHeader 컴포넌트가 모든 페이지 상단에 라이브 시계.
-6- `bun install` 실행 후 `bun run dev` 가 기동되는지 확인.
+1- **shell 복사** — `cp -r ../templates/webview/dist/* .ShipofTheseus/<proj>/webview/`. 결과:
+   ```
+   webview/
+   ├── index.html
+   ├── data/             # ← 비어 있음, 단계 2 에서 채움
+   └── assets/
+       ├── styles.css
+       ├── app.js
+       ├── mermaid.min.js
+       └── marked.min.js
+   ```
+2- **데이터 합본 작성** — `webview/data/webview.json` 에 8 탭 데이터를 단일 객체로 emit. 스키마 :
+   - `schema_version`, `emit_mode: "prebuilt"`, `project_id`, `final_phase`, `timing`
+   - `state` — `state.json` snapshot (status / current_phase / pending_artifacts / ...)
+   - `plan.module_graph_mermaid` — `plan/06-plan.md` 의 모듈 의존 flowchart Mermaid 본문
+   - `intent` — `intent/{01-intent, 04-questions, 05-decisions}.md` 의 path → 본문 dict
+   - `impl` + `quality` — `impl/08-impl-log.md` + `quality/09-quality-gate.md` 본문
+   - `tests.unit` — sprints/NN/unit.json 정규화 (sprint / total / pass / fail / failures)
+   - `tests.e2e` — sprints/NN/e2e.json 정규화 (sprint / scenarios[name, status, steps, note])
+   - `sprints` — sprints/NN/{report, inputs, score}.{md,json} 합본 (sprint / score / outcome / bisect)
+   - `runtime.prereq` + `runtime.boot_result` — `intent/04-runtime-prereq.md` + boot_check.py 결과
+   상세 스키마 = [`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §3.2.
+3- **inline 주입 (옵션)** — file:// 환경 / 단일 파일 배포 시 `webview/index.html` 의 `<script src="./assets/app.js"></script>` *직전* 에 `<script>window.__WEBVIEW__ = <JSON>;</script>` 박음. 이 경우 `data/webview.json` 은 별도 emit 안 해도 됨 (shell 의 우선순위 = window > fetch).
+4- **dev mode src 복사 (옵션)** — contributor 가 라이브 폴링/SSE 가 필요한 경우만 :
+   ```
+   cp ../templates/webview/{package.json,server.ts,tsconfig.json,vite.config.ts} webview/
+   cp -r ../templates/webview/src webview/src
+   ```
+   사용자가 `bun install && bun run dev` 직접 기동.
 
-## 6 탭 강제
+## 8 탭 강제 (shell 이 prebuilt 이므로 데이터만 책임)
 
-| 탭 | 데이터 소스 | 인터랙션 |
-| -- | --------- | ------- |
-| 모듈 구성도 | `/api/plan` | 노드 클릭 → TODO 상세 |
-| 설계 의도 | `/api/intent` | 섹션 접기/펼치기 |
-| 구현 의도 | `/api/impl` | 게이트별 expand, 위반 라인 클릭 |
-| 단위 테스트 | `/api/tests/unit` | 실패 클릭 → 트레이스 |
-| E2E 테스트 | `/api/tests/e2e` | 시나리오 클릭 → 스크린샷·스텝 |
-| 스프린트 | `/api/sprints` | 차원별 점수 차트, 회귀 바이섹트 링크 |
+shell `index.html` 에 8 탭이 *이미 박혀* 있다 — 본 에이전트는 데이터 채우기만 책임.
 
-**한 탭이라도 누락/숨김 = 검수 fail.**
+| 탭 | 데이터 키 | 빈 상태 표시 |
+| -- | -------- | ----------- |
+| 진행 상태 | `state` | "—" + "데이터 미주입" |
+| 모듈 구성도 | `plan.module_graph_mermaid` | "데이터 미주입" placeholder |
+| 설계 의도 | `intent` (file → markdown) | "데이터 없음" |
+| 구현 의도 | `impl` + `quality` | "데이터 없음" |
+| 단위 테스트 | `tests.unit` | "데이터 미주입" 행 |
+| E2E 테스트 | `tests.e2e` | "데이터 미주입" 행 |
+| 스프린트 | `sprints` | "데이터 미주입" 행 + 빈 SVG |
+| Runtime | `runtime` | "—" |
 
-## 시간 정보 (필수)
+**한 탭이라도 데이터 키 누락 = self_lint C-PSR fail.** 산출물 자체가 없으면 빈 list / null 로라도 채워야 한다 ("아직 산출물 없음" 안내가 그려짐).
 
-a- TimingHeader 컴포넌트 — 모든 페이지 상단.
-b- 5 초 폴링으로 누적 경과 라이브 갱신.
-c- 페이즈 진행 중에도 사용자가 시간 체감.
+## Mermaid + Markdown 자동 렌더 (shell 책임)
 
-## 시각화 권고
+shell 은 :
+- `data.plan.module_graph_mermaid` 를 모듈 구성도 탭의 `<pre class="mermaid">` 에 주입 후 `mermaid.run()`.
+- `data.intent` / `data.impl` / `data.quality` 의 markdown 을 `marked.parse()` 로 HTML 변환 + ```mermaid` 코드 펜스 자동 감지 → `<pre class="mermaid">` 로 변환 후 `mermaid.run()`.
 
-a- 모듈 구성도: `react-flow` (DAG) 또는 단순 `dagre` + svg.
-b- 점수 차트: `recharts` 또는 `victory` 라인.
-c- 마크다운 렌더: `react-markdown` + `remark-gfm`.
+본 에이전트는 *원본 markdown / Mermaid 본문 그대로* 데이터에 박는다 — 렌더 변환은 shell 의 책임.
 
-## Mermaid 자동 렌더 (필수)
-
-[`../conventions/diagrams.md`](../conventions/diagrams.md) 가 마인드맵·유즈케이스·시퀀스를 모두 Mermaid 코드 펜스로 산출하므로, fe 가 마크다운 렌더 시 ` ```mermaid ` 펜스를 자동 감지해 SVG 로 그려야 한다:
-
-a- `mermaid` npm 패키지 (5.x+) 를 dependencies 에 추가.
-b- `react-markdown` 의 `code` 컴포넌트를 오버라이드 — `language-mermaid` 클래스 감지 시 `mermaid.render()` 호출 후 결과 SVG 를 dangerouslySetInnerHTML 로 표시.
-c- 다크 모드 호환을 위해 `mermaid.initialize({ theme: 'base' })` 후 본문 색상은 CSS 변수로.
-d- ImplIntent / DesignIntent / ModuleMap / Sprints 4 탭 모두에서 Mermaid 펜스가 동작.
-
-오프라인 동작 강제 — CDN 링크 금지 (build-and-config.md §6 의 .gitattributes 와 함께 이식성 보장).
+오프라인 동작 강제 — `mermaid.min.js` + `marked.min.js` 가 `assets/` 에 vendored. CDN 링크 금지 ([`../conventions/build-and-config.md`](../conventions/build-and-config.md) §6 의 .gitattributes 와 정합).
 
 ## 하드 룰
 
-a- 정적 HTML 만 생성 = fail (인터랙션 요구 미충족).
+a- 정적 HTML 만 생성 = fail. shell 복사 + JSON emit 둘 다 의무.
 b- "TODO: E2E 탭 차후" 같은 미완성 표시 = fail (항상 생성 룰).
-c- 빌드 시점에 fs 로 파일 박아넣기 = fail. 런타임 폴링/감시여야 새 산출물이 자동 반영.
-d- 외부 네트워크 의존 (CDN 마크다운 렌더 등) = fail. `bun install` 후 오프라인 동작해야 함.
+c- shell 본문에 산출물 절대경로 박아넣기 = fail. 데이터는 항상 fetch / inline.
+d- 외부 네트워크 의존 (CDN 마크다운 렌더 등) = fail. dist 의 vendored UMD 만.
+e- cold session 안에서 `bun run build` 실행 = fail ([`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §1 의 핵심 변경).
 
 ## 완료 조건
 
-a- `webview/` 트리 생성 완료.
-b- `bun install && bun run dev` 가 기동 (5173 포트 또는 자유 포트).
-c- 6 탭 모두 데이터 로드 (해당 산출물이 있는 한 — 없으면 안내 메시지).
-d- TimingHeader 가 모든 페이지에 보이고 라이브 갱신.
+a- `webview/index.html` + `webview/data/webview.json` (또는 inline 주입) 둘 다 산출.
+b- `webview/assets/` 에 mermaid.min.js + marked.min.js + styles.css + app.js 4 파일 존재.
+c- 8 탭 데이터 키 모두 존재 (해당 산출물이 없으면 빈 list / null).
+d- `webview/index.html` 본문에 `unpkg.com` / `cdn.jsdelivr.net` / `cdnjs.cloudflare` 0 회.
+e- self_lint C-PSR 통과.

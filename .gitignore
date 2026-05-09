@@ -9,7 +9,11 @@ __pycache__/
 node_modules/
 .env
 .env.local
+# build output dirs ignored — *but* harness 의 prebuilt shell (sprint-35 v0.9.40)
+# 은 committed asset 이므로 templates/*/dist/ 는 예외.
 dist/
+!skills/theseus-harness/templates/*/dist/
+!skills/theseus-harness/templates/*/dist/**
 .vite/
 bun.lockb
 .omc/

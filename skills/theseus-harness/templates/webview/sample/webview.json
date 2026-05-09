@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.9.40",
+  "emit_mode": "prebuilt",
+  "project_id": "synthetic_mine_throughput_001",
+  "final_phase": 14,
+  "timing": {
+    "started_at_iso": "2026-05-09T13:00:00+09:00",
+    "ended_at_iso": "2026-05-09T19:35:00+09:00",
+    "duration_seconds": 23700
+  },
+  "state": {
+    "status": "complete",
+    "current_phase": null,
+    "active_skill": null,
+    "active_agent": null,
+    "current_universe": null,
+    "current_module": null,
+    "current_sub_depth": 0,
+    "last_completed_phase": "14",
+    "completed_count": 15,
+    "total_estimated": 15,
+    "pending_artifacts": []
+  },
+  "plan": {
+    "module_graph_mermaid": "flowchart TB\n  classDef io fill:#dbeafe,stroke:#1e40af\n  classDef core fill:#dcfce7,stroke:#166534\n  classDef out fill:#fef9c3,stroke:#854d0e\n  data_io[data_io]:::io\n  graph_mod[graph]:::core\n  registry[registry]:::core\n  truck[truck]:::core\n  simulation[simulation]:::core\n  outputs[outputs]:::out\n  invariants[invariants]:::core\n  data_io --> graph_mod\n  graph_mod --> registry\n  registry --> truck\n  truck --> simulation\n  simulation --> outputs\n  simulation --> invariants"
+  },
+  "intent": {
+    "01-intent.md": "# 의도\n\n광산 시뮬레이션 처리량 추정 — DES (이산 사건 시뮬레이션) 기반.\n\n```mermaid\nmindmap\n  root((광산-DES))\n    무엇을\n      처리량 추정\n      병목 식별\n    제약\n      45 min budget\n      no-internet\n```\n\n## 핵심 KPI\n- throughput (tonnes/hour)\n- bottleneck identification (cap-1 edges)\n",
+    "04-questions.md": "## Q-G1\n- grade: G4\n\n## Q-D1\n- stack: Python\n- libs: SimPy, networkx, matplotlib\n"
+  },
+  "impl": {
+    "08-impl-log.md": "# Implementation Log\n\n## TODO 진행\n\n| TODO | Status | Notes |\n|---|---|---|\n| T-001 | ✓ | data_io module |\n| T-002 | ✓ | graph module |\n| T-003 | ✓ | simulation core |\n\n## Modules\n- `data_io`\n- `graph`\n- `registry`\n- `truck`\n- `simulation`\n- `outputs`\n- `invariants`\n"
+  },
+  "quality": "# Quality Gate\n\n## 9 게이트 결과\n\n| Gate | Status |\n|---|---|\n| 1 의도 정합 | ✓ |\n| 2 SOLID | ✓ |\n| 3 테스트 | ✓ 24/24 |\n| 4 NFR | ✓ |\n| 5 runtime | ✓ |\n| 6 dacapo | ✓ |\n| 7 lineage | ✓ |\n| 8 fingerprint | ✓ |\n| 9 budget | 0.78 |\n\n**proceed**\n",
+  "tests": {
+    "unit": [
+      { "sprint": "01", "total": 8, "pass": 8, "fail": 0, "failures": [] },
+      { "sprint": "02", "total": 12, "pass": 12, "fail": 0, "failures": [] },
+      { "sprint": "03", "total": 24, "pass": 24, "fail": 0, "failures": [] }
+    ],
+    "e2e": [
+      {
+        "sprint": "03",
+        "scenarios": [
+          { "name": "baseline scenario", "status": "pass", "steps": 12, "note": "throughput=850 tph" },
+          { "name": "ramp_closed scenario", "status": "pass", "steps": 14, "note": "throughput=720 tph" },
+          { "name": "crusher_double scenario", "status": "pass", "steps": 11, "note": "throughput=1240 tph" }
+        ]
+      }
+    ]
+  },
+  "sprints": [
+    { "sprint": "01", "score": 0.832, "outcome": "PASS", "bisect": null },
+    { "sprint": "02", "score": 0.891, "outcome": "PASS", "bisect": null },
+    { "sprint": "03", "score": 0.942, "outcome": "PASS", "bisect": null },
+    { "sprint": "04", "score": 0.967, "outcome": "PASS", "bisect": null },
+    { "sprint": "05", "score": 0.940, "outcome": "REGRESSION", "bisect": "sprints/05/bisect.md" },
+    { "sprint": "06", "score": 0.971, "outcome": "PASS", "bisect": null }
+  ],
+  "runtime": {
+    "prereq": {
+      "mode": "real",
+      "secrets_count": 0,
+      "boot_command": "python -m simulation.main",
+      "env_hash": "sha256:e91c4a..."
+    },
+    "boot_result": {
+      "boot_exit": 0,
+      "healthz_status": 200,
+      "elapsed_ms": 1240
+    }
+  }
+}

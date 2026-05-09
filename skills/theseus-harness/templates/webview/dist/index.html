@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>theseus-view · phase progression</title>
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <header class="tv-header">
+    <div class="tv-header-row">
+      <div class="tv-title-block">
+        <h1 class="tv-title">theseus-view</h1>
+        <span class="tv-subtitle">phase 진행 추적 · 산출물 트리 · 게이트 결과</span>
+      </div>
+      <div class="tv-header-actions">
+        <span class="tv-mode" data-bind="emit_mode">prebuilt</span>
+        <button class="tv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
+          <span class="tv-theme-icon-light" aria-hidden="true">&#9728;</span>
+          <span class="tv-theme-icon-dark" aria-hidden="true">&#9790;</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="tv-timing">
+      <span><strong>프로젝트:</strong> <code class="tv-mono" data-bind="project_id">—</code></span>
+      <span><strong>시작:</strong> <code class="tv-mono" data-bind="started_at_iso">—</code></span>
+      <span><strong>총 경과:</strong> <span data-bind="duration_human">—</span></span>
+      <span><strong>최종 페이즈:</strong> <span data-bind="final_phase">—</span> / 14</span>
+      <span><strong>상태:</strong> <span class="tv-badge" data-bind="status">—</span></span>
+    </div>
+  </header>
+
+  <nav class="tv-tabs" role="tablist">
+    <button class="tv-tab active" role="tab" data-tab="progress">진행 상태</button>
+    <button class="tv-tab" role="tab" data-tab="modules">모듈 구성도</button>
+    <button class="tv-tab" role="tab" data-tab="design">설계 의도</button>
+    <button class="tv-tab" role="tab" data-tab="impl">구현 의도</button>
+    <button class="tv-tab" role="tab" data-tab="unit">단위 테스트</button>
+    <button class="tv-tab" role="tab" data-tab="e2e">E2E 테스트</button>
+    <button class="tv-tab" role="tab" data-tab="sprints">스프린트</button>
+    <button class="tv-tab" role="tab" data-tab="runtime">Runtime</button>
+  </nav>
+
+  <main class="tv-main">
+    <section class="tv-panel active" data-panel="progress">
+      <h2 class="tv-panel-title">진행 상태</h2>
+      <p class="tv-panel-note">cold session 종료 시점의 state.json — 라이브 폴링이 필요하면 dev mode (server.ts) 사용</p>
+      <div class="tv-table-frame">
+        <table class="tv-table" data-table="progress">
+          <tbody>
+            <tr><td class="tv-label">상태</td><td><span class="tv-badge" data-bind="status">—</span></td></tr>
+            <tr><td class="tv-label">현재 페이즈</td><td data-bind="current_phase">—</td></tr>
+            <tr><td class="tv-label">활성 스킬</td><td data-bind="active_skill">—</td></tr>
+            <tr><td class="tv-label">활성 에이전트</td><td data-bind="active_agent">—</td></tr>
+            <tr><td class="tv-label">현재 우주</td><td data-bind="current_universe">—</td></tr>
+            <tr><td class="tv-label">서브모듈</td><td data-bind="current_module">—</td></tr>
+            <tr><td class="tv-label">마지막 완료</td><td data-bind="last_completed_phase">—</td></tr>
+            <tr><td class="tv-label">진행률</td><td data-bind="progress_pct">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tv-pending-block">
+        <h3 class="tv-h3">대기 산출물</h3>
+        <ul class="tv-pending-list" data-list="pending_artifacts"><li class="tv-empty">없음</li></ul>
+      </div>
+    </section>
+
+    <section class="tv-panel" data-panel="modules">
+      <h2 class="tv-panel-title">모듈 구성도</h2>
+      <p class="tv-panel-note">plan/06-plan.md 의 TODO DAG (Mermaid)</p>
+      <div class="tv-mermaid-frame">
+        <pre class="mermaid tv-mermaid-target" data-mermaid-target="modules">flowchart LR
+  Empty[데이터 미주입]
+  classDef pending fill:#f1f5f9,stroke:#94a3b8,stroke-dasharray:4 4
+  class Empty pending</pre>
+      </div>
+    </section>
+
+    <section class="tv-panel" data-panel="design">
+      <h2 class="tv-panel-title">설계 의도</h2>
+      <p class="tv-panel-note">intent/{01-intent, 04-questions, 05-decisions}.md</p>
+      <div class="tv-md-list" data-md-list="design"></div>
+    </section>
+
+    <section class="tv-panel" data-panel="impl">
+      <h2 class="tv-panel-title">구현 의도</h2>
+      <p class="tv-panel-note">impl/08-impl-log.md + quality/09-quality-gate.md</p>
+      <div class="tv-md-list" data-md-list="impl"></div>
+    </section>
+
+    <section class="tv-panel" data-panel="unit">
+      <h2 class="tv-panel-title">단위 테스트</h2>
+      <p class="tv-panel-note">sprints/NN/unit.json — 스프린트별 테스트 통과 / 실패</p>
+      <div class="tv-table-frame">
+        <table class="tv-table" data-table="unit_tests">
+          <thead>
+            <tr>
+              <th>Sprint</th>
+              <th class="tv-th-num">Total</th>
+              <th class="tv-th-num">Pass</th>
+              <th class="tv-th-num">Fail</th>
+              <th class="tv-th-num">Pass Rate</th>
+              <th>Failures</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="6" class="tv-empty">데이터 미주입</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tv-panel" data-panel="e2e">
+      <h2 class="tv-panel-title">E2E 테스트</h2>
+      <p class="tv-panel-note">sprints/NN/e2e.json — 시나리오별 통과 / 실패</p>
+      <div class="tv-table-frame">
+        <table class="tv-table" data-table="e2e_tests">
+          <thead>
+            <tr>
+              <th>Sprint</th>
+              <th>Scenario</th>
+              <th>Status</th>
+              <th class="tv-th-num">Steps</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="5" class="tv-empty">데이터 미주입</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tv-panel" data-panel="sprints">
+      <h2 class="tv-panel-title">스프린트</h2>
+      <p class="tv-panel-note">sprints/NN/{report.md, inputs.json, score.json} — 차원별 점수 시계열</p>
+      <div class="tv-table-frame">
+        <table class="tv-table" data-table="sprints">
+          <thead>
+            <tr>
+              <th>Sprint</th>
+              <th class="tv-th-num">Score</th>
+              <th>Outcome</th>
+              <th>Bisect</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="4" class="tv-empty">데이터 미주입</td></tr></tbody>
+        </table>
+      </div>
+      <div class="tv-chart-frame">
+        <h3 class="tv-h3">Score Timeline</h3>
+        <svg class="tv-chart" data-chart="sprint-score" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </section>
+
+    <section class="tv-panel" data-panel="runtime">
+      <h2 class="tv-panel-title">Runtime</h2>
+      <p class="tv-panel-note">Q-D9 사전조건 + 게이트 7 부팅 검증 (boot_check.py 결과)</p>
+      <div class="tv-table-frame">
+        <table class="tv-table" data-table="runtime_prereq">
+          <tbody>
+            <tr><td class="tv-label">Mode</td><td class="tv-mono" data-bind="rt_mode">—</td></tr>
+            <tr><td class="tv-label">Secrets count</td><td class="tv-mono" data-bind="rt_secrets_count">—</td></tr>
+            <tr><td class="tv-label">Boot command</td><td class="tv-mono" data-bind="rt_boot_command">—</td></tr>
+            <tr><td class="tv-label">Env hash</td><td class="tv-mono" data-bind="rt_env_hash">—</td></tr>
+            <tr><td class="tv-label">Boot exit</td><td class="tv-mono" data-bind="rt_boot_exit">—</td></tr>
+            <tr><td class="tv-label">/healthz</td><td class="tv-mono" data-bind="rt_healthz_status">—</td></tr>
+            <tr><td class="tv-label">Elapsed (ms)</td><td class="tv-mono" data-bind="rt_elapsed_ms">—</td></tr>
+            <tr><td class="tv-label">결과</td><td><span class="tv-badge" data-bind="rt_outcome">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="tv-footer">
+    <span class="tv-mono">theseus-harness · phase-12 webview · prebuilt shell v0.9.40</span>
+    <span class="tv-footer-sep">·</span>
+    <span>데이터: <code class="tv-mono">window.__WEBVIEW__</code> 우선, fallback <code class="tv-mono">./data/webview.json</code></span>
+    <span class="tv-footer-sep">·</span>
+    <span>라이브 폴링이 필요하면 <code class="tv-mono">bun run dev</code> (server.ts dev mode)</span>
+  </footer>
+
+  <script src="./assets/mermaid.min.js"></script>
+  <script src="./assets/marked.min.js"></script>
+  <script src="./assets/app.js"></script>
+</body>
+</html>

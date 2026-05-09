@@ -2,6 +2,53 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.40 — 2026-05-09 (sprint-35 — prebuilt shell + JSON injection)
+
+### 마일스톤
+
+사용자 직접 지시 — *"리니지 뷰 / 테세우스 뷰 는 html 로 미리 준비해두고 컨텐츠만 동적 교체되도록 하자"*. cold session 마다 매번 Bun+React build 하는 패턴을 *prebuilt vanilla shell 복사 + JSON 데이터 emit* 으로 교체. 결과: cold session 부팅 시간 대폭 감소 + bun/npm 의존 제거 + 산출물 일관성. FE 시연 = `huashu-design` 스킬 (정보 건축 / 엔지니어링 디버그 도구).
+
+1. **`templates/lineage-viewer/dist/`** — standalone HTML viewer (vanilla, ≈3.4 MB w/ vendored mermaid). 6 섹션 (헤더 + flowchart + gantt + fingerprint chain + dacapo summary + phase 04 답안 매핑 + sentinel events). 라이트/다크 토글 + localStorage 유지.
+2. **`templates/webview/dist/`** — phase 12 theseus-view shell (vanilla, ≈3.4 MB w/ vendored mermaid + marked). 8 탭 (Progress / ModuleMap / DesignIntent / ImplIntent / UnitTests / E2ETests / Sprints / Runtime). vanilla SVG 점수 차트 (0.999 임계 점선). 기존 `templates/webview/src/` + `server.ts` + `package.json` = 옵션 dev mode 만 보존.
+3. **`conventions/prebuilt-shell-runtime-json.md`** — emit 프로토콜 (패턴 A inline `window.__LINEAGE__/__WEBVIEW__` + 패턴 B sibling JSON fetch) + 스키마 (lineage.json / webview.json) + self_lint C-PSR.
+4. **`HARD-CORE.md` 9.nn** — cold session build 0 룰. dist 복사 + JSON injection 만 강제.
+5. **`phases/12-webview-assembly.md`** 본문 갱신 — "bun runtime build" → "prebuilt shell 복사 + JSON emit". 흔한 실패 c (build-time fs bake) 의미 보존, dev mode 옵션 명시.
+6. **`agents/webview-builder.md`** 본문 갱신 — 동작 4 단계 (shell 복사 / 데이터 합본 / inline 주입 옵션 / dev mode src 옵션). 8 탭 = shell 책임, 데이터 채우기 = agent 책임으로 분리.
+7. **`conventions/phase-lineage-viewer.md` §14 신규** — `lineage.{md,html,json}` 이중/삼중 emit. C-PLV 룰 확장 (G3+ lineage.html 의무).
+8. **self_lint C-PSR 신규** + C-HC1 임계 4250 → 4400 bump (9.nn 추가 정합, sprint-32/34 precedent).
+
+### 변경 — 신규 산출물
+
+- `templates/lineage-viewer/dist/{index.html, assets/{styles.css, app.js, mermaid.min.js}}`
+- `templates/lineage-viewer/sample/{lineage.json, lineage.html, inline-data.js}` (검증용)
+- `templates/webview/dist/{index.html, assets/{styles.css, app.js, mermaid.min.js, marked.min.js}, data/webview.json}`
+- `templates/webview/sample/webview.json` (검증용)
+- `conventions/prebuilt-shell-runtime-json.md` (90 컨벤션째)
+
+### 변경 — 갱신
+
+- `HARD-CORE.md` — 9.nn 한 줄 추가 (4386 chars, ≤ 4400 임계 통과)
+- `phases/12-webview-assembly.md` — 전면 재작성 (prebuilt + JSON 패턴, 옵션 dev mode 분리)
+- `agents/webview-builder.md` — 전면 재작성 (동작 4 단계, 8 탭 데이터 키 의무)
+- `conventions/phase-lineage-viewer.md` — §14 추가, §11 호환성에 prebuilt-shell-runtime-json 호환 row 추가
+- `conventions/INDEX.md` — prebuilt-shell-runtime-json row, 90 컨벤션 카운트
+- `scoring/self_lint.py` — `check_prebuilt_shell_runtime_json` + C-PSR row, C-HC1 임계 4400 으로 bump
+- `README.md` d-97 (prebuilt-shell-runtime-json)
+- `SKILL.md` frontmatter version 0.9.40
+- `.claude-plugin/plugin.json` version 0.9.40
+
+### 자기 평가
+
+- self_lint: **all_ok=True** (60+ 룰 모두 통과 — C-PSR 신규 통과)
+- HARD-CORE 길이: 4386 chars (≤ 4400 임계 통과)
+- prebuilt shell 검증: dist/ 모든 파일 존재 + CDN 호스트 0 + 데이터 채널 ≥ 1
+- 시연 (수동) — `templates/lineage-viewer/sample/lineage.html` + `templates/webview/sample/webview.json` 으로 브라우저 직접 검증 가능 (자동화 환경 file:// 차단으로 sandbox 검증 미수행, 사용자 측 1 회 시연 권장)
+
+### 다음 sprint 후보
+
+- **sprint-36** : phase 13 interactive-viewer 의 prebuilt 패턴 적용 — 도메인별 (DES / ML / API / Frontend / 분석 / ETL) per-domain template + 도메인 매칭 시 dist 선택 복사. 본 sprint 보다 복잡 (per-domain template ≥ 6 종).
+- 미리 적용 시뮬: `update_phase_lineage` 호출이 lineage.html 의 `<script>window.__LINEAGE__={...}</script>` inline 갱신을 자동 emit 하는 orchestrator 측 구현 (`scoring/lineage_emitter.py` 후보).
+
 ## v0.9.39 — 2026-05-09 (sprint-34 — runtime 단조성 + sub-todo 병렬 + regression + gantt + optional 4-option)
 
 ### 마일스톤
