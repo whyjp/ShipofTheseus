@@ -15,10 +15,10 @@ indexed-in: conventions/INDEX.md
 
 ## 1. 결손 진단
 
-기존 [`plan-tree.md`](plan-tree.md) + v0.9.10 [`aide-tree-symmetry.md`](aide-tree-symmetry.md) :
+기존 [`plan-tree.md`](plan-tree.md) + [`aide-tree.md`](aide-tree.md) §3 (sprint-37 PR-AB 통합):
 
 - plan-tree 의 N universe 06-plan.md = ✅ 강제
-- aide-tree-symmetry = sequenceDiagram per-universe ✅ 강제
+- aide-tree §3 (symmetry) = sequenceDiagram per-universe ✅ 강제
 - **그러나 *실 코드 implementation* 은 winner only** — U1/U2 = plan-only, 코드 0
 
 → multiverse 경합의 *plan 차원* 만 실, *코드 차원* 가짜. tournament merge 는 *plan 비교* 만 — 실 결과 비교 없음.
@@ -105,7 +105,7 @@ d- **wall clock budget 으로 N universe 중 일부 skip** — silent. budget-aw
 
 ## 5. 호환성
 
-- v0.9.10 aide-tree-symmetry = plan 차원 sequenceDiagram per-universe → 본 컨벤션이 *코드 차원* 으로 확장.
+- [`aide-tree.md`](aide-tree.md) §3 (symmetry) = plan 차원 sequenceDiagram per-universe → 본 컨벤션이 *코드 차원* 으로 확장.
 - v0.9.10 tournament-blind-rerun = 임계 미달 시 anonymize champion 재경합 → 본 컨벤션의 코드 fan-out 후 적용 가능.
 - v0.9.11 interface-first-parallel-impl = 모듈 단위 fan-out → 본 컨벤션 universe 단위와 *합성* (universe × 모듈 = 2D fan-out).
 

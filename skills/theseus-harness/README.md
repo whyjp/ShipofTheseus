@@ -42,8 +42,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-25 [`conventions/sprint-regression-loop.md`](conventions/sprint-regression-loop.md) — self-polishing 임계 도달까지 반복 (v0.9.8)
   d-26 [`conventions/parallel-cold-review.md`](conventions/parallel-cold-review.md) — N framing fan-out 페이즈 03 다양성 (v0.9.8)
   d-27 [`conventions/mindmap-centrality.md`](conventions/mindmap-centrality.md) — canonical concept graph 모든 페이즈 backbone (v0.9.9)
-  d-28 [`conventions/aide-tree-symmetry.md`](conventions/aide-tree-symmetry.md) — universe candidate sequenceDiagram 강제 (v0.9.10)
-  d-29 [`conventions/aide-tree-multi-phase.md`](conventions/aide-tree-multi-phase.md) — 페이즈 02/05/08/11/13 multiverse 확장 (v0.9.10)
+  d-28 [`conventions/aide-tree.md`](conventions/aide-tree.md) — multi-phase multiverse 확장 (breadth, 02/05/06/08/11/13) + universe candidate sequenceDiagram 대칭 강제 (depth) — sprint-37 PR-AB 통합
   d-30 [`conventions/tournament-blind-rerun.md`](conventions/tournament-blind-rerun.md) — 임계 미달 시 anonymize 재경합 (v0.9.10)
   d-31 [`conventions/interface-first-parallel-impl.md`](conventions/interface-first-parallel-impl.md) — 페이즈 06 인터페이스 의무 + 페이즈 08 fan-out (v0.9.11)
   d-32 [`conventions/analytical-bound-cross-validation.md`](conventions/analytical-bound-cross-validation.md) — closed-form 상한 vs simulated baseline (v0.9.12)

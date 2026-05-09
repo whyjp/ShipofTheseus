@@ -34,7 +34,7 @@ applied_conventions:
   - interview          # 페이즈 04 답안 형식이 두괄식·1질의·숫자 5개 룰 준수
   - autonomy           # Q-D1~D9 사전 위임 매핑
   - plan-tree          # 페이즈 06 N universe 토너먼트
-  - aide-tree-symmetry # universe 별 sequenceDiagram 강제
+  - aide-tree          # universe 별 sequenceDiagram 강제 (depth) + multi-phase multiverse 확장 (breadth)
   ...
 ```
 
@@ -47,7 +47,7 @@ applied_conventions:
 | 페이즈 | expected 컨벤션 (의무) | optional |
 |---|---|---|
 | 04 | interview, autonomy, stack, runtime-prereq | nfr-derivation |
-| 06 | plan-tree, aide-tree-symmetry, competition, models | aide-tree-multi-phase, ensemble-synthesis-default |
+| 06 | plan-tree, aide-tree (§3 symmetry), competition, models | aide-tree (§2 multi-phase), ensemble-synthesis-default |
 | 08 | test-invariants, multiverse-impl-fan-out, interface-first-parallel-impl | dacapo |
 | 10 | sprint-regression-loop, budget-saturation-loop, lessons | parallel-cold-review |
 | 14 | score-rubric-objectivity, deliverable-hurdle-supremacy | — |

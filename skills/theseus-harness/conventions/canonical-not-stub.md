@@ -76,5 +76,5 @@ See `candidates/universe-1/06-plan.md` for the full plan with mermaid diagrams, 
 ## 호환성
 
 - [`fragmentation.md`](fragmentation.md) (p) — 단일 헤비 스킬 금지의 *역방향* 안전. 본 룰은 정보 *고립* 금지 (단일 위치에 너무 많이 vs 분산된 위치에 너무 적게 — 양 끝 모두 차단).
-- [`aide-tree-symmetry.md`](aide-tree-symmetry.md) (ab) — universe candidate sequenceDiagram 강제 + 본 룰의 canonical inline mode 결합 시 winner sequence 가 canonical 에도 박힘.
+- [`aide-tree.md`](aide-tree.md) §3 (sprint-37 PR-AB 통합) — universe candidate sequenceDiagram 강제 + 본 룰의 canonical inline mode 결합 시 winner sequence 가 canonical 에도 박힘.
 - [`indexing.md`](indexing.md) (s) — canonical 산출물이 phase 간 cross-ref index 역할.

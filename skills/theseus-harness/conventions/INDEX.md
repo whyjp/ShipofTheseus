@@ -16,8 +16,7 @@
 
 | id | cat | phases | grades | trigger |
 |---|---|---|---|---|
-| aide-tree-multi-phase | multiverse | [02,05,08,11,13] | [G3,G4,G5] | always |
-| aide-tree-symmetry | multiverse | [06] | [G3,G4,G5] | universe candidate |
+| aide-tree | multiverse | [02,05,06,08,11,13] | [G3,G4,G5] | always (multi-phase) / universe candidate (symmetry) |
 | analytical-bound-cross-validation | quality | [09,11] | [all] | analytical bound 가능 |
 | anti-patterns | meta | [all] | [all] | always |
 | autonomy | core | [all] | [all] | always |
@@ -113,7 +112,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **89 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **88 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
