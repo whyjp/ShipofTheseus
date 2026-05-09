@@ -93,6 +93,13 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.tt — Runtime guard chain 자동 호출 의무 (sprint-41 PR-E 신규, 본 sprint 핵심 enforcement 메커니즘)**:
+>   - 매 phase 진입/종료 시 `python skills/theseus-harness/scoring/runtime_guard_chain.py --project-root <root> --phase <N> --transition <entry|exit> --grade <G> --orchestrator-version <V>` 자동 호출 의무.
+>   - exit 1 시 phase advance 차단 — orchestrator 가 fail check 의 fix step 자동 진행 후 chain 재호출.
+>   - **chain 구성** — skill_version semver tuple 비교 + phase 단조성 + sub-CLI hook (phase 09 entry = cold_session_artefacts / phase 06/08 exit = dacapo_threshold / phase 10 exit = sprint_loop_cap).
+>   - 본 룰 = sprint-41 의 핵심 enforcement 메커니즘 — 위 9.qq / 9.rr / 9.ss 모두 본 chain 의 sub-call.
+>   - phase-state-machine 컨벤션 의 *runtime guard* 직접 구현.
+>   - **증거 회피 사례** — 0510 회차 의 모든 메타-허들 미동작 (skill_version stale silent skip + 13 산출물 0 + 다카포 round 2 = 0 + sprint cap = 1 자율) — 본 9.tt 활성 시 매 transition 차단으로 일괄 정정.
 > - **9.ss — Sprint loop 4-layer 종료 조건 CLI (sprint-41 PR-D 신규)**:
 >   - phase 10 sprint iteration 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/sprint_loop_cap.py --project-root <root> --current-iteration N --max-iterations 10` 자동 호출 의무.
 >   - exit 1 시 sprint iteration 자동 +1 + 미달 layer 의 fix-TODO 자동 생성.
