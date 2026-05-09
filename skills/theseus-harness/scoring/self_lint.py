@@ -2693,16 +2693,20 @@ def check_pre_cold_session_bootup(skill_root: Path) -> list[str]:
 
 
 def check_viewer_auto_refresh(skill_root: Path) -> list[str]:
-    """C-VAR (sprint-36) — 3 viewer 모두 polling + visibility + manual button."""
+    """C-VAR (sprint-36, sprint-37 PR-AC 통합) — 3 viewer 모두 polling + visibility + manual button.
+
+    sprint-37 PR-AC 다이어트로 viewer-auto-refresh + viewer-runtime-lifecycle
+    → viewer-runtime (§2 frontend / §3 backend 두 layer) 통합. C-VAR 룰은 frontend layer 책임만 검증.
+    """
     issues: list[str] = []
-    conv = skill_root / "conventions" / "viewer-auto-refresh.md"
+    conv = skill_root / "conventions" / "viewer-runtime.md"
     if not conv.exists():
-        return ["conventions/viewer-auto-refresh.md 부재 (sprint-36)"]
+        return ["conventions/viewer-runtime.md 부재 (sprint-37 PR-AC 통합)"]
     cbody = _read(conv)
     for kw in ["polling", "Page Visibility", "manual-refresh",
                "If-None-Match", "If-Modified-Since", "5초", "status pill"]:
         if kw not in cbody:
-            issues.append(f"viewer-auto-refresh.md: '{kw}' 키워드 누락")
+            issues.append(f"viewer-runtime.md: '{kw}' 키워드 누락 (frontend §2)")
     # 3 viewer 의 app.js 에 polling 패턴 박혀있는지
     for vname, rel in [
         ("lineage-viewer",     "templates/lineage-viewer/dist/assets/app.js"),
@@ -2722,15 +2726,19 @@ def check_viewer_auto_refresh(skill_root: Path) -> list[str]:
 
 
 def check_viewer_runtime_lifecycle(skill_root: Path) -> list[str]:
-    """C-VRL (sprint-36) — viewer-runtime-lifecycle.md + scoring/viewer_runtime.py + scripts."""
+    """C-VRL (sprint-36, sprint-37 PR-AC 통합) — viewer-runtime.md + scoring/viewer_runtime.py + scripts.
+
+    sprint-37 PR-AC 다이어트로 viewer-auto-refresh + viewer-runtime-lifecycle
+    → viewer-runtime (§2 frontend / §3 backend 두 layer) 통합. C-VRL 룰은 backend layer 책임만 검증.
+    """
     issues: list[str] = []
-    conv = skill_root / "conventions" / "viewer-runtime-lifecycle.md"
+    conv = skill_root / "conventions" / "viewer-runtime.md"
     if not conv.exists():
-        return ["conventions/viewer-runtime-lifecycle.md 부재 (sprint-36)"]
+        return ["conventions/viewer-runtime.md 부재 (sprint-37 PR-AC 통합)"]
     cbody = _read(conv)
     for kw in ["viewer.lock.json", "PID", "SIGTERM", "SIGKILL", "stale lock"]:
         if kw not in cbody:
-            issues.append(f"viewer-runtime-lifecycle.md: '{kw}' 키워드 누락")
+            issues.append(f"viewer-runtime.md: '{kw}' 키워드 누락 (backend §3)")
     cli = skill_root / "scoring" / "viewer_runtime.py"
     if not cli.exists():
         issues.append("scoring/viewer_runtime.py 부재 (sprint-36)")
@@ -2953,8 +2961,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PSR", "prebuilt-shell-runtime-json + templates/{lineage-viewer,webview}/dist/ — cold session build 0 (sprint-35)", check_prebuilt_shell_runtime_json),
     ("C-EFS", "emit fidelity samples + emit_fidelity.py CLI — 의무 키 + sprint-35-extra 룰 (sprint-35-extra)", check_emit_fidelity_samples),
     ("C-PCB", "pre-cold-session bootup — phase 00 이전 viewer 부팅 + 빈 골격 (sprint-36)", check_pre_cold_session_bootup),
-    ("C-VAR", "viewer auto-refresh — 3 viewer 폴링 + visibility + manual (sprint-36)", check_viewer_auto_refresh),
-    ("C-VRL", "viewer runtime lifecycle — start/stop + PID lock (sprint-36)", check_viewer_runtime_lifecycle),
+    ("C-VAR", "viewer-runtime.md §2 (sprint-36 + sprint-37 PR-AC 통합) — frontend 폴링 + visibility + manual", check_viewer_auto_refresh),
+    ("C-VRL", "viewer-runtime.md §3 (sprint-36 + sprint-37 PR-AC 통합) — backend lifecycle + PID lock", check_viewer_runtime_lifecycle),
     ("C-IVP", "interactive-viewer prebuilt shell + dashboard.json schema (sprint-36)", check_interactive_viewer_prebuilt),
 ]
 
