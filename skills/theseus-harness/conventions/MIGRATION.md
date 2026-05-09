@@ -23,7 +23,8 @@
 
 | deprecated | successor | introduced_in | removed_in | rationale |
 |---|---|---|---|---|
-| (현재 비어 있음) | | | | sprint-37 PR-AA 부터 누적 |
+| intent-refresh-post-interview | intent-refresh | sprint-37 PR-AA | sprint-37 PR-AA | 책임 단순 (의도 refresh 1 가지) + phase param 분기. 양쪽 본문 inline 흡수 |
+| intent-refresh-post-critique | intent-refresh | sprint-37 PR-AA | sprint-37 PR-AA | 동일 — 1차/2차 refresh 단일 컨벤션 phase 분기 |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

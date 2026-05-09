@@ -5,7 +5,7 @@
 
 ## 입력 (sprint-17 — refresh 4 universes 우선)
 
-- **`intent/01-{1,2,3,4}-intent.md`** — sprint-17 신규, 인터뷰 후 refresh 4 framing (domain / constraint / risk / outcome). 본 페이즈 critique 의 *주요* 입력. ([`../conventions/intent-refresh-post-interview.md`](../conventions/intent-refresh-post-interview.md))
+- **`intent/01-{1,2,3,4}-intent.md`** — sprint-17 신규, 인터뷰 후 refresh 4 framing (domain / constraint / risk / outcome). 본 페이즈 critique 의 *주요* 입력. ([`../conventions/intent-refresh.md`](../conventions/intent-refresh.md) §3.1 — 1차 refresh)
 - **`intent/01-additional.md`** — sprint-17 신규, 인터뷰가 새로 드러낸 요구 / 비목표 / 제약 단일 doc.
 - `intent/04-answers.md` — 참조 보존 (refresh 본문이 이미 흡수)
 - `intent/04-autonomy.md` — Q-D1~Q-D8 사전 위임 답 (8 줄)
@@ -17,7 +17,7 @@
 ```python
 for u in [1, 2, 3, 4]:
     if not (intent_dir / f"01-{u}-intent.md").exists():
-        raise SkillEntryError(f"intent/01-{u}-intent.md 부재 — phase 04+ refresh 미완료. intent-refresh-post-interview.md 컨벤션 의무.")
+        raise SkillEntryError(f"intent/01-{u}-intent.md 부재 — phase 04+ refresh 미완료. intent-refresh.md (§3.1) 컨벤션 의무.")
 if not (intent_dir / "01-additional.md").exists():
     raise SkillEntryError("intent/01-additional.md 부재 — phase 04+ refresh 미완료.")
 ```
@@ -48,7 +48,7 @@ if verification_fm.get("manual_only", False):
 
 ## phase 05 종료 직후 mandatory 2nd refresh cycle
 
-phase 05 critique + decisions 산출물 완성 직후, phase 06 plan 진입 *전* 에 [`../conventions/intent-refresh-post-critique.md`](../conventions/intent-refresh-post-critique.md) (ci, HARD-RULE 9.kk) 가 강제하는 6 신규 산출물 (사용자 인터랙션 0) :
+phase 05 critique + decisions 산출물 완성 직후, phase 06 plan 진입 *전* 에 [`../conventions/intent-refresh.md`](../conventions/intent-refresh.md) §3.2 (2차 refresh) 가 강제하는 6 신규 산출물 (사용자 인터랙션 0) :
 
 ```
 intent/01-1-intent.v2.md   ~ intent/01-4-intent.v2.md   # 4 framing universe v2 (critique-absorbed)
