@@ -100,8 +100,24 @@ widget 타입은 viewer 가 *모르는 도메인* — DES/ML/API 모두 동일 5
 |---|---|
 | G2 | 도메인 매칭 시 최소 1 plot emit (옵션) |
 | G3+ | 도메인별 default dashboard 전체 emit (권고) |
-| G4+ | 도메인별 default dashboard + dashboard.json widgets ≥ 3 (kpi_grid + topology + metric_chart 최소 — sprint-40 PR-C 강화) |
+| G4+ | 도메인별 default dashboard + dashboard.json widgets ≥ 3 (kpi_grid + topology + metric_chart 최소 — sprint-40 PR-C 강화) + **HARD-RULE 9.nn invoke step 강제** (sprint-40 PR-D, orchestrator 자동 진입 + interactive-viewer-builder agent invoke + exit_gate.json verdict 검증) |
 | G5 | 도메인별 dashboard + 인터랙티브 drill-down + observability 메트릭 라이브 연동 (강제) |
+
+## Invoke step 의무 (sprint-40 PR-D 신규)
+
+orchestrator 의 phase 12 → 13 transition 본문 (HARD-RULE 9.nn / 9.oo 정합):
+
+```
+# phase 12 종료 marker 박힘 직후
+1. orchestrator 가 `phase: 13-interactive-viewer` frontmatter 산출 시작
+2. interactive-viewer-builder agent invoke (subagent_type 명시)
+3. agent 가 도메인 식별 → dashboard.json + widgets emit
+4. agent 종료 후 exit_gate.json emit (G3+ 강제, G2 + 도메인 매칭 시)
+5. orchestrator 가 exit_gate.json verdict 검증 — pass 시에만 phase 13 종료 marker 박음
+6. 도메인 미매칭 + skip 시 handoff/14-handoff.md 사유 1줄 의무
+```
+
+**G4+ 강제** — agent 자율 skip 금지. 도메인 미매칭 시에도 *skip + 사유 기록* 양식 의무 (silent skip 금지).
 
 ## 종료 게이트 — 산출물 파일 존재 강제 (sprint-40 PR-C 신규)
 

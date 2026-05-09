@@ -60,6 +60,8 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) |
 > | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · **regression §2** (sprint loop, sprint-37 PR-AE 통합) · budget-saturation-loop · **sprint-narrative §2 §4** (delta + lessons/stagnation, sprint-37 PR-AF 통합) · evidence-driven-sprint-planning · **regression-tdd-gate** (sprint-34, sprint iteration trigger) |
 > | 11 회귀 바이섹트 | **regression §3** (lint autogen, sprint-37 PR-AE 통합) · **regression-tdd-gate** (sprint-34, regression_log binary search) |
+> | 12 theseus-view | prebuilt-shell-runtime-json · phase-lineage-viewer · viewer-runtime · **(sprint-40 PR-C) phase 12 §종료 게이트 — webview/{index.html, data/webview.json, assets/{app.js, mermaid.min.js, marked.min.js, styles.css}} 6 파일 강제 + webview/exit_gate.json emit** · webview-builder agent invoke 의무 |
+> | 13 interactive-viewer | prebuilt-shell-runtime-json · viewer-runtime · interactive-viewer-builder agent · **(sprint-40 PR-C) phase 13 §종료 게이트 — interactive-viewer/{index.html, dashboard.json, assets/app.js} 강제 + dashboard.json widgets ≥ 1 (G3+) / ≥ 3 (G4+, kpi_grid+topology+metric_chart 의무) + interactive-viewer/exit_gate.json emit** · **(sprint-40 PR-D) HARD-RULE 9.nn — G4+ phase 13 invoke step 강제** |
 > | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer (**sprint-34 gantt + 모든 그레이드**) · decision-support-framing |
 >
 > **9.a~c 본문 의무 (페이즈 06/08 산출물 구조)** — 본 entry skill 에 직접 박힘 (실 코드 외부 repo 따라 구현 가능 의무):
@@ -75,6 +77,22 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > - 9.d Da Capo산출물 본문 의무 (frontmatter 외): `tournament-NN.md` (6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합), `dacapo-rerun-NN.md` (lesson 본문 + Step F-G detail), `dacapo-flow.md` (bq 의무 — Mermaid + timeline + step trace per round)
 > - 9.b `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 명시 / 인터페이스 노출
 > - 9.c G3+ universe N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff 라인 (universe-1 vs universe-2 동일 ≠ 형식적 분기)
+> - **9.nn — G4+ Phase 13 invoke step 강제 (sprint-40 PR-D 신규)**:
+>   - phase 12 종료 marker 박힘 후 orchestrator 가 *자동* phase 13 진입 의무 — agent 자율 skip 금지.
+>   - phase 13 진입 시 `interactive-viewer-builder` agent invoke 의무 (subagent_type=`interactive-viewer-builder`).
+>   - phase 13 종료 marker 박힘 *직전* `interactive-viewer/exit_gate.json` 의 `verdict == "pass"` 검증 (phase 13 §종료 게이트 1:1 정합).
+>   - 도메인 미매칭 + skip 시 `handoff/14-handoff.md` 사유 1줄 의무 (regex `phase 13 .* skip|interactive-viewer .* skip`).
+>   - **증거 회피 사례** — simulation-bench 001 v0.9.44 g4-v2 회차 (G4) 가 `interactive-viewer/` 디렉터리 자체 부재 + phase 13 종료 marker 자동 진행. 본 9.nn = 그 silent skip 차단.
+> - **9.oo — Phase 12 invoke step 강제 (sprint-40 PR-D 신규, 모든 grade)**:
+>   - phase 11 종료 후 (또는 phase 09 종료 후 G2 시) phase 12 자동 진입.
+>   - phase 12 진입 시 `webview-builder` agent invoke 의무.
+>   - phase 12 종료 marker 박힘 *직전* `webview/exit_gate.json` 의 `verdict == "pass"` 검증.
+>   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 `webview/index.md` 마크다운 표 만 박고 `webview/index.html` + `data/webview.json` + `assets/*.{js,css}` 6 파일 통째 부재. 본 9.oo = 차단.
+> - **9.pp — pre-cold-session-bootup 자동 호출 의무 (sprint-40 PR-D 신규)**:
+>   - phase 00 진입 *직전* orchestrator 가 `python skills/theseus-harness/scoring/pre_bootup.py bootstrap --root <project>` 자동 호출.
+>   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
+>   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
+>   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
 >
 > **위반 처리** — 컨벤션 미달 = self_lint 페이즈 exit fail → 페이즈 재진입 (자율, ≥ 3 회 위반 시만 ack). cold session evidence (sprint-17 슬림화 도입 동기 — v0.9.18~v0.9.22 동안 본 영역이 118 → 287 lines 비대화 + 신규 컨벤션 fabrication 표적화 사고) → `intent/00-violation.md` 추적.
 
