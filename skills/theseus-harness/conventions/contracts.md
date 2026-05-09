@@ -122,7 +122,7 @@ python scoring/fingerprint.py verify --file plan/06-plan.md
 1- 모든 마크다운 산출물의 frontmatter 를 파싱.
 2- 각 파일에 대해:
   a- `skill_name == "theseus-harness"` 확인.
-  b- `skill_version` 의 *major* 가 현재 하네스 major 와 같고 *minor* 가 현재 하네스 minor *이상* 임 확인 (sprint-40 v0.9.45 강화). minor 미달 시 phase 진입 거부 — 사용자 ack 0 자동 트리거: ⓐ frontmatter 일괄 갱신 (helper) + ⓑ minor 차이가 도입한 의무 산출물 (e.g., v0.9.41 = `webview/lineage.json`, v0.9.41 = `interactive-viewer/`, v0.9.44 = `gate_pnc/mirror/primary/literal.json`) 부재 시 영향 phase (12 / 13 / 09) 재실행. patch 차이는 silent pass.
+  b- `skill_version` 의 *major* 가 현재 하네스 major 와 같고 *(major, minor, patch) tuple ≥ 현재 하네스 tuple* 임 확인 (sprint-40 v0.9.45 도입, sprint-41 v0.9.46 명료화 — 0.x.y 라인에서 patch 가 sprint 마다 증가하므로 *minor + patch* 모두 비교 의무). 미달 시 phase 진입 거부 — 사용자 ack 0 자동 트리거: ⓐ frontmatter 일괄 갱신 (helper) + ⓑ 차이가 도입한 의무 산출물 (e.g., v0.9.41 = `webview/lineage.json` + `interactive-viewer/`, v0.9.44 = `gate_pnc/mirror/primary/literal.json`, v0.9.46 = `dacapo_threshold.json` × 2) 부재 시 영향 phase (12 / 13 / 09) 재실행. **runtime guard 구현** — sprint-41 PR-E `runtime_guard_chain.py` 의 `check_skill_version` (semver tuple 비교) 가 본 룰의 enforcement 메커니즘. 컨벤션 본문 = 명세, CLI = 집행.
   c- `project_id`, `project_run` 이 같은 묶음 안에서 일관 확인.
   d- `fingerprint` 재계산해 frontmatter 의 값과 일치 확인.
   e- `prev_fingerprint` 가 직전 페이즈 산출물의 `fingerprint` 와 일치 확인 (체인 무결).
