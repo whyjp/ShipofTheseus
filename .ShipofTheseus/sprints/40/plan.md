@@ -227,31 +227,37 @@ skills/theseus-harness/SKILL.md `version: 0.9.45`, plugin.json 동시 갱신, CH
 
 ---
 
-## 4. 점수 회복 추정
+## 4. 구조 가치 — 범용 / 치밀 / 밀도 (벤치 점수 targeting 아님)
 
-| PR | 메타 효과 | 점수 효과 (직접) | 누적 점수 |
-|---|---|---:|---:|
-| 시작 | — | — | 95 |
-| PR-B | M-1 활성 + G-1 V6 evidence | +1 (V6 catch + drift 해소) | 96 |
-| PR-C | M-2 viewer 산출물 강제 | 0 (점수 외, 신뢰 회복) | 96 |
-| PR-D | M-3 Phase 13 invoke | 0 | 96 |
-| PR-E | M-4 게이트 JSON + G-2 numeric drift | +1 (Results) | 97 |
-| PR-F | G-3 modeling shortcuts + L2 catalogue | +1~2 (Sim correctness 의 1~2pt) | 98~99 |
-| PR-G | G-4 warmup quantification | +1 (Experimental design) | 99~100 |
-| **총** | | **+4~5pt** | **99~100** |
+> **원칙 정합** — 메모리 [`feedback_harness_strengthening_methodology.md`](../../../../memory/feedback_harness_strengthening_methodology.md): *"외부 답안 후 패치는 케이스 종속. 본 하네스 강화 = prompt → 게이트 흐름의 *구조* 변경"*. 본 §4 = 각 PR 의 *구조 가치* (도메인 독립). 외부 점수 영향은 *결과* 이지 *목표* 아님.
 
-(G-5 = sprint-41+ 별도 — *질적 게이트* 신규 패러다임. conceptual exemplary 1pt.)
+| PR | 구조 변경 | 도메인 독립 적용 범위 |
+|---|---|---|
+| PR-B | `skill_version` minor gate (silent regression 차단) + V6 evidence-bound (subprocess × 2 + sha256 + 7 anti-pattern grep) | 모든 결정성 파이프라인 (Python/Rust/Go/TS — 언어별 anti-pattern catalogue 확장 가능) |
+| PR-C/D | viewer 산출물 file-existence 3 단 게이트 + Phase 12/13 invoke step + pre-bootup 자동 호출 | 모든 G3+ 회차 (observability claim ↔ artifact 정합 — 도메인 무관) |
+| PR-E | 4 게이트 JSON 골격 자동 emit + numeric drift atomic regen (±0.01%) | 모든 deliverable + summary 페어 (mining / ML / ETL / API 모두) |
+| PR-F | modeling shortcuts 4-tier (gold-standard / defensible-coarse / heuristic / placeholder) + cascading sub-Q (interview keyword) + L2 도메인 critique 카탈로그 | 모든 도메인 모델링 (DES/ML/API/ETL/분석 5 도메인 본문 박힘) |
+| PR-G | methodology-completeness 4 골격 (transient/sample/determinism/horizon) — *도메인-agnostic* enforcement | 도메인 매칭 시 모든 회차 (sub-checklist 는 nfr-derivation 분리) |
 
-## 5. 검증 — 100/100 도전 절차
+**구조 가치 = enforcement layer 의 닫힘**. 메모리 [`feedback_pseudocode_to_enforcement.md`] 의 *"의사코드 → runtime guard"* 패러다임 5 layer 정착:
+1. `skill_version` minor gate — 컨벤션 *버전* layer
+2. file-existence 게이트 (phase 09/12/13) — *산출물* layer
+3. evidence-bound JSON (V6 / numeric / 4 게이트 / methodology) — *증거* layer
+4. invoke step (HARD-RULE 9.nn/9.oo/9.pp) — *호출* layer
+5. cascading sub-Q + L2 catalogue — *질문 깊이* layer
+
+## 5. 검증 — 외부 적용 후 평가
 
 PR-H 머지 후:
 
-1. simulation-bench 측에서 fresh G4 cold session 실행 (skill_version 0.9.45 강제).
-2. zero-context Opus reviewer (separate Agent + evaluate-submission skill) 자동 채점.
-3. 결과:
-   - 95/100 — 본 sprint 효과 0 (회귀)
-   - 96~99/100 — 부분 회복 (어느 G/M 동작 안했는지 진단 필요)
-   - **100/100 — sprint-40 목표 달성**.
+1. simulation-bench (또는 다른 외부 도메인 적용처) 에서 fresh G4 cold session 실행 (skill_version 0.9.45 강제).
+2. zero-context 외부 reviewer 의 채점.
+3. 평가 *대상* = 본 sprint 의 5 layer enforcement 가 *실 cold session 에서 활성* 인가? (구조 검증)
+   - 활성 → 본 sprint 구조 가치 입증.
+   - 일부 미활성 → 어느 layer 의 runtime guard 가 미반영 인지 진단, sprint-41 fix.
+   - 전체 미활성 → orchestrator runtime guard 의 더 깊은 결손, sprint-41 핵심 의제 격상.
+
+평가 *부산물* = 외부 점수 변화. 본 sprint 의 구조 변경이 *직접* 점수 회복을 noun 으로 삼지 않는 이유 = *케이스 종속 패치* 회피 ([`feedback_harness_strengthening_methodology.md`] 정합).
 
 검증 기록 위치: `docs/reviews/2026-05-1?-bench-001-mine-throughput-v0945-100.md` (재실행 일자 + 결과).
 

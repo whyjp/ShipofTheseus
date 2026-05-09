@@ -584,44 +584,71 @@ phase 09 종료 직전 :
 - [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — sprint-39 4 패턴 inline 의 *런타임* layer 닫음.
 
 
-## §Warmup-Quantification — DES 도메인 methodology completeness (sprint-40 PR-G 신규)
+## §Methodology-Completeness — 도메인 매칭 시 methodology checklist enforcement (sprint-40 PR-G 신규)
 
-**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 — `baseline.yaml: warmup_minutes: 0` + 첫-반/끝-반 throughput 분리 0. reviewer *"acknowledged but not justified"* (Experimental design -1pt). **본 절 = 그 회피 패턴 차단.**
+본 절 = [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist (sprint-40 PR-G) 의 phase 09 enforcement layer. *형용사 → NFR* 채널 (nfr-derivation 본 컨벤션) 과 직교 — *도메인 매칭* 시 *methodology* 차원의 checklist 자동 활성.
 
-본 절은 [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist (sprint-40 PR-G) 를 phase 09 trigger 에 매핑한 enforcement layer.
+### 활성 조건
 
-### 검사 항목 (DES 도메인 시)
+phase 01 의도 추출 시 `domain` field 가 [`../conventions/domain-pack.md`](../conventions/domain-pack.md) 카탈로그의 한 항목과 매칭되면 활성. 미매칭 시 본 게이트 skip + frontmatter `methodology_completeness_skipped: true` + `skip_reason: "domain unmatched"` 명시.
 
-| 항목 | 의무 evidence |
+### 도메인 매칭 시 검사 항목 (도메인-agnostic 골격)
+
+각 도메인의 *구체* sub-checklist 는 [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist 에 박힘. 본 절은 *모든 도메인* 공통 골격 :
+
+| 골격 항목 | 도메인 별 매핑 |
 |---|---|
-| warmup justification (quantitative) | `outputs/half_split_analysis.csv` (또는 동등) — first-half/second-half throughput delta + delta_threshold 5% 이내 또는 명시 정당화 |
-| replication count power analysis | target CI half-width + observed CI + reps 매트릭스 |
-| common-random-numbers protocol | seed derivation + reproducibility byte-equal evidence (PR-B `gate_v6_reproducibility.json` 정합) |
-| terminating vs steady-state 분류 | `conceptual_model.md` 명시 + 그에 따른 warmup 정책 |
+| **transient/steady-state classification** | DES: warmup justification · ML: train/val/test split · API: cold-start vs warm · ETL: batch boundary |
+| **sample size / power analysis** | DES: replication count + CI half-width · ML: cross-val folds + variance · API: load duration + percentile coverage · ETL: batch sample size |
+| **determinism protocol** | 모든 도메인: seed derivation + reproducibility byte-equal evidence (PR-B `gate_v6_reproducibility.json` 정합) |
+| **horizon classification** | DES: terminating vs steady-state · ML: epoch budget vs early stop · API: SLO window · ETL: backfill vs incremental |
 
-### 산출물 — `quality/gate_warmup.json`
+각 도메인의 구체 verification method 는 nfr-derivation §도메인 sub-checklist 본문 참조. 본 §은 *4 골격 항목 통과* 만 검사.
 
-[`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist 본문의 schema 정합. 4 methodology 항목 모두 `verdict == "pass"` 의무.
+### 산출물 — `quality/gate_methodology_completeness.json` (도메인 매칭 시 의무)
+
+```json
+{
+  "schema_version": "0.9.45",
+  "domain": "<DES | ML | API | ETL | ...>",
+  "domain_matched": true,
+  "skeleton_checks": {
+    "transient_classification": {"verdict": "pass", "evidence_path": "..."},
+    "sample_size_power": {"verdict": "pass", "evidence_path": "..."},
+    "determinism_protocol": {"verdict": "pass", "evidence_path": "quality/gate_v6_reproducibility.json"},
+    "horizon_classification": {"verdict": "pass", "evidence_path": "..."}
+  },
+  "verdict": "pass"
+}
+```
+
+도메인-specific 필드는 nfr-derivation §도메인 sub-checklist 의 schema 가 추가 박음 (e.g., DES = `warmup_minutes_value` / `first_half_throughput_mean`).
 
 ### 게이트 룰
 
-- `domain == "DES"` 면 본 게이트 활성. 다른 도메인은 해당 도메인의 methodology checklist (ML / API / ETL) 활성.
-- 4 methodology 항목 모두 verdict pass 의무.
+- `domain_matched == false` → 본 게이트 skip (frontmatter 명시).
+- `domain_matched == true` → 4 skeleton 항목 모두 `verdict == "pass"` 의무.
 - evidence_path 미존재 또는 빈 파일 → fail.
-- 미달 시 phase 09 verdict = `halt` → phase 06 plan 재진입 (warmup 정책 결정 또는 first-half/second-half 분석 추가).
+- 미달 시 phase 09 verdict = `halt` → phase 06 plan 재진입 (해당 도메인 methodology 항목 보강).
 
-### self_lint C-WUP (sprint-40 PR-G 신규)
+### self_lint C-MCC (sprint-40 PR-G — Methodology Completeness Catalogue, sprint-40 fix 일반화)
 
 phase 09 진입 시 :
-- `quality/gate_warmup.json` 존재 확인 (도메인이 DES 일 때)
-- 4 methodology 항목 모두 verdict == "pass" 확인
+- domain 매칭 시 `quality/gate_methodology_completeness.json` 존재 확인
+- 4 skeleton 항목 모두 verdict == "pass" 확인
 - evidence_path 실제 파일 존재 확인
 - 미달 시 phase 09 진입 거부
 
+### 도메인 사례 (예시 — 본문 구조와 별개)
+
+> **예시 footnote.** simulation-bench 001 (DES, mining) 회차 = warmup_minutes=0 정당화 thin (transient_classification skeleton 의 DES 매핑 — `warmup justification` evidence 부재). 본 §의 *구조 룰* 이 활성 시 `gate_methodology_completeness.json` 의 `transient_classification.verdict == "fail"` → phase 06 plan 재진입.
+>
+> 이 사례는 본 룰의 *적용* 결과이지 *케이스 종속* 룰이 아님. ML / API / ETL 도메인에도 동일 4 skeleton 적용 — 본 §은 도메인-agnostic.
+
 ### 메모리 정합
 
-- [`feedback_analytical_bound_validation.md`](../../../memory/feedback_analytical_bound_validation.md) — *시간 차원* cross-validation 으로 본 게이트가 정당화.
-- [`feedback_94_plateau_general_harness.md`](../../../memory/feedback_94_plateau_general_harness.md) — 6pt 질적 layer 의 Experimental methodology 차원 직접 보강.
+- [`feedback_harness_strengthening_methodology.md`](../../../memory/feedback_harness_strengthening_methodology.md) — *구조 변경 vs 케이스 패치* 정합. 본 §은 4-항목 골격 = 구조, 도메인 매핑은 nfr-derivation 분리.
+- [`feedback_analytical_bound_validation.md`](../../../memory/feedback_analytical_bound_validation.md) — *cross-validation* 의 도메인 직교 확장.
 
 
 ## §V8 — Viewer-readiness 사전 차단 (sprint-40 PR-C 신규)
