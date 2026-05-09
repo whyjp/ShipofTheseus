@@ -22,7 +22,7 @@
     "pending_artifacts": []
   },
   "plan": {
-    "module_graph_mermaid": "flowchart TB\n  classDef io fill:#fef3eb,stroke:#b45309,color:#1a1614\n  classDef core fill:#ecf2e3,stroke:#15803d,color:#1a1614\n  classDef out fill:#fef7d8,stroke:#a16207,color:#1a1614\n  data_io[data_io]:::io\n  graph_mod[graph]:::core\n  registry[registry]:::core\n  truck[truck]:::core\n  simulation[simulation]:::core\n  outputs[outputs]:::out\n  invariants[invariants]:::core\n  data_io --> graph_mod\n  graph_mod --> registry\n  registry --> truck\n  truck --> simulation\n  simulation --> outputs\n  simulation --> invariants"
+    "module_graph_mermaid": "flowchart TB\n  classDef io fill:#eef2ff,stroke:#4f46e5,color:#09090b\n  classDef core fill:#ecfdf5,stroke:#16a34a,color:#09090b\n  classDef out fill:#fef3c7,stroke:#d97706,color:#09090b\n  data_io[data_io]:::io\n  graph_mod[graph]:::core\n  registry[registry]:::core\n  truck[truck]:::core\n  simulation[simulation]:::core\n  outputs[outputs]:::out\n  invariants[invariants]:::core\n  data_io --> graph_mod\n  graph_mod --> registry\n  registry --> truck\n  truck --> simulation\n  simulation --> outputs\n  simulation --> invariants"
   },
   "intent": {
     "01-intent.md": "# 의도\n\n광산 시뮬레이션 처리량 추정 — DES (이산 사건 시뮬레이션) 기반.\n\n```mermaid\nmindmap\n  root((광산-DES))\n    무엇을\n      처리량 추정\n      병목 식별\n    제약\n      45 min budget\n      no-internet\n```\n\n## 핵심 KPI\n- throughput (tonnes/hour)\n- bottleneck identification (cap-1 edges)\n",

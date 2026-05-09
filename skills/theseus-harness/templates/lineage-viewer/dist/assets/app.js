@@ -127,28 +127,28 @@
     }
 
     try {
-      // Editorial Pentagram theme — warm paper + ink
+      // Linear/Stripe theme — indigo/violet
       var isDark = root.getAttribute('data-theme') === 'dark';
       var themeVars = isDark ? {
-        background:        '#161210',
-        primaryColor:      '#1f1916',
-        primaryBorderColor:'#a89d88',
-        primaryTextColor:  '#f0ead8',
-        lineColor:         '#a89d88',
-        secondaryColor:    '#2a221d',
-        tertiaryColor:     '#1f1916',
-        textColor:         '#f0ead8',
-        fontFamily:        '"Source Serif Pro", "Source Serif 4", "Iowan Old Style", Cambria, Georgia, serif'
+        background:        '#0a0a14',
+        primaryColor:      '#1e1b4b',
+        primaryBorderColor:'#818cf8',
+        primaryTextColor:  '#fafafa',
+        lineColor:         '#71717a',
+        secondaryColor:    '#11111c',
+        tertiaryColor:     '#1c1c2a',
+        textColor:         '#fafafa',
+        fontFamily:        '"Inter Variable", "Inter", "Pretendard", system-ui, sans-serif'
       } : {
-        background:        '#faf7f0',
-        primaryColor:      '#f5f0e6',
-        primaryBorderColor:'#5d574e',
-        primaryTextColor:  '#1a1614',
-        lineColor:         '#8a8174',
-        secondaryColor:    '#ede5d3',
-        tertiaryColor:     '#f5f0e6',
-        textColor:         '#1a1614',
-        fontFamily:        '"Source Serif Pro", "Source Serif 4", "Iowan Old Style", Cambria, Georgia, serif'
+        background:        '#fafbff',
+        primaryColor:      '#eef2ff',
+        primaryBorderColor:'#4f46e5',
+        primaryTextColor:  '#09090b',
+        lineColor:         '#71717a',
+        secondaryColor:    '#f4f4f7',
+        tertiaryColor:     '#ffffff',
+        textColor:         '#09090b',
+        fontFamily:        '"Inter Variable", "Inter", "Pretendard", system-ui, sans-serif'
       };
       window.mermaid.initialize({
         startOnLoad: false,
