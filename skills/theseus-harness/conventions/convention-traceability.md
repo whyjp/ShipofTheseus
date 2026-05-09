@@ -49,7 +49,7 @@ applied_conventions:
 | 04 | interview, autonomy, stack, runtime-prereq | nfr-derivation |
 | 06 | plan-tree, aide-tree (§3 symmetry), competition, models | aide-tree (§2 multi-phase), ensemble-synthesis-default |
 | 08 | test-invariants, multiverse-impl-fan-out, interface-first-parallel-impl | dacapo |
-| 10 | sprint-regression-loop, budget-saturation-loop, lessons | parallel-cold-review |
+| 10 | regression (§2 sprint loop), budget-saturation-loop, lessons | parallel-cold-review |
 | 14 | score-rubric-objectivity, deliverable-hurdle-supremacy | — |
 | ... | ... | ... |
 

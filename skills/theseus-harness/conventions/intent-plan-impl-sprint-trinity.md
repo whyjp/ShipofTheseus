@@ -11,7 +11,7 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**페이즈 10 sprint loop = 3 axis (intent / plan / impl) 각 ≥ 2 회 + 0.999 지향 + 전체 budget cap 내 분배.** v0.9.8 [`sprint-regression-loop.md`](sprint-regression-loop.md) + v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) 가 *impl 단위만* 가정 — 의도 / 계획 단위 self-polishing 부재. 본 컨벤션이 trinity 분배 + axis 별 min 2 강제.
+**페이즈 10 sprint loop = 3 axis (intent / plan / impl) 각 ≥ 2 회 + 0.999 지향 + 전체 budget cap 내 분배.** [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) + v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) 가 *impl 단위만* 가정 — 의도 / 계획 단위 self-polishing 부재. 본 컨벤션이 trinity 분배 + axis 별 min 2 강제.
 
 ## 1. 결손 진단
 
@@ -131,7 +131,7 @@ mindmap
 
 ## 4. 호환성
 
-- v0.9.8 [`sprint-regression-loop.md`](sprint-regression-loop.md) — *impl 단위만* → 본 컨벤션이 axis 3 으로 확장
+- [`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) — *impl 단위만* → 본 컨벤션이 axis 3 으로 확장
 - v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) — early stop violation 임계 강화 (axis 별 min 2 추가)
 - v0.9.16 [`sprint-score-delta-tracking.md`](sprint-score-delta-tracking.md) — axis 별 lesson type honest tracking
 - v0.9.16 [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) — axis 별 evidence_missing 자동 매핑
@@ -146,7 +146,7 @@ mindmap
 | plan — 모듈 분할 | per-module use-case 다이어그램 추가 (per-module-diagram-fan-out 적용) |
 | plan — 인터페이스 | 인터페이스 정의 ≥ 5 추가 + dataclass / pseudocode / 클래스 시그니처 (plan 의무 본문 강화) |
 | plan — TODO DAG | 의존 그래프 verification + leaf TODO 별 테스트 TODO 추가 |
-| impl — 기존 sprint-regression-loop §3 표 적용 | (기존 룰) |
+| impl — regression §2 sprint loop §2.5 표 적용 | (기존 룰) |
 
 ## 6. 본 컨벤션이 *케이스 종속이 아닌* 이유
 

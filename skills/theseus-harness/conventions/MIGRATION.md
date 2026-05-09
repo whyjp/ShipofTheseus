@@ -32,6 +32,8 @@
 | mindmap-centrality | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 구조 layer (4 axis + 페이즈 reference 매트릭스) — 단일 컨벤션의 §2 |
 | mindmap-quality-gardening | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 형식 layer (Mermaid 강제 + 4 임계) — 단일 컨벤션의 §3 |
 | mindmap-richness-default | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 풍성도 layer (A 등급 default + templated stub) — 단일 컨벤션의 §4 |
+| sprint-regression-loop | regression | sprint-37 PR-AE | sprint-37 PR-AE | sprint loop layer (페이즈 10) — 단일 컨벤션의 §2 |
+| regression-derived-lint-rule-autogen | regression | sprint-37 PR-AE | sprint-37 PR-AE | lint autogen layer (페이즈 11) — 단일 컨벤션의 §3 (self_lint C-RDLR 함수 유지) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

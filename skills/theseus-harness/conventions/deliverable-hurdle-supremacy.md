@@ -174,7 +174,7 @@ self_lint C-DHS = supremacy gate. handoff 의 final_status 가 "PASS" 인데 H1-
 ## 9. 본 컨벤션이 *케이스 종속이 아닌* 이유
 
 a- H1-H5 = *측정 메트릭* 단위 (count / size / non-zero), 도메인 X
-b- retry sprint = sprint-regression-loop.md 의 일반 메커니즘 활용
+b- retry sprint = regression.md §2 sprint loop 의 일반 메커니즘 활용
 c- 사용자 ack = 페이즈 04 Q-D 의 generic 패턴
 d- 메모리 override 룰 = generic supremacy 메커니즘
 

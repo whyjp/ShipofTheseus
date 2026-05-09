@@ -237,7 +237,7 @@ c- mindmap 진화 = revision counter, 도메인 X.
 d- Mermaid 표준 = 도메인 무관.
 e- 임계 (≥3 sub / ≥15 nodes / ≥25 nodes A) = generic 정량.
 f- templated section = 도메인 무관 stub.
-g- fallback PASS with lesson = sprint-regression-loop 일반 메커니즘 활용.
+g- fallback PASS with lesson = regression §2 sprint loop 일반 메커니즘 활용.
 
 ## 9. 다른 컨벤션과의 직교성
 
@@ -245,7 +245,7 @@ g- fallback PASS with lesson = sprint-regression-loop 일반 메커니즘 활용
 |---|---|---|---|
 | nfr-derivation | prompt 형용사 | derived gate | 품질 axis 가 §i 노드로 마인드맵에 직접 박힘 |
 | premortem-friction | 콜드리뷰 페이즈 진입 | derived improvements | premortem 발견 결손이 마인드맵 새 노드로 갱신 |
-| sprint-regression-loop | sprint 종료 시 dimension gap | next sprint lesson | weakest dim → 마인드맵의 어느 axis 가 약한가 매핑 |
+| regression §2 sprint loop | sprint 종료 시 dimension gap | next sprint lesson | weakest dim → 마인드맵의 어느 axis 가 약한가 매핑 |
 | parallel-cold-review | 페이즈 03 진입 | N framing 결손 합집합 | 4 framing 이 *마인드맵 노드 별* premortem |
 | deep-semantic-intent | §i implied framing 추출 | NFR + framing | 품질 axis 의 새 노드 (revision +1) |
 | domain-research-stacking | 도메인 어댑터 stack | 도메인-specific 노드 | 기능 axis 의 새 노드 (revision +1) |

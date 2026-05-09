@@ -15,7 +15,7 @@ indexed-in: conventions/INDEX.md
 
 ## 1. 결손 진단
 
-[`sprint-regression-loop.md`](sprint-regression-loop.md) (v0.9.8) 가 sprint NN+1 lesson 적용 룰 도입.
+[`regression.md`](regression.md) §2 sprint loop (sprint-37 PR-AE 통합) 가 sprint NN+1 lesson 적용 룰 도입.
 [`budget-saturation-loop.md`](budget-saturation-loop.md) (v0.9.15) 가 lesson type 4 분류 도입:
 
 | Lesson type | 기대 효과 (claim) |
