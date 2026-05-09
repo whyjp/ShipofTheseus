@@ -110,7 +110,7 @@ v01_cold (v0.9.9, self-estimate 97) retroactive 적용 :
 
 - v0.9.6 nfr-derivation = surface adjective 추출 (1차)
 - 본 컨벤션 = surface + implied (2차)
-- v0.9.7 premortem-friction / v0.9.9 mindmap-centrality / 기타 모두 *직교* — surface NFR + implied framing 모두 §i 의 노드로 박힘.
+- v0.9.7 premortem-friction / [`mindmap-quality.md`](mindmap-quality.md) §2 (sprint-37 PR-AD 통합) / 기타 모두 *직교* — surface NFR + implied framing 모두 §i 의 노드로 박힘.
 
 ## 7. 자기 검증
 

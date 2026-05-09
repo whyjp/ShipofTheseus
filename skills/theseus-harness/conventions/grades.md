@@ -51,7 +51,7 @@ e- 페이즈 11 회귀 바이섹트도 자율 적용 — 본 하네스의 핵심
 
 | 출처 | 신호 |
 |---|---|
-| 마인드맵 ([`mindmap-quality-gardening.md`](mindmap-quality-gardening.md)) | `mindmap_node_count` / `mindmap_axis_count` / `mindmap_max_depth` / `mindmap_external_systems` / `mindmap_domain_nouns` |
+| 마인드맵 ([`mindmap-quality.md`](mindmap-quality.md) §3) | `mindmap_node_count` / `mindmap_axis_count` / `mindmap_max_depth` / `mindmap_external_systems` / `mindmap_domain_nouns` |
 | 의도 §a 무엇을 | `observable_results_count` |
 | 의도 §c 비목표 | `explicit_non_goals_count` |
 | 의도 §d 제약 | `constraint_count` / `explicit_thresholds_count` |

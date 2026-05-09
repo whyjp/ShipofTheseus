@@ -46,7 +46,7 @@ next_sprint_candidates:
     expected_score_dim: Results
     expected_delta_range: [0.003, 0.010]
     lesson_type: content_evidence
-  - source: zero_applied_convention[mindmap-quality-gardening]
+  - source: zero_applied_convention[mindmap-quality]
     description: "마인드맵 ≥15 노드 미충족 → 페이즈 01 재진입"
     expected_score_dim: Conceptual
     expected_delta_range: [0.005, 0.020]

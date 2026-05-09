@@ -68,9 +68,7 @@
 | lessons | sprint | [10,11] | [all] | always |
 | magic-number-traceability | quality | [09] | [all] | code present |
 | measurement-contract | planning | [06,11] | [all] | metric ≥ 1 |
-| mindmap-centrality | mindmap | [all] | [all] | always |
-| mindmap-quality-gardening | mindmap | [01] | [all] | always |
-| mindmap-richness-default | mindmap | [01] | [all] | always |
+| mindmap-quality | mindmap | [all] | [all] | always |
 | models | core | [all] | [all] | always |
 | multiverse-impl-fan-out | impl | [08] | [G3,G4,G5] | always |
 | multiverse-width-default-bump | planning | [06,08] | [G3,G4,G5] | always |
@@ -111,7 +109,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **87 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **85 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

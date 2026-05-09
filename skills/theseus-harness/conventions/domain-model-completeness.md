@@ -135,5 +135,5 @@ d- **boundary 가 *implicit*** — in/out 표 명시 의무. "scope 외" 모호 
 ## 6. 호환성
 
 - [`intent-completeness.md`](intent-completeness.md) (aw) — §k 9 sub 위에 §m 추가 (직교 차원).
-- [`mindmap-richness-default.md`](mindmap-richness-default.md) (ba) — mindmap 4 axis × ≥4 sub 가 entity catalog 의 시각 표현. mindmap entity 노드 = §m D1 entity 와 1:1 매핑 권장.
+- [`mindmap-quality.md`](mindmap-quality.md) §4 (sprint-37 PR-AD 통합) — mindmap 4 axis × ≥4 sub 가 entity catalog 의 시각 표현. mindmap entity 노드 = §m D1 entity 와 1:1 매핑 권장.
 - [`measurement-contract.md`](measurement-contract.md) (bi) — D4 invariant 가 페이즈 06 measurement metric 의 정의 입력.

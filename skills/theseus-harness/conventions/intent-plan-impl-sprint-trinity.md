@@ -140,7 +140,7 @@ mindmap
 
 | axis weakest | lesson |
 |---|---|
-| intent — mindmap richness | mindmap A 등급 도달까지 노드 추가 (mindmap-richness-default 적용) |
+| intent — mindmap richness | mindmap A 등급 도달까지 노드 추가 (mindmap-quality §4 적용) |
 | intent — §k 9 sub depth | limitation / data-derived 분리 강화 (intent-completeness 적용) |
 | intent — §i NFR | derived NFR 갯수 ↑ + 임계 정량화 (nfr-derivation 적용) |
 | plan — 모듈 분할 | per-module use-case 다이어그램 추가 (per-module-diagram-fan-out 적용) |

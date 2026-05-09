@@ -49,7 +49,7 @@ class GradeSignals:
     """
 
     # ── 마인드맵 복잡도 (하나의 차원, 전부 아님) ─────────────
-    mindmap_node_count: int = 0          # 마인드맵 노드 수 (≥15 = mindmap-quality-gardening §1)
+    mindmap_node_count: int = 0          # 마인드맵 노드 수 (≥15 = mindmap-quality §3 B 임계, ≥25 = §4 A 임계)
     mindmap_axis_count: int = 0          # axis 수 (≥4 axis = G4 정합)
     mindmap_max_depth: int = 0           # 최대 깊이
     mindmap_external_systems: int = 0    # 외부 시스템 / dependency 수

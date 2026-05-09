@@ -50,7 +50,7 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | 페이즈 | 컨벤션 (lookup) |
 > | --- | --- |
 > | 모든 phase enter/exit | **phase-state-machine** (sprint-34 신규, runtime 단조성 게이트 + frontmatter forgery 차단) |
-> | 01 의도 | mindmap-richness-default · deep-semantic-intent · domain-model-completeness · intent-completeness · mindmap-centrality · **intent-optional-disambiguation** (sprint-34, optional marker 검출 시) |
+> | 01 의도 | **mindmap-quality** (sprint-37 PR-AD 통합: 구조 + 형식 + 풍성도) · deep-semantic-intent · domain-model-completeness · intent-completeness · **intent-optional-disambiguation** (sprint-34, optional marker 검출 시) |
 > | 04 인터뷰 | commentary-policy · runtime-prereq · interview · **intent-optional-disambiguation** (sprint-34, Q-OPT-NN + optional-decisions.md) |
 > | 04 → 05 (refresh 1) | **intent-refresh §3.1** (sprint-17 by, sprint-37 PR-AA 통합, 01-{1..4}-intent + 01-additional 의무) |
 > | 05 → 06 (refresh 2) | **intent-refresh §3.2** (sprint-19 ci, sprint-37 PR-AA 통합, 01-{1..4}-intent.v2 + 04-refreshed + 05-refreshed 의무, 사용자 ack 없음 자율) |

@@ -16,7 +16,7 @@ indexed-in: conventions/INDEX.md
 ## intent sprint loop trigger
 
 §k 9 sub 모두 PASS 라도 [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) (bd) 의 intent axis sprint ≥ 2 의무 — 첫 sprint = baseline measure, 두 번째 sprint = lesson 적용 후 재측정. axis lesson 후보:
-- mindmap richness 추가 노드 (mindmap-richness-default A 등급 도달까지)
+- mindmap richness 추가 노드 (mindmap-quality §4 A 등급 도달까지)
 - §k limitation / data-derived 분리 강화
 - §i derived NFR 추가 + 임계 정량화
 

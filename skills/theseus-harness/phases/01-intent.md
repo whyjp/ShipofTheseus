@@ -51,13 +51,13 @@ c- 열린 질문 0개 — 게으른 추출. 재실행.
 
 ## 마인드맵 A 등급 default + intent sprint loop
 
-a- **마인드맵 A 등급 default** ([`../conventions/mindmap-richness-default.md`](../conventions/mindmap-richness-default.md), ba) — §9 마인드맵 산출물의 frontmatter `mindmap_quality_grade` 가 A (≥25 노드 / 4 axis × ≥4 sub / 3 axis sub-sub + 1 axis sub-sub-sub) default. B fallback PASS *with lesson* — sprint NN+1 의 mindmap 보강 trigger. C/D = 페이즈 02 진입 거부.
+a- **마인드맵 A 등급 default** ([`../conventions/mindmap-quality.md`](../conventions/mindmap-quality.md) §4 풍성도, sprint-37 PR-AD 통합) — §9 마인드맵 산출물의 frontmatter `mindmap_quality_grade` 가 A (≥25 노드 / 4 axis × ≥4 sub / 3 axis sub-sub + 1 axis sub-sub-sub) default. B fallback PASS *with lesson* — sprint NN+1 의 mindmap 보강 trigger. C/D = 페이즈 02 진입 거부.
 
 b- **intent-extractor templated stub 의무** — agent 가 *templated mindmap stub* 을 base 로 출력 후 도메인-specific 노드 ≥ 9 개 추가 (자동 ≥ 25 노드 + A 등급 도달).
 
 c- **intent sprint loop** ([`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md), bd) — 페이즈 10 sprint trinity 의 *intent axis* 가 본 페이즈 산출물을 polishing 대상. axis 별 ≥ 2 sprint 강제. 첫 sprint = baseline measure, 두 번째 sprint = mindmap richness / §k limitation / §i derived NFR 보강.
 
-### Templated Section §9 (mindmap-richness-default.md ba)
+### Templated Section §9 (mindmap-quality.md §4)
 
 ```mermaid
 mindmap
