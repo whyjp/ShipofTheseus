@@ -122,7 +122,7 @@ python scoring/fingerprint.py verify --file plan/06-plan.md
 1- 모든 마크다운 산출물의 frontmatter 를 파싱.
 2- 각 파일에 대해:
   a- `skill_name == "theseus-harness"` 확인.
-  b- `skill_version` 의 major 가 현재 하네스 major 와 같음 확인.
+  b- `skill_version` 의 *major* 가 현재 하네스 major 와 같고 *minor* 가 현재 하네스 minor *이상* 임 확인 (sprint-40 v0.9.45 강화). minor 미달 시 phase 진입 거부 — 사용자 ack 0 자동 트리거: ⓐ frontmatter 일괄 갱신 (helper) + ⓑ minor 차이가 도입한 의무 산출물 (e.g., v0.9.41 = `webview/lineage.json`, v0.9.41 = `interactive-viewer/`, v0.9.44 = `gate_pnc/mirror/primary/literal.json`) 부재 시 영향 phase (12 / 13 / 09) 재실행. patch 차이는 silent pass.
   c- `project_id`, `project_run` 이 같은 묶음 안에서 일관 확인.
   d- `fingerprint` 재계산해 frontmatter 의 값과 일치 확인.
   e- `prev_fingerprint` 가 직전 페이즈 산출물의 `fingerprint` 와 일치 확인 (체인 무결).
@@ -160,7 +160,7 @@ c- 어느 방식이든, 지휘자가 페이즈 *완료* 로 표시하기 전에 
 a- frontmatter 없이 산출 — 페이즈 09 게이트에서 자동 fail.
 b- frontmatter 의 `fingerprint` 를 손으로 적기 — 검증 실패. 항상 helper 로 계산.
 c- `prev_fingerprint` 누락 — 체인 끊김. 페이즈 N=00 (시작 페이즈) 만 `prev_fingerprint: null` 허용.
-d- `skill_version` 을 임의 변경해 호환을 위장 — 검증은 본문 + 기록된 버전을 기반으로 하므로 결국 깨진다.
+d- `skill_version` 을 임의 변경해 호환을 위장 — 검증은 본문 + 기록된 버전을 기반으로 하므로 결국 깨진다. 반대로 *오래된* skill_version (예: 0.9.40) 회차 산출물을 그대로 재사용해 신규 minor 의무 산출물 (v0.9.41 prebuilt viewer / v0.9.44 4 게이트 JSON) 을 자동 skip — silent regression (sprint-40 검증 사례: simulation-bench 001 v0.9.44 g4-v2 33 파일 전 frontmatter `skill_version: 0.9.40` stale, viewer + gate JSON 0 emit). 본 §재진입 규칙 b 의 minor gate 가 차단.
 
 ## 버전 정책 (semver)
 
