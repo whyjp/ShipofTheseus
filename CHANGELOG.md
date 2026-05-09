@@ -2,6 +2,95 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.45 — 2026-05-10 (sprint-40 — 100/100 도전 + 메타-허들 활성 트랙 4)
+
+### 마일스톤
+
+sprint-39 마감 후 simulation-bench 001 v0.9.44 g4-v2 외부 검증 = **95/100 (94 plateau 첫 돌파)**. 그러나 동시에 *메타-허들 미동작* 발견 (skill_version 0.9.40 stale + viewer 산출물 0 emit + sprint-39 4 게이트 JSON 0 emit). 본 sprint = **메타 4 + 점수 회복 4 PR 통합 (M-1~4 + G-1~4)** → 100/100 재도전 준비.
+
+### 변경 — 트랙 4 8 PR (PR-A ~ PR-H)
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | sprint-40 plan.md + bench v0.9.44 진단 docs (외부 + 메쉬업) | `.ShipofTheseus/sprints/40/plan.md` + `docs/reviews/2026-05-09-bench-001-mine-throughput-v0944{,−meshup}.md` |
+| PR-B | **M-1 + G-1** — `skill_version` minor gate (contracts.md) + V6 cross-process evidence (`gate_v6_reproducibility.json` + 7 anti-pattern grep) | conventions/{contracts, reproducibility-doublecheck, cross-process-anti-patterns 신규}.md + phases/09 §V6-Evidence-Bound |
+| PR-C | **M-2** — viewer 산출물 file-existence 3 단 게이트 (phase 09 §V8 사전 / phase 12 종료 / phase 13 종료) | phases/{09, 12, 13} + agents/{webview, interactive-viewer}-builder + viewer-runtime.md |
+| PR-D | **M-3** — Phase 13 G4+ invoke step + Phase 12 invoke + pre-bootup 자동 호출 (HARD-RULE 9.nn / 9.oo / 9.pp) | orchestrator SKILL.md + phases/13 invoke step 절 + pre-cold-session-bootup.md |
+| PR-E | **M-4 + G-2** — sprint-39 4 게이트 JSON 자동 emit (`gate_pnc/mirror/primary/literal.json` 골격) + numeric drift atomic regen (`gate_readme_summary_consistency.json`) | phases/09 §README-Sync + §Gate-JSON-Emit-Mandate + readme-numbers-from-summary.md |
+| PR-F | **G-3** — modeling shortcuts 4-tier (gold-standard / defensible-coarse / heuristic / placeholder) + cascading sub-Q (interview §10) + L2 도메인 critique 카탈로그 (parallel-cold-review §9) | conventions/modeling-shortcuts.md (신규) + interview.md + parallel-cold-review.md |
+| PR-G | **G-4** — DES warmup quantification + methodology completeness (nfr-derivation 도메인 sub-checklist) + `gate_warmup.json` | conventions/nfr-derivation.md + phases/09 §Warmup-Quantification |
+| PR-H | sprint 마감 v0.9.45 + CHANGELOG (본 entry) | SKILL.md / orchestrator SKILL.md / plugin.json / CHANGELOG |
+
+### 변경 — self_lint (+7 신규, 129 → 136)
+
+| 룰 | scope |
+|---|---|
+| C-V6X | gate_v6_reproducibility.json verdict + summary_byte_equal + violations |
+| C-VEX | webview/exit_gate.json + interactive-viewer/exit_gate.json + gate_v8_viewer_readiness.json (3 게이트 통합) |
+| C-RDS | gate_readme_summary_consistency.json verdict + atomic_regen_block.atomic |
+| C-GJM | sprint-39 4 게이트 JSON verdict pass (silent skip 차단) |
+| C-MSC | intent/modeling_shortcuts.json classification + alternative + expected_loss |
+| C-CSQ | intent/04-cascaded-subq.md keyword 매칭 sub-Q 답 존재 |
+| C-PCR-L2 | parallel-cold-review L2 catalogue applied |
+| C-WUP | gate_warmup.json 4 methodology 항목 verdict pass + evidence_path 실재 |
+
+(C-VEX 통합 카운트 1 + 7 = 8 신규 — 본 sprint 가 7 룰로 명세하나 C-VEX 가 3 게이트 통합 단일 룰. 실 net +7.)
+
+### 변경 — 신규 산출물 (per-project)
+
+- `quality/gate_v6_reproducibility.json` — V6 cross-process evidence + sha256 + anti-pattern grep
+- `quality/gate_v8_viewer_readiness.json` — phase 09 entry viewer 외피 검사
+- `webview/exit_gate.json` — phase 12 종료 file-existence
+- `interactive-viewer/exit_gate.json` — phase 13 종료 file-existence + widgets ≥ 1/3
+- `quality/gate_readme_summary_consistency.json` — atomic regen + drift ≤ 0.01%
+- `intent/modeling_shortcuts.json` — phase 02/03 4-tier classification
+- `intent/04-cascaded-subq.md` — phase 04 cascading sub-Q 산출
+- `quality/gate_warmup.json` — DES methodology 4 항목 (phase 09)
+
+### 변경 — 신규 컨벤션 (+2, 84 → 86)
+
+| 신규 | 위치 | 기능 |
+|---|---|---|
+| cross-process-anti-patterns | conventions/cross-process-anti-patterns.md | 7 regex 카탈로그 (Python hash() salt / np.random.seed(hash()) / random.seed(hash()) / os.urandom mix / id() / time.time() seed / uuid4() seed) |
+| modeling-shortcuts | conventions/modeling-shortcuts.md | 4-tier classification + per-domain L2 매핑 |
+
+### 변경 — 신규 HARD-RULE 9 (orchestrator SKILL.md)
+
+- **9.nn** — G4+ Phase 13 invoke step 강제
+- **9.oo** — Phase 12 invoke step 강제 (모든 grade)
+- **9.pp** — pre-cold-session-bootup 자동 호출 강제
+
+### 점수 회복 추정 (95 → 99~100/100)
+
+| PR | 메타 효과 | 점수 효과 (직접) | 누적 점수 추정 |
+|---|---|---:|---:|
+| 시작 | — | — | 95 |
+| PR-B | M-1 활성 + V6 evidence | +1 (V6 catch + drift 해소) | 96 |
+| PR-C/D | M-2 / M-3 viewer 산출 강제 + invoke | 0 (점수 외, 신뢰 회복) | 96 |
+| PR-E | M-4 게이트 JSON + G-2 numeric drift | +1 (Results 14→15) | 97 |
+| PR-F | G-3 modeling shortcuts + L2 catalogue | +1~2 (Sim correctness 18→19~20) | 98~99 |
+| PR-G | G-4 warmup quantification | +1 (Experimental design 14→15) | 99~100 |
+| **총** | 메타 4 활성 + 점수 회복 4 | **+4~5pt** | **99~100** |
+
+(G-5 conceptual exemplary-rubric = sprint-41+ 신규 *질적 게이트* 패러다임 — 본 sprint 범위 외.)
+
+### 마감 사실
+
+- 8 PR 모두 main 머지 (commit-immediate 패턴, 사용자 합의)
+- self_lint 129 → 136 (+7)
+- 컨벤션 84 → 86 (+2)
+- HARD-RULE 9.mm → 9.pp (+3)
+- 외부 검증 보류 — simulation-bench 재실행은 사용자가 직접 (skill_version 0.9.45 강제 적용 후 fresh G4 cold session)
+
+### 메모리 신규 후보
+
+- `project_sprint40_v0945.md` (sprint 마감 결과)
+- `project_bench_001_v0945.md` (재실행 후 — 100/100 도달 시 또는 부분 회복 시)
+
+### 후속
+
+- **sprint-41 검토 후보** — G-5 conceptual exemplary-rubric (질적 게이트 신규 패러다임) + sprint-40 메모리 [`feedback_convention_runtime_gap.md`](C:\\Users\\cxx\\.claude\\projects\\D--github-ShipofTheseus\\memory\\feedback_convention_runtime_gap.md) 의 추가 결손 식별
+
 ## v0.9.44 — 2026-05-09 (sprint-39 — 4 패턴 inline 트랙 3)
 
 ### 마일스톤

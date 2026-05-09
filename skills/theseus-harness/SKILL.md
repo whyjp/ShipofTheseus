@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.44
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 84 컨벤션 / 15 페이즈 / 18 에이전트. sprint-39 — phase 09 4 패턴 inline (PNC/Mirror/Primary/Literal) + self_lint 129. 트랙 3 마감.
+version: 0.9.45
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 86 컨벤션 / 15 페이즈 / 18 에이전트. sprint-40 — 메타-허들 활성 (M-1~4) + 점수 회복 4 게이트 (V6 evidence + numeric drift atomic + modeling shortcuts + warmup quantification) + self_lint 136. 100/100 도전 트랙.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
