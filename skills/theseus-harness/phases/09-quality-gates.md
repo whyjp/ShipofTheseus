@@ -311,3 +311,57 @@ a- **truck_util = 1 - queue/shift** 류 — sibling (queue, shift) 이 truck_uti
 b- **direct measurement 정의 모호** — formula = "throughput / capacity" 인데 capacity 가 derived = chain proxy.
 c- **primary 라벨 없이 "1차" 주장** — 06.b directive 의 type 정합 의무.
 d- **override 남용** — ack 후 violation 누적 = bench cheat. ack ≤ 1 권고.
+
+
+## §Literal — Letter-by-Fallback (Literal-Forbid) pattern (sprint-39 PR-E inline)
+
+**4 감점 메타 패턴 D** — 06.b directives.json 의 `avoid` directive 의 *literal* (e.g., hardcoded path / forbidden API) 가 deliverable source 에 등장. fallback 가 있어도 letter 위반.
+
+### 검사 알고리즘
+
+1. avoid directive 추출 (e.g., "no hardcoded paths", "no /mnt/", "no localhost", "no print()")
+2. regex 자동 추출 (e.g., `r"/mnt/[a-z]/"`, `r"localhost:[0-9]+"`, `r"\bprint\("`)
+3. 모든 deliverable source code grep
+4. 매치 시 위반 (fallback 존재 무관 — letter-strict)
+
+### 산출물 — `gate_literal.json`
+
+```json
+{
+  "avoid_directives_total": <int>,
+  "regex_patterns": [
+    {"directive": "D-005", "pattern": "/mnt/[a-z]/", "source_quote": "no hardcoded /mnt paths"}
+  ],
+  "violations": [
+    {
+      "directive": "D-005",
+      "pattern": "/mnt/[a-z]/",
+      "match": "/mnt/d/data",
+      "file": "src/loader.py:L42",
+      "fallback_present": true,
+      "severity": "cap_correctness"
+    }
+  ]
+}
+```
+
+### 게이트 룰
+
+- violations 0 의무 (cap_correctness — fallback 존재 무관, letter-strict)
+- regex 자동 추출 + 사용자 ack (06.f path-policy 정합) — false positive 회피
+- skip 조건: avoid directive 0 인 작업 (functional-only). avoid 가 *non-textual* (e.g., performance constraint) 인 경우 별도 분류
+
+### self_lint C-LIT
+
+phases/09-quality-gates.md 본문에 §Literal 룰 키워드 박힘 검증.
+
+### 안티 패턴
+
+a- **fallback 존재로 letter 위반 무시** — letter-strict. fallback 보장 != letter 통과.
+b- **regex 추출 자동화 skip** + 수동 grep — false negative 폭증.
+c- **avoid 의 의도가 *행동 패턴*** (e.g., "no synchronous wait") 인데 regex 로 매치 안 됨 — 행동 패턴은 별도 분류 (sprint-40 검토 후보).
+d- **regex pattern 사용자 ack 0** + 자동 fail — false positive 폭증. ack 게이트 통과 후 enforce.
+
+## sprint-39 4 패턴 통합 (트랙 3 마감)
+
+§PNC (A) + §Mirror (B) + §Primary (C) + §Literal (D) — phase 09 cold session 자동 검출 4 패턴. self_lint C-PNC / C-MIR / C-PRI / C-LIT 4 룰 동시 통과 의무.
