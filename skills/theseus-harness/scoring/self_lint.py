@@ -46,12 +46,18 @@ def _files(root: Path, pattern: str) -> list[Path]:
     return sorted(root.glob(pattern))
 
 
+# conventions/ 디렉토리 안의 *컨벤션이 아닌* meta 파일. 본 집합에 포함된 파일은 C1/C2/C11/C-IDX-1/C-IDX-2 검사 skip.
+# - INDEX.md : router 메타 (sprint-20 v0.9.25)
+# - MIGRATION.md : 다이어트 매핑 (sprint-37 v0.9.42, PR-A)
+_CONVENTION_META_FILES = {"INDEX.md", "MIGRATION.md"}
+
+
 def check_convention_one_line_summary(skill_root: Path) -> list[str]:
     """C1 — 모든 conventions/*.md 의 첫 두 줄 검사 (INDEX.md 제외 — router 메타). sprint-27 v0.9.32 — frontmatter skip."""
     issues: list[str] = []
     for p in _files(skill_root / "conventions", "*.md"):
-        if p.name == "INDEX.md":
-            continue   # router 메타 파일, 컨벤션 아님
+        if p.name in _CONVENTION_META_FILES:
+            continue   # router / migration 메타 파일, 컨벤션 아님
         text = _read(p)
         lines = text.splitlines()
         # sprint-27: skip leading YAML frontmatter (--- ... ---)
@@ -100,7 +106,7 @@ def check_conventions_frontmatter_drift(skill_root: Path) -> list[str]:
             "trigger-when": m.group(5).strip(),
         }
     for p in _files(skill_root / "conventions", "*.md"):
-        if p.name == "INDEX.md":
+        if p.name in _CONVENTION_META_FILES:
             continue
         rid = p.stem
         if rid not in router:
@@ -134,7 +140,7 @@ def check_skill_links_all_conventions(skill_root: Path) -> list[str]:
     combined = skill + "\n" + idx
     issues: list[str] = []
     for p in _files(skill_root / "conventions", "*.md"):
-        if p.name == "INDEX.md":
+        if p.name in _CONVENTION_META_FILES:
             continue
         # INDEX 의 router 표는 stem 만 포함 (`| <id> |`), SKILL 은 markdown link `conventions/<file>.md`
         if f"conventions/{p.name}" in combined or f"| {p.stem} |" in idx:
@@ -249,6 +255,8 @@ def check_skill_readme_lists_all_conventions(skill_root: Path) -> list[str]:
     issues: list[str] = []
     readme = _read(skill_root / "README.md")
     for p in _files(skill_root / "conventions", "*.md"):
+        if p.name in _CONVENTION_META_FILES:
+            continue
         rel = f"conventions/{p.name}"
         if rel not in readme:
             issues.append(f"skill README 가 {rel} 를 노출하지 않음")
@@ -2338,7 +2346,7 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
         issues.append("conventions/INDEX.md 누락 (sprint-20 v0.9.25)")
         return issues
     body = _read(idx)
-    files = {p.stem for p in (skill_root / "conventions").glob("*.md") if p.name != "INDEX.md"}
+    files = {p.stem for p in (skill_root / "conventions").glob("*.md") if p.name not in _CONVENTION_META_FILES}
     import re
     table_ids = set()
     # markdown 표 header row 만 제외 — 첫 컬럼 "id" 가 header 지표 (다른 column 명 'grades' 등은 실 convention 명과 충돌)
