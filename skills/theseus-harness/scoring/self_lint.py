@@ -2275,6 +2275,23 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_phase07_dispatch(skill_root: Path) -> list[str]:
+    """C-DPT (sprint-38 PR-I) — phase 07 dispatch 3 sub-phase (07.a table / 07.b trace / 07.c cross-agent invariant).
+
+    단일 함수로 3 sub-phase 키워드 모두 검사 (phase 07 본문에 박힘).
+    """
+    issues: list[str] = []
+    p07 = skill_root / "phases" / "07-plan-recursion.md"
+    if not p07.exists():
+        return ["phases/07-plan-recursion.md 부재"]
+    body = _read(p07)
+    for kw in ["07.a Dispatch table", "07.b Dispatch trace", "07.c Cross-agent invariant",
+               "dispatch_row_count", "unmatched_todo: 0", "invariant_violations: 0"]:
+        if kw not in body:
+            issues.append(f"phases/07-plan-recursion.md: '{kw}' 키워드 누락 (sprint-38 PR-I)")
+    return issues
+
+
 def check_premortem(skill_root: Path) -> list[str]:
     """C-PMT (sprint-38 PR-G) — phase 06.e post-decision premortem.
 
@@ -3063,6 +3080,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-CLS", "phases/06-plan.md §06.c (sprint-38 PR-E) — classification (≥ 3 layer + orphan 모듈 0)", check_classification),
     ("C-STT", "phases/06-plan.md §06.d (sprint-38 PR-F) — sub-tree TODO (max_depth ≥ 3 + leaf 매핑 의무 + dispatch 1:1)", check_sub_tree_todo),
     ("C-PMT", "phases/06-plan.md §06.e (sprint-38 PR-G) — post-decision premortem (격언 동·서 + 시뮬레이션 + derived improvements ≥ 1)", check_premortem),
+    ("C-DPT", "phases/07-plan-recursion.md (sprint-38 PR-I) — phase 07 dispatch 3 sub-phase (table + trace + cross-agent invariant)", check_phase07_dispatch),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
