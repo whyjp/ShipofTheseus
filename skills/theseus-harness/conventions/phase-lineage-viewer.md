@@ -68,11 +68,26 @@ gantt
 - section ≥ 3 (Setup / Plan / Impl 등 — 그레이드 별 활성 phase 그룹)
 - 모든 활성 phase 가 노드로 (G1: P01 + P14 만 / G2: P01 + P04 + P06 + P08 + P09 + P14 / G3+: 풀)
 - dacapo loop 가 발생한 phase 는 *별도 task* 로 (`crit` 클래스 + dacapo R1/R2 라벨)
-- sentinel 위반은 `crit` 클래스 + 명시 라벨 (예: "★ B universe_skip")
+- sentinel 위반은 `crit` 클래스 + `★` 라벨 prefix (예: "★ B universe_skip")
+- **hotspot 마커 (sprint-35-extra)** — 누적 소요시간이 *동급 phase 중앙값 × 1.5* 초과 시 `★` 라벨 prefix 추가. crit 와 *직교* — Da Capo + hotspot 모두 시 "★ P08 dacapo R1 (hotspot)" 처럼 둘 다 표기.
+- **병렬 서브에이전트 (sprint-35-extra)** — phase 08 multiverse / phase 11 회귀 멀티 candidate 처럼 *동시* 다수 task 가 도는 경우, *각 universe 별 row 분해* 의무. 동일 시작 시각으로 정렬되어 시각적 동시성이 보임. 단일 task 로 합쳐 표시 = 병렬성 은폐로 fail.
+- bypass phase = 일반 task (no class) 또는 `:done` (gray). `:crit` 사용 금지 — bypass 는 정상 lineage.
 - phase 14 = `milestone` task (0 분 길이)
 - 시각 = phase_state.json 의 entered_at (start) + duration_seconds → end (자동 산출)
 
 **자동 갱신** — `update_phase_lineage(event='exit', ...)` 호출 시 gantt block 도 함께 갱신. 수동 편집 금지.
+
+### 1.5.a 색상 의미 표 (legend)
+
+| 표시 | 의미 | 트리거 |
+|---|---|---|
+| 일반 (default fill) | 정상 phase 진행 | 첫 실행 통과, sentinel 0 |
+| **빨강 `:crit`** | Da Capo rerun · sentinel 위반 | winner 임계 미달 → 폴리싱 / 또는 universe_skip / log pattern / forgery 감지 |
+| **★ 라벨 prefix** | hotspot — 시간 1.5× 초과 또는 sentinel 박힘 | task 라벨 본문에 `★` 접두 |
+| **dashed (no fill)** | bypass | 회귀 미발생으로 phase 11 skip 등 |
+| **milestone (0 분)** | phase 14 핸드오프 | `:milestone` 클래스 |
+
+view 가독성: 빨강 + ★ 두 신호로 *어디 시간 많이 썼는지* + *어디 무결성 깨졌는지* 가 즉시 식별. 병렬 서브에이전트는 *동일 start 의 다수 row* 로 시각적 동시성 표현.
 
 ## 2. lineage.md 구조
 

@@ -409,6 +409,34 @@ html, body {
   line-height: 1.6;
 }
 
+/* ── Legend (gantt 범례) ──────────────────────────────────────── */
+.lv-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 12px 4px 0;
+  padding: 8px 14px;
+  font-size: var(--fs-1);
+  color: var(--fg-3);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  align-items: center;
+}
+.lv-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.lv-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+  border: 1px solid currentColor;
+}
+.lv-legend-normal  { background: var(--bg-2); color: var(--border-strong); }
+.lv-legend-crit    { background: rgba(220, 38, 38, 0.15); color: var(--c-err); }
+.lv-legend-hotspot { background: rgba(217, 119, 6, 0.18); color: var(--c-warn); }
+.lv-legend-bypass  { background: transparent; color: var(--fg-3); border-style: dashed; }
+.lv-legend-parallel{ background: var(--grad-soft); color: var(--grad-indigo); border-color: var(--grad-indigo); }
+
 /* ── Tables — card-style table ────────────────────────────────── */
 .lv-table-frame {
   background: var(--bg-2);
