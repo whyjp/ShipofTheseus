@@ -27,6 +27,8 @@
 | intent-refresh-post-critique | intent-refresh | sprint-37 PR-AA | sprint-37 PR-AA | 동일 — 1차/2차 refresh 단일 컨벤션 phase 분기 |
 | aide-tree-multi-phase | aide-tree | sprint-37 PR-AB | sprint-37 PR-AB | breadth (multi-phase 확장) — 단일 컨벤션의 §2 축 |
 | aide-tree-symmetry | aide-tree | sprint-37 PR-AB | sprint-37 PR-AB | depth (sequenceDiagram 대칭) — 단일 컨벤션의 §3 축 |
+| viewer-auto-refresh | viewer-runtime | sprint-37 PR-AC | sprint-37 PR-AC | frontend 폴링 layer — 단일 컨벤션의 §2 (self_lint C-VAR 함수 유지) |
+| viewer-runtime-lifecycle | viewer-runtime | sprint-37 PR-AC | sprint-37 PR-AC | backend lifecycle layer — 단일 컨벤션의 §3 (self_lint C-VRL 함수 유지) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

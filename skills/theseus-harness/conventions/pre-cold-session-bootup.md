@@ -136,6 +136,5 @@ d- **빈 골격 JSON 에 dummy filler ("TODO")** — 실제 빈 array / null 만
 ## 7. 호환성
 
 - [`prebuilt-shell-runtime-json.md`](prebuilt-shell-runtime-json.md) — 본 컨벤션이 phase 00 이전 시점을 추가. emit 프로토콜 정합.
-- [`viewer-runtime-lifecycle.md`](viewer-runtime-lifecycle.md) — bootstrap 의 step 5 = lifecycle up.
-- [`viewer-auto-refresh.md`](viewer-auto-refresh.md) — 빈 골격이 polling 으로 자동 갱신되는 메커니즘.
+- [`viewer-runtime.md`](viewer-runtime.md) §3 (sprint-37 PR-AC 통합) — bootstrap 의 step 5 = lifecycle up. §2 (frontend) — 빈 골격이 polling 으로 자동 갱신되는 메커니즘.
 - [`phase-lineage-viewer.md`](phase-lineage-viewer.md) §15 — emit fidelity 룰. skeleton 모드 추가.
