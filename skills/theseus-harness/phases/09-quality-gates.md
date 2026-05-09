@@ -463,6 +463,127 @@ d- **anti-pattern grep skip** — D-6 회귀 (hash(scenario_id) → SeedSequence
 - [`project_bench_001_v0944.md`](../../../memory/project_bench_001_v0944.md) — D-6/V6 회귀 root cause 의 1:1 대응 lint.
 
 
+## §README-Sync — Numeric drift atomic regen (sprint-40 PR-E 강화)
+
+**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 — README §7 baseline 12 126.7 t vs `summary.json` 12 116.7 t (0.08% drift, strict 임계 0.01% 의 8 배). zero-context Opus reviewer -1pt Results & interpretation. **본 절 = G-RNFS 의 *atomic regen* + *JSON evidence* layer.**
+
+### 검사 알고리즘 (G-RNFS 강화)
+
+1. **숫자 literal grep** ([`../conventions/readme-numbers-from-summary.md`](../conventions/readme-numbers-from-summary.md) §알고리즘 1-5).
+2. **Atomic regen block (sprint-40 PR-E 신규)** — `harness/measure_run.py` (또는 entry script) invoke 와 README 갱신을 *atomic step* 으로 묶음:
+   ```python
+   # phase 09 게이트 본문이 의무 실행
+   subprocess.run([sys.executable, entry_script, ...], env={**os.environ, "PYTHONHASHSEED": "0"})
+   summary = json.load(open(out_dir / "summary.json"))
+   regenerate_readme_from_summary(README_PATH, summary)   # 자동 regen
+   # 두 step 사이에 다른 phase 진입 금지
+   ```
+3. **drift ≤ 0.01% 검증** — 모든 numeric literal 매핑 후 fuzzy match.
+4. **JSON evidence emit** — `quality/gate_readme_summary_consistency.json` 산출.
+
+### 산출물 — `quality/gate_readme_summary_consistency.json`
+
+```json
+{
+  "schema_version": "0.9.45",
+  "atomic_regen_block": {
+    "measure_run_started_at": "2026-05-..T..:..:..+09:00",
+    "summary_emitted_at": "...",
+    "readme_regenerated_at": "...",
+    "atomic": true,
+    "phases_between": []
+  },
+  "scanned": {
+    "files": ["README.md", "outputs/README.md", "handoff/14-handoff.md"],
+    "numbers_total": 47,
+    "numbers_mapped": 45,
+    "numbers_external_source": 2
+  },
+  "drift": {
+    "tolerance_pct": 0.01,
+    "violations": [],
+    "max_observed_drift_pct": 0.0
+  },
+  "verdict": "pass"
+}
+```
+
+### 게이트 룰
+
+- `atomic_regen_block.atomic == true` 의무 (`phases_between == []` 보장)
+- `drift.violations == []` 의무
+- `numbers_mapped + numbers_external_source == numbers_total` 의무 (모든 숫자 추적)
+- 미달 시 phase 09 verdict = `halt` + atomic regen step 자동 재실행 → phase 09 재진입
+
+### self_lint C-RDS (sprint-40 PR-E 신규)
+
+phase 09 진입 시 `quality/gate_readme_summary_consistency.json` 의 `verdict == "pass"` + `atomic_regen_block.atomic == true` 검증. fail 시 phase 09 진입 거부.
+
+### 메모리 정합
+
+- [`feedback_pseudocode_to_enforcement.md`](../../../memory/feedback_pseudocode_to_enforcement.md) — G-RNFS 컨벤션은 v0.9.18 도입, atomic regen layer 가 sprint-40 에서 enforcement 닫음.
+- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — atomic step 강제로 *컨벤션 선언 ≠ 런타임* 갭 G-2 layer 정정.
+
+
+## §Gate-JSON-Emit-Mandate — sprint-39 4 게이트 자동 emit (sprint-40 PR-E 강화)
+
+**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 — sprint-39 가 도입한 4 패턴 게이트 (§PNC / §Mirror / §Primary / §Literal) 의 JSON 산출물 (`gate_pnc.json` / `gate_mirror.json` / `gate_primary.json` / `gate_literal.json`) **0 emit**. 컨벤션 선언만 박히고 cold session 이 *통째 skip*. **본 절 = 런타임 집행 layer.**
+
+### 의무
+
+phase 09 *진입* 시 (그러나 게이트 본문 진행 전) 다음 4 JSON 골격을 *자동* emit. cold session 이 skip 할 수 없음 — 골격 부재 시 phase 09 진입 거부.
+
+```python
+# orchestrator phase 09 entry hook
+GATE_JSONS = ['gate_pnc.json', 'gate_mirror.json', 'gate_primary.json', 'gate_literal.json']
+
+for fname in GATE_JSONS:
+    path = quality_dir / fname
+    if not path.exists():
+        # 빈 골격 emit — cold session 이 본문 채움
+        skeleton = SKELETONS[fname]   # 컨벤션 본문 §산출물 참조
+        path.write_text(json.dumps(skeleton, indent=2))
+```
+
+### 4 골격 스키마
+
+phase 09 §PNC / §Mirror / §Primary / §Literal 본문 §산출물 절 정합. 빈 골격 형식:
+
+```json
+// gate_pnc.json (PNC) 골격
+{"schema_version": "0.9.45", "fields_total": 0, "fields_consumed": 0, "fields_orphan": 0, "violations": [], "verdict": "pending"}
+
+// gate_mirror.json 골격
+{"schema_version": "0.9.45", "internal_facts_total": 0, "mirrored_count": 0, "unmirrored_count": 0, "violations": [], "verdict": "pending"}
+
+// gate_primary.json 골격
+{"schema_version": "0.9.45", "primary_directives_total": 0, "direct_measured": 0, "proxy_via_sibling": 0, "violations": [], "verdict": "pending"}
+
+// gate_literal.json 골격
+{"schema_version": "0.9.45", "avoid_directives_total": 0, "regex_patterns": [], "violations": [], "verdict": "pending"}
+```
+
+cold session 진행 중 phase 09 본문이 각 게이트의 *실제 검사* 후 `verdict` 를 `pass` / `fail` 로 갱신.
+
+### 게이트 룰
+
+- 4 JSON 모두 *존재* 의무 (phase 09 entry 시 자동 골격 emit)
+- 모든 `verdict == "pass"` 의무 (phase 09 종합 판정 통과 조건)
+- `verdict == "pending"` 인 채로 phase 10 진입 시도 = silent skip 신호 → phase 09 재진입 강제
+
+### self_lint C-GJM (sprint-40 PR-E 신규 — Gate-JSON-emit Mandate)
+
+phase 09 종료 직전 :
+- 4 JSON 파일 존재 확인
+- 4 JSON 모두 `verdict == "pass"` 확인
+- 미달 시 phase 09 종료 거부
+
+### 메모리 정합
+
+- [`feedback_dual_pressure_json_schema.md`](../../../memory/feedback_dual_pressure_json_schema.md) — *이중 압력* 패러다임 (게이트 + JSON evidence). 본 §Gate-JSON-Emit-Mandate = 4 게이트의 런타임 활성.
+- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — sprint-39 4 패턴 inline 의 *런타임* layer 닫음.
+
+
 ## §V8 — Viewer-readiness 사전 차단 (sprint-40 PR-C 신규)
 
 phase 09 진입 시 phase 12/13 viewer 산출 디렉터리 *외피 존재* 사전 검사. **목적**: pre-cold-session-bootup.md 가 빈 골격을 사전 생성했는지 확인 — 부재 시 phase 00 재실행 트리거. (pre-bootup 누락 → 12/13 종료 게이트 fail → 시간 낭비. 09 사전 차단으로 빠른 실패.)
