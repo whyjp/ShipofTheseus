@@ -2,6 +2,8 @@
 .ShipofTheseus/*
 !.ShipofTheseus/theseus-self
 !.ShipofTheseus/theseus-self/**
+!.ShipofTheseus/sprints/
+!.ShipofTheseus/sprints/**
 __pycache__/
 *.pyc
 .pytest_cache/
