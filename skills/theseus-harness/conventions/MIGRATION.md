@@ -42,6 +42,7 @@
 | domain-model-completeness | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | model completeness (built-in) — 단일 컨벤션의 §2 (self_lint C-DMC 함수 유지) |
 | canonical-not-stub | phases/06,08,14 §canonical inline | sprint-37 PR-AH | sprint-37 PR-AH | 페이즈 본문 inline 흡수 (self_lint C-CNS 함수 phases 본문 검사로 변경) |
 | timing | phases/00,14 §timing inline | sprint-37 PR-AI | sprint-37 PR-AI | 페이즈 본문 inline 흡수 (self_lint 검사 0, cross-ref 다수 갱신) |
+| stack | phases/04 §stack inline | sprint-37 PR-AJ | sprint-37 PR-AJ | 페이즈 본문 inline 흡수 (self_lint 검사 0, phase 04 본문 통합) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 
