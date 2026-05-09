@@ -821,3 +821,83 @@ e- **rubric_axis 부재** — 외부 rubric 작업 시 모든 directive 의 rubr
 - 06.b → 06.d: directives 의 *exec layer* 가 sub-tree TODO 의 leaf 책임 매핑.
 - 06.b → 08.f (prompt-trace): directives 의 *visibility layer* 가 deliverable ↔ directive 매핑 source.
 - 06.b → 06.f path-policy: directives.json 자체가 06.f deliverable list 에 포함.
+
+
+## §06.c Classification (sprint-38 PR-E)
+
+**phase 06 의 세 번째 sub-phase** — 모듈/관심사/책임 분할 (구현 분류 트리). 06.b directives 의 *def layer* 가 입력.
+
+### 트리거
+
+phase 06.b (Intent-decoding) 직후. directives.json 의 *def layer* 가 어떤 모듈에 정의되는지 매핑.
+
+### 산출물 — `plan/06-classification.md`
+
+```markdown
+---
+phase: "06.c"
+prev_fingerprint: "P06B-..."
+fingerprint: "P06C-..."
+created_at: "<ISO>"
+layer_count: <int>           # ≥ 3
+module_count: <int>
+orphan_module_count: 0       # 의무 0 (모든 모듈 ≥ 1 directive 매핑)
+---
+
+# Phase 06.c Classification — 모듈/관심사/책임 분할
+
+## Layer 분할 (≥ 3)
+
+### Layer 1: <name> (e.g., domain core)
+- 책임: <1-line>
+- 모듈:
+  - `<module>`: directives [D-001, D-007] / 책임 <1-line>
+  - `<module>`: directives [...]
+
+### Layer 2: <name> (e.g., adapter)
+- 책임: <1-line>
+- 모듈: ...
+
+### Layer 3: <name> (e.g., infra)
+- 책임: ...
+
+## Orphan 모듈 검증
+
+모든 모듈 → ≥ 1 directive 매핑 (06.b directives.json) 검증 결과:
+- orphan 모듈: 0 (의무 0)
+```
+
+### 의무 체크
+
+a- **layer ≥ 3** — 단일 layer flat 분할 회피.
+b- **모든 모듈 ≥ 1 directive 매핑** — orphan 모듈 0. directive 가 어느 모듈도 정의 안 함 = directive 추가 누락 신호.
+c- **모든 directive ≥ 1 모듈 매핑** — fabricated directive 0. 매핑 안 되는 directive = 06.b 재진입.
+d- **layer 책임 분리** — 같은 책임이 두 layer 에 중복 = SoC 위반.
+
+### self_lint C-CLS
+
+```python
+def check_classification(skill_root: Path) -> list[str]:
+    """C-CLS (sprint-38 PR-E) — phase 06.c classification."""
+    issues = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    body = p06.read_text(encoding="utf-8")
+    for kw in ["§06.c", "Classification", "Layer 분할 (≥ 3)",
+              "orphan_module_count: 0", "Orphan 모듈"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.c '{kw}' 키워드 누락 (sprint-38 PR-E)")
+    return issues
+```
+
+### 안티 패턴
+
+a- **layer 1 (flat)** — 모든 모듈이 한 layer = 분할 의미 0. ≥ 3 강제.
+b- **orphan 모듈 ≥ 1** — directive 매핑 0 모듈 = 의도 외 코드.
+c- **fabricated directive** (모듈 매핑 0 directive) — 06.b 의 directive 가 fabricated. 06.b 재진입.
+d- **layer 책임 중복** — SoC 위반. 책임 1:1 layer 매핑.
+
+### 호환성
+
+- 06.b → 06.c: directives 의 def layer 가 모듈 매핑 입력.
+- 06.c → 06.d: classification 의 모듈 트리가 sub-tree TODO 의 leaf 단위.
+- 06.c → 06.f: classification.md 도 06.f deliverable list 포함.
