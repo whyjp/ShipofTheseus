@@ -584,6 +584,46 @@ phase 09 종료 직전 :
 - [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — sprint-39 4 패턴 inline 의 *런타임* layer 닫음.
 
 
+## §Warmup-Quantification — DES 도메인 methodology completeness (sprint-40 PR-G 신규)
+
+**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 — `baseline.yaml: warmup_minutes: 0` + 첫-반/끝-반 throughput 분리 0. reviewer *"acknowledged but not justified"* (Experimental design -1pt). **본 절 = 그 회피 패턴 차단.**
+
+본 절은 [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist (sprint-40 PR-G) 를 phase 09 trigger 에 매핑한 enforcement layer.
+
+### 검사 항목 (DES 도메인 시)
+
+| 항목 | 의무 evidence |
+|---|---|
+| warmup justification (quantitative) | `outputs/half_split_analysis.csv` (또는 동등) — first-half/second-half throughput delta + delta_threshold 5% 이내 또는 명시 정당화 |
+| replication count power analysis | target CI half-width + observed CI + reps 매트릭스 |
+| common-random-numbers protocol | seed derivation + reproducibility byte-equal evidence (PR-B `gate_v6_reproducibility.json` 정합) |
+| terminating vs steady-state 분류 | `conceptual_model.md` 명시 + 그에 따른 warmup 정책 |
+
+### 산출물 — `quality/gate_warmup.json`
+
+[`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist 본문의 schema 정합. 4 methodology 항목 모두 `verdict == "pass"` 의무.
+
+### 게이트 룰
+
+- `domain == "DES"` 면 본 게이트 활성. 다른 도메인은 해당 도메인의 methodology checklist (ML / API / ETL) 활성.
+- 4 methodology 항목 모두 verdict pass 의무.
+- evidence_path 미존재 또는 빈 파일 → fail.
+- 미달 시 phase 09 verdict = `halt` → phase 06 plan 재진입 (warmup 정책 결정 또는 first-half/second-half 분석 추가).
+
+### self_lint C-WUP (sprint-40 PR-G 신규)
+
+phase 09 진입 시 :
+- `quality/gate_warmup.json` 존재 확인 (도메인이 DES 일 때)
+- 4 methodology 항목 모두 verdict == "pass" 확인
+- evidence_path 실제 파일 존재 확인
+- 미달 시 phase 09 진입 거부
+
+### 메모리 정합
+
+- [`feedback_analytical_bound_validation.md`](../../../memory/feedback_analytical_bound_validation.md) — *시간 차원* cross-validation 으로 본 게이트가 정당화.
+- [`feedback_94_plateau_general_harness.md`](../../../memory/feedback_94_plateau_general_harness.md) — 6pt 질적 layer 의 Experimental methodology 차원 직접 보강.
+
+
 ## §V8 — Viewer-readiness 사전 차단 (sprint-40 PR-C 신규)
 
 phase 09 진입 시 phase 12/13 viewer 산출 디렉터리 *외피 존재* 사전 검사. **목적**: pre-cold-session-bootup.md 가 빈 골격을 사전 생성했는지 확인 — 부재 시 phase 00 재실행 트리거. (pre-bootup 누락 → 12/13 종료 게이트 fail → 시간 낭비. 09 사전 차단으로 빠른 실패.)
