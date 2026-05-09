@@ -197,7 +197,7 @@ j- 사용자 ack 시도 — 페이즈 04 외 인터럽트 0 정합. 자율로만
 - [`intra-phase-dacapo-loop.md`](intra-phase-dacapo-loop.md) (bl) — 본 컨벤션의 4 universe = phase 04+ / 05+ 범위 *축소* multiverse. phase 06 plan-tree 의 광폭 multiverse (G4=7 등) 와 별개 layer.
 - [`autonomy.md`](autonomy.md) — 페이즈 04 외 인터럽트 0 정합 (1차/2차 refresh 모두 진행 자동, 사용자 ack 없음).
 - [`contracts.md`](contracts.md) — fingerprint chain (04 → 04+ → 05 → 05+ → 06) 정합.
-- [`mindmap-richness-default.md`](mindmap-richness-default.md) (ba) — 각 refresh universe (1차/2차 모두) 가 자체 mindmap 갱신 의무 (initial 01-intent.md 의 mindmap 그대로 복사 금지 — refresh 의미 0).
+- [`mindmap-quality.md`](mindmap-quality.md) §4 (sprint-37 PR-AD 통합) — 각 refresh universe (1차/2차 모두) 가 자체 mindmap 갱신 의무 (initial 01-intent.md 의 mindmap 그대로 복사 금지 — refresh 의미 0).
 - [`cross-phase-shared-context.md`](cross-phase-shared-context.md) (cj) — 04-refreshed.md / 05-refreshed.md 가 phase 06 plan 의 입력 source.
 
 ## 9. cold session 검증

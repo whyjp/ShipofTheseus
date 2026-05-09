@@ -11,12 +11,12 @@
 3- **도메인 키워드 추출** — 원문에서 "결제·검색·알림·로그인·관리자·실시간·ML·CRUD·지도·..." 같은 도메인 단어 (*명사*) 식별. [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) + [`../conventions/domain-adapters/`](../conventions/domain-adapters/) 매칭.
 4- **NFR 자동 제안 (명사 카탈로그)** — 매칭 카탈로그의 권고 임계를 §성능/스펙 에 *proposed: true* 마크 자동 채움.
 5- **NFR 자동 추출 (qualitative 형용사)** ([`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md)) — prompt 형용사군을 nfr-derivation 표 의미군 (Q1~Q10) 매핑 → §i Derived NFRs 절 *proposed: true* 자동 채움. 매칭 0 = "본 prompt 는 functional-only" 명시.
-6- **마인드맵 작성 — Mermaid 의무** ([`../conventions/mindmap-quality-gardening.md`](../conventions/mindmap-quality-gardening.md)) — text tree (ASCII) **금지**. ` ```mermaid mindmap ... ``` ` block 의무. 4 axis × ≥3 sub-node + ≥15 노드.
+6- **마인드맵 작성 — Mermaid 의무** ([`../conventions/mindmap-quality.md`](../conventions/mindmap-quality.md) §3 형식 + §4 풍성도) — text tree (ASCII) **금지**. ` ```mermaid mindmap ... ``` ` block 의무. 4 axis × ≥4 sub-node + ≥25 노드 (A 등급 default, G4+).
 7- **§k 9 sub-criterion 의무** ([`../conventions/intent-completeness.md`](../conventions/intent-completeness.md)) — 9 sub 모두 *named section* 으로 작성. 자유 작성 X.
 8- **§j Grade signals 산출** ([`../conventions/grades.md`](../conventions/grades.md) v0.9.17) — `intent/01-grade-signals.json` + `intent/01-mindmap-signals.json` 두 파일 의무.
 9- [`../templates/intent.template.md`](../templates/intent.template.md) 의 나머지 섹션 채워 `intent/01-intent.md` 작성.
 10- 헤더에 [`../conventions/timing.md`](../conventions/timing.md) 의 시간 메타 표기.
-11- **frontmatter `applied_conventions: [...]` 자동 박음** ([`../conventions/convention-traceability.md`](../conventions/convention-traceability.md) v0.9.16) — 본 페이즈에서 인용한 컨벤션 (intent-completeness / mindmap-quality-gardening / nfr-derivation / spec-catalog / domain-adapters/<domain> / autonomy / contracts / ...) list. 누락 시 self_lint C-CT fail.
+11- **frontmatter `applied_conventions: [...]` 자동 박음** ([`../conventions/convention-traceability.md`](../conventions/convention-traceability.md) v0.9.16) — 본 페이즈에서 인용한 컨벤션 (intent-completeness / mindmap-quality / nfr-derivation / spec-catalog / domain-adapters/<domain> / autonomy / contracts / ...) list. 누락 시 self_lint C-CT fail.
 
 ## §k 9 sub-criterion — templated section (자유 작성 X)
 

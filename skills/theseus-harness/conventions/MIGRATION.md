@@ -29,6 +29,9 @@
 | aide-tree-symmetry | aide-tree | sprint-37 PR-AB | sprint-37 PR-AB | depth (sequenceDiagram 대칭) — 단일 컨벤션의 §3 축 |
 | viewer-auto-refresh | viewer-runtime | sprint-37 PR-AC | sprint-37 PR-AC | frontend 폴링 layer — 단일 컨벤션의 §2 (self_lint C-VAR 함수 유지) |
 | viewer-runtime-lifecycle | viewer-runtime | sprint-37 PR-AC | sprint-37 PR-AC | backend lifecycle layer — 단일 컨벤션의 §3 (self_lint C-VRL 함수 유지) |
+| mindmap-centrality | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 구조 layer (4 axis + 페이즈 reference 매트릭스) — 단일 컨벤션의 §2 |
+| mindmap-quality-gardening | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 형식 layer (Mermaid 강제 + 4 임계) — 단일 컨벤션의 §3 |
+| mindmap-richness-default | mindmap-quality | sprint-37 PR-AD | sprint-37 PR-AD | 풍성도 layer (A 등급 default + templated stub) — 단일 컨벤션의 §4 |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

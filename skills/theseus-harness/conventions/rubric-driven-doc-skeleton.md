@@ -193,7 +193,7 @@ mindmap
 
 ## 4. 호환성
 
-- v0.9.13 [`mindmap-quality-gardening.md`](mindmap-quality-gardening.md) — Mermaid 마인드맵 ToC 도 본 skeleton 의 §9 섹션으로 매핑
+- [`mindmap-quality.md`](mindmap-quality.md) §3 (sprint-37 PR-AD 통합) — Mermaid 마인드맵 ToC 도 본 skeleton 의 §9 섹션으로 매핑
 - v0.9.18 [`intent-completeness.md`](intent-completeness.md) — §k 9 sub 가 본 skeleton 의 sub-section 으로 매핑 (직교)
 - v0.9.20 [`directional-simplification.md`](directional-simplification.md) (bg) — Limitations 섹션이 본 skeleton 의 의무 헤더
 - v0.9.20 [`rubric-targeted-quality-gates.md`](rubric-targeted-quality-gates.md) (bk) — *같은 adapter* 사용 (rubric 1 회 파싱, skeleton + gates 둘 다 입력)

@@ -344,7 +344,7 @@ def phase_06(grade, prompt, intent_artifacts):
             'bg directional-simplification 표 row 추가 (limitations 방향성 ↑/↓/?)',
             'bi measurement-contract reconstruct 정당화',
             'bb per-module-diagram 분리 (모듈 ≥ 4 시)',
-            'aa mindmap-centrality concept 보강',
+            'aa mindmap-quality §2 구조 (concept) 보강',
             'bf contested-decision spike 양 가지 코드 (≤50 LOC) 추가',
             'ae interface-first 인터페이스 정의 ≥ 5 추가',
         ])
