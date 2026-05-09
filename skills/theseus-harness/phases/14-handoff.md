@@ -68,3 +68,15 @@ d- 자율 권한이 있다면 PR URL 까지 사용자에게 제공.
 
 `handoff/14-handoff.md` (canonical) 도 phase 06 §canonical 룰 동등 적용 — winner inline ≥80% 또는 shared schema 3 섹션 의무. asof_fingerprint frontmatter 의무. "80%", "shared schema", "asof_fingerprint" 키워드 본문 박힘 강제 (self_lint C-CNS).
 
+
+## §timing 핸드오프 요약 (sprint-37 PR-AI inline, prev: timing.md)
+
+**최종 핸드오프 문서에는 다음을 표시한다** :
+
+a- 최초 프롬프트 시각
+b- 핸드오프 시각
+c- 총 소요 (사람이 읽는 단위 — `1시간 23분`)
+d- 페이즈별 누적 시간 막대 (텍스트 표)
+e- 스프린트별 소요 표
+
+§timing 본 룰의 전체 정의 (시작 시각 기록, 페이즈 산출물 헤더, 스프린트 보고서 헤더, 도구 사용, 강제 사항) 는 [`./00-naming.md`](./00-naming.md) §timing 참조.

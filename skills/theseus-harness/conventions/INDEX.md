@@ -100,10 +100,9 @@
 | subagent-trigger | core | [06,08] | [G3,G4,G5] | phase 06 exit / phase 08 enter |
 | submission-portability | quality | [09] | [all] | entry script |
 | test-invariants | quality | [09,10] | [all] | always |
-| timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **79 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **78 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
