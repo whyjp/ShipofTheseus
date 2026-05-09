@@ -2093,11 +2093,15 @@ def check_diagrams_and_coverage(skill_root: Path) -> list[str]:
 
 
 def check_intent_refresh_post_interview(skill_root: Path) -> list[str]:
-    """C-IRPI (sprint-17) — phase 04 → 05 사이 의도 refresh 4 framing universe + 01-additional 의무."""
+    """C-IRPI (sprint-17, sprint-37 PR-AA 통합) — phase 04 → 05 사이 의도 refresh 4 framing universe + 01-additional 의무.
+
+    sprint-37 PR-AA 다이어트로 intent-refresh-post-interview + intent-refresh-post-critique
+    → intent-refresh (phase param 분기 단일) 통합. C-IRPI 룰은 1차 refresh 책임만 검증.
+    """
     issues: list[str] = []
-    p = skill_root / "conventions" / "intent-refresh-post-interview.md"
+    p = skill_root / "conventions" / "intent-refresh.md"
     if not p.exists():
-        issues.append("conventions/intent-refresh-post-interview.md 누락 (by, sprint-17)")
+        issues.append("conventions/intent-refresh.md 누락 (sprint-37 PR-AA 통합)")
         return issues
     body = _read(p)
     for kw in [
@@ -2109,7 +2113,7 @@ def check_intent_refresh_post_interview(skill_root: Path) -> list[str]:
         "interview_answers_consumed",
     ]:
         if kw not in body:
-            issues.append(f"intent-refresh-post-interview.md: '{kw}' 키워드 누락")
+            issues.append(f"intent-refresh.md: '{kw}' 키워드 누락 (1차 refresh)")
     phase05 = skill_root / "phases" / "05-critique.md"
     if phase05.exists():
         p5 = _read(phase05)
@@ -2122,15 +2126,15 @@ def check_intent_refresh_post_interview(skill_root: Path) -> list[str]:
     harness_idx = skill_root / "conventions" / "INDEX.md"
     found = False
     for p in [harness_skill, harness_idx]:
-        if p.exists() and "intent-refresh-post-interview" in _read(p):
+        if p.exists() and "intent-refresh" in _read(p):
             found = True
             break
     if not found:
-        issues.append("theseus-harness/{SKILL.md, conventions/INDEX.md}: intent-refresh-post-interview 등록 누락")
+        issues.append("theseus-harness/{SKILL.md, conventions/INDEX.md}: intent-refresh 등록 누락")
     orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
     if orch.exists():
-        if "intent-refresh-post-interview" not in _read(orch):
-            issues.append("orchestrator/SKILL.md: 페이즈별 lookup 표에 intent-refresh-post-interview 누락")
+        if "intent-refresh" not in _read(orch):
+            issues.append("orchestrator/SKILL.md: 페이즈별 lookup 표에 intent-refresh 누락")
     return issues
 
 
@@ -2276,27 +2280,31 @@ def check_impl_multiverse_strict(skill_root: Path) -> list[str]:
 
 
 def check_intent_refresh_post_critique(skill_root: Path) -> list[str]:
-    """C-IRPC (sprint-19, ci) — phase 05 후 2nd intent refresh + 04/05 cascade re-write."""
+    """C-IRPC (sprint-19 ci, sprint-37 PR-AA 통합) — phase 05 후 2nd intent refresh + 04/05 cascade re-write.
+
+    sprint-37 PR-AA 다이어트로 intent-refresh-post-interview + intent-refresh-post-critique
+    → intent-refresh (phase param 분기 단일) 통합. C-IRPC 룰은 2차 refresh 책임만 검증.
+    """
     issues: list[str] = []
-    p = skill_root / "conventions" / "intent-refresh-post-critique.md"
+    p = skill_root / "conventions" / "intent-refresh.md"
     if not p.exists():
-        issues.append("conventions/intent-refresh-post-critique.md 누락 (ci, sprint-19)")
+        issues.append("conventions/intent-refresh.md 누락 (sprint-37 PR-AA 통합)")
         return issues
     body = _read(p)
     for kw in [
-        "intent-refresh-post-critique",
+        "intent-refresh",
         "01-1-intent.v2.md", "01-2-intent.v2.md", "01-3-intent.v2.md", "01-4-intent.v2.md",
         "04-refreshed.md", "05-refreshed.md",
         "critique_findings_consumed", "intent_v1_supersedes",
         "C-IRPC", "사용자 ack 없음",
     ]:
         if kw not in body:
-            issues.append(f"intent-refresh-post-critique.md: '{kw}' 키워드 누락")
+            issues.append(f"intent-refresh.md: '{kw}' 키워드 누락 (2차 refresh)")
     phase05 = skill_root / "phases" / "05-critique.md"
     if phase05.exists():
         p5 = _read(phase05)
-        if "intent-refresh-post-critique" not in p5:
-            issues.append("phases/05-critique.md: sprint-19 mandatory 2nd refresh 절 누락")
+        if "intent-refresh" not in p5:
+            issues.append("phases/05-critique.md: 2nd refresh 절 (intent-refresh) 누락")
         if "01-1-intent.v2.md" not in p5:
             issues.append("phases/05-critique.md: 01-N-intent.v2.md 산출물 명시 누락")
     return issues
@@ -2913,7 +2921,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-DCL-NO-FORWARD-PROJECT", "dacapo-enforcement.md sprint-17 — forward time projection 차단", check_dacapo_no_forward_projection),
     ("C-DCL-MIN-LOOP-ATTEMPT", "dacapo-enforcement.md sprint-17 — rerun ≥ 1 최소 loop attempt", check_dacapo_min_loop_attempt),
     ("C-DIAG-AND-COVERAGE", "diagrams.md sprint-17 — HARD-RULE 9.a OR → AND (sequence + usecase + interface 셋 다)", check_diagrams_and_coverage),
-    ("C-IRPI", "intent-refresh-post-interview.md (by, sprint-17) — phase 04 → 05 refresh 4 framing universe + 01-additional", check_intent_refresh_post_interview),
+    ("C-IRPI", "intent-refresh.md (sprint-17 by + sprint-37 PR-AA 통합) — phase 04 → 05 1차 refresh 4 framing universe + 01-additional", check_intent_refresh_post_interview),
     ("C-RNFS", "readme-numbers-from-summary.md (bz, sprint-18) — doc 숫자 vs measurement artifact ±0.01% 일치", check_readme_numbers_from_summary),
     ("C-RDC", "reproducibility-doublecheck.md (ca, sprint-18) — entry script 2회 실행 sha256 byte-equal", check_reproducibility_doublecheck),
     ("C-MNT", "magic-number-traceability.md (cb, sprint-18) — code literal → A_i 또는 데이터 출처 1:1 매핑", check_magic_number_traceability),
@@ -2923,7 +2931,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
     ("C-CNS", "canonical-not-stub.md (cg, sprint-19) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
-    ("C-IRPC", "intent-refresh-post-critique.md (ci, sprint-19) — phase 05 후 2nd intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
+    ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
     ("C-HC1", "HARD-CORE.md (sprint-20 v0.9.25) — always-load 본문 ≤ 4000 chars + 의무 키워드 (HR1/HR8/HR9/Layer 3/fingerprint)", check_hard_core_size),
     ("C-IDX-1", "conventions/INDEX.md (sprint-20 v0.9.25) — 88 컨벤션 router 단일 진실 원천 + 1:1 매칭", check_conventions_index_completeness),
