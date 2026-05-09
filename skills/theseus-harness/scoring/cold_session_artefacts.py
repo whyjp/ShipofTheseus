@@ -32,11 +32,19 @@ References:
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+# Windows cp949 회피 — stdout/stderr UTF-8 강제 (한글 출력)
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+if sys.stderr.encoding and sys.stderr.encoding.lower() != 'utf-8':
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 
 SCHEMA_VERSION = "0.9.46"
