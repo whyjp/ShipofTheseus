@@ -2,6 +2,80 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.43 — 2026-05-09 (sprint-38 — 본체 강화 + 구현-층 깊이 트랙 2)
+
+### 마일스톤
+
+sprint-37 다이어트 (트랙 1) 마감 후 sprint-38 트랙 2 진입. 핵심 = phase 06 monolithic → 6 sub-phase 분해 + phase 07 dispatch 3 sub-phase + phase 08.f prompt-trace lint + path-policy 정식 enforcement.
+
+### 변경 — 트랙 2 12 PR (PR-A ~ PR-L)
+
+| PR | scope |
+|---|---|
+| PR-A #75 | sprint-38 plan.md (.ShipofTheseus/sprints/38/) |
+| PR-B #76 | path-policy + user-confirm gate (phase 06.f) 정식 enforcement (sprint-37 권고 → sprint-38 게이트) |
+| PR-C #77 | 06.a Research-injection sub-phase (외부 ref ≥ 3 + 결론 ≤ 3) |
+| PR-D #78 | 06.b Intent-decoding + directives.json schema (6 type × 3 layer) |
+| PR-E #79 | 06.c Classification sub-phase (≥ 3 layer + orphan 모듈 0) |
+| PR-F #80 | 06.d Sub-tree TODO sub-phase (max_depth ≥ 3 + dispatch 1:1) |
+| PR-G #81 | 06.e Post-decision Premortem sub-phase (격언 동·서 + derived improvements ≥ 1) |
+| PR-H #82 | phase 06 6 sub-phase architecture summary 통합 |
+| PR-I #83 | phase 07 dispatch 3 sub-phase (07.a table / 07.b trace / 07.c cross-agent invariant) |
+| PR-J #84 | phase 08.f prompt-trace lint (deliverable → directive 매핑) |
+| PR-K #85 | self_lint 신규 3 (C-DIET / C-PHASE-LEN / C-MIGRATION) |
+| PR-L | sprint 마감 (v0.9.43 + CHANGELOG, 본 entry) |
+
+### 변경 — 신규 산출물 (per-project)
+
+- `plan/06-research.md` (06.a) — 인용 ≥ 3 + 결론 ≤ 3
+- `plan/06-directives.json` (06.b) — 6 type × 3 layer + source_quote/loc
+- `plan/06-classification.md` (06.c) — ≥ 3 layer + orphan 0
+- `plan/06-todo-tree.md` (06.d) — max_depth ≥ 3 + leaf 매핑
+- `plan/06-premortem.md` (06.e) — derived improvements ≥ 1
+- `plan/06-path-policy.md` (06.f) — 사용자 ack 의무
+- `dispatch/07-dispatch-table.md` (07.a) — TODO ↔ agent 매핑
+- `dispatch/07-dispatch-trace.json` (07.b) — agent 실행 trace
+- `dispatch/07-cross-agent-lint.md` (07.c) — invariant 검증
+- `impl/08-prompt-trace.md` (08.f) — deliverable ↔ directive 매핑
+
+### 변경 — self_lint (+9 신규, 116 → 125)
+
+| 룰 | scope |
+|---|---|
+| C-PPC | path-policy + user-confirm gate (phase 06.f) |
+| C-RES | research-injection (06.a) |
+| C-IDC | intent-decoding directives.json (06.b) |
+| C-CLS | classification (06.c) |
+| C-STT | sub-tree TODO (06.d) |
+| C-PMT | premortem (06.e) |
+| C-DPT | phase 07 dispatch 3 sub-phase |
+| C-PT | prompt-trace (08.f) |
+| C-DIET | deprecated 컨벤션 grace ≤ 1 sprint |
+| C-PHASE-LEN | 페이즈 본문 50K chars 강제 (sub-phase 분리) |
+| C-MIGRATION | MIGRATION.md 매핑 무결성 |
+
+(C23 allow_markers 확장 — 06.f / path-policy / user-confirm gate sanctioned interrupt 통과)
+
+### 변경 — autonomy 정책 갱신
+
+기존 "사용자 단 한 번 호출 (페이즈 04)" → **"사용자 단 두 번 호출 (페이즈 04 + 페이즈 06.f)"**. 산출물 경로는 cold context 결정 의무 (사전 위임 매핑 불가).
+
+### 마감 사실
+
+- phase 06 본문 = 41K chars (sub-phase 6 통합 후 자연 비대) — C-PHASE-LEN 50K 임계 통과. sprint-39+ 에서 별도 파일 분리 (phases/06.a-research.md / 06.b-intent-decoding.md 등) 후보
+- self_lint 125 (sprint-37 114 → +1 fix #74 + sprint-38 PR-B~K +10 = 125). all_ok=True 모든 PR 통과
+- 본 plan.md 자체 = path-policy 정식 첫 적용 사례 (sprint-37 권고 → sprint-38 enforcement)
+
+### 메모리 신규 후보
+
+- `feedback_phase06_sub_phase_decomposition.md` (PR-H 머지 후 신규) — 6 sub-phase 분해 결정 영구화
+- `project_sprint38_v0943.md` (본 PR-L 머지 시점) — 출하 결과 기록
+
+### 후속
+
+- sprint-39 — 트랙 3 (페이즈 09 4 패턴 inline)
+- sprint-40 — 외부 적용 (simulation-bench 재제출, 94 plateau 극복 검증)
+
 ## v0.9.42 — 2026-05-09 (sprint-37 — convention diet + 본체 강화 패러다임 전환)
 
 ### 마일스톤
