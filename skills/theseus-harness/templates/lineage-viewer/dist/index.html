@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Phase Lineage Viewer · theseus-harness</title>
+  <title>Phase Lineage · theseus-harness</title>
   <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
   <header class="lv-header">
     <div class="lv-header-row">
       <div class="lv-title-block">
-        <h1 class="lv-title">Phase Lineage</h1>
-        <span class="lv-subtitle">theseus-harness · cold session 결과 디버그 뷰어</span>
+        <span class="lv-eyebrow">theseus-harness</span>
+        <h1 class="lv-title">Phase&nbsp;Lineage</h1>
+        <span class="lv-subtitle">cold session 결과 디버그 뷰어</span>
       </div>
       <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
         <span class="lv-theme-icon-light" aria-hidden="true">&#9728;</span>
@@ -23,10 +24,9 @@
       <div class="lv-meta-hero">
         <span class="lv-meta-hero-id" data-bind="project_id">—</span>
         <span class="lv-meta-hero-run" data-bind="project_run">—</span>
-        <div class="lv-meta-hero-outcome">
-          <span class="lv-meta-hero-outcome-label">Outcome</span>
+        <span class="lv-meta-hero-outcome">
           <span class="lv-badge" data-bind="final_outcome">—</span>
-        </div>
+        </span>
       </div>
       <div class="lv-meta-grid">
         <div class="lv-meta-item">
@@ -48,7 +48,7 @@
         <div class="lv-meta-item">
           <span class="lv-meta-label">Phases</span>
           <span class="lv-meta-value">
-            <span data-bind="phases_completed">—</span><span class="lv-meta-fade"> / 15</span>
+            <span data-bind="phases_completed">—</span><span class="lv-meta-fade"> &nbsp;/ 15</span>
           </span>
         </div>
         <div class="lv-meta-item">
@@ -66,21 +66,27 @@
   <main class="lv-main">
     <section class="lv-section" data-section="flowchart">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 01">Phase Flowchart</h2>
-        <p class="lv-section-note">phase 00 → 14 흐름 + Da Capo 서브그래프 + sentinel 노드 (Mermaid)</p>
+        <span class="lv-section-num">01</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase Flowchart</h2>
+          <p class="lv-section-note">phase 00 → 14 흐름, 다카포 서브그래프와 sentinel 노드를 포함한 단일 mermaid flowchart.</p>
+        </div>
       </header>
       <div class="lv-mermaid-frame">
         <pre class="mermaid lv-mermaid-target" data-mermaid-target="flowchart">flowchart LR
   Empty["데이터 미주입"]
-  classDef pending fill:#f1f5f9,stroke:#94a3b8,stroke-dasharray:4 4
+  classDef pending fill:#f5f0e6,stroke:#b8ad9c,stroke-dasharray:4 4
   class Empty pending</pre>
       </div>
     </section>
 
     <section class="lv-section" data-section="gantt">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 02">Phase Gantt Timeline</h2>
-        <p class="lv-section-note">phase_state.json 의 entered_at / exited_at 직접 시각화 — frontmatter 위조 즉시 식별</p>
+        <span class="lv-section-num">02</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase Gantt Timeline</h2>
+          <p class="lv-section-note">phase_state.json 의 entered_at / exited_at 직접 시각화. frontmatter 위조의 즉시 식별.</p>
+        </div>
       </header>
       <div class="lv-mermaid-frame">
         <pre class="mermaid lv-mermaid-target" data-mermaid-target="gantt">gantt
@@ -94,8 +100,11 @@
 
     <section class="lv-section" data-section="fingerprint_chain">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 03">Fingerprint Chain</h2>
-        <p class="lv-section-note">페이즈 N 산출 fingerprint = 페이즈 N+1 prev_fingerprint 일치 — 체인 단절 시 sentinel</p>
+        <span class="lv-section-num">03</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Fingerprint Chain</h2>
+          <p class="lv-section-note">페이즈 N 의 산출 fingerprint 가 페이즈 N+1 의 prev_fingerprint 와 일치하는가. 체인이 끊기면 sentinel.</p>
+        </div>
       </header>
       <div class="lv-table-frame">
         <table class="lv-table" data-table="fingerprint_chain">
@@ -118,8 +127,11 @@
 
     <section class="lv-section" data-section="dacapo">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 04">Da Capo Summary</h2>
-        <p class="lv-section-note">Phase 06 / 08 의 rerun 흐름 + 최종 winner — drill-down 은 plan/dacapo-flow.md</p>
+        <span class="lv-section-num">04</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Da Capo Summary</h2>
+          <p class="lv-section-note">Phase 06 / 08 의 rerun 흐름과 최종 winner. drill-down 은 plan/dacapo-flow.md 로 이어진다.</p>
+        </div>
       </header>
       <div class="lv-table-frame">
         <table class="lv-table" data-table="dacapo">
@@ -143,8 +155,11 @@
 
     <section class="lv-section" data-section="phase04_answers">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 05">Phase 04 답안 매핑</h2>
-        <p class="lv-section-note">자율 결정 (페이즈 05~14) 의 사후 회수 — autonomy 정합 lineage</p>
+        <span class="lv-section-num">05</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase 04 답안 매핑</h2>
+          <p class="lv-section-note">자율 결정 (페이즈 05~14) 의 사후 회수. autonomy 정합 lineage.</p>
+        </div>
       </header>
       <div class="lv-table-frame">
         <table class="lv-table" data-table="phase04_answers">
@@ -165,8 +180,11 @@
 
     <section class="lv-section" data-section="sentinel_events">
       <header class="lv-section-head">
-        <h2 class="lv-section-title" data-num="§ 06">Sentinel Events</h2>
-        <p class="lv-section-note">universe_skip / log pattern / 위조 감지 등 — 0 건이면 정상 lineage</p>
+        <span class="lv-section-num">06</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Sentinel Events</h2>
+          <p class="lv-section-note">universe_skip / log pattern / 위조 감지. 0 건이면 정상 lineage 다.</p>
+        </div>
       </header>
       <div class="lv-table-frame">
         <table class="lv-table" data-table="sentinel_events">
@@ -188,12 +206,12 @@
   </main>
 
   <footer class="lv-footer">
-    <span class="lv-mono">theseus-harness · phase-lineage-viewer · prebuilt shell v0.9.40</span>
+    <span>theseus-harness · phase-lineage-viewer · prebuilt shell v0.9.40</span>
     <span class="lv-footer-sep">·</span>
-    <span>데이터 source: <code class="lv-mono">window.__LINEAGE__</code> 우선, fallback <code class="lv-mono">./lineage.json</code></span>
+    <span>데이터 source: <code>window.__LINEAGE__</code> 우선, fallback <code>./lineage.json</code></span>
   </footer>
 
   <script src="./assets/mermaid.min.js"></script>
-  <script src="./assets/app.js"></script>
+  <script src="./assets/app.js?v=0.9.40-3"></script>
 </body>
 </html>

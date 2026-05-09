@@ -127,14 +127,37 @@
     }
 
     try {
+      // Editorial Pentagram theme — warm paper + ink
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      var themeVars = isDark ? {
+        background:        '#161210',
+        primaryColor:      '#1f1916',
+        primaryBorderColor:'#a89d88',
+        primaryTextColor:  '#f0ead8',
+        lineColor:         '#a89d88',
+        secondaryColor:    '#2a221d',
+        tertiaryColor:     '#1f1916',
+        textColor:         '#f0ead8',
+        fontFamily:        '"Source Serif Pro", "Source Serif 4", "Iowan Old Style", Cambria, Georgia, serif'
+      } : {
+        background:        '#faf7f0',
+        primaryColor:      '#f5f0e6',
+        primaryBorderColor:'#5d574e',
+        primaryTextColor:  '#1a1614',
+        lineColor:         '#8a8174',
+        secondaryColor:    '#ede5d3',
+        tertiaryColor:     '#f5f0e6',
+        textColor:         '#1a1614',
+        fontFamily:        '"Source Serif Pro", "Source Serif 4", "Iowan Old Style", Cambria, Georgia, serif'
+      };
       window.mermaid.initialize({
         startOnLoad: false,
-        theme: root.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+        theme: 'base',
+        themeVariables: themeVars,
         securityLevel: 'loose',
-        flowchart: { useMaxWidth: true, htmlLabels: true },
-        gantt:     { useMaxWidth: true, fontSize: 12 }
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+        gantt:     { useMaxWidth: true, fontSize: 12, gridLineStartPadding: 35 }
       });
-      // mermaid 9~11 모두 지원: run 우선, contentLoaded fallback
       var run = window.mermaid.run || function () { window.mermaid.contentLoaded(); };
       run.call(window.mermaid, { querySelector: '.lv-mermaid-target' });
       window.__lineageRendered__ = true;
@@ -159,12 +182,13 @@
       if (r.bypass)        { matchCls = 'lv-match-bypass'; matchText = 'bypass'; }
       else if (r.match)    { matchCls = 'lv-match-ok';     matchText = '✓'; }
       else                 { matchCls = 'lv-match-fail';   matchText = '✗'; }
+      var phaseCell = el('span', { className: 'lv-phase-cell' }, [
+        el('span', { className: 'lv-phase-num', text: r.phase || '—' }),
+        el('span', { className: 'lv-phase-name', text: r.name || '—' })
+      ]);
       var tr = el('tr', r.bypass ? { className: 'lv-row-bypass' } : null, [
         el('td', { className: 'lv-cell-num', text: String(i + 1) }),
-        el('td', null, [
-          el('span', { className: 'lv-mono', text: 'P' + (r.phase || '??') }),
-          el('span', { text: ' · ' + (r.name || '—') })
-        ]),
+        el('td', null, [phaseCell]),
         el('td', { className: 'lv-cell-mono', text: r.start || '—' }),
         el('td', { className: 'lv-cell-mono', text: r.end || '—' }),
         el('td', { className: 'lv-cell-mono', text: r.fingerprint || '—' }),
@@ -183,8 +207,17 @@
       return;
     }
     rows.forEach(function (r) {
+      // phase: "06 plan" → split into num + name
+      var phaseStr = r.phase || '';
+      var phaseM = /^(\S+)\s+(.*)$/.exec(phaseStr);
+      var phaseCell = phaseM
+        ? el('span', { className: 'lv-phase-cell' }, [
+            el('span', { className: 'lv-phase-num', text: phaseM[1] }),
+            el('span', { className: 'lv-phase-name', text: phaseM[2] })
+          ])
+        : el('span', { className: 'lv-phase-name', text: phaseStr || '—' });
       var tr = el('tr', null, [
-        el('td', null, [el('span', { className: 'lv-mono', text: r.phase || '—' })]),
+        el('td', null, [phaseCell]),
         el('td', { className: 'lv-cell-num', text: String(r.rerun_count != null ? r.rerun_count : '—') }),
         el('td', { className: 'lv-cell-mono', text: r.final_winner || '—' }),
         el('td', { className: 'lv-cell-num', text: r.final_score != null ? r.final_score.toFixed(3) : '—' }),
@@ -206,7 +239,7 @@
     }
     rows.forEach(function (r) {
       var tr = el('tr', null, [
-        el('td', null, [el('span', { className: 'lv-mono', text: r.question || '—' })]),
+        el('td', { className: 'lv-cell-q', text: r.question || '—' }),
         el('td', { text: r.label || '—' }),
         el('td', { text: r.answer || '—' }),
         el('td', { text: r.phase_impact || '—' })

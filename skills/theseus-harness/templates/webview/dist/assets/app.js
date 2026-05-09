@@ -228,11 +228,34 @@
       return;
     }
     try {
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      var themeVars = isDark ? {
+        background:        '#161210',
+        primaryColor:      '#1f1916',
+        primaryBorderColor:'#a89d88',
+        primaryTextColor:  '#f0ead8',
+        lineColor:         '#a89d88',
+        secondaryColor:    '#2a221d',
+        tertiaryColor:     '#1f1916',
+        textColor:         '#f0ead8',
+        fontFamily:        '"Source Serif Pro", "Iowan Old Style", Cambria, Georgia, serif'
+      } : {
+        background:        '#faf7f0',
+        primaryColor:      '#f5f0e6',
+        primaryBorderColor:'#5d574e',
+        primaryTextColor:  '#1a1614',
+        lineColor:         '#8a8174',
+        secondaryColor:    '#ede5d3',
+        tertiaryColor:     '#f5f0e6',
+        textColor:         '#1a1614',
+        fontFamily:        '"Source Serif Pro", "Iowan Old Style", Cambria, Georgia, serif'
+      };
       window.mermaid.initialize({
         startOnLoad: false,
-        theme: root.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+        theme: 'base',
+        themeVariables: themeVars,
         securityLevel: 'loose',
-        flowchart: { useMaxWidth: true, htmlLabels: true }
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
       });
       var run = window.mermaid.run || function () { window.mermaid.contentLoaded(); };
       run.call(window.mermaid, { querySelector: '[data-mermaid-target="modules"]' });
