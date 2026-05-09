@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.45
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 86 컨벤션 / 15 페이즈 / 18 에이전트. sprint-40 — 메타-허들 활성 (M-1~4) + 점수 회복 4 게이트 (V6 evidence + numeric drift atomic + modeling shortcuts + warmup quantification) + self_lint 136. 100/100 도전 트랙.
+version: 0.9.46
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 86 컨벤션 / 15 페이즈 / 18 에이전트. sprint-41 — Hurdle-as-CLI 트랙 5. CLI 5 종 신규 (dacapo_threshold / cold_session_artefacts / sprint_loop_cap / runtime_guard_chain / generate_sprint40_artefacts) + HARD-RULE 9.qq~9.tt + ouroboros 패러다임 직접 적용. 컨벤션 본문 = 명세, CLI = 집행. agent 자율 skip 불가.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
