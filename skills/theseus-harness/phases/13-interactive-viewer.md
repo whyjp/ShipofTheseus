@@ -100,7 +100,85 @@ widget 타입은 viewer 가 *모르는 도메인* — DES/ML/API 모두 동일 5
 |---|---|
 | G2 | 도메인 매칭 시 최소 1 plot emit (옵션) |
 | G3+ | 도메인별 default dashboard 전체 emit (권고) |
+| G4+ | 도메인별 default dashboard + dashboard.json widgets ≥ 3 (kpi_grid + topology + metric_chart 최소 — sprint-40 PR-C 강화) |
 | G5 | 도메인별 dashboard + 인터랙티브 drill-down + observability 메트릭 라이브 연동 (강제) |
+
+## 종료 게이트 — 산출물 파일 존재 강제 (sprint-40 PR-C 신규)
+
+phase 13 *종료 직전* 다음 강제 — fail 시 phase 13 미완:
+
+| 검사 | G2 | G3+ | G4+ | fail 시 |
+|---|---|---|---|---|
+| `<project>/interactive-viewer/index.html` exists | (도메인 매칭 시) | ✓ | ✓ | interactive-viewer-builder agent 재실행 |
+| `<project>/interactive-viewer/dashboard.json` exists + valid JSON | (도메인 매칭 시) | ✓ | ✓ | 동일 |
+| `<project>/interactive-viewer/assets/app.js` exists | (도메인 매칭 시) | ✓ | ✓ | shell 복사 단계 재실행 |
+| `dashboard.json:widgets` length ≥ 1 | — | ✓ | — | dashboard 재생성 |
+| `dashboard.json:widgets` length ≥ 3 (kpi_grid + topology + metric_chart 최소) | — | — | ✓ | 동일 |
+| 도메인 미매칭 + skip 시 `handoff/14-handoff.md` 에 *사유 1줄* | — | ✓ | ✓ | handoff 보강 후 phase 14 재진입 |
+
+**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 (G4) — `interactive-viewer/` 디렉터리 자체 부재, dashboard.json 0, 그럼에도 phase 13 종료 marker 자동 진행. **G4 강제 unwiring 의 직접 사례.** 본 종료 게이트 = 그 silent skip 차단.
+
+### 검사 알고리즘 (orchestrator phase 13 exit)
+
+```python
+import json, pathlib
+
+def check_phase13_exit(project_root: pathlib.Path, grade: str, domain_matched: bool) -> tuple[bool, list[str]]:
+    iv = project_root / 'interactive-viewer'
+    missing = []
+    if grade == 'G2' and not domain_matched:
+        return (True, [])  # G2 + 미매칭 = skip 허용
+    # G3+ or G2+매칭
+    for rel in ['index.html', 'dashboard.json', 'assets/app.js']:
+        path = iv / rel
+        if not path.exists() or path.stat().st_size == 0:
+            missing.append(f'interactive-viewer/{rel}')
+    # dashboard.json widgets 카운트
+    dj = iv / 'dashboard.json'
+    if dj.exists():
+        try:
+            data = json.loads(dj.read_text())
+            widgets = data.get('widgets', [])
+            min_widgets = 3 if grade in ('G4', 'G5') else 1
+            if len(widgets) < min_widgets:
+                missing.append(f'dashboard.json:widgets (need ≥ {min_widgets}, got {len(widgets)})')
+            # G4+ 의무 widget 종류 확인
+            if grade in ('G4', 'G5'):
+                types = {w.get('type') for w in widgets}
+                required_types = {'kpi_grid', 'topology', 'metric_chart'}
+                if not required_types.issubset(types):
+                    missing.append(f'dashboard.json:widget_types missing: {required_types - types}')
+        except json.JSONDecodeError as e:
+            missing.append(f'dashboard.json (invalid JSON: {e})')
+    return (len(missing) == 0, missing)
+```
+
+### 산출물 — `interactive-viewer/exit_gate.json`
+
+```json
+{
+  "schema_version": "0.9.45",
+  "grade": "G4",
+  "domain_matched": true,
+  "domain": "DES",
+  "checked_at": "2026-05-..T..:..:..+09:00",
+  "required_files": [...],
+  "widget_count": 5,
+  "widget_types": ["kpi_grid", "topology", "metric_chart", "table", "markdown"],
+  "g4_widget_types_satisfied": true,
+  "missing": [],
+  "verdict": "pass"
+}
+```
+
+### self_lint C-VEX (sprint-40 PR-C — phase 12 와 통합)
+
+phase 13 종료 marker 박힘 직전 `interactive-viewer/exit_gate.json` 의 `verdict == "pass"` + `missing == []` 검증. 미매칭 skip 시 `handoff/14-handoff.md` 에 *사유 1줄* 검증 (regex `phase 13 .* skip|interactive-viewer .* skip`).
+
+### 메모리 정합
+
+- [`feedback_phase12_real_definition.md`](../../../memory/feedback_phase12_real_definition.md) — phase 12/13 의 진짜 정의 (결과 시각화 + observability + interactive viewer).
+- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — 본 게이트 = G4 강제 unwiring 정정.
 
 ## 안티 패턴
 
