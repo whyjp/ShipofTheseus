@@ -85,3 +85,18 @@ b- `webview/assets/` 에 mermaid.min.js + marked.min.js + styles.css + app.js 4 
 c- 8 탭 데이터 키 모두 존재 (해당 산출물이 없으면 빈 list / null).
 d- `webview/index.html` 본문에 `unpkg.com` / `cdn.jsdelivr.net` / `cdnjs.cloudflare` 0 회.
 e- self_lint C-PSR 통과.
+f- **(sprint-40 PR-C)** `webview/exit_gate.json` 산출 + `verdict == "pass"` + `missing == []`. 본 산출물이 phase 12 종료 marker 박힘 *직전* 의무 — 부재 시 phase 12 미완. v0.9.44 g4-v2 회차의 *마크다운 표만 박고 HTML/JSON 0 emit* 회피 패턴 직접 차단.
+
+## 강제 산출물 표 (sprint-40 PR-C — phase 12 종료 게이트 1:1 대응)
+
+| 파일 | 의무 grade | 검사 (phase 12 exit) | 부재 시 |
+|---|---|---|---|
+| `webview/index.html` | all | exists + size > 0 | webview-builder 재실행 |
+| `webview/data/webview.json` | all | exists + valid JSON | 동일 |
+| `webview/assets/app.js` | all | exists | shell 복사 단계 재실행 |
+| `webview/assets/mermaid.min.js` | all | exists | 동일 |
+| `webview/assets/marked.min.js` | all | exists | 동일 |
+| `webview/assets/styles.css` | all | exists | 동일 |
+| `webview/exit_gate.json` | all | exists + verdict=pass | 본 에이전트의 *마지막* 산출 |
+
+본 표는 [`../phases/12-webview-assembly.md`](../phases/12-webview-assembly.md) §종료 게이트 와 1:1 정합 — 본 에이전트 종료 후 phase 12 종료 marker 박힘 직전 orchestrator 가 자동 실행.
