@@ -42,6 +42,38 @@
       panels[j].classList.toggle('active', panels[j].getAttribute('data-panel') === name);
     }
     try { localStorage.setItem(ACTIVE_TAB_KEY, name); } catch (e) {}
+    // mermaid 는 hidden 시 16px placeholder 만 — 활성 탭 진입 시 재렌더
+    if (name === 'modules' && window.__webviewData__) renderModuleGraph(window.__webviewData__);
+    if (name === 'sprints' && window.__webviewData__) drawSprintChart(window.__webviewData__.sprints || []);
+    if (name === 'design' || name === 'impl') reflowMermaidIn(name);
+  }
+  function reflowMermaidIn(panelName) {
+    if (!window.mermaid) return;
+    var panel = document.querySelector('[data-panel="' + panelName + '"]');
+    if (!panel) return;
+    var nodes = panel.querySelectorAll('pre.mermaid');
+    var pending = [];
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      // 이미 렌더된 SVG 가 16px placeholder 인지 검사
+      var svg = n.querySelector('svg');
+      if (!svg) { pending.push(n); continue; }
+      var w = svg.getBoundingClientRect().width;
+      if (w < 32) {
+        // re-render
+        var src = n.getAttribute('data-mermaid-src');
+        if (!src) continue;
+        n.removeAttribute('data-processed');
+        n.textContent = src;
+        pending.push(n);
+      }
+    }
+    if (pending.length) {
+      try {
+        var run = window.mermaid.run || function () { window.mermaid.contentLoaded(); };
+        run.call(window.mermaid, { nodes: pending });
+      } catch (e) {}
+    }
   }
   document.addEventListener('click', function (ev) {
     var btn = ev.target.closest && ev.target.closest('.tv-tab');
@@ -122,8 +154,16 @@
       var src = codeBlocks[i].textContent;
       var newPre = document.createElement('pre');
       newPre.className = 'mermaid';
+      newPre.setAttribute('data-mermaid-src', src);   // reflow 시 재렌더용
       newPre.textContent = src;
       pre.parentNode.replaceChild(newPre, pre);
+    }
+    // 이미 변환된 노드 중 src 미저장 분도 보충
+    var allMermaid = container.querySelectorAll('pre.mermaid');
+    for (var k = 0; k < allMermaid.length; k++) {
+      if (!allMermaid[k].getAttribute('data-mermaid-src')) {
+        allMermaid[k].setAttribute('data-mermaid-src', allMermaid[k].textContent);
+      }
     }
     var run = window.mermaid.run || function () { window.mermaid.contentLoaded(); };
     try { run.call(window.mermaid, { nodes: container.querySelectorAll('pre.mermaid:not([data-processed])') }); }

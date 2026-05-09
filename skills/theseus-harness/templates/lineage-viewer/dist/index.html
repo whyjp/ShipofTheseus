@@ -10,7 +10,7 @@
   <header class="lv-header">
     <div class="lv-header-row">
       <div class="lv-title-block">
-        <h1 class="lv-title">Phase Lineage Viewer</h1>
+        <h1 class="lv-title">Phase Lineage</h1>
         <span class="lv-subtitle">theseus-harness · cold session 결과 디버그 뷰어</span>
       </div>
       <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
@@ -20,47 +20,45 @@
     </div>
 
     <div class="lv-meta">
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Project</span>
-        <span class="lv-meta-value lv-mono" data-bind="project_id">—</span>
+      <div class="lv-meta-hero">
+        <span class="lv-meta-hero-id" data-bind="project_id">—</span>
+        <span class="lv-meta-hero-run" data-bind="project_run">—</span>
+        <div class="lv-meta-hero-outcome">
+          <span class="lv-meta-hero-outcome-label">Outcome</span>
+          <span class="lv-badge" data-bind="final_outcome">—</span>
+        </div>
       </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Run</span>
-        <span class="lv-meta-value lv-mono" data-bind="project_run">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Grade</span>
-        <span class="lv-meta-value" data-bind="grade">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Started</span>
-        <span class="lv-meta-value lv-mono" data-bind="started_at_iso">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Ended</span>
-        <span class="lv-meta-value lv-mono" data-bind="ended_at_iso">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Duration</span>
-        <span class="lv-meta-value" data-bind="duration_human">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Outcome</span>
-        <span class="lv-badge" data-bind="final_outcome">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Phases</span>
-        <span class="lv-meta-value">
-          <span data-bind="phases_completed">—</span><span class="lv-meta-fade"> / 15</span>
-        </span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Da Capo</span>
-        <span class="lv-meta-value" data-bind="dacapo_count">—</span>
-      </div>
-      <div class="lv-meta-item">
-        <span class="lv-meta-label">Violations</span>
-        <span class="lv-meta-value" data-bind="violations_count">—</span>
+      <div class="lv-meta-grid">
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Grade</span>
+          <span class="lv-meta-value" data-bind="grade">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Started</span>
+          <span class="lv-meta-value lv-mono" data-bind="started_at_iso">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Ended</span>
+          <span class="lv-meta-value lv-mono" data-bind="ended_at_iso">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Duration</span>
+          <span class="lv-meta-value" data-bind="duration_human">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Phases</span>
+          <span class="lv-meta-value">
+            <span data-bind="phases_completed">—</span><span class="lv-meta-fade"> / 15</span>
+          </span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Da Capo</span>
+          <span class="lv-meta-value" data-bind="dacapo_count">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Violations</span>
+          <span class="lv-meta-value" data-bind="violations_count">—</span>
+        </div>
       </div>
     </div>
   </header>
@@ -68,19 +66,20 @@
   <main class="lv-main">
     <section class="lv-section" data-section="flowchart">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">1. Phase Flowchart</h2>
+        <h2 class="lv-section-title" data-num="§ 01">Phase Flowchart</h2>
         <p class="lv-section-note">phase 00 → 14 흐름 + Da Capo 서브그래프 + sentinel 노드 (Mermaid)</p>
       </header>
       <div class="lv-mermaid-frame">
         <pre class="mermaid lv-mermaid-target" data-mermaid-target="flowchart">flowchart LR
-  Empty[데이터 미주입]:::pending
-  classDef pending fill:#f1f5f9,stroke:#94a3b8,stroke-dasharray:4 4</pre>
+  Empty["데이터 미주입"]
+  classDef pending fill:#f1f5f9,stroke:#94a3b8,stroke-dasharray:4 4
+  class Empty pending</pre>
       </div>
     </section>
 
     <section class="lv-section" data-section="gantt">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">2. Phase Gantt Timeline</h2>
+        <h2 class="lv-section-title" data-num="§ 02">Phase Gantt Timeline</h2>
         <p class="lv-section-note">phase_state.json 의 entered_at / exited_at 직접 시각화 — frontmatter 위조 즉시 식별</p>
       </header>
       <div class="lv-mermaid-frame">
@@ -95,7 +94,7 @@
 
     <section class="lv-section" data-section="fingerprint_chain">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">3. Fingerprint Chain</h2>
+        <h2 class="lv-section-title" data-num="§ 03">Fingerprint Chain</h2>
         <p class="lv-section-note">페이즈 N 산출 fingerprint = 페이즈 N+1 prev_fingerprint 일치 — 체인 단절 시 sentinel</p>
       </header>
       <div class="lv-table-frame">
@@ -119,7 +118,7 @@
 
     <section class="lv-section" data-section="dacapo">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">4. Da Capo Summary</h2>
+        <h2 class="lv-section-title" data-num="§ 04">Da Capo Summary</h2>
         <p class="lv-section-note">Phase 06 / 08 의 rerun 흐름 + 최종 winner — drill-down 은 plan/dacapo-flow.md</p>
       </header>
       <div class="lv-table-frame">
@@ -144,7 +143,7 @@
 
     <section class="lv-section" data-section="phase04_answers">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">5. Phase 04 답안 매핑</h2>
+        <h2 class="lv-section-title" data-num="§ 05">Phase 04 답안 매핑</h2>
         <p class="lv-section-note">자율 결정 (페이즈 05~14) 의 사후 회수 — autonomy 정합 lineage</p>
       </header>
       <div class="lv-table-frame">
@@ -166,7 +165,7 @@
 
     <section class="lv-section" data-section="sentinel_events">
       <header class="lv-section-head">
-        <h2 class="lv-section-title">6. Sentinel Events</h2>
+        <h2 class="lv-section-title" data-num="§ 06">Sentinel Events</h2>
         <p class="lv-section-note">universe_skip / log pattern / 위조 감지 등 — 0 건이면 정상 lineage</p>
       </header>
       <div class="lv-table-frame">

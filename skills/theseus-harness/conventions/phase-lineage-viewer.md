@@ -111,42 +111,42 @@ flowchart TB
   classDef dacapo fill:#bbdefb,stroke:#1565c0
   classDef budget fill:#ffe0b2,stroke:#ef6c00
 
-  P00[Phase 00 — naming<br/>2026-05-05 13:00]:::done
-  P00 --> P01[Phase 01 — intent + 마인드맵<br/>13:02 · grade=G4]:::done
-  P01 --> P02[Phase 02 — 의도 리뷰<br/>13:08]:::done
-  P02 --> P03[Phase 03 — 콜드 재이해<br/>13:11 · 4 답변 일치]:::done
-  P03 --> P04[Phase 04 — 사용자 질의<br/>13:14 · Q-G1=G4 / Q-D1~D9 사전답안]:::done
-  P04 --> P05[Phase 05 — 비평<br/>13:18 · simplification 표 6 row]:::done
-  P05 --> P06[Phase 06 — plan-tree<br/>13:25 · width=7]:::dacapo
+  P00["Phase 00 — naming<br/>2026-05-05 13:00"]:::done
+  P00 --> P01["Phase 01 — intent + 마인드맵<br/>13:02 · grade=G4"]:::done
+  P01 --> P02["Phase 02 — 의도 리뷰<br/>13:08"]:::done
+  P02 --> P03["Phase 03 — 콜드 재이해<br/>13:11 · 4 답변 일치"]:::done
+  P03 --> P04["Phase 04 — 사용자 질의<br/>13:14 · Q-G1=G4 / Q-D1~D9 사전답안"]:::done
+  P04 --> P05["Phase 05 — 비평<br/>13:18 · simplification 표 6 row"]:::done
+  P05 --> P06["Phase 06 — plan-tree<br/>13:25 · width=7"]:::dacapo
 
-  subgraph DC06[Phase 06 Da Capo Loop]
+  subgraph DC06 ["Phase 06 Da Capo Loop"]
     direction LR
-    R0[Rerun 00<br/>winner=U3 0.892]:::dacapo
-    R1[Rerun 01<br/>winner=U-anon-r1-a 0.945]:::dacapo
-    R2[Rerun 02<br/>winner=U-anon-r2-a 0.967 ✓]:::done
-    R0 -->|lesson: ae interface| R1
-    R1 -->|lesson: bi measurement| R2
+    R0["Rerun 00<br/>winner=U3 0.892"]:::dacapo
+    R1["Rerun 01<br/>winner=U-anon-r1-a 0.945"]:::dacapo
+    R2["Rerun 02<br/>winner=U-anon-r2-a 0.967 ✓"]:::done
+    R0 -->|"lesson: ae interface"| R1
+    R1 -->|"lesson: bi measurement"| R2
   end
 
   P06 --> DC06
-  DC06 --> P07[Phase 07 — plan 재이해<br/>14:23 · accept]:::done
-  P07 --> P08[Phase 08 — impl 5 sub × 7 universe<br/>14:30]:::dacapo
+  DC06 --> P07["Phase 07 — plan 재이해<br/>14:23 · accept"]:::done
+  P07 --> P08["Phase 08 — impl 5 sub × 7 universe<br/>14:30"]:::dacapo
 
-  subgraph DC08[Phase 08 Da Capo Loop]
-    R0_8[Rerun 00<br/>winner=U3-impl 0.93]:::dacapo
-    R1_8[Rerun 01<br/>winner=U-anon-impl 0.97 ✓]:::done
-    R0_8 -->|lesson: DIP refactor| R1_8
+  subgraph DC08 ["Phase 08 Da Capo Loop"]
+    R0_8["Rerun 00<br/>winner=U3-impl 0.93"]:::dacapo
+    R1_8["Rerun 01<br/>winner=U-anon-impl 0.97 ✓"]:::done
+    R0_8 -->|"lesson: DIP refactor"| R1_8
   end
 
   P08 --> DC08
-  DC08 --> P09[Phase 09 — 게이트 9<br/>17:12 · proceed]:::done
-  P09 --> P10[Phase 10 — sprint trinity<br/>17:20 · 6 sprint × 3 axis]:::done
-  P10 --> P11[Phase 11 — 회귀 바이섹트<br/>(미발생)]:::bypass
-  P11 --> P12[Phase 12 — theseus-view<br/>18:42]:::done
-  P12 --> P13[Phase 13 — interactive-viewer<br/>19:08]:::done
-  P13 --> P14[Phase 14 — 핸드오프<br/>19:35 · winner promote]:::done
+  DC08 --> P09["Phase 09 — 게이트 9<br/>17:12 · proceed"]:::done
+  P09 --> P10["Phase 10 — sprint trinity<br/>17:20 · 6 sprint × 3 axis"]:::done
+  P10 --> P11["Phase 11 — 회귀 바이섹트<br/>미발생"]:::bypass
+  P11 --> P12["Phase 12 — theseus-view<br/>18:42"]:::done
+  P12 --> P13["Phase 13 — interactive-viewer<br/>19:08"]:::done
+  P13 --> P14["Phase 14 — 핸드오프<br/>19:35 · winner promote"]:::done
 
-  P14 --> Done([HANDOFF<br/>19:35 · 6h 35m 총 소요])
+  P14 --> Done(["HANDOFF<br/>19:35 · 6h 35m 총 소요"])
 ```
 
 ## 2. 페이즈별 진입/종료 시각 + 핸드오프 fingerprint
@@ -336,6 +336,7 @@ b- **bypass 페이즈 누락** — 회귀 미발생으로 phase 11 skip → bypa
 c- **fingerprint chain 표 mismatch 무시** — sentinel ★ 노드 추가 안 함 → 무결성 우회. C-PLV 강제.
 d- **dacapo flow 와 lineage 의 cross-link 부재** — drill-down 불가능. plan/dacapo-flow.md cross-link 의무.
 e- **수동 편집** — 사람이 손으로 행 추가 → orchestrator 자동 갱신과 drift. fingerprint mismatch 로 검출.
+f- **Mermaid 노드 라벨에 unquoted parens** (sprint-35 v0.9.40 회귀 정정) — `[Phase 11 — 회귀 바이섹트<br/>(미발생)]` 형태는 Mermaid 가 `(` 를 stadium shape 으로 오해, parse error. **노드 라벨에 parens / `=` / 한글 + 특수문자 혼용 시 반드시 `["..."]` 인용 의무**. 예: `P11["Phase 11 — 회귀 바이섹트<br/>미발생"]:::bypass`. subgraph / edge 라벨 / Done(\[...\]) stadium 도 동일.
 
 ## 11. 호환성
 
