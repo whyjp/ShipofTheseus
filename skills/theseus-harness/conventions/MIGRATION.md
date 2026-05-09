@@ -37,6 +37,9 @@
 | sprint-score-delta-tracking | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 시간 axis (delta-tracking) — 단일 컨벤션의 §2 (self_lint C-SDT 함수 유지) |
 | cross-universe-lesson-distillation | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 공간 axis (패배 universe 약점 흡수) — 단일 컨벤션의 §3 (self_lint C-CULD 함수 유지) |
 | lessons | sprint-narrative | sprint-37 PR-AF | sprint-37 PR-AF | 단계 axis (정체 감지 + lesson_pack + rewrite) — 단일 컨벤션의 §4 (self_lint C20 함수 유지) |
+| domain-research-stacking | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | research stacking framework — 단일 컨벤션의 §3 |
+| domain-failure-patterns | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | failure patterns framework — 단일 컨벤션의 §4 |
+| domain-model-completeness | domain-pack | sprint-37 PR-AG | sprint-37 PR-AG | model completeness (built-in) — 단일 컨벤션의 §2 (self_lint C-DMC 함수 유지) |
 
 ## 후속 PR 별 예상 추가 (참조 — `.ShipofTheseus/sprints/37/diet-analysis.md` §3)
 

@@ -216,7 +216,7 @@ sprint loop (§2) + lint autogen (§3) 결합 = "self-polishing 임계 도달 + 
 - [`budget-saturation-loop.md`](budget-saturation-loop.md) — 본 §2 의 *조기 종료 회피* + 임계 0.999 정정 (default 임계 + 80% budget 사용 강제).
 - [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) — 본 §2 의 *impl 단위만* → trinity 3 axis 로 확장 (intent / plan / impl 각 ≥ 2 sprint).
 - [`tournament-blind-rerun.md`](tournament-blind-rerun.md) — 본 §2 의 sprint-level 임계 미달 시 *project-wide* lesson 적용 + 임계 미달 시 anonymize 재경합.
-- [`domain-failure-patterns.md`](domain-failure-patterns.md) — 본 §3 정합 (회귀 정정 시 도메인 어댑터 failure_patterns 누적).
+- [`domain-pack.md`](domain-pack.md) §4 (sprint-37 PR-AG 통합) — 본 §3 정합 (회귀 정정 시 도메인 어댑터 failure_patterns 누적).
 - [`regression-tdd-gate.md`](regression-tdd-gate.md) — sprint iteration trigger + regression_log binary search (별도 컨벤션 유지).
 
 ## 8. 통합 history (sprint-37 PR-AE)

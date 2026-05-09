@@ -248,7 +248,7 @@ g- fallback PASS with lesson = regression §2 sprint loop 일반 메커니즘 �
 | regression §2 sprint loop | sprint 종료 시 dimension gap | next sprint lesson | weakest dim → 마인드맵의 어느 axis 가 약한가 매핑 |
 | parallel-cold-review | 페이즈 03 진입 | N framing 결손 합집합 | 4 framing 이 *마인드맵 노드 별* premortem |
 | deep-semantic-intent | §i implied framing 추출 | NFR + framing | 품질 axis 의 새 노드 (revision +1) |
-| domain-research-stacking | 도메인 어댑터 stack | 도메인-specific 노드 | 기능 axis 의 새 노드 (revision +1) |
+| domain-pack §3 (research-stacking) | 도메인 어댑터 stack | 도메인-specific 노드 | 기능 axis 의 새 노드 (revision +1) |
 | evidence-driven-sprint-planning | sprint NN+1 lesson | source 매핑 | B fallback 시 자동 lesson source |
 | **mindmap-quality** (본) | **페이즈 01-14 모두** | **canonical concept graph** | **모든 컨벤션의 reference axis** |
 
@@ -279,7 +279,7 @@ k- C 등급 G3 PASS 가 *G4 작업에 무단 적용* — C-MRD-A-DEFAULT 가 gra
 ## 11. 호환성
 
 - [`intent-completeness.md`](intent-completeness.md) — §k 9 sub 와 직교 (mindmap = §9 axis, §k = §a~§i sub-criterion)
-- [`domain-model-completeness.md`](domain-model-completeness.md) — mindmap 4 axis × ≥4 sub 가 entity catalog 의 시각 표현. mindmap entity 노드 = §m D1 entity 와 1:1 매핑 권장
+- [`domain-pack.md`](domain-pack.md) §2 (sprint-37 PR-AG 통합) — mindmap 4 axis × ≥4 sub 가 entity catalog 의 시각 표현. mindmap entity 노드 = §m D1 entity 와 1:1 매핑 권장
 - [`intent-refresh.md`](intent-refresh.md) — 각 refresh universe 가 자체 mindmap 갱신 의무 (initial 그대로 복사 금지)
 - [`rubric-driven-doc-skeleton.md`](rubric-driven-doc-skeleton.md) — Mermaid 마인드맵 ToC 가 본 skeleton 의 §9 섹션으로 매핑
 

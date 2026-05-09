@@ -51,7 +51,7 @@ bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *ru
 | 6 | **NFR 명시 임계 일치** | `intent/01-intent.md` §d 의 ✅ NFR 항목별 페이즈 10 측정 결과 — [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) | p99/가용성/LCP 임계 미달. ⏸ 항목 skip |
 | 7 | **env-satisfied + 실 실행 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0) | env / 부팅 / healthz 검증 |
 | 8 | **Process flow / cycle coherence** ([`../conventions/process-flow-coherence.md`](../conventions/process-flow-coherence.md), v0.9.18) — 작업이 process 차원 (workflow / state machine / DES / pipeline / transaction) 이면 활성. `process_flow_applicable: false` 시 skip | all_states_reachable / all_terminal_reachable / no_orphan_states / cycle_invariant_holds / error_paths_explicit / state_visit_count > 0 |
-| 9 | **Domain failure patterns 자기 검증** ([`../conventions/domain-failure-patterns.md`](../conventions/domain-failure-patterns.md), v0.9.18) — 작업 도메인 추정 후 [`../conventions/domain-adapters/<domain>.md`](../conventions/domain-adapters/) 의 `failure_patterns:` 모든 항목 자동 검증. 매칭 어댑터 없으면 skip + 명시 | DFP-* 패턴 매칭 시 severity 별 cap (cap_total / cap_correctness / cap_experimental / cap_results / warning) |
+| 9 | **Domain failure patterns 자기 검증** ([`../conventions/domain-pack.md`](../conventions/domain-pack.md) §4, sprint-37 PR-AG 통합) — 작업 도메인 추정 후 [`../conventions/domain-adapters/<domain>.md`](../conventions/domain-adapters/) 의 `failure_patterns:` 모든 항목 자동 검증. 매칭 어댑터 없으면 skip + 명시 | DFP-* 패턴 매칭 시 severity 별 cap (cap_total / cap_correctness / cap_experimental / cap_results / warning) |
 
 ### Derived 게이트 (NFR-V 답안 종속, v0.9.6) — [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md)
 
