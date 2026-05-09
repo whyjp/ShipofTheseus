@@ -2275,6 +2275,24 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_primary_source(skill_root: Path) -> list[str]:
+    """C-PRI (sprint-39 PR-D) — 4 감점 메타 패턴 C: Proxy-as-Primary.
+
+    phase 09 본문에 §Primary 룰 (formula sibling overlap > 50% warn) 박힘 검증.
+    """
+    issues: list[str] = []
+    p09 = skill_root / "phases" / "09-quality-gates.md"
+    if not p09.exists():
+        return ["phases/09-quality-gates.md 부재"]
+    body = _read(p09)
+    for kw in ["§Primary", "Proxy-as-Primary",
+               "sibling_overlap", "proxy_via_sibling",
+               "gate_primary.json", "direct_measured"]:
+        if kw not in body:
+            issues.append(f"phases/09-quality-gates.md: §Primary '{kw}' 키워드 누락 (sprint-39 PR-D)")
+    return issues
+
+
 def check_mirror(skill_root: Path) -> list[str]:
     """C-MIR (sprint-39 PR-C) — 4 감점 메타 패턴 B: Workspace ≠ Deliverable mirror.
 
@@ -3217,6 +3235,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-MIGRATION", "conventions/MIGRATION.md (sprint-38 PR-K) — 매핑 무결성 (deprecated 삭제 + successor 존재)", check_migration_integrity),
     ("C-PNC", "phases/09-quality-gates.md §PNC (sprint-39 PR-B) — Plumbed-Not-Consumed (정의 ↔ 사용 비대칭)", check_pnc),
     ("C-MIR", "phases/09-quality-gates.md §Mirror (sprint-39 PR-C) — Workspace ≠ Deliverable (internal ↔ deliverable mirror)", check_mirror),
+    ("C-PRI", "phases/09-quality-gates.md §Primary (sprint-39 PR-D) — Proxy-as-Primary (formula sibling overlap > 50% warn)", check_primary_source),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
