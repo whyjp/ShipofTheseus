@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
   "version": "0.9.42",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 77 컨벤션 / 15 페이즈 / 18 에이전트. AIDE 멀티버스 + 다카포 + sprint trinity. sprint-37 신규: convention diet (90→77, 14 통합 + 3 inline) + 본체 강화 패러다임 전환 + MIGRATION.md 매핑.",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 84 컨벤션 / 15 페이즈 / 18 에이전트. AIDE 멀티버스 + 다카포 + sprint trinity. sprint-37 신규: convention diet (-13 net: 14 통합 + 3 inline) + 본체 강화 패러다임 전환 + MIGRATION.md 매핑.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
