@@ -92,7 +92,6 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-83 [`conventions/submission-portability.md`](conventions/submission-portability.md) — entry script --data-dir CLI flag + DATA_DIR env var fallback 의무 (sprint-18, 범용)
   d-84 [`conventions/dacapo-mandatory-rerun.md`](conventions/dacapo-mandatory-rerun.md) — winner score 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제, sprint-19)
   d-85 [`conventions/plan-tournament-scoring-strict.md`](conventions/plan-tournament-scoring-strict.md) — tournament 6-dim weighted (be 정합) 의무, 1-5 cold-read coarse reject (sprint-19)
-  d-86 [`conventions/canonical-not-stub.md`](conventions/canonical-not-stub.md) — canonical 산출물 ≥ winner 80% 또는 shared schema mode (위임 stub 금지, sprint-19)
   d-87 [`conventions/impl-multiverse-strict.md`](conventions/impl-multiverse-strict.md) — phase 08 G4+ multiverse + tournament + dacapo-flow 의무 강제 (sprint-19)
   d-89 [`conventions/cross-phase-shared-context.md`](conventions/cross-phase-shared-context.md) — shared 정보 단일 위치 + asof_fingerprint 인용 의무 (sprint-19)
   d-90 [`conventions/INDEX.md`](conventions/INDEX.md) — 93 컨벤션 router (단일 진실 원천, sprint-20+)

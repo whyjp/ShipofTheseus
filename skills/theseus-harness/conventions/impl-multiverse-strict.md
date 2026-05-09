@@ -44,7 +44,7 @@ indexed-in: conventions/INDEX.md
    각 디렉터리 본문 ≥ 1 (placeholder 금지)
 2- impl/tournament-impl-NN.md frontmatter 6-dim weighted (cf plan-tournament-scoring-strict 정합)
 3- impl/shadow-grade-impl-NN.json (be 정합)
-4- impl/08-impl-log.md (canonical, canonical-not-stub cg 정합 — winner inline 또는 shared schema)
+4- impl/08-impl-log.md (canonical, phase 08 §canonical inline 정합 sprint-37 PR-AH — winner inline 또는 shared schema)
 5- impl/dacapo-flow.md (bq dacapo-flow-trace 정합 — phase 08 view)
 6- mandatory_first_rerun_satisfied: true (ce dacapo-mandatory-rerun 정합 — rerun_count >= 1 의무)
 7- 5 sub-phase TDD trace (08-1 plan-to-code / 08-2 red / 08-3 green / 08-4 refactor / 08-5 invariants) 본문 + 각 sub 별 ≥ 5 줄 본문 (skip 자백 금지)
@@ -90,4 +90,4 @@ g- **mandatory ≥ 1 rerun 후 즉시 종료 (sprint-28 j 정합)** — phase 08
 - [`intra-phase-dacapo-loop.md`](intra-phase-dacapo-loop.md) (bl) — phase 08 부분의 게이트 강제.
 - [`dacapo-mandatory-rerun.md`](dacapo-mandatory-rerun.md) (ce) — phase 08 rerun_count >= 1 의무.
 - [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) — `impl/dacapo-flow.md` per-phase view 의무.
-- [`canonical-not-stub.md`](canonical-not-stub.md) (cg) — `impl/08-impl-log.md` 가 stub 금지.
+- phases/06,08,14 §canonical inline (sprint-37 PR-AH, prev: canonical-not-stub.md cg) — `impl/08-impl-log.md` 가 stub 금지.

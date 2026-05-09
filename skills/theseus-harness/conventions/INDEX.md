@@ -23,7 +23,6 @@
 | budget-aware-fallback | sprint | [10] | [G3,G4,G5] | budget tight |
 | budget-saturation-loop | sprint | [10] | [G3,G4,G5] | always |
 | build-and-config | core | [08] | [all] | always |
-| canonical-not-stub | meta | [06,08,14] | [all] | canonical 산출 시 |
 | checkpoints | core | [10,11] | [G3,G4,G5] | sprint loop |
 | commentary-policy | interview | [04,08] | [all] | always |
 | competition | meta | [06,08,11] | [G3,G4,G5] | universe 단일안 부재 |
@@ -104,7 +103,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **80 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **79 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

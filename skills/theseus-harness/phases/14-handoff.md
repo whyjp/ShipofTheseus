@@ -62,3 +62,9 @@ d- 자율 권한이 있다면 PR URL 까지 사용자에게 제공.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+
+## §canonical 산출물 룰 (sprint-37 PR-AH inline, prev: canonical-not-stub.md)
+
+`handoff/14-handoff.md` (canonical) 도 phase 06 §canonical 룰 동등 적용 — winner inline ≥80% 또는 shared schema 3 섹션 의무. asof_fingerprint frontmatter 의무. "80%", "shared schema", "asof_fingerprint" 키워드 본문 박힘 강제 (self_lint C-CNS).
+
