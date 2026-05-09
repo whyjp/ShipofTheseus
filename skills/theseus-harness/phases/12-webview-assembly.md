@@ -1,16 +1,18 @@
-# Phase 12 — be4fe + bun fe 웹뷰 자동 생성 (theseus-view)
+# Phase 12 — theseus-view (prebuilt shell + JSON emit)
 
 ## 한 줄 요약
-**theseus-view — 메타-스킬 진행 추적 전용 bun 기반 웹뷰를 생성한다.** be4fe 가 산출 파일을 읽어 API 로 노출, fe 가 모듈 구성도·설계 의도·구현 의도·단위 테스트·E2E 결과를 탭 인터페이스로 시각화. 매 실행마다 항상 생성.
+**theseus-view — 메타-스킬 진행 추적 전용 prebuilt HTML viewer + JSON 데이터 emit.** v0.9.40 부터 cold session 은 `templates/webview/dist/` 의 prebuilt shell 을 *복사* + 8 탭 데이터를 단일 `data/webview.json` 으로 emit — bun/npm 의존 0, build step 0. 라이브 폴링/SSE 가 필요한 contributor 시나리오는 *옵션 dev mode* (`bun run dev` + `server.ts`) 로 분리.
+
+본 페이즈는 [`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) 의 **§3.2 webview emit 프로토콜** 을 phase 12 trigger 에 매핑한 본문.
 
 ## 책임 범위 — theseus-view (스킬 진행 추적)
 
-본 페이즈(12)의 산출물 **theseus-view** 는 *메타-스킬 대시보드* 다 — 페이즈 진행도, 산출물 트리, 게이트 결과 등 하네스 자체의 실행 상태를 시각화한다. 책임 범위:
+본 페이즈(12)의 산출물 **theseus-view** 는 *메타-스킬 대시보드* — 페이즈 진행도, 산출물 트리, 게이트 결과 등 하네스 자체의 실행 상태를 시각화. 책임 범위 :
 
-- 페이즈 진행 상태 (state.json 폴링)
+- 페이즈 진행 상태 (state.json snapshot — cold session 종료 시점)
 - 모듈 구성도 DAG / 설계·구현 의도 / 단위·E2E 테스트 탭
-- 스프린트 타임라인 + 점수 차트 + 회귀 바이섹트
-- Runtime 탭 (부팅 사전조건 + 게이트 7 라이브)
+- 스프린트 타임라인 + 점수 차트 (SVG, vanilla)
+- Runtime 탭 (Q-D9 사전조건 + 게이트 7 부팅 결과)
 
 **프로젝트 결과 시각화 (output observability) 는 본 페이즈의 책임이 아니다 — 페이즈 13 (interactive-viewer) 에 위임.**
 
@@ -18,80 +20,115 @@
 - `.ShipofTheseus/<프로젝트명>/` 의 모든 산출물.
 
 ## 서브에이전트
-[`../agents/webview-builder.md`](../agents/webview-builder.md). 시작 스캐폴드는 [`../templates/webview/`](../templates/webview/).
+[`../agents/webview-builder.md`](../agents/webview-builder.md). 시작 스캐폴드 (prebuilt shell) = [`../templates/webview/dist/`](../templates/webview/dist/), dev mode 옵션 src = [`../templates/webview/`](../templates/webview/) (server.ts 등 기존 보존).
 
 ## 산출물 (`webview/`)
 
 ```
-webview/
-├── package.json            # bun 런타임, hono + react + vite
-├── tsconfig.json
-├── server.ts               # be4fe — Hono, 산출물 파일 직읽기
-├── src/
-│   ├── main.tsx
-│   ├── App.tsx             # 탭 컨테이너
-│   ├── tabs/
-│   │   ├── ModuleMap.tsx   # 모듈 구성도 (DAG 시각화)
-│   │   ├── DesignIntent.tsx# 의도 문서 렌더
-│   │   ├── ImplIntent.tsx  # 구현 의도(impl-log + 게이트 결과)
-│   │   ├── UnitTests.tsx   # 단위 테스트 결과 인터랙티브
-│   │   ├── E2ETests.tsx    # E2E 결과 인터랙티브 (스프린트별)
-│   │   └── Sprints.tsx     # 스프린트 타임라인 + 점수 차트 + 회귀 바이섹트
-│   └── components/
-│       ├── TimingHeader.tsx# 시작/경과/현재 시각 표시 (실시간 업데이트)
-│       └── ScoreBadge.tsx
-├── README.md               # 빌드 + 실행 명령
-└── public/
-    └── index.html
+.ShipofTheseus/<proj>/webview/
+├── index.html                # ← templates/webview/dist/index.html 복사 (shell)
+├── data/
+│   └── webview.json          # ← cold session emit (8 탭 합본)
+└── assets/
+    ├── styles.css            # ← templates/webview/dist/assets/* 복사
+    ├── app.js
+    ├── mermaid.min.js        # vendored UMD
+    └── marked.min.js         # vendored UMD
 ```
 
-## 필수 탭 (모두 항상 생성)
+옵션 dev mode (필요 시 contributor 가 추가) :
+```
+.ShipofTheseus/<proj>/webview/
+├── package.json              # ← templates/webview/package.json 복사
+├── server.ts                 # ← templates/webview/server.ts 복사 (be4fe Hono)
+├── tsconfig.json
+├── vite.config.ts
+└── src/                      # ← templates/webview/src/ 복사 (React 원본)
+```
 
-| 탭 | 무엇을 보여주는가 |
-| -- | --------------- |
-| 진행 상태 (라이브) | `state.json` 폴링, 현재 페이즈 / 활성 스킬 / 우주 / 누적 경과 |
-| 모듈 구성도 | 계획의 DAG 시각화 (TODO 의존, 모듈 경계, 포트) |
-| 설계 의도 | `intent/01-intent.md` + `04-answers.md` + `05-decisions.md` 렌더 |
-| 구현 의도 | `impl/08-impl-log.md` + `quality/09-quality-gate.md` 렌더 |
-| 단위 테스트 | 모든 스프린트의 단위 결과, 클릭 시 실패 트레이스 표시 |
-| E2E 테스트 | E2E 시나리오·스크린샷·스프린트별 상태 |
-| 스프린트 | 점수 차트(차원별), 타임라인, 회귀 바이섹트 링크 |
-| **Runtime** (v0.7.6 신규) | Q-D9 사전조건 (mode / secrets_count / boot_command / env_hash) + 게이트 7 부팅 검증 라이브 (boot_exit / healthz_status / elapsed). [`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md) 의 사용자 대면 표면. |
+## 필수 탭 (8 탭, 모두 항상 생성)
+
+| 탭 | 무엇을 보여주는가 | 데이터 source |
+| -- | --------------- | ----------- |
+| 진행 상태 | `state.json` snapshot — status / current_phase / active_skill / pending_artifacts | `webview.json:state` |
+| 모듈 구성도 | 계획의 DAG (TODO 의존, 모듈 경계, 포트) — Mermaid flowchart | `webview.json:plan.module_graph_mermaid` |
+| 설계 의도 | `intent/01-intent.md` + `04-questions.md` + `05-decisions.md` 렌더 (markdown + Mermaid 자동 감지) | `webview.json:intent` |
+| 구현 의도 | `impl/08-impl-log.md` + `quality/09-quality-gate.md` 렌더 | `webview.json:impl,quality` |
+| 단위 테스트 | 모든 스프린트의 단위 결과 (sprint / total / pass / fail / pass-rate / failures) | `webview.json:tests.unit` |
+| E2E 테스트 | E2E 시나리오·스텝·상태 (스프린트별) | `webview.json:tests.e2e` |
+| 스프린트 | 점수 차트 (vanilla SVG, 0.999 임계 점선) + 타임라인 + 회귀 바이섹트 링크 | `webview.json:sprints` |
+| Runtime | Q-D9 사전조건 + 게이트 7 부팅 검증 (boot_check.py 결과) — [`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md) 의 사용자 대면 표면 | `webview.json:runtime` |
+
+## emit 프로토콜 (cold session 측 의무)
+
+[`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §3.2 본문 발췌 :
+
+1. **shell 복사** — `cp -r templates/webview/dist/* <project>/webview/`
+2. **데이터 합본 emit** — `webview.json` 을 `<project>/webview/data/` 에 작성. 스키마 = 컨벤션 §3.2 표.
+3. **inline 주입 (옵션)** — file:// 환경 / 단일 파일 배포가 필요하면 `webview/index.html` 의 `<script src="./assets/app.js"></script>` *직전* 에 `<script>window.__WEBVIEW__ = <JSON>;</script>` 박음. shell 의 우선순위 = window > fetch.
+4. **CDN 링크 / 산출물 절대경로 / build-time fs bake 금지** — self_lint C-PSR 가 검증.
 
 ## 시간 정보 표시
 
-[`../conventions/timing.md`](../conventions/timing.md) 의 헤더 메타를 모든 페이지 상단 `TimingHeader` 컴포넌트에 표시: 최초 프롬프트 시각·총 누적 경과·현재 시각. 5 초 간격 폴링으로 누적 경과는 라이브 갱신 (페이즈 진행 중에도 사용자가 시간 체감 가능).
+shell 헤더가 `webview.json:timing` 의 `started_at_iso` + `duration_seconds` 를 표시. cold session 종료 시점의 *snapshot* 이므로 라이브 폴링 없음 — 라이브가 필요하면 dev mode.
 
-## be4fe 책임
-
-a- `.ShipofTheseus/<프로젝트>/**/*.md` Read 후 frontmatter/섹션 파싱해 JSON 으로 노출.
-b- `sprints/*/inputs.json` + `report.md` 합쳐 차트용 시계열 데이터 생성.
-c- 단위/E2E 테스트 결과 (Go `go test -json`, Playwright JSON reporter) 를 정규화.
-d- 파일 변경 감시 (chokidar 등) → SSE 로 fe 에 푸시.
-e- 신규 엔드포인트 `GET /api/runtime` (v0.7.6) — `intent/04-runtime-prereq.md` frontmatter + 가장 최근 `boot_check.py` 결과 (BootResult JSON) 합쳐 노출. Runtime 탭이 5 초 간격 폴링.
-
-## 실행
-
-`webview/README.md` 에 다음 명령 명시:
+## 실행 (cold session 결과 열람)
 
 ```
-cd webview
+# 단순 — 브라우저로 직접 열기 (inline 주입 패턴 시)
+open .ShipofTheseus/<proj>/webview/index.html
+
+# HTTP server 패턴 (sibling JSON fetch 시)
+python -m http.server --directory .ShipofTheseus/<proj>/webview 8000
+# → http://localhost:8000
+```
+
+## 옵션 dev mode (contributor 친화)
+
+shell 자체를 수정하거나 라이브 폴링이 필요한 경우만 :
+
+```
+cd .ShipofTheseus/<proj>/webview
 bun install
-bun run dev          # be4fe + fe 동시 기동, http://localhost:5173
+bun run dev          # be4fe (5174) + vite (5173)
 ```
+
+dev mode 산출은 *cold session 결과 아님* — production 산출은 prebuilt shell 만이 source of truth ([`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §5).
 
 ## 성공 기준
 
-a- `bun install && bun run dev` 가 성공.
-b- 모든 8 탭이 데이터 로드 (해당 산출물이 있는 한).
-c- TimingHeader 가 모든 페이지에 보이고 라이브 업데이트.
-d- 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭으로 드릴다운.
-e- Lighthouse 같은 외부 점검까지 강제하지는 않음 — 기능 동작만 확인.
+a- `webview/index.html` + `webview/data/webview.json` (또는 inline 주입) 둘 다 산출.
+b- 8 탭 데이터 로드 (해당 산출물이 있는 한). 빈 탭은 "데이터 미주입" 안내 — 단 *키 자체는 의무*.
+c- 헤더 timing 정보 표시.
+d- 단위·E2E 탭이 인터랙티브 — 실패 항목 클릭 시 트레이스 / 노트 표시.
+e- self_lint C-PSR + C-EFS 통과.
+f- **emit fidelity** — `emit_fidelity.py check --root <proj>` 통과 (8 탭 키 enumeration + 빈값/dummy 금지). [`../conventions/prebuilt-shell-runtime-json.md`](../conventions/prebuilt-shell-runtime-json.md) §3.3 정합. cold session 이 fail 시 phase 12 exit 차단.
+
+## emit fidelity — 8 탭 의무 키 + 빈값 정책
+
+8 탭은 *모두 webview.json 키 enumeration 의무* (해당 산출이 있든 없든). 빈값 정책 :
+
+| 탭 / 키 | 키 필요 시점 | 빈값 정책 |
+|---|---|---|
+| `state` | 항상 | object 자체 부재 fail. 진행중이면 `current_phase` 채움, 종료면 `status: complete` |
+| `timing` | 항상 | `started_at_iso` 의무. duration 은 종료 후 |
+| `plan.module_graph_mermaid` | phase 06 진입 후 (G2+) | G1 = 옵션. G2+ 면 "flowchart" 키워드 의무 |
+| `intent` | phase 01 종료 후 | `01-intent.md` 키 의무. 04/05 는 G2+ |
+| `impl` | phase 08 진입 후 (G2+) | `08-impl-log.md` 키 의무 |
+| `quality` | phase 09 종료 후 | string. dummy filler 금지 |
+| `tests.unit` | phase 10 진입 후 (G2+) | sprint 별 record. 빈 list = phase 미도달 |
+| `tests.e2e` | phase 10 진입 후 (G3+) | scenario 별 record |
+| `sprints` | phase 10 진입 후 (G2+) | sprint 별 score+outcome |
+| `runtime.prereq` / `runtime.boot_result` | phase 04-runtime + phase 09 게이트 7 | 모두 객체 의무. boot_exit 정합 |
+
+빈 list / null 은 *그 phase 미도달 시* OK. *진입했는데 빈 list* = fail. shell 의 "데이터 미주입" fallback 은 *키 자체가 부재* 일 때만 표시 — 키 있으면서 빈값 = fail.
 
 ## 흔한 실패
 
-a- 정적 HTML 만 출력 — 인터랙티브 요구 미충족, fail.
+a- 정적 HTML 만 출력 + 8 탭 누락 — 인터랙티브 요구 미충족, fail.
 b- E2E 탭이 숨겨져 있거나 "차후 구현" 표시 — 항상 생성 룰 위반.
-c- 산출 파일을 빌드 시점에 fs 로 박아넣음 — 런타임 폴링/감시여야 의도와 코드가 변할 때 자동 반영.
+c- shell 본문에 산출물 절대경로 박음 (build-time fs bake) — 런타임 fetch / inline 만 허용. C-PSR 위반.
+d- CDN 링크 사용 (`https://unpkg.com/...`) — 오프라인 동작 위반. C-PSR 위반.
+e- `bun install && bun run build` 를 cold session 안에서 실행 — prebuilt shell 우회. 본 컨벤션 위반.
 
 > **공통 안티 패턴** (조기 추상화 / 분산 모놀리스 / 두괄식 누락 / 객관식 라벨 등) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조.

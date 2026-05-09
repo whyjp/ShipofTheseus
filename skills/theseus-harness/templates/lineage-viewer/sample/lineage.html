@@ -1,0 +1,76 @@
+<!doctype html>
+<!--
+  sample/lineage.html — dist/ shell + sample data 로 렌더 검증.
+  cold session 이 emit 하는 lineage.html 의 *예시* (window.__LINEAGE__ inline 패턴).
+  브라우저로 직접 열어 6 섹션이 모두 그려지는지 확인.
+-->
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase Lineage Viewer · sample</title>
+  <link rel="stylesheet" href="../dist/assets/styles.css">
+</head>
+<body>
+  <header class="lv-header">
+    <div class="lv-header-row">
+      <div class="lv-title-block">
+        <h1 class="lv-title">Phase Lineage Viewer</h1>
+        <span class="lv-subtitle">theseus-harness · sample (synthetic_mine_throughput_001)</span>
+      </div>
+      <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
+        <span class="lv-theme-icon-light" aria-hidden="true">&#9728;</span>
+        <span class="lv-theme-icon-dark" aria-hidden="true">&#9790;</span>
+      </button>
+    </div>
+    <div class="lv-meta">
+      <div class="lv-meta-item"><span class="lv-meta-label">Project</span><span class="lv-meta-value lv-mono" data-bind="project_id">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Run</span><span class="lv-meta-value lv-mono" data-bind="project_run">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Grade</span><span class="lv-meta-value" data-bind="grade">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Started</span><span class="lv-meta-value lv-mono" data-bind="started_at_iso">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Ended</span><span class="lv-meta-value lv-mono" data-bind="ended_at_iso">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Duration</span><span class="lv-meta-value" data-bind="duration_human">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Outcome</span><span class="lv-badge" data-bind="final_outcome">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Phases</span><span class="lv-meta-value"><span data-bind="phases_completed">—</span><span class="lv-meta-fade"> / 15</span></span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Da Capo</span><span class="lv-meta-value" data-bind="dacapo_count">—</span></div>
+      <div class="lv-meta-item"><span class="lv-meta-label">Violations</span><span class="lv-meta-value" data-bind="violations_count">—</span></div>
+    </div>
+  </header>
+  <main class="lv-main">
+    <section class="lv-section" data-section="flowchart">
+      <header class="lv-section-head"><h2 class="lv-section-title">1. Phase Flowchart</h2><p class="lv-section-note">phase 00 → 14 흐름 + Da Capo 서브그래프 + sentinel 노드 (Mermaid)</p></header>
+      <div class="lv-mermaid-frame"><pre class="mermaid lv-mermaid-target" data-mermaid-target="flowchart"></pre></div>
+    </section>
+    <section class="lv-section" data-section="gantt">
+      <header class="lv-section-head"><h2 class="lv-section-title">2. Phase Gantt Timeline</h2><p class="lv-section-note">phase_state.json entered_at / exited_at 직접 시각화</p></header>
+      <div class="lv-mermaid-frame"><pre class="mermaid lv-mermaid-target" data-mermaid-target="gantt"></pre></div>
+    </section>
+    <section class="lv-section" data-section="fingerprint_chain">
+      <header class="lv-section-head"><h2 class="lv-section-title">3. Fingerprint Chain</h2><p class="lv-section-note">페이즈 N 산출 fingerprint = 페이즈 N+1 prev_fingerprint 일치</p></header>
+      <div class="lv-table-frame"><table class="lv-table" data-table="fingerprint_chain"><thead><tr><th class="lv-th-num">#</th><th>Phase</th><th>Start</th><th>End</th><th>Fingerprint</th><th class="lv-th-match">Match</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="lv-section" data-section="dacapo">
+      <header class="lv-section-head"><h2 class="lv-section-title">4. Da Capo Summary</h2><p class="lv-section-note">Phase 06 / 08 의 rerun 흐름</p></header>
+      <div class="lv-table-frame"><table class="lv-table" data-table="dacapo"><thead><tr><th>Phase</th><th class="lv-th-num">Reruns</th><th>Final Winner</th><th class="lv-th-num">Score</th><th class="lv-th-num">Shadow</th><th>Outcome</th><th class="lv-th-num">Budget</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="lv-section" data-section="phase04_answers">
+      <header class="lv-section-head"><h2 class="lv-section-title">5. Phase 04 답안 매핑</h2><p class="lv-section-note">자율 결정의 사후 회수</p></header>
+      <div class="lv-table-frame"><table class="lv-table" data-table="phase04_answers"><thead><tr><th>Question</th><th>Label</th><th>Answer</th><th>Phase Impact</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="lv-section" data-section="sentinel_events">
+      <header class="lv-section-head"><h2 class="lv-section-title">6. Sentinel Events</h2><p class="lv-section-note">universe_skip / log pattern / 위조 감지</p></header>
+      <div class="lv-table-frame"><table class="lv-table" data-table="sentinel_events"><thead><tr><th>Time</th><th>Phase</th><th>Sentinel</th><th>Match</th><th>Recovery</th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </main>
+  <footer class="lv-footer">
+    <span class="lv-mono">theseus-harness · phase-lineage-viewer · sample</span>
+    <span class="lv-footer-sep">·</span>
+    <span>이 샘플은 <code class="lv-mono">window.__LINEAGE__</code> inline 주입 패턴 시연</span>
+  </footer>
+
+  <!-- ── 데이터 inline 주입 (cold session emit 패턴 시연) ── -->
+  <script src="./inline-data.js"></script>
+  <script src="../dist/assets/mermaid.min.js"></script>
+  <script src="../dist/assets/app.js"></script>
+</body>
+</html>

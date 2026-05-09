@@ -9,7 +9,11 @@ __pycache__/
 node_modules/
 .env
 .env.local
+# build output dirs ignored — *but* harness 의 prebuilt shell (sprint-35 v0.9.40)
+# 은 committed asset 이므로 templates/*/dist/ 는 예외.
 dist/
+!skills/theseus-harness/templates/*/dist/
+!skills/theseus-harness/templates/*/dist/**
 .vite/
 bun.lockb
 .omc/
@@ -17,4 +21,11 @@ bun.lockb
 .claude/scheduled_tasks.lock
 # livetest 산출물 (.tests/) — 시나리오 출하 결과는 git 추적 안 함
 .tests/
+# Playwright MCP 스냅샷 / 콘솔 로그 / repo root 스크린샷
+.playwright-mcp/
+/lineage-viewer-*.png
+/webview-*.png
+# templates/lineage-viewer/dist/lineage.json = cold session emit. dist/ 자체는
+# committed (sprint-35 v0.9.40) 이지만 *.json 데이터는 emit 시점 산출물.
+skills/theseus-harness/templates/lineage-viewer/dist/lineage.json
 

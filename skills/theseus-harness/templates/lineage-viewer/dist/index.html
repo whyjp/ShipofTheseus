@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase Lineage · theseus-harness</title>
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <header class="lv-header">
+    <div class="lv-header-row">
+      <div class="lv-title-block">
+        <span class="lv-eyebrow">theseus-harness</span>
+        <h1 class="lv-title">Phase&nbsp;Lineage</h1>
+        <span class="lv-subtitle">cold session 결과 디버그 뷰어</span>
+      </div>
+      <button class="lv-theme-toggle" data-action="toggle-theme" type="button" title="테마 토글">
+        <span class="lv-theme-icon-light" aria-hidden="true">&#9728;</span>
+        <span class="lv-theme-icon-dark" aria-hidden="true">&#9790;</span>
+      </button>
+    </div>
+
+    <div class="lv-meta">
+      <div class="lv-meta-hero">
+        <span class="lv-meta-hero-id" data-bind="project_id">—</span>
+        <span class="lv-meta-hero-run" data-bind="project_run">—</span>
+        <span class="lv-meta-hero-outcome">
+          <span class="lv-badge" data-bind="final_outcome">—</span>
+        </span>
+      </div>
+      <div class="lv-meta-grid">
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Grade</span>
+          <span class="lv-meta-value" data-bind="grade">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Started</span>
+          <span class="lv-meta-value lv-mono" data-bind="started_at_iso">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Ended</span>
+          <span class="lv-meta-value lv-mono" data-bind="ended_at_iso">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Duration</span>
+          <span class="lv-meta-value" data-bind="duration_human">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Phases</span>
+          <span class="lv-meta-value">
+            <span data-bind="phases_completed">—</span><span class="lv-meta-fade"> &nbsp;/ 15</span>
+          </span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Da Capo</span>
+          <span class="lv-meta-value" data-bind="dacapo_count">—</span>
+        </div>
+        <div class="lv-meta-item">
+          <span class="lv-meta-label">Violations</span>
+          <span class="lv-meta-value" data-bind="violations_count">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="lv-main">
+    <section class="lv-section" data-section="flowchart">
+      <header class="lv-section-head">
+        <span class="lv-section-num">01</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase Flowchart</h2>
+          <p class="lv-section-note">phase 00 → 14 흐름, 다카포 서브그래프와 sentinel 노드를 포함한 단일 mermaid flowchart.</p>
+        </div>
+      </header>
+      <div class="lv-mermaid-frame">
+        <pre class="mermaid lv-mermaid-target" data-mermaid-target="flowchart">flowchart LR
+  Empty["데이터 미주입"]
+  classDef pending fill:#f5f0e6,stroke:#b8ad9c,stroke-dasharray:4 4
+  class Empty pending</pre>
+      </div>
+    </section>
+
+    <section class="lv-section" data-section="gantt">
+      <header class="lv-section-head">
+        <span class="lv-section-num">02</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase Gantt Timeline</h2>
+          <p class="lv-section-note">phase_state.json 의 entered_at / exited_at 직접 시각화. frontmatter 위조의 즉시 식별.</p>
+        </div>
+      </header>
+      <div class="lv-mermaid-frame">
+        <pre class="mermaid lv-mermaid-target" data-mermaid-target="gantt">gantt
+  title Empty
+  dateFormat YYYY-MM-DD HH:mm
+  axisFormat %H:%M
+  section Empty
+  데이터 미주입 :p0, 2000-01-01 00:00, 1m</pre>
+      </div>
+      <div class="lv-legend" aria-label="Gantt 색상 의미">
+        <span class="lv-legend-item"><span class="lv-legend-dot lv-legend-normal"></span>정상</span>
+        <span class="lv-legend-item"><span class="lv-legend-dot lv-legend-crit"></span>Da Capo · sentinel</span>
+        <span class="lv-legend-item"><span class="lv-legend-dot lv-legend-hotspot"></span>★ hotspot</span>
+        <span class="lv-legend-item"><span class="lv-legend-dot lv-legend-bypass"></span>bypass (미발생)</span>
+        <span class="lv-legend-item"><span class="lv-legend-dot lv-legend-parallel"></span>동일 start = 병렬 서브에이전트</span>
+      </div>
+    </section>
+
+    <section class="lv-section" data-section="fingerprint_chain">
+      <header class="lv-section-head">
+        <span class="lv-section-num">03</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Fingerprint Chain</h2>
+          <p class="lv-section-note">페이즈 N 의 산출 fingerprint 가 페이즈 N+1 의 prev_fingerprint 와 일치하는가. 체인이 끊기면 sentinel.</p>
+        </div>
+      </header>
+      <div class="lv-table-frame">
+        <table class="lv-table" data-table="fingerprint_chain">
+          <thead>
+            <tr>
+              <th class="lv-th-num">#</th>
+              <th>Phase</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Fingerprint</th>
+              <th class="lv-th-match">Match</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="6" class="lv-empty">데이터 미주입</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lv-section" data-section="dacapo">
+      <header class="lv-section-head">
+        <span class="lv-section-num">04</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Da Capo Summary</h2>
+          <p class="lv-section-note">Phase 06 / 08 의 rerun 흐름과 최종 winner. drill-down 은 plan/dacapo-flow.md 로 이어진다.</p>
+        </div>
+      </header>
+      <div class="lv-table-frame">
+        <table class="lv-table" data-table="dacapo">
+          <thead>
+            <tr>
+              <th>Phase</th>
+              <th class="lv-th-num">Reruns</th>
+              <th>Final Winner</th>
+              <th class="lv-th-num">Score</th>
+              <th class="lv-th-num">Shadow</th>
+              <th>Outcome</th>
+              <th class="lv-th-num">Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="7" class="lv-empty">데이터 미주입</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lv-section" data-section="phase04_answers">
+      <header class="lv-section-head">
+        <span class="lv-section-num">05</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Phase 04 답안 매핑</h2>
+          <p class="lv-section-note">자율 결정 (페이즈 05~14) 의 사후 회수. autonomy 정합 lineage.</p>
+        </div>
+      </header>
+      <div class="lv-table-frame">
+        <table class="lv-table" data-table="phase04_answers">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Label</th>
+              <th>Answer</th>
+              <th>Phase Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4" class="lv-empty">데이터 미주입</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lv-section" data-section="sentinel_events">
+      <header class="lv-section-head">
+        <span class="lv-section-num">06</span>
+        <div class="lv-section-text">
+          <h2 class="lv-section-title">Sentinel Events</h2>
+          <p class="lv-section-note">universe_skip / log pattern / 위조 감지. 0 건이면 정상 lineage 다.</p>
+        </div>
+      </header>
+      <div class="lv-table-frame">
+        <table class="lv-table" data-table="sentinel_events">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Phase</th>
+              <th>Sentinel</th>
+              <th>Match</th>
+              <th>Recovery</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" class="lv-empty">데이터 미주입</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lv-footer">
+    <span>theseus-harness · phase-lineage-viewer · prebuilt shell v0.9.40</span>
+    <span class="lv-footer-sep">·</span>
+    <span>데이터 source: <code>window.__LINEAGE__</code> 우선, fallback <code>./lineage.json</code></span>
+  </footer>
+
+  <script src="./assets/mermaid.min.js"></script>
+  <script src="./assets/app.js?v=0.9.40-3"></script>
+</body>
+</html>

@@ -84,6 +84,7 @@
 | plan-tournament-scoring-strict | tournament | [06] | [all] | tournament 산출 |
 | plan-tree | planning | [06] | [G3,G4,G5] | always |
 | polyglot-code-quality | quality | [09] | [all] | always |
+| prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit |
 | premortem-friction | interview | [02,03,07] | [G3,G4,G5] | always |
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |
@@ -110,7 +111,7 @@
 | timing | core | [all] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **89 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **90 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 
