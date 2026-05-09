@@ -2,6 +2,54 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.44 — 2026-05-09 (sprint-39 — 4 패턴 inline 트랙 3)
+
+### 마일스톤
+
+sprint-37/38 마감 후 sprint-39 트랙 3 — sprint-37 §0 의 4 감점 메타 패턴 (94 plateau 직접 원인) 을 phase 09 게이트 본문에 inline. 별도 컨벤션 0, cold session 자동 검출.
+
+### 변경 — 트랙 3 6 PR (PR-A ~ PR-F)
+
+| PR | scope |
+|---|---|
+| PR-A #88 | sprint-39 plan.md |
+| PR-B #89 | A. PNC inline → phases/09 §PNC (Plumbed-Not-Consumed, AST 분석) |
+| PR-C #90 | B. Mirror inline → phases/09 §Mirror (Workspace ≠ Deliverable) |
+| PR-D #91 | C. Primary-Source inline → phases/09 §Primary (Proxy-as-Primary, sibling overlap > 50%) |
+| PR-E #92 | D. Literal-Forbid inline → phases/09 §Literal (Letter-by-Fallback, regex strict) |
+| fix #93 | C23 정합 — §Literal '사용자 ack 0' 라인에 06.f marker |
+| PR-F | sprint 마감 (v0.9.44 + CHANGELOG, 본 entry) |
+
+### 변경 — self_lint (+4 신규, 125 → 129)
+
+| 룰 | scope |
+|---|---|
+| C-PNC | phases/09 §PNC (정의 ↔ 사용 비대칭) |
+| C-MIR | phases/09 §Mirror (internal ↔ deliverable mirror) |
+| C-PRI | phases/09 §Primary (formula sibling overlap > 50%) |
+| C-LIT | phases/09 §Literal (avoid directive literal regex) |
+
+### 변경 — 신규 산출물 (per-project, phase 09)
+
+- `gate_pnc.json` — fields_total / consumed / orphan + violations
+- `gate_mirror.json` — internal_facts ↔ deliverable mirror 매핑
+- `gate_primary.json` — primary_directives + direct_measured / proxy_via_sibling
+- `gate_literal.json` — avoid_directives + regex_patterns + violations
+
+### 마감 사실
+
+- 4 패턴 모두 phase 09 본문 inline (별도 컨벤션 0, sprint-37 다이어트 패러다임 정합)
+- self_lint 125 → 129 (+4)
+- 3 단계 패러다임 전환 완료: 정리 (sprint-37) → 깊이 (sprint-38) → 통합 (sprint-39)
+
+### 메모리 신규 후보
+
+- `project_sprint39_v0944.md` (본 PR-F 머지 시점)
+
+### 후속
+
+- sprint-40 — 외부 적용 (simulation-bench 재제출, sprint-37/38/39 누적 효과 측정, 94 plateau 극복 검증)
+
 ## v0.9.43 — 2026-05-09 (sprint-38 — 본체 강화 + 구현-층 깊이 트랙 2)
 
 ### 마일스톤
