@@ -13,13 +13,18 @@ indexed-in: conventions/INDEX.md
 
 **cold session 시작 *전* 에 lineage / webview / interactive 3 viewer 가 이미 떠 있도록.** orchestrator 가 phase 00 enter 직전 `pre_bootup.py bootstrap` 호출 → 3 viewer dist 복사 + 의무 키 모두 박힌 빈 골격 JSON emit + viewer-runtime HTTP server 시작. 사용자는 cold session 시작과 동시에 viewer 띄워두고 phase 별 진행을 5초 polling 으로 자동 추적. observability 본질적 상승.
 
-## 1. 동기 — sprint-36 변경
+## 1. 동기 — sprint-36 변경 + sprint-40 PR-D 강화
 
 **v0.9.40 까지의 문제**:
 
 a- **lineage / webview / interactive viewer 가 cold session *종료 후* 에만 존재** — 진행 중에는 사용자가 볼 곳 없음.
 b- **사용자가 phase 12 / 13 종료까지 기다려야** viewer 첫 등장. phase 06 dacapo 진행 중 상태 추적 불가.
 c- **viewer 부팅이 cold session 결과 산출에 결합** — 산출 fail 시 viewer 도 fail.
+
+**v0.9.45 (sprint-40 PR-D) 강화**:
+
+d- **HARD-RULE 9.pp — orchestrator 자동 호출 의무**: phase 00 진입 *직전* `python skills/theseus-harness/scoring/pre_bootup.py bootstrap --root <project>` 호출 강제. 미호출 시 phase 09 §V8 viewer-readiness 게이트 fail → phase 00 재실행.
+e- **증거 회피 사례** (v0.9.44 g4-v2): pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재. 본 9.pp + §V8 게이트 양쪽 압력으로 차단.
 
 **v0.9.41 변경**:
 
