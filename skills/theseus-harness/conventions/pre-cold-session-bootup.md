@@ -26,6 +26,12 @@ c- **viewer 부팅이 cold session 결과 산출에 결합** — 산출 fail 시
 d- **HARD-RULE 9.pp — orchestrator 자동 호출 의무**: phase 00 진입 *직전* `python skills/theseus-harness/scoring/pre_bootup.py bootstrap --root <project>` 호출 강제. 미호출 시 phase 09 §V8 viewer-readiness 게이트 fail → phase 00 재실행.
 e- **증거 회피 사례** (v0.9.44 g4-v2): pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재. 본 9.pp + §V8 게이트 양쪽 압력으로 차단.
 
+**v0.9.46 (sprint-41 PR-F) 강화 — sprint-40 13 산출물 골격 자동 emit**:
+
+f- **`generate_sprint40_artefacts.py` 자동 호출**: pre_bootup.py bootstrap 직후 `python skills/theseus-harness/scoring/generate_sprint40_artefacts.py --project-root <root>` 호출. 13 sprint-40 의무 산출물 (gate_v6/v8/readme_summary/methodology/4 패턴/modeling_shortcuts/cascaded_subq/webview_exit/iv_exit/iv_dashboard) 의 *빈 골격* (`verdict: pending`) 자동 emit.
+g- **cold session 의 책임** = phase 진행 중 `verdict: pending` → `verdict: pass` 갱신. cold session 이 *발견* (생성 X) 패러다임 — 본 PR-F 의 핵심 기여.
+h- **0510 회차 회피 패턴 직접 차단**: 13 산출물 모두 부재 → `cold_session_artefacts.py` (sprint-41 PR-C) 가 phase 09 진입 차단 → orchestrator 가 PR-F 골격 자동 emit → cold session 이 verdict 갱신 → phase 09 통과.
+
 **v0.9.41 변경**:
 
 a- **phase 00 *이전* 에 viewer 부팅** — cold session 시작과 viewer 부팅 분리.
