@@ -169,3 +169,49 @@ self_lint C-RTG 검증. fail RTG 자동 → 페이즈 10 sprint NN+1 lesson sour
 - C-GIS (grader-in-sprint) — be (페이즈 10 검증 위치, 본 페이즈 frontmatter 일부)
 - C-RDS (rubric-driven-doc-skeleton) — bj
 - C-RTG (rubric-targeted-gates) — bk
+
+
+## §PNC — Plumbed-Not-Consumed pattern (sprint-39 PR-B inline)
+
+**4 감점 메타 패턴 A** — 필드/변수 정의 layer ↔ 실효 사용 layer 의 비대칭. 정의 ✓ / 사용 ✗ = PNC 위반.
+
+### 검사 알고리즘
+
+1. AST 분석 (Python: `ast` / Go: `go/ast` / TS: `tsc --noEmit + ts-morph`)
+2. dataclass / TypedDict / class field / yaml schema 추출
+3. 각 field 가 어디서 *읽기* 되는지 (read access) 추적
+4. read access 0 = PNC 위반 (define-only)
+
+### 산출물 — `gate_pnc.json`
+
+```json
+{
+  "fields_total": <int>,
+  "fields_consumed": <int>,
+  "fields_orphan": <int>,
+  "violations": [
+    {
+      "field": "warmup_minutes",
+      "defined_at": "config.py:L12",
+      "consumed_at": null,
+      "severity": "cap_correctness"
+    }
+  ]
+}
+```
+
+### 게이트 룰
+
+- violations 0 의무 (cap_correctness — 정의 layer fact 가 코드 실효에 영향 0 = correctness 신뢰 0)
+- false positive allow_list: per-project frontmatter `pnc_allow_list: ["debug_*", "_reserved_*"]`
+- skip 조건: project 가 *외부 schema* (e.g., OpenAPI request body) 정의만 하는 경우 — 내부 read 0 정상
+
+### self_lint C-PNC
+
+phases/09-quality-gates.md 본문에 §PNC 룰 키워드 박힘 검증. cold session 의 gate_pnc.json 산출물 검증은 phase 09 game 단계에서.
+
+### 안티 패턴
+
+a- **field 정의 후 read 0** — orphan field. PNC 위반.
+b- **allow_list 남용** — 모든 field 를 allow 로 우회 = 실효 검사 0. allow_list ≤ 5% 권고.
+c- **AST 분석 skip** — string grep 으로 대체 = false positive/negative 폭증. AST 의무.
