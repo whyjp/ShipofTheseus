@@ -533,3 +533,104 @@ d- canonical 박지만 phase 08 가 universe-1 직접 인용 (canonical 우회) 
 
 phases/06-plan.md / phases/08-implement.md / phases/14-handoff.md 본문에 본 §canonical 룰 ("80%", "shared schema", "asof_fingerprint") 박혀 있는지 검사.
 
+
+
+## §06.f Path-policy + user-confirm gate (sprint-38 PR-B 정식 enforcement)
+
+**phase 06 의 마지막 sub-phase** (06.a Research → 06.b Intent-decoding → 06.c Classification → 06.d Sub-tree TODO → 06.e Premortem → **06.f Path-policy**). phase 07 진입 전 사용자 ack 의무.
+
+### 룰 본문
+
+산출물 생성 *전* 의무 4 단계:
+
+```
+① 경로 후보 ≥ 2 제시
+② 내용 줄거리 압축 제시 (3~5 줄)
+③ AskUserQuestion 또는 인터뷰 — 06.f path-policy sanctioned interrupt
+④ 사용자 ack 후 작성 — 06.f path-policy 정합
+```
+
+본 룰은 `feedback_deliverable_path_user_confirm` (sprint-37 메모리) 의 *enforcement* 지점. sprint-37 까지는 *권고*, sprint-38 부터는 phase 07 진입 게이트.
+
+### 산출물 — `plan/06-path-policy.md`
+
+```markdown
+# Phase 06 산출물 경로 정책 (06.f)
+
+## 산출물별 경로 후보 + 사용자 ack (06.f path-policy)
+
+### Deliverable: `plan/06-plan.md` (canonical)
+- 후보 1: `.ShipofTheseus/<프로젝트>/plan/06-plan.md` (default)
+- 후보 2: `skills/theseus-harness/sprints/<sprint>/06-plan.md` (mirror)
+- 줄거리: <3~5 줄 압축>
+- 사용자 ack (06.f): ✓ 후보 1 (2026-05-09T...)
+
+### Deliverable: `plan/06-research.md` (06.a)
+- 후보 1: `.ShipofTheseus/<프로젝트>/plan/06-research.md`
+- 후보 2: ...
+- 줄거리: ...
+- 사용자 ack (06.f): ✓ 후보 1
+```
+
+frontmatter 의무:
+
+```yaml
+---
+phase: "06.f"
+deliverables:
+  - id: "plan/06-plan.md"
+    candidates:
+      - path: "<path-a>"
+        rationale: "<1-line>"
+      - path: "<path-b>"
+        rationale: "<1-line>"
+    selected: "<chosen-path>"
+    outline: "<3-5 line summary>"
+    user_confirmed_at: "<ISO-8601>"
+  - id: "plan/06-research.md"
+    ...
+all_acked: true
+---
+```
+
+`all_acked: false` 또는 어느 deliverable 의 `selected` 부재 = phase 07 진입 거부.
+
+### 트리거 — phase 06.e premortem 종료 직후
+
+`plan/06-premortem.md` 작성 직후, phase 06 canonical (`plan/06-plan.md`) 작성 *전* 자동 진입. orchestrator 가:
+
+1. 06.a~06.e 의 모든 산출물 list 수집
+2. 06.f 진입 — 각 deliverable 별 경로 후보 ≥ 2 + 줄거리 자동 생성
+3. AskUserQuestion 일괄 발사 — 06.f sub-phase 의 deliverable 갯수만큼 객관식 또는 multi-select
+4. 사용자 ack 받으면 (06.f path-policy) `plan/06-path-policy.md` 작성 + frontmatter `all_acked: true`
+5. phase 07 진입
+
+### self_lint C-PPC
+
+```python
+def check_path_policy(skill_root: Path) -> list[str]:
+    """C-PPC (sprint-38 PR-B) — phase 06.f path-policy + user-confirm gate."""
+    issues = []
+    p06 = skill_root / "phases" / "06-plan.md"
+    body = p06.read_text(encoding="utf-8")
+    for kw in ["§06.f", "Path-policy", "AskUserQuestion", "후보 ≥ 2",
+              "all_acked", "user_confirmed_at", "phase 07 진입 거부"]:
+        if kw not in body:
+            issues.append(f"phases/06-plan.md: §06.f '{kw}' 키워드 누락 (sprint-38 PR-B)")
+    return issues
+```
+
+### 안티 패턴
+
+a- **경로 후보 1 개만** — *대안 없는 결정* 은 사용자 ack (06.f) 무의미. ≥ 2 강제.
+b- **줄거리 부재 또는 1 줄 < 3** — 사용자가 *무엇을 작성할지* 사전 인지 못함.
+c- **AskUserQuestion 우회 + 평문 추정** (06.f path-policy 위반) — 답안 추적 불가. 도구 호출 의무 (CLAUDE.md `AskUserQuestion` 정합).
+d- **phase 06 canonical 작성 후 06.f 호출** — 순서 위반. 06.e 직후 → 06.f → canonical 작성 → phase 07.
+e- **all_acked: false 인 채 phase 07 진입** — orchestrator runtime guard 가 거부.
+f- **다른 phase (01/04/08/14) 의 산출물 경로 정책 0** — 본 sprint 부터 phase 06 만 정식 enforcement, 다른 phase 는 sprint-39/40 확장 후보 (현재 *권고*).
+
+### 호환성
+
+- [`autonomy.md`](../conventions/autonomy.md) — phase 04 외 인터럽트 0 정합 위반 *없음*. 06.f 의 사용자 ack 는 *phase 04 의 사전 위임* 으로 자동 처리되지 *않음* — 산출물 경로는 case-by-case 결정 의무 (사용자가 "이번 작업의 산출물 어디 둘까" 를 cold context 에서 결정).
+- 단, 페이즈 04 답안에 `Q-D-PATH-POLICY` 추가 가능 (sprint-39 후보) — 답안 1: 항상 ack / 답안 2: 첫 deliverable 만 ack + 나머지 자동 mirror / 답안 3: 자동 (default 경로) — *현 sprint-38 PR-B 는 답안 1 강제*.
+- [`interview.md`](../conventions/interview.md) — 06.f path-policy AskUserQuestion 옵션 ≤ 4 한도 정합. deliverable ≥ 5 시 multi-question 분리.
