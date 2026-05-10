@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.50",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 16 페이즈 (1.5 신설) / 18 에이전트. sprint-50 신규: Extension Discipline — *프롬프트 너머* 확장 사고를 페이즈 본문 + 9 신규 CLI 로 enforcement. Phase 1.5 Hidden Intent (Pragmatic Tip 53) / Phase 06 Design-Twice (Ousterhout Ch.11) / Phase 08 Deep-Module + DRY (Ch.4 + Tip 11) / Phase 09 Define-Errors-Out + Comments-Why (Ch.10 + Ch.13) / Phase 10 Refactor-not-Rewrite (Pragmatic Ch.6) / Phase 14 Knowledge Portfolio (Ch.1). HARD-RULE 9.bbb~9.jjj 9 룰 신규.",
+  "version": "0.9.51",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 16 페이즈 / 18 에이전트. sprint-51 신규: Extension Invoke Closure + Prompt-Driven Harness. Intent Recursion 패러다임 — prompt_meta_extractor 로 prompt 자체에서 8 메타-카탈로그 (output_schemas / readme / decisions / eval_dims / anti_patterns / constraints / default_warnings / conditional_obligations) 자동 추출 → 후속 모든 페이즈의 seed. orchestrator phase walkthrough 에 sprint-50 신규 9 CLI + Phase 1.5 invoke literal Bash 박힘 (sprint-43 패러다임 재적용). reviewer 약점 3 건 (token_usage / warmup / intervention.category) 도메인 무관 일반 룰로 catch — placeholder_grep + default_value_justification. HARD-RULE 9.kkk / 9.lll / 9.mmm 신규 + sprint-50 9.bbb~9.jjj invoke closure. 5 layer enforcement (컨벤션 / self_lint / runtime CLI / prompt-meta seed + recursion sink).",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
