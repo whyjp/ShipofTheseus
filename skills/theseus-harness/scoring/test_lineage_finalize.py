@@ -218,7 +218,7 @@ def test_cli_invocation_smoke(tmp_path: Path):
     _write_phase(sot, "handoff/14-handoff.md", "14-handoff", "2026-05-10T11:14:12Z")
     proc = subprocess.run(
         [sys.executable, str(LF), "refresh", "--root", str(tmp_path)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8",
     )
     assert proc.returncode == 0, proc.stderr
     out = json.loads(proc.stdout)
