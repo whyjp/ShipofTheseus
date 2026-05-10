@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.49",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-49 신규: Sprint↔version 명칭 정책 도입 (forward only, sprint-49 = v0.9.49 첫 적용). contracts.md §Sprint↔version 절 + CHANGELOG 정책 entry. 4 layer enforcement (sprint-40~43 누적) 보존 — 12 CLI + literal command + declared = invoked 강제.",
+  "version": "0.9.50",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 16 페이즈 (1.5 신설) / 18 에이전트. sprint-50 신규: Extension Discipline — *프롬프트 너머* 확장 사고를 페이즈 본문 + 9 신규 CLI 로 enforcement. Phase 1.5 Hidden Intent (Pragmatic Tip 53) / Phase 06 Design-Twice (Ousterhout Ch.11) / Phase 08 Deep-Module + DRY (Ch.4 + Tip 11) / Phase 09 Define-Errors-Out + Comments-Why (Ch.10 + Ch.13) / Phase 10 Refactor-not-Rewrite (Pragmatic Ch.6) / Phase 14 Knowledge Portfolio (Ch.1). HARD-RULE 9.bbb~9.jjj 9 룰 신규.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
