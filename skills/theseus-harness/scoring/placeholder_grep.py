@@ -254,6 +254,109 @@ def _check_null_recursive(data, fields: list[str], file_path: str,
             _check_null_recursive(item, fields, file_path, violations)
 
 
+# ─── sprint-52 PR-E — viewer JSON sentinel 검증 ──────────────────────────
+#
+# pre_bootup.py 가 시작 시 박은 빈 골격 (mermaid="cold session 미시작" /
+# fingerprint_chain=[] / project_run="pending" / winner=null / phases[].fingerprint=PENDING /
+# phases[].created_at=정시 stub) 이 cold session 종료 후에도 잔존하는 패턴 catch.
+#
+# lineage_finalize.py refresh 가 phase 14 에서 채우는 게 정상. 채우지 않은 채 마감되면
+# 본 검사가 fail.
+_STUB_TS_RE = re.compile(r"T\d{2}:00:00Z?$|T\d{2}:00Z?$")
+
+
+def _check_lineage_json(path: Path) -> list[dict]:
+    """lineage.json 의 cold session 마감 후 placeholder 잔존 검출."""
+    out: list[dict] = []
+    try:
+        d = json.loads(path.read_text(encoding='utf-8'))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        return [{'kind': 'viewer_json_unreadable', 'file': str(path), 'detail': str(exc)}]
+
+    if d.get('project_run') != 'completed':
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'project_run', 'detail': f'project_run={d.get("project_run")!r} (expected "completed")'})
+    if d.get('final_outcome') in ('IN_PROGRESS', 'PENDING', None):
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'final_outcome', 'detail': f'final_outcome={d.get("final_outcome")!r}'})
+    if d.get('winner') in (None, ''):
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'winner', 'detail': 'winner is null/empty'})
+    if d.get('fingerprint_chain') == []:
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'fingerprint_chain', 'detail': 'fingerprint_chain == [] (lineage_finalize 미실행)'})
+    for key in ('mermaid_flowchart', 'mermaid_gantt'):
+        val = d.get(key) or ''
+        for stub in ('미시작', 'Empty', 'Pending', 'pending session', '대기'):
+            if stub in val:
+                out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                            'field': key, 'detail': f"{key} 에 stub '{stub}' 포함"})
+                break
+    for ph in d.get('phases') or []:
+        if ph.get('fingerprint') == 'PENDING':
+            out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                        'field': f'phases[{ph.get("phase")}].fingerprint',
+                        'detail': 'fingerprint == "PENDING"'})
+        ca = ph.get('created_at')
+        if ca is None or _STUB_TS_RE.search(str(ca) or ''):
+            out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                        'field': f'phases[{ph.get("phase")}].created_at',
+                        'detail': f'created_at stub or null: {ca!r}'})
+    return out
+
+
+def _check_dashboard_json(path: Path) -> list[dict]:
+    out: list[dict] = []
+    try:
+        d = json.loads(path.read_text(encoding='utf-8'))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        return [{'kind': 'viewer_json_unreadable', 'file': str(path), 'detail': str(exc)}]
+    status = d.get('status')
+    cur = d.get('current_phase')
+    final_p = d.get('final_phase')
+    if status == 'complete' and final_p in (None, ''):
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'final_phase', 'detail': 'status=complete + final_phase=null 모순'})
+    if status == 'complete' and cur == 'pre-bootup':
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'current_phase', 'detail': 'status=complete + current_phase="pre-bootup" 모순'})
+    return out
+
+
+def _check_webview_json(path: Path) -> list[dict]:
+    out: list[dict] = []
+    try:
+        d = json.loads(path.read_text(encoding='utf-8'))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        return [{'kind': 'viewer_json_unreadable', 'file': str(path), 'detail': str(exc)}]
+    if d.get('final_phase') in (None, ''):
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'final_phase', 'detail': 'final_phase null'})
+    timing = d.get('timing') or {}
+    dur = timing.get('duration_seconds')
+    pc = timing.get('phases_completed') or 0
+    if isinstance(dur, (int, float)) and dur < 60 and pc > 1:
+        out.append({'kind': 'viewer_placeholder', 'file': str(path),
+                    'field': 'timing.duration_seconds',
+                    'detail': f'duration_seconds={dur} < 60 + phases_completed={pc} 모순 (실험 wall-time stub 의심)'})
+    return out
+
+
+def check_viewer_json_placeholders(target_root: Path) -> list[dict]:
+    """lineage.json / interactive-viewer/dashboard.json / webview/data/webview.json 검증."""
+    violations: list[dict] = []
+    lin = target_root / 'lineage.json'
+    if lin.exists():
+        violations.extend(_check_lineage_json(lin))
+    dash = target_root / 'interactive-viewer' / 'dashboard.json'
+    if dash.exists():
+        violations.extend(_check_dashboard_json(dash))
+    wv = target_root / 'webview' / 'data' / 'webview.json'
+    if wv.exists():
+        violations.extend(_check_webview_json(wv))
+    return violations
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--target-root', type=Path, default=None,
@@ -266,6 +369,8 @@ def main() -> int:
                         help='escape 비율 상한 (escape 만 사용 우회 차단)')
     parser.add_argument('--include-todo', action='store_true', default=False,
                         help='TODO 도 sentinel 로 검사 (default OFF — 코드 base 의 normal annotation 으로 false positive 多)')
+    parser.add_argument('--include-viewer-json', action='store_true', default=False,
+                        help='viewer JSON 3 종 (lineage / dashboard / webview) 의 cold session 마감 placeholder 잔존 검사 (sprint-52 PR-E)')
     parser.add_argument('--self-test', action='store_true', default=False)
     parser.add_argument('--json-out', type=Path, default=None)
     args = parser.parse_args()
@@ -307,7 +412,12 @@ def main() -> int:
     total = len(all_matches)
     escape_ratio = len(escape) / total if total else 0.0
 
-    # 2) prompt-meta schema field null 검사
+    # 2-a) viewer JSON placeholder 검사 (sprint-52 PR-E, opt-in)
+    viewer_violations = []
+    if args.include_viewer_json:
+        viewer_violations = check_viewer_json_placeholders(args.target_root)
+
+    # 2-b) prompt-meta schema field null 검사
     schema_violations = []
     if args.prompt_meta_file and args.prompt_meta_file.exists():
         try:
@@ -338,6 +448,12 @@ def main() -> int:
             f'prompt-meta schema field violations: {len(schema_violations)}'
         )
 
+    if viewer_violations:
+        failures.append(
+            f'viewer JSON placeholder 잔존: {len(viewer_violations)} '
+            f'(lineage_finalize.py refresh 미실행)'
+        )
+
     report = {
         'schema_version': SCHEMA_VERSION,
         'pass': not failures,
@@ -347,6 +463,7 @@ def main() -> int:
         'escape_count': len(escape),
         'escape_ratio': round(escape_ratio, 3),
         'schema_violations': schema_violations[:20],
+        'viewer_violations': viewer_violations[:20],
         'top_non_escape': non_escape[:10],
         'failures': failures,
     }
