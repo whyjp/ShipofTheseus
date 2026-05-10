@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.47
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-42 — Context-and-Effort Hurdles 트랙 6. CLI 4 종 신규 (cross_phase_context_audit / universe_count_monotonicity / stagnation_breakthrough / surrender_phrase_grep) + HARD-RULE 9.uu~9.xx + 신규 컨벤션 surrender-phrase-forbid. 정성 layer 추가 — context 전달 / universe 다양성 / stagnation 돌파 / 자백 어휘 차단. ouroboros 보다 깊은 enforcement.
+version: 0.9.48
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-43 — Orchestrator Runtime Invoke 트랙 7. CLI 3 종 신규 (submission_completeness / phase_invoke_audit / dashboard_submission_parity) + HARD-RULE 9.yy/9.zz/9.aaa + phases/06/08/09/10/14 §자동 CLI 호출 literal Bash 박힘. 4 layer 결합 (문서/정량/정성/runtime invoke) — declared = invoked 강제.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
