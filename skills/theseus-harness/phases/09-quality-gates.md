@@ -30,7 +30,49 @@ bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *ru
 - 페이즈 09 종합 판정 = halt (수정 후 재진입 강제)
 - 페이즈 14 handoff 의 `lessons:` 에 자동 추가
 
+---
 
+## sprint-50 — Define-Errors-Out + Comments-Why (HARD-RULE 9.fff / 9.ggg)
+
+> 격언:
+> - Ousterhout, *A Philosophy of Software Design*, Ch.10 — *"Define Errors Out of Existence"*
+> - Ousterhout, Ch.13 — *"Comments Should Describe Things That Are Not Obvious from the Code"*
+
+### 9.fff — Define-Errors-Out 검사 (`scoring/define_errors_check.py`)
+
+raise 된 예외 종류 catalog ≥ 1. 각 raise 가 *어딘가에서* handle (try/except 또는 sentinel comment `# caller catches`) 의무.
+
+vacuous PASS 차단:
+- 0 raise = warning (implicit propagation 의심).
+- bare except / `except Exception:` only = fail (specific type catch ≥ 1 의무, Effective Python Item 87 정합).
+
+### 9.ggg — Comments-Why-Not-What 검사 (`scoring/comment_intent_check.py`)
+
+comment 와 *바로 다음 코드 줄* 의 token Jaccard overlap ≥ 0.5 = paraphrase. paraphrase 비율 ≤ τ=0.5 의무.
+
+vacuous PASS 차단:
+- sentinel marker (`# why:` / `# 이유:`) 가 escape — *그러나* 전체 comment 중 escape ≥ 80% = 의심 fail (escape 만 사용 우회 차단).
+- comment 수 < 5 = 검사 skip (small codebase).
+
+### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
+
+phase 09 종합 판정 *직전* 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/define_errors_check.py \
+    --code-root <submission>/src/ \
+    --require-handle \
+    --json-out .ShipofTheseus/<프로젝트>/quality/define_errors.json
+
+python skills/theseus-harness/scoring/comment_intent_check.py \
+    --code-root <submission>/src/ \
+    --max-paraphrase-ratio 0.5 \
+    --max-escape-ratio 0.8 \
+    --json-out .ShipofTheseus/<프로젝트>/quality/comment_intent.json
+```
+
+- exit 0 (둘 다) → phase 10 sprint loop 진입
+- exit 1 (어느 하나) → phase 08 step C implementer 재진입 (예외 정의 / comment 의도 수정).
 
 ## 한 줄 요약
 **테스트 실행 전에 아홉 게이트로 *코드 모양 + 실행 가능성 + 프로세스 정합 + 도메인 결손 부재* 를 감사한다.** 게이트 1~5 = 정적 모양, 게이트 6 = NFR 측정, **게이트 7 = env-satisfied + 실 부팅 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0), **게이트 8 (v0.9.18) = process flow / cycle coherence**, **게이트 9 (v0.9.18) = domain failure patterns 자기 검증**.
