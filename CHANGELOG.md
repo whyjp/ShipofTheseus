@@ -2,6 +2,84 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.50 — 2026-05-10 (sprint-50 — Extension Discipline)
+
+### 마일스톤
+
+g4-v3 cold session (`D:\github\simulation-bench\submissions\2026-05-10__001_synthetic_mine_throughput__claude-code__claude-opus-4-7__theseus-orchestrator-g4-v3`) 직후 사용자 직접 진단:
+
+> *"의도를 이해하고 프롬프트에 적혀있는 이상의 처리를 해야 한다. 성찰-상상력을 덧대서 추가하면 좋은 작업이나 더 설계를 확장하거나 프롬프트보다 더 확장된 제안을 intent 이후 단계에 추가하는 건 어떨까. plan/impl 에서도 확장된 사고를 지시해야 한다. 실용주의 프로그래밍, 이펙티브 소프트웨어 설계의 인사이트들을 실제 반영해야 한다."*
+
+본 sprint = *프롬프트 충실 이행* 의 부재가 아니라 *프롬프트 너머의 사고* 부재 = 91 plateau 의 구조적 원인 — 진단 후 의도→설계→구현→유지보수→테스트 *전 페이즈* 에서 "확장 사고 (Extension Thinking)" 를 페이즈 본문 + CLI enforcement 로 박는 작업.
+
+`feedback_score_targeting_taboo.md` 정합 — 점수는 결과지 목표 아님. 본 sprint 의 가치 = *구조* (확장 사고 단계의 부재 진단을 enforcement 로 닫음).
+
+### 확장 바이블 4 권 mapping
+
+| # | 책 | 페이즈 매핑 |
+|---|---|---|
+| 1 | The Pragmatic Programmer (Hunt & Thomas) | Phase 1.5 (Tip 53), Phase 08 (Tip 11), Phase 10 (Ch.6), Phase 14 (Ch.1) |
+| 2 | A Philosophy of Software Design (Ousterhout) | Phase 06 (Ch.11), Phase 08 (Ch.4–5), Phase 09 (Ch.10, Ch.13) |
+| 3 | Effective Java/C++ (Bloch / Meyers) | Phase 09 (Item 87 root exception) |
+| 4 | 요구사항→설계→구현→유지보수→테스트 5 단계 표준 | Phase 1.5 / 06 / 08 / 10 / 14 매핑 |
+
+### 변경 — 7 PR
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | sprint-50 plan + premortem (격언 동·서, 3 시나리오, 5 derived improvements) | 2 docs |
+| PR-B | Phase 1.5 신설 + 3 산출물 + 3 CLI (HARD-RULE 9.bbb / 9.jjj) | 1 phase + 3 CLI |
+| PR-C | Phase 06 Design-Twice + universe_philosophy_distinct CLI (9.ccc) | 1 patch + 1 CLI |
+| PR-D | Phase 08 Deep-Module + DRY 2 CLI (9.ddd / 9.eee) | 1 patch + 2 CLI |
+| PR-E | Phase 09 Define-Errors-Out + Comments-Why 2 CLI (9.fff / 9.ggg) | 1 patch + 2 CLI |
+| PR-F | Phase 10/14 patch + 2 CLI + HARD-CORE 9.bbb~9.jjj inline (9.hhh / 9.iii) | 2 patch + 2 CLI + HARD-CORE patch |
+| PR-G | v0.9.50 마감 + CHANGELOG + memory + g4-v3 review doc + sprint report | 본 entry |
+
+### 신규 페이즈 (1)
+
+`phases/01-5-hidden-intent.md` — 페이즈 04 (Q&A) 직후 / 페이즈 05 (Critique) 직전 의무 단계. *프롬프트가 묻지 않은* 항목 ≥5 발굴 + (must/should/could) 분류 + 후속 페이즈 trace 약속.
+
+페이즈 수: 15 → 16 (1.5 sub-phase 신설).
+
+### 신규 CLI (10 종)
+
+| CLI | 룰 | 격언 출처 |
+|---|---|---|
+| `intent_extension_emit.py` | 9.bbb | Pragmatic Tip 53 — "Don't gather requirements—dig for them" |
+| `extension_to_artifact_trace.py` | 9.jjj | (자체) 채택 extension trace 의무 |
+| `hidden_intent_originality.py` | 9.bbb 보강 | (자체) 2 단 휴리스틱 paraphrase 차단 |
+| `universe_philosophy_distinct.py` | 9.ccc | Ousterhout Ch.11 — "Design It Twice" |
+| `deep_module_metric.py` | 9.ddd | Ousterhout Ch.4 — "Modules Should Be Deep" |
+| `dry_violation_count.py` | 9.eee | Pragmatic Tip 11 — "DRY" |
+| `define_errors_check.py` | 9.fff | Ousterhout Ch.10 + Effective Python Item 87 |
+| `comment_intent_check.py` | 9.ggg | Ousterhout Ch.13 — "Comments WHY not WHAT" |
+| `refactor_not_rewrite_ratio.py` | 9.hhh | Pragmatic Ch.6 — "Refactoring" |
+| `knowledge_portfolio_check.py` | 9.iii | Pragmatic Ch.1 — "Your Knowledge Portfolio" |
+
+### vacuous PASS 차단 (premortem §3 기반)
+
+- Phase 1.5 항목 ≥5 만 보지 않고 *카테고리 distinct ≥3* + *should 채택 ≥1* + *body ≥80 chars* 의무 (premortem §3-1)
+- universe philosophy *이름만 다른 우주* 차단 → architectural decision unique 비율 검사 (premortem §3-2)
+- deep-module *단일 파일 우회* 차단 → 모듈 수 = 1 = automatic fail (premortem §3-3)
+- comment paraphrase *escape 만 사용* 차단 → escape 비율 ≥80% = 의심 fail (premortem §3-4)
+- refactor *변화 0* 차단 → additions=deletions=0 = automatic fail (premortem §3-5)
+
+### HARD-CORE.md 신규 inline
+
+9.bbb~9.jjj 한 줄 inline + 페이즈 본문 cross-ref. 컨벤션 다이어트 패러다임 정합 — *신규 컨벤션 파일 0*. C-HC1 4000 chars limit 은 sprint-35 부터 누적 위반 (현 6887 chars) — 본 sprint 추가 +794. 다음 sprint 다이어트 의제.
+
+### 의도적 미적용
+
+`feedback_score_targeting_taboo.md` 정합 — *점수 % 표기 0*. 본 sprint 의 검증은 본 sprint 자체 X / *다음 cold session (g4-v4)* 결과로 판정. dogfood 한계 (`feedback_self_eating_dogfood.md`) 정합.
+
+### 후속
+
+- **sprint-51** (다음) = v0.9.51 — g4-v4 cold session 결과 검증 후 의제 결정. 후보:
+  1. HARD-CORE.md 다이어트 (9.bbb~9.jjj 9 줄 INDEX router 로 옮김)
+  2. deep-module / DRY CLI 의 다른 언어 (Go / TS / Rust / Java) 카탈로그 추가
+  3. comment-intent 휴리스틱 embedding-based 고도화 (premortem §4-1 인계)
+  4. universe philosophy 카탈로그 확장 (constraint-programming / streaming / staged-pipeline 등 — premortem §4-2 인계)
+
 ## v0.9.49 — 2026-05-10 (sprint-49 — Sprint↔version 명칭 정책 첫 적용)
 
 ### 마일스톤

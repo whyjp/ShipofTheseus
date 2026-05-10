@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.49
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-49 — Sprint↔version 명칭 정책 도입 (forward only, sprint-49 = v0.9.49 첫 적용). contracts.md §Sprint↔version 절 + CHANGELOG 정책 entry. 4 layer enforcement (sprint-40~43 누적) 보존.
+version: 0.9.50
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 16 페이즈 (1.5 신설) / 18 에이전트. sprint-50 — Extension Discipline. *프롬프트 너머* 확장 사고를 페이즈 본문 + 9 신규 CLI 로 enforcement. Phase 1.5 Hidden Intent / Phase 06 Design-Twice / Phase 08 Deep-Module + DRY / Phase 09 Define-Errors-Out + Comments-Why / Phase 10 Refactor-not-Rewrite / Phase 14 Knowledge Portfolio. HARD-RULE 9.bbb~9.jjj 9 룰 신규. 4 layer enforcement (sprint-40~43) 보존.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
