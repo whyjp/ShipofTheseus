@@ -170,6 +170,26 @@ c- PATCH — 문서 오타, 에이전트 프롬프트 미세 조정.
 
 같은 MAJOR 내의 산출물은 재진입 호환. 다른 MAJOR 면 거부 (마이그레이션 가이드는 `docs/changes/` 의 ADR 로).
 
+## Sprint ↔ version 명칭 정책 (sprint-43 v0.9.48 마감 직후 도입, sprint-49 부터 적용)
+
+**Forward 정책** — sprint 번호 = `skill_version` 의 *patch* 자릿수와 일치.
+
+a- **sprint-49** = v0.9.49 (다음 sprint, 본 정책 첫 적용)
+b- **sprint-N** = v0.{MAJOR}.{MINOR}.{N} (1.0+ 진입 후 minor 차원으로 이전 가능)
+c- 본 정책의 *retroactive 적용 X* — sprint-37 ~ sprint-43 (= v0.9.42 ~ v0.9.48) 은 *역사적 misalignment* 로 보존. 변경 비용 (137 reference + memory + dir rename) > 이득.
+
+### 동기
+
+- 외부 검증 시 *어느 sprint 의 산출인지* 와 *어느 version 의 enforcement layer 가 활성인지* 의 *이름 차이* 가 사용자 추적 비용 증가
+- sprint-44 ~ sprint-48 = v0.9.44 ~ v0.9.48 의 *historic offset +5* — 미래 contributor 가 표 lookup 의무
+- sprint-49 부터 *직접 매핑* — 회차 명칭 보면 enforcement layer 즉시 식별
+
+### Anti-pattern
+
+a- *retroactive rename* — sprint-37 → sprint-42 류 변경 시 CHANGELOG / docs/reviews / memory 의 137 reference + 4 dir + 4 memory 파일 + git tag 모두 충돌. cost > benefit.
+b- *forward 정책 무시* — sprint-49 가 v0.9.49 가 *아니게* 발행 시 본 정책 깨짐. version bump 가 sprint 마감과 1:1 페어 의무.
+c- *patch 외 minor 차원 동시 bump* — `0.9.49` → `0.10.0` 으로 minor bump 시 다음 sprint = sprint-?. 본 case 는 별도 ADR 발행 후 정책 마이그레이션.
+
 ## 향후 모듈 분해 시
 
 본 컨벤션이 그대로 스킬 간 인터페이스가 된다. `skills/theseus-intent` 가 출력한 산출물을 `skills/theseus-plan` 이 frontmatter 만 검증하고 그대로 소비 — 두 스킬은 본문에 대한 약한 결합만 갖는다 (DIP 의 직접 적용).
