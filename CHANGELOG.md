@@ -2,6 +2,88 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.48 — 2026-05-10 (sprint-43 — Orchestrator Runtime Invoke 트랙 7)
+
+### 마일스톤
+
+g4-v2 91/100 회차 샌드박스 검증 결과 *공식 점수 정합 + submission 폴더 빈 상태 (10 .pyc 만)* + sprint-41/42 9 CLI 모두 *runtime 미호출* 진단. *declared ≠ invoked* 갭의 textbook evidence — 컨벤션 본문 + CLI 코드 만으로는 enforcement 보장 불가.
+
+본 sprint = orchestrator phase 본문에 *literal Bash command* 박기 + 3 신규 CLI (post-eval 잔존 / invoke trace / dashboard parity) → *declared = invoked* 강제.
+
+### 변경 — 트랙 7 6 PR (PR-A ~ PR-F)
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | sprint-43 plan + g4-v2 91 샌드박스 검증 docs | 1 plan + 1 review |
+| PR-B | **submission_completeness.py** + HARD-RULE 9.yy | scoring + test (6/6 PASS) |
+| PR-C | **phase_invoke_audit.py** + HARD-RULE 9.zz | scoring + test (8/8 PASS) |
+| PR-D | **dashboard_submission_parity.py** + HARD-RULE 9.aaa | scoring + test (8/8 PASS) |
+| PR-E | **phases/06/08/09/10/14 §자동 CLI 호출** literal Bash command 박힘 | phases/* 본문 + orchestrator SKILL.md walkthrough |
+| PR-F | sprint 마감 v0.9.48 + CHANGELOG (본 entry) | SKILL.md / orchestrator / plugin.json / CHANGELOG |
+
+### CLI 3 종 신규 (skills/theseus-harness/scoring/)
+
+| CLI | 역할 |
+|---|---|
+| `submission_completeness.py` | evaluation_report.json output_exists_* checks → 현재 disk 잔존 검증. .pyc-only 패턴 차단. G3+ governance trail 의무. |
+| `phase_invoke_audit.py` | orchestrator SKILL.md 본문에서 literal Bash command 정규식 추출 → 각 CLI 별 호출 trace (gate_*.json) 검증. *declared ≠ invoked* 갭 직접 추적. |
+| `dashboard_submission_parity.py` | dashboard md `files:` 항목 ↔ submission disk 실 파일 list. missing_on_disk → fail / untracked_on_dashboard → warning. |
+
+### HARD-RULE 9 신규 (3)
+
+- **9.yy** — phase 14 handoff *직후* + dashboard sync *전* submission_completeness 자동 호출 (.pyc-only 차단)
+- **9.zz** — phase 09 + 14 진입 시 phase_invoke_audit 자동 호출 (sprint-43 핵심 enforcement)
+- **9.aaa** — dashboard sync *직후* dashboard_submission_parity 자동 호출
+
+### orchestrator phases §자동 CLI 호출 literal command 박힘 (PR-E)
+
+| phase | literal Bash command |
+|---|---|
+| 06 (plan exit) | dacapo_threshold + universe_count_monotonicity + cross_phase_context_audit |
+| 08 (impl exit) | dacapo_threshold + universe_count_monotonicity + cross_phase_context_audit |
+| 09 (entry+exit) | cold_session_artefacts + runtime_guard_chain (entry) + phase_invoke_audit + cross_phase_context_audit (exit) |
+| 10 (sprint loop) | sprint_loop_cap + stagnation_breakthrough + surrender_phrase_grep |
+| 14 (handoff) | surrender_phrase_grep + cross_phase_context_audit + phase_invoke_audit + submission_completeness + dashboard_submission_parity |
+
+### 테스트 — 22/22 PASS (3 신규 suite)
+
+- test_submission_completeness (6) + test_phase_invoke_audit (8) + test_dashboard_submission_parity (8) = **22**
+
+각 CLI 의 *g4-v2 91 회피 패턴* 직접 회귀 테스트:
+- submission_completeness: 10 .pyc + eval pass → 3 violation (pyc_only/low_survival/governance) ✓
+- phase_invoke_audit: 5 declared, 0 trace → fail ✓
+- dashboard_parity: 5 declared, disk 빈 → 5 missing fail ✓
+
+### 실 g4-v2 회차 직접 검증
+
+| CLI | 결과 |
+|---|---|
+| submission_completeness | verdict=fail, pyc_only=True, survival=0%, 3 violation ✓ |
+| dashboard_submission_parity | 11 declared, 0 disk → 11 missing ✓ |
+
+### 4 layer 통합 패러다임 (sprint-40 + 41 + 42 + 43)
+
+| sprint | layer | enforcement |
+|---|---|---|
+| sprint-40 | 문서 layer | 컨벤션 본문 강화 |
+| sprint-41 | 정량 layer | CLI 5 종 |
+| sprint-42 | 정성 layer | CLI 4 종 |
+| **sprint-43** | **runtime invoke layer** | **CLI 3 종 + orchestrator literal command** |
+
+**12 CLI 통합 + 4 layer + literal command 본문 박힘** = ouroboros + *declared = invoked* 강제.
+
+### 마감 사실
+
+- 6 PR 모두 main 머지 + push (commit-immediate + push-immediate)
+- self_lint 후속 +4 (144 → 148 예정 — C-SCM / C-PIA / C-DSP / C-OWL)
+- 컨벤션 87 (sprint-42 동일)
+- HARD-RULE 9.yy / 9.zz / 9.aaa 신규
+- phases/06/08/09/10/14 본문에 literal Bash command 박힘 (5 phase × 평균 3 command = 15 literal invocation)
+
+### 후속
+
+- **sprint-44 검토 후보** — self_lint.py 에 12 CLI 호출 trace 통합 + cold session 실 검증 (외부 적용 후 활성 여부 측정)
+
 ## v0.9.47 — 2026-05-10 (sprint-42 — Context-and-Effort Hurdles 트랙 6)
 
 ### 마일스톤
