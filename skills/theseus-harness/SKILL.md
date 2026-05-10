@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.50
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 16 페이즈 (1.5 신설) / 18 에이전트. sprint-50 — Extension Discipline. *프롬프트 너머* 확장 사고를 페이즈 본문 + 9 신규 CLI 로 enforcement. Phase 1.5 Hidden Intent / Phase 06 Design-Twice / Phase 08 Deep-Module + DRY / Phase 09 Define-Errors-Out + Comments-Why / Phase 10 Refactor-not-Rewrite / Phase 14 Knowledge Portfolio. HARD-RULE 9.bbb~9.jjj 9 룰 신규. 4 layer enforcement (sprint-40~43) 보존.
+version: 0.9.51
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 16 페이즈 / 18 에이전트. sprint-51 — Extension Invoke Closure + Prompt-Driven Harness. Intent Recursion 패러다임 도입 — prompt_meta_extractor 로 prompt 자체에서 8 메타-카탈로그 자동 추출 (output_schemas / readme / decisions / eval_dims / anti_patterns / constraints / default_warnings / conditional_obligations) → Phase 1.5 / placeholder_grep / default_value_justification 의 seed. orchestrator phase walkthrough 에 Phase 1.5 + 9 sprint-50 CLI literal Bash 박힘 (sprint-43 패러다임 재적용, declared = invoked). reviewer 약점 3 건 (token_usage / warmup / intervention.category) 도메인 무관 일반 룰로 catch. HARD-RULE 9.kkk + 9.lll + 9.mmm + 9.bbb~9.jjj. 4 layer enforcement → 5 layer (1 컨벤션 / 2 self_lint / 3 runtime CLI / 4 prompt-meta seed + recursion sink).
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

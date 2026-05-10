@@ -2,6 +2,92 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.51 — 2026-05-10 (sprint-51 — Extension Invoke Closure + Prompt-Driven Harness)
+
+### 마일스톤
+
+g4-v4 cold session 96/100 직후 사용자 직접 진단 — *"sprint-50 의 9 HARD-RULE 산출물 대부분 invoke 안 됨"* + *"benchmarks/001 prompt 를 직접 이해해서 도메인 무관 확장 사고 가능하게 해야 함"* + *"이 자체가 우리 intent 가 회귀하며 숨은 의도를 모두 채우는 방식의 이유야"*.
+
+본 sprint = sprint-50 의 *완성*:
+1. **Intent Recursion 패러다임** 도입 — *prompt 자체가 후속 페이즈의 seed*. 본 하네스의 기존 페이즈 01 refresh-1/2 cycle 이 이미 *intent 회귀* 메커니즘이고, 본 sprint 는 그 회귀의 *seed* 자동화.
+2. **Layer 4 enforcement** 도입 — sprint-40 의 5 layer 정합 (1 컨벤션 / 2 self_lint / 3 runtime CLI / **4 prompt-meta seed + recursion sink**).
+3. **sprint-43 declared ≠ invoked** 갭 closure — sprint-50 신규 페이즈 (Phase 1.5) + 9 CLI 가 orchestrator phase walkthrough 에 자동 invoke 되지 않던 갭 직접 닫음.
+
+### 변경 — 7 PR
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | `prompt_meta_extractor.py` (480 LOC, 도메인 무관) + plan 재정렬 (Intent Recursion) | 1 CLI + plan |
+| PR-B | 도메인 의존성 audit + 2 fix (CONSTRAINT_RE / NATURAL_CATEGORIES) | 2 CLI fix |
+| PR-C | orchestrator phase walkthrough invoke literal Bash (sprint-50 9 CLI + Phase 1.5 + sprint-51 prompt-meta) | SKILL.md catalog |
+| PR-D | `placeholder_grep.py` (sentinel + prompt-meta schema null) | 1 CLI |
+| PR-E | `default_value_justification.py` (sentence-level, prompt-meta default_warnings trigger) | 1 CLI |
+| PR-F | `refactor_not_rewrite_ratio.py` sprint_type frontmatter 인식 + sprint-50/51 plan frontmatter | CLI patch + 2 plan patch |
+| PR-G | v0.9.51 마감 + CHANGELOG + memory + g4-v4 review doc cross-link | 본 entry |
+
+### 신규 CLI (3 종)
+
+| CLI | 룰 | 격언 / 출처 |
+|---|---|---|
+| `prompt_meta_extractor.py` | 9.kkk | (자체) 도메인 무관 markdown structural parser. 8 메타-카탈로그 자동 추출 |
+| `placeholder_grep.py` | 9.lll | (자체) sentinel + prompt-meta schema null. surrender_phrase_grep sister CLI |
+| `default_value_justification.py` | 9.mmm | Pragmatic Tip 53 — *"Don't gather requirements—dig for them"*. sentence-level justification 검사 |
+
+### 신규 HARD-RULE (3)
+
+- **9.kkk** Phase 04 entry `prompt_meta_extractor.py` 의무 호출 — 8 카탈로그 자동 추출
+- **9.lll** All-phase `placeholder_grep.py` — sentinel grep + prompt-meta output_schemas null field
+- **9.mmm** Phase 1.5 `default_value_justification.py` — prompt-meta default_warnings trigger 시 의식적 default 의 justification 의무
+
+### orchestrator phase walkthrough invoke 박힘 (sprint-43 패러다임 재적용)
+
+기존 sprint-43 이 *기존* phase 06/08/09/10/14 에 박았던 literal Bash 패턴을 sprint-50 신규 9 CLI + Phase 1.5 entry 에 *재적용*:
+- phase 04 entry: `prompt_meta_extractor.py`
+- phase 04 → 1.5 → 05: Phase 1.5 신규 의무 단계 (`intent_extension_emit.py` + `hidden_intent_originality.py`)
+- phase 06: `universe_philosophy_distinct.py`
+- phase 08: `deep_module_metric.py` + `dry_violation_count.py`
+- phase 09: `define_errors_check.py` + `comment_intent_check.py` + `extension_to_artifact_trace.py`
+- phase 10: `refactor_not_rewrite_ratio.py` (sprint_type-aware)
+- phase 14: `knowledge_portfolio_check.py`
+
+`phase_invoke_audit.py` (sprint-43 9.zz) 가 본 sprint 후 sprint-50 9 CLI 모두 trace 검증 가능.
+
+### reviewer 약점 3 건 도메인 무관 catch — sandbox 직접 검증
+
+| 약점 | 매핑 룰 | sandbox 결과 |
+|---|---|---|
+| token_usage 누락 (`"token_count_method": "unknown"`) | `placeholder_grep.py` (9.lll) | g4-v4 token_usage.json:5 직접 catch ✅ |
+| intervention.category placeholder (`"unrecorded"`) | `placeholder_grep.py` (9.lll) | g4-v4 submission.yaml:16 직접 catch ✅ |
+| warmup=0 정당화 부재 | `default_value_justification.py` (9.mmm) | g4-v4 baseline.yaml:warmup_minutes 직접 catch ✅ |
+
+도메인 의존 patch 0 — `feedback_harness_strengthening_methodology.md` 정합.
+
+### 도메인 의존성 audit (PR-B)
+
+본 sprint 신규 룰 본문 audit 결과 2 건 도메인 의존 발견 → 즉시 fix:
+1. `prompt_meta_extractor.py` `CONSTRAINT_RE`: `truck/loaders?/nodes?/edges?/kph/mph/meters?` 제거 → 일반 unit (hours/min/replications/% 등) only
+2. `hidden_intent_originality.py` `NATURAL_CATEGORIES`: `data/topology/scenario` 제거 → `inputs/outputs/behaviors/metrics/constraints` (메타-카테고리) + `--prompt-meta-file` augment
+
+검증: 본 prompt 직접 호출 후 도메인 noun 0 매치 확인.
+
+### 5 Layer Enforcement 도입
+
+| Layer | 도입 sprint | 본문 |
+|---|---|---|
+| 1 | sprint-30 | 컨벤션 본문 |
+| 2 | sprint-37~39 | self_lint enforcement |
+| 3 | sprint-40~43 | runtime CLI invoke (declared = invoked) |
+| **4** | **sprint-51** | **prompt-meta seed + recursion sink** |
+| 5 (구상) | future | embedding-based semantic check (premortem 인계) |
+
+### 후속 — sprint-52 의제 후보
+
+1. **g4-v5 cold session 결과 attribution** — sprint-51 의 9 CLI 가 *진짜로* invoke 됐는지 (`phase_invoke_audit.py` trace ≥9) + 96 → 97+ 도전
+2. **Layer 5** — embedding-based semantic check (knowledge_portfolio / comment_intent / hidden_intent_originality 의 semantic 휴리스틱 고도화)
+3. **HARD-CORE 다이어트** — 9.bbb~9.mmm 12 줄 INDEX router 로 옮김 (4000 chars limit 위반 누적)
+4. **기존 phase 본문 mine 예시** 일반화 (sprint-37 이전 phase 본문의 loader_utilisation / truck.py / ramp_closed_after_30min 등 — 본 sprint audit 외)
+5. **다른 언어 catalog** (deep_module / DRY / define_errors / comment_intent — Python → Go / TS / Rust / Java)
+
 ## v0.9.50 — 2026-05-10 (sprint-50 — Extension Discipline)
 
 ### 마일스톤
