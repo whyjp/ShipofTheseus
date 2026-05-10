@@ -93,6 +93,11 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.aaa — Dashboard ↔ submission parity CLI (sprint-43 PR-D 신규)**:
+>   - dashboard sync *직후* orchestrator 가 `python skills/theseus-harness/scoring/dashboard_submission_parity.py --submission-dir <sub> --dashboard-md <md>` 자동 호출 의무.
+>   - 검사: dashboard md 의 `files:` 항목 (path 추출) ↔ submission disk 실 파일 list. 차집합 — *missing on disk* (dashboard declared, disk 부재) = fail. *untracked on dashboard* (disk 있음, dashboard 미tracked) = warning. `__pycache__` 등 legitimate cleanup 제외.
+>   - exit 1 시 *dashboard 재생성* 또는 *disk 복구* 강제. parity 불일치 = 데이터 무결성 실패.
+>   - **증거 회피 사례** — g4-v2 91 회차 = dashboard md 11 declared (`requirements.txt` / `run_experiment.py` / `src/mine_sim/*.py` 등), submission disk 0. 본 9.aaa = 11/11 missing → fail.
 > - **9.zz — Phase invoke audit CLI (sprint-43 PR-C 신규, *declared ≠ invoked* 갭 차단)**:
 >   - phase 09 진입 + phase 14 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/phase_invoke_audit.py --orchestrator-skill <path> --project-root <root>` 자동 호출 의무.
 >   - 검사: orchestrator SKILL.md 본문에서 *literal Bash command* (`python skills/.../<NAME>.py`) 정규식 추출 + cold session 산출물의 *호출 trace* (gate_<NAME>.json 존재 + evaluated_at) 검증.
