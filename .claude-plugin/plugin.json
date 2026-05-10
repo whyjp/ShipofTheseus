@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.46",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 86 컨벤션 / 15 페이즈 / 18 에이전트. sprint-41 신규: Hurdle-as-CLI 트랙 — CLI 5 종 (dacapo_threshold / cold_session_artefacts / sprint_loop_cap / runtime_guard_chain / generate_sprint40_artefacts) + HARD-RULE 9.qq~9.tt + self_lint 140 (+4). ouroboros 패러다임 직접 적용 — 컨벤션 본문 = 명세, CLI = 집행. agent 자율 skip 차단.",
+  "version": "0.9.47",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-42 신규: Context-and-Effort Hurdles 트랙 — CLI 4 종 (cross_phase_context_audit / universe_count_monotonicity / stagnation_breakthrough / surrender_phrase_grep) + HARD-RULE 9.uu~9.xx + 신규 컨벤션 surrender-phrase-forbid + self_lint 144 (+4). 정성 layer 추가 — context 전달 / universe 다양성 / stagnation 돌파 / 자백 어휘 차단. ouroboros 보다 깊은 enforcement.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
