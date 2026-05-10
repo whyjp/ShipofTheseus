@@ -1,3 +1,9 @@
+---
+name: Sprint-51
+sprint_type: rule-addition
+version: 0.9.51
+---
+
 # Sprint-51 — v0.9.51 — Extension Invoke Closure + Prompt-Driven Harness
 
 > 시작: 2026-05-10 (g4-v4 96 회차 직후 진단 시점, 사용자 직접 지시 후 plan 재정렬)
