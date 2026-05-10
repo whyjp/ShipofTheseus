@@ -96,15 +96,28 @@ CONDITIONAL_TRIGGERS = [
 ]
 
 
-# Numeric + unit constraint — explicit constraint catalog
+# Numeric + unit constraint — explicit constraint catalog (도메인 무관 unit only).
+# 본 패턴은 *generic SI/통계/실험* unit 만. 벤치 도메인의 specific noun (truck/loader/
+# node/edge/kph/meter 등) 은 *제거* — `feedback_harness_strengthening_methodology.md`
+# 정합. 도메인 noun 은 prompt_meta 의 output_schemas / decision_questions 자체로 추출.
 CONSTRAINT_RE = re.compile(
-    r'\b(\d+(?:\.\d+)?)\s*'
-    r'(hour|hours|h|min|minutes|sec|seconds|s|'
-    r'replication|replications|reps|'
-    r'%|percent|'
+    r'\b(\d+(?:\.\d+)?)[\s\-]*'  # hyphen 또는 공백 허용 (e.g. "8-hour")
+    r'('
+    # 시간 unit
+    r'hours?|h|minutes?|min|seconds?|sec|s|'
+    r'days?|weeks?|months?|years?|'
+    r'ms|milliseconds?|us|microseconds?|ns|'
+    # 반복/시도 unit (도메인 무관 실험 unit)
+    r'replications?|reps|iterations?|'
+    r'runs?|trials?|samples?|epochs?|'
+    # 통계
+    r'%|percent|sigma|stddev|'
     r'CI|confidence|'
-    r'truck|trucks|loaders?|nodes?|edges?|'
-    r'kph|mph|m\b|metres?|meters?)',
+    # 데이터/메모리 unit (도메인 무관)
+    r'bytes?|KB|MB|GB|TB|kbps|mbps|gbps|'
+    # 일반 SI 단위 (단 m 단독은 boundary 충돌로 제외)
+    r'km|cm|mm|kg|mg'
+    r')(?=\W|$)',  # boundary — non-word 또는 EOF 직전 (% / space / punct OK)
     re.IGNORECASE,
 )
 
