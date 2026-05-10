@@ -58,6 +58,62 @@ python skills/theseus-harness/scoring/sub_agent_dispatch.py analyze-todos \
 
 자세한 위상 정렬 알고리즘 + 그레이드별 모드 추천: [`../conventions/subagent-trigger.md`](../conventions/subagent-trigger.md).
 
+---
+
+## sprint-50 — Design-Twice (universe philosophy distinct, HARD-RULE 9.ccc)
+
+> 격언: Ousterhout, *A Philosophy of Software Design*, Ch.11 — *"Design It Twice"*. 같은 문제에 대한 두 번째 설계는 *반드시* 첫 번째와 다른 *철학* 으로 출발해야 한다. 둘 다 modular variant 면 *진짜로 두 번 설계한 게 아니다*.
+
+기존 multiverse (G3=3 / G4=4 / G5=6 universe) 는 *코드 분기* 만 강제했다. sprint-50 부터는 universe 별 *설계 철학* 도 distinct 의무.
+
+### universe 별 meta.md frontmatter 의무 신규 필드
+
+```yaml
+---
+universe: 1
+philosophy: modular   # 또는 oop / functional / data-driven / event-driven / actor / dsl-first
+---
+```
+
+7 카탈로그 외 값은 `--allow-extra` flag + 사용자 ack 필요 (`feedback_no_human_ack.md` 와 충돌 없음 — 카탈로그 *확장* 은 영구 변경이라 ack 1 회).
+
+### universe 별 06-plan.md 본문 의무 — architectural decision header ≥3
+
+각 universe 의 `06-plan.md` 는 다음 중 ≥3 개 §-level 표제 의무 (philosophy 는 *선언* 이고, 본문은 *행동*):
+
+- Module boundary / 모듈 경계
+- Communication style / 통신 방식
+- State management / 상태 관리
+- Error model / 에러 모델
+- Concurrency model / 동시성
+- Data flow / 데이터 흐름
+- Extension point / 확장 지점
+- Persistence / 영속성
+- Event model / 이벤트 모델
+- Control flow / 제어 흐름
+
+universe 간 *unique* 결정 (그 universe 만의 결정) ≥1 보유 비율 ≥ 50%. 이름만 다르고 결정 동질이면 fail (premortem §3-2 정합).
+
+### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
+
+phase 06 tournament 시작 *직전* (universe meta.md 확정 후) 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/universe_philosophy_distinct.py \
+    --project-root .ShipofTheseus/<프로젝트>/ \
+    --grade <G3|G4|G5> \
+    --json-out .ShipofTheseus/<프로젝트>/plan/universe_philosophy_distinct.json
+```
+
+- exit 0 → tournament 진입
+- exit 1 → universe meta.md 또는 06-plan.md 재작성 강제. `intent/00-violation.md` 기록 + 페이즈 06 재진입.
+
+### vacuous PASS 차단
+
+- universe-N/meta.md 에 `philosophy:` 필드만 있고 본문 결정이 모두 동일 = *결정 동질* fail.
+- universe 수 부족 (G4 인데 universe ≥3 만 있음) = fail (sprint-13 multiverse-width-default-bump 정합).
+- 카탈로그 외 philosophy 를 `--allow-extra` 없이 declare = fail.
+
 ## 입력
 - `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-critique.md`, `intent/05-decisions.md`
 - `naming/00-naming.md` (모듈명 확정본)
