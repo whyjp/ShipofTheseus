@@ -2,6 +2,29 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## 정책 도입 (2026-05-10) — Sprint ↔ version 명칭 일치 (forward only)
+
+sprint-43 v0.9.48 마감 직후, 사용자 지시 — *"스프린트 명칭을 version 와 일치하게 해줘 / 43 이후 이제 다음 스프린트는 49로 만 해도 돼"*.
+
+**Forward 정책 (sprint-49 부터 적용):**
+- sprint-N = v0.{MAJOR}.{MINOR}.{N} (현재 0.9.{N})
+- 다음 sprint = **sprint-49** (= v0.9.49)
+- 본 정책 본문 = `skills/theseus-harness/conventions/contracts.md` §Sprint ↔ version 명칭 정책
+
+**Retroactive 적용 X** — sprint-37 ~ sprint-43 (= v0.9.42 ~ v0.9.48) 은 *역사적 misalignment* 로 보존. 변경 비용 (137 reference + memory + dir rename + 4 git tag) > 이득.
+
+**Sprint ↔ version 매핑 (역사적):**
+| sprint | version |
+|---|---|
+| sprint-37 | v0.9.42 |
+| sprint-38 | v0.9.43 |
+| sprint-39 | v0.9.44 |
+| sprint-40 | v0.9.45 |
+| sprint-41 | v0.9.46 |
+| sprint-42 | v0.9.47 |
+| sprint-43 | v0.9.48 |
+| **sprint-49** (다음) | **v0.9.49** |
+
 ## v0.9.48 — 2026-05-10 (sprint-43 — Orchestrator Runtime Invoke 트랙 7)
 
 ### 마일스톤
