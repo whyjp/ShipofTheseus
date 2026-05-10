@@ -3,6 +3,35 @@
 ## 한 줄 요약
 **점수 ≥ 0.999 가 나올 때까지 무한 반복한다 + axis 별 ≥ 2 sprint 강제 (intent / plan / impl trinity).** 회수 캡 없음 — 단, *전체 budget cap 80% 사용 + axis 별 sprint ≥ 2* 충족 시 soft-converge. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
 
+---
+
+## sprint-50 — Refactor-not-Rewrite (HARD-RULE 9.hhh)
+
+> 격언: Hunt & Thomas, *The Pragmatic Programmer*, Ch.6 — *"Refactoring"* — "Refactoring is not the same as writing new code."
+
+sprint loop 의 *개선* 이 *기존 함수/모듈 변경* 비율 ≥ 신규 추가 의무. *전부 추가만* 하는 sprint = 진짜 refactoring 아님.
+
+측정: `git diff --shortstat <sprint-baseline>..HEAD` 의 +/- 카운트. modified ratio = `deletions / (deletions + additions)` ≥ τ=0.3 의무.
+
+vacuous PASS 차단:
+- additions = deletions = 0 = automatic fail.
+- 임계: 변경:추가 ≈ 1:3 이상.
+
+### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
+
+매 sprint loop iteration 종료 *직전* 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/refactor_not_rewrite_ratio.py \
+    --git-root <repo-root> \
+    --baseline <sprint-baseline-commit> \
+    --min-modified-ratio 0.3 \
+    --json-out .ShipofTheseus/<프로젝트>/sprints/<NN>/refactor_ratio.json
+```
+
+- exit 0 → 다음 sprint iteration 또는 phase 11/12 진입
+- exit 1 → 본 sprint iteration *재진행* — *기존 코드 변경* 강제 (lesson_pack 누적).
+
 ## Sprint Trinity 3 axis 분배
 
 [`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md) (bd) 의 3 axis :
