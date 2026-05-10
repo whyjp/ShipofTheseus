@@ -51,18 +51,19 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 > | --- | --- |
 > | 모든 phase enter/exit | **phase-state-machine** (sprint-34 신규, runtime 단조성 게이트 + frontmatter forgery 차단) |
 > | 01 의도 | **mindmap-quality** (sprint-37 PR-AD 통합) · deep-semantic-intent · **domain-pack §2 §3** (sprint-37 PR-AG 통합: model + research-stacking) · intent-completeness · **intent-optional-disambiguation** (sprint-34, optional marker 검출 시) |
-> | 04 인터뷰 | commentary-policy · runtime-prereq · interview · **intent-optional-disambiguation** (sprint-34, Q-OPT-NN + optional-decisions.md) |
+> | 04 인터뷰 | commentary-policy · runtime-prereq · interview · **intent-optional-disambiguation** (sprint-34, Q-OPT-NN + optional-decisions.md) · **(sprint-51) prompt_meta_extractor.py 의무 호출 — `intent/00-prompt-meta.json` emit (HARD-RULE 9.kkk)** |
 > | 04 → 05 (refresh 1) | **intent-refresh §3.1** (sprint-17 by, sprint-37 PR-AA 통합, 01-{1..4}-intent + 01-additional 의무) |
+> | **04 → 1.5 → 05** | **(sprint-50/51) Phase 1.5 Hidden Intent — 의무 단계** — `intent/01-{hidden-intent,extension-scope,extension-trace}.md` 3 산출물 + intent_extension_emit.py + hidden_intent_originality.py 의무 호출 (HARD-RULE 9.bbb). prompt-meta seed 입력 (--prompt-meta-file). |
 > | 05 → 06 (refresh 2) | **intent-refresh §3.2** (sprint-19 ci, sprint-37 PR-AA 통합, 01-{1..4}-intent.v2 + 04-refreshed + 05-refreshed 의무, 사용자 ack 없음 자율) |
 > | 05 비평 | directional-simplification · premortem-friction · **domain-pack §4** (failure patterns, sprint-37 PR-AG 통합) · parallel-cold-review |
-> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** · **subagent-trigger** (sprint-34, phase 06 exit 시 analyze-todos 호출) |
-> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** · dead-code-zero · magic-number-traceability · submission-portability · reproducibility-doublecheck · **subagent-trigger** (sprint-34) · **regression-tdd-gate** (sprint-34, 매 sub-impl + dacapo step F) |
-> | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) |
-> | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · **regression §2** (sprint loop, sprint-37 PR-AE 통합) · budget-saturation-loop · **sprint-narrative §2 §4** (delta + lessons/stagnation, sprint-37 PR-AF 통합) · evidence-driven-sprint-planning · **regression-tdd-gate** (sprint-34, sprint iteration trigger) |
+> | 06 계획 | per-module-diagram-fan-out · multiverse-width-default-bump · contested-decision-multiverse · measurement-contract · rubric-driven-doc-skeleton · intra-phase-dacapo-loop · dacapo-enforcement (**HARD-RULE 9.p**) · dacapo-frontmatter-schema · shadow-grader-zero-context · dacapo-skip-sentinel · dacapo-flow-trace · data-structure-invariants · plan-tree · tournament-blind-rerun · interface-first-parallel-impl · **dacapo-mandatory-rerun (HARD-RULE 9.gg)** · **plan-tournament-scoring-strict (9.hh)** · **canonical-not-stub (9.ii)** · **cross-phase-shared-context (9.ll)** · **subagent-trigger** (sprint-34, phase 06 exit 시 analyze-todos 호출) · **(sprint-50) universe_philosophy_distinct.py — Design-Twice (HARD-RULE 9.ccc)** |
+> | 08 구현 | intra-phase-dacapo-loop · simulation-physical-invariants · idiomatic-code-quality · experimental-control-protocol · deliverable-hurdle-supremacy · multiverse-impl-fan-out · **impl-multiverse-strict (HARD-RULE 9.jj, 7 조건 게이트)** · **dacapo-mandatory-rerun (9.gg)** · **canonical-not-stub (9.ii)** · dead-code-zero · magic-number-traceability · submission-portability · reproducibility-doublecheck · **subagent-trigger** (sprint-34) · **regression-tdd-gate** (sprint-34, 매 sub-impl + dacapo step F) · **(sprint-50) deep_module_metric.py + dry_violation_count.py (HARD-RULE 9.ddd / 9.eee)** |
+> | 09 게이트 | rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary (**HARD-RULE 9.bb**) · reproducibility-doublecheck (**9.cc**) · magic-number-traceability (**9.dd**) · dead-code-zero (**9.ee**) · submission-portability (**9.ff**) · **(sprint-50) define_errors_check.py + comment_intent_check.py + extension_to_artifact_trace.py (HARD-RULE 9.fff / 9.ggg / 9.jjj)** |
+> | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · **regression §2** (sprint loop, sprint-37 PR-AE 통합) · budget-saturation-loop · **sprint-narrative §2 §4** (delta + lessons/stagnation, sprint-37 PR-AF 통합) · evidence-driven-sprint-planning · **regression-tdd-gate** (sprint-34, sprint iteration trigger) · **(sprint-50) refactor_not_rewrite_ratio.py (HARD-RULE 9.hhh, sprint_type-aware)** |
 > | 11 회귀 바이섹트 | **regression §3** (lint autogen, sprint-37 PR-AE 통합) · **regression-tdd-gate** (sprint-34, regression_log binary search) |
 > | 12 theseus-view | prebuilt-shell-runtime-json · phase-lineage-viewer · viewer-runtime · **(sprint-40 PR-C) phase 12 §종료 게이트 — webview/{index.html, data/webview.json, assets/{app.js, mermaid.min.js, marked.min.js, styles.css}} 6 파일 강제 + webview/exit_gate.json emit** · webview-builder agent invoke 의무 |
 > | 13 interactive-viewer | prebuilt-shell-runtime-json · viewer-runtime · interactive-viewer-builder agent · **(sprint-40 PR-C) phase 13 §종료 게이트 — interactive-viewer/{index.html, dashboard.json, assets/app.js} 강제 + dashboard.json widgets ≥ 1 (G3+) / ≥ 3 (G4+, kpi_grid+topology+metric_chart 의무) + interactive-viewer/exit_gate.json emit** · **(sprint-40 PR-D) HARD-RULE 9.nn — G4+ phase 13 invoke step 강제** |
-> | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer (**sprint-34 gantt + 모든 그레이드**) · decision-support-framing |
+> | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer (**sprint-34 gantt + 모든 그레이드**) · decision-support-framing · **(sprint-50) knowledge_portfolio_check.py — Knowledge Portfolio refresh (HARD-RULE 9.iii)** |
 >
 > **9.a~c 본문 의무 (페이즈 06/08 산출물 구조)** — 본 entry skill 에 직접 박힘 (실 코드 외부 repo 따라 구현 가능 의무):
 > - 9.a `plan/06-plan.md` 본문 8 항목 의무 (별도 impl-design.md 안 만듦, plan 단일 source — plan + impl-log 응집 보존):
@@ -93,6 +94,50 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.kkk — Prompt meta extractor CLI (sprint-51 PR-A/C 신규, 도메인 무관 prompt-driven seed)**:
+>   - phase 04 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/prompt_meta_extractor.py --prompt-file <prompt> --output .ShipofTheseus/<proj>/intent/00-prompt-meta.json` 자동 호출 의무.
+>   - 8 메타-카탈로그 추출: output_schemas / readme_required_items / decision_questions / evaluation_dimensions / anti_patterns / explicit_constraints / default_warnings / conditional_obligations.
+>   - 본 산출물 = Phase 1.5 hidden intent / placeholder grep / default justification 의 *seed*. *Intent Recursion* 패러다임 (sprint-51) 의 cycle 시작점.
+>   - 추출 실패 (prompt 부재 또는 8 카탈로그 모두 0) → phase 04 재진입 강제.
+>   - 본 CLI = 도메인 무관 markdown structural parser. 본 sprint-51 PR-A 검증: bench 001 prompt → 3/43 schema fields / 11 readme / 6 decisions / 8 eval_dims / 6 anti / 2 defaults / 6 conditionals / 3 constraints (도메인 noun 0).
+> - **9.bbb — Phase 1.5 Hidden Intent emit CLI (sprint-50 PR-B 신규)**:
+>   - phase 04 종료 + Phase 1.5 entry 시 `python skills/theseus-harness/scoring/intent_extension_emit.py --project-root <root> --min-items 5 --min-categories 3 --require-should-adoption` + `python skills/theseus-harness/scoring/hidden_intent_originality.py --project-root <root> --prompt-meta-file intent/00-prompt-meta.json --max-token-overlap 0.4 --escape-categories-min 1` 자동 호출 의무.
+>   - 3 산출물 (`intent/01-{hidden-intent,extension-scope,extension-trace}.md`) emit + ≥5 항목 + ≥3 카테고리 distinct + ≥1 should 채택 의무.
+>   - 격언: Hunt & Thomas, Pragmatic Programmer Tip 53 — *"Don't gather requirements—dig for them"*.
+>   - **증거 회피 사례** — g4-v4 96 회차 (sprint-50 v0.9.50 cold session) 가 frontmatter `skill_version: 0.9.50` 박힘에도 *3 산출물 모두 부재* + Phase 1.5 자동 진행 0. 본 9.bbb invoke literal Bash = sprint-43 *declared ≠ invoked* 갭의 sprint-50 신규 페이즈 closure.
+> - **9.ccc — Universe philosophy distinct CLI (sprint-50 PR-C 신규, Design-Twice)**:
+>   - phase 06 plan tournament 진입 *직전* (universe meta.md 확정 후) `python skills/theseus-harness/scoring/universe_philosophy_distinct.py --project-root <root> --grade <G3|G4|G5>` 자동 호출 의무.
+>   - 7 philosophy catalog (modular / oop / functional / data-driven / event-driven / actor / dsl-first) 중 universe 별 distinct 의무 + universe 별 06-plan.md 본문 architectural decision header ≥3.
+>   - 격언: Ousterhout, *A Philosophy of Software Design*, Ch.11 — *"Design It Twice"*.
+>   - **증거 회피 사례** — g4-v4 96 회차 universe-1/2 모두 *philosophy 필드 부재* (Approach prose 만). 본 9.ccc = catch.
+> - **9.ddd — Deep-module metric CLI (sprint-50 PR-D 신규)**:
+>   - phase 08 종료 직전 `python skills/theseus-harness/scoring/deep_module_metric.py --code-root <submission>/src/ --max-ratio 0.4` 자동 호출 의무.
+>   - (interface / functional) 비율 ≤ τ + vacuous PASS 차단 (모듈 수 = 1 = automatic fail).
+>   - 격언: Ousterhout Ch.4 — *"Modules Should Be Deep"*.
+> - **9.eee — DRY violation count CLI (sprint-50 PR-D 신규)**:
+>   - phase 08 종료 직전 `python skills/theseus-harness/scoring/dry_violation_count.py --code-root <submission>/src/ --n-gram 8 --max-violation-ratio 0.05` 자동 호출 의무.
+>   - boilerplate 제외 catalog (import / class header / __init__ / decorator / pass / lone return).
+>   - 격언: Hunt & Thomas, Pragmatic Programmer Tip 11 — *"DRY"*.
+> - **9.fff — Define-Errors-Out check CLI (sprint-50 PR-E 신규)**:
+>   - phase 09 종합 판정 직전 `python skills/theseus-harness/scoring/define_errors_check.py --code-root <submission>/src/ --require-handle` 자동 호출 의무.
+>   - raise 된 예외 종류 catalog ≥ 1 + 각 raise 가 try/except specific type 또는 sentinel comment 로 handle 의무 + bare except only fail.
+>   - 격언: Ousterhout Ch.10 + Effective Python Item 87 — *"Defining a Root Exception"*.
+>   - **증거 회피 사례** — sandbox test §2.2 max-thinking real src 가 `TypeError` raise 후 handle 0 = 본 CLI 가 직접 catch.
+> - **9.ggg — Comment-WHY-not-WHAT check CLI (sprint-50 PR-E 신규)**:
+>   - phase 09 종합 판정 직전 `python skills/theseus-harness/scoring/comment_intent_check.py --code-root <submission>/src/ --max-paraphrase-ratio 0.5 --max-escape-ratio 0.8` 자동 호출 의무.
+>   - comment vs 다음 코드 줄 token Jaccard ≥ 0.5 = paraphrase. sentinel escape (`# why:` / `# 이유:`) ≥ 80% = 우회 의심 fail.
+>   - 격언: Ousterhout Ch.13 — *"Comments Should Describe Things That Are Not Obvious from the Code"*.
+> - **9.hhh — Refactor-not-Rewrite ratio CLI (sprint-50 PR-F 신규, sprint_type-aware)**:
+>   - phase 10 sprint loop iteration 종료 직전 `python skills/theseus-harness/scoring/refactor_not_rewrite_ratio.py --git-root <repo> --baseline <sprint-baseline> --min-modified-ratio 0.3` 자동 호출 의무.
+>   - sprint frontmatter `sprint_type: refactoring | feature | bug-fix` 인 경우만 적용 — `sprint_type: rule-addition` 는 skip.
+>   - 격언: Hunt & Thomas, Pragmatic Programmer Ch.6 — *"Refactoring"*.
+> - **9.iii — Knowledge Portfolio refresh CLI (sprint-50 PR-F 신규)**:
+>   - phase 14 handoff 산출 *직후* `python skills/theseus-harness/scoring/knowledge_portfolio_check.py --project-root <root> --min-insights 3` 자동 호출 의무.
+>   - handoff §-level header keyword (lesson/learned/insight/finding/takeaway/observation/discovery + 학습/교훈/발견/관찰/통찰) + 본문 ≥ 80 chars + distinct topic ≥ 3.
+>   - 격언: Hunt & Thomas, Pragmatic Programmer Ch.1 — *"Treat your knowledge as an investment portfolio"*.
+> - **9.jjj — Extension-to-artifact trace CLI (sprint-50 PR-B 신규)**:
+>   - phase 09 quality gate 직전 `python skills/theseus-harness/scoring/extension_to_artifact_trace.py --project-root <root> --submission-root <sub> --min-trace 1` 자동 호출 의무.
+>   - Phase 1.5 채택 (must/should) HI-NN 항목이 plan/impl/sprint/handoff/코드 본문 grep trace ≥1. frontmatter 만 mention 은 trace 0 처리.
 > - **9.aaa — Dashboard ↔ submission parity CLI (sprint-43 PR-D 신규)**:
 >   - dashboard sync *직후* orchestrator 가 `python skills/theseus-harness/scoring/dashboard_submission_parity.py --submission-dir <sub> --dashboard-md <md>` 자동 호출 의무.
 >   - 검사: dashboard md 의 `files:` 항목 (path 추출) ↔ submission disk 실 파일 list. 차집합 — *missing on disk* (dashboard declared, disk 부재) = fail. *untracked on dashboard* (disk 있음, dashboard 미tracked) = warning. `__pycache__` 등 legitimate cleanup 제외.
