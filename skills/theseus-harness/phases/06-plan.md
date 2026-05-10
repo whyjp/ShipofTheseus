@@ -77,6 +77,26 @@ philosophy: modular   # 또는 oop / functional / data-driven / event-driven / a
 
 7 카탈로그 외 값은 `--allow-extra` flag + 사용자 ack 필요 (`feedback_no_human_ack.md` 와 충돌 없음 — 카탈로그 *확장* 은 영구 변경이라 ack 1 회).
 
+### universe candidate frontmatter `created_at` 의무 (sprint-52 PR-D, HARD-RULE 9.ooo)
+
+`plan/candidates/universe-N/{meta.md, 06-plan.md, 07-cold-read.md}` 산출 시 frontmatter `created_at` 의무 — *실 ISO timestamp* (초 단위 포함). 정시 stub (`T..:00:00Z`, `T..:00Z`) 금지.
+
+```yaml
+---
+skill_name: shipoftheseus:theseus-orchestrator
+skill_version: <semver>
+phase: 06-plan-candidate    # 또는 07-cold-read
+universe: universe-N
+created_at: "2026-05-10T11:08:23Z"   # 초 단위 정시 금지
+fingerprint: PENDING                  # phase 14 lineage_finalize 가 chain 채움
+prev_fingerprint: PENDING_FROM_<source>
+---
+```
+
+self_lint **C-UNIV-CREATED-AT** 검증 — `plan/candidates/universe-*/{06-plan.md, 07-cold-read.md}` 의 `created_at` 부재 / 정시 stub 감지 시 fail. phase 14 lineage_finalize 가 mtime fallback 으로 처리하지만, *근본 원인* 은 phase 06 산출 시점의 timestamp 누락.
+
+격언: declared = invoked (sprint-43) — 본 §은 그 패턴의 frontmatter 차원. *형식 선언* 만 있고 *실 값* 없으면 finalize 단계에서 stub fallback 부담이 누적.
+
 ### universe 별 06-plan.md 본문 의무 — architectural decision header ≥3
 
 각 universe 의 `06-plan.md` 는 다음 중 ≥3 개 §-level 표제 의무 (philosophy 는 *선언* 이고, 본문은 *행동*):

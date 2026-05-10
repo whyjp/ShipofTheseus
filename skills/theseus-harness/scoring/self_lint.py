@@ -3057,6 +3057,50 @@ def check_viewer_runtime_lifecycle(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_univ_created_at(skill_root: Path) -> list[str]:
+    """sprint-52 PR-D — phase 06 본문에 universe candidate frontmatter
+    `created_at` 의무 + 정시 stub 차단 + lineage_finalize cross-link 박힘 검증."""
+    p = skill_root / "phases" / "06-plan.md"
+    if not p.exists():
+        return [f"{p} 부재"]
+    text = p.read_text(encoding="utf-8")
+    issues: list[str] = []
+    must = [
+        ("universe candidate frontmatter", "universe candidate frontmatter"),
+        ("created_at 의무 키워드", "created_at"),
+        ("HARD-RULE 9.ooo 명시", "9.ooo"),
+        ("정시 stub 차단 명시", "정시 stub"),
+        ("lineage_finalize cross-link", "lineage_finalize"),
+        ("sprint-52 marker", "sprint-52"),
+    ]
+    for label, needle in must:
+        if needle not in text:
+            issues.append(f"phases/06-plan.md 에 {label} 부재 ('{needle}')")
+    return issues
+
+
+def check_lineage_finalize_wired(skill_root: Path) -> list[str]:
+    """sprint-52 PR-C — phase 14-handoff 본문에 lineage_finalize.py refresh
+    literal Bash invoke 박힘 검증 (sprint-43 declared=invoked 패턴 finalize 차원)."""
+    p = skill_root / "phases" / "14-handoff.md"
+    if not p.exists():
+        return [f"{p} 부재"]
+    text = p.read_text(encoding="utf-8")
+    issues: list[str] = []
+    must = [
+        ("lineage_finalize CLI invoke", "lineage_finalize.py refresh"),
+        ("--strict 플래그", "--strict"),
+        ("HARD-RULE 9.nnn 명시", "9.nnn"),
+        ("HARD-RULE 9.ppp 명시", "9.ppp"),
+        ("placeholder_grep --include-viewer-json", "--include-viewer-json"),
+        ("sprint-52 마커", "sprint-52"),
+    ]
+    for label, needle in must:
+        if needle not in text:
+            issues.append(f"phases/14-handoff.md 에 {label} 부재 ('{needle}')")
+    return issues
+
+
 def check_interactive_viewer_prebuilt(skill_root: Path) -> list[str]:
     """C-IVP (sprint-36) — interactive-viewer prebuilt shell + dashboard.json schema."""
     issues: list[str] = []
@@ -3281,6 +3325,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-VAR", "viewer-runtime.md §2 (sprint-36 + sprint-37 PR-AC 통합) — frontend 폴링 + visibility + manual", check_viewer_auto_refresh),
     ("C-VRL", "viewer-runtime.md §3 (sprint-36 + sprint-37 PR-AC 통합) — backend lifecycle + PID lock", check_viewer_runtime_lifecycle),
     ("C-IVP", "interactive-viewer prebuilt shell + dashboard.json schema (sprint-36)", check_interactive_viewer_prebuilt),
+    ("C-UNIV-CREATED-AT", "phases/06-plan.md (sprint-52 PR-D, HARD-RULE 9.ooo) — universe candidate frontmatter created_at 의무 + 정시 stub 차단", check_univ_created_at),
+    ("C-LFW", "phases/14-handoff.md (sprint-52 PR-C, HARD-RULE 9.nnn/9.ppp) — lineage_finalize.py refresh + placeholder_grep --include-viewer-json literal Bash invoke", check_lineage_finalize_wired),
 ]
 
 

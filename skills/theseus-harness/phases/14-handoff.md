@@ -134,3 +134,35 @@ python skills/theseus-harness/scoring/knowledge_portfolio_check.py \
 - exit 1 → handoff §g-2 본문에 insight ≥3 보강 후 재진입.
 
 격언: Hunt & Thomas, *Pragmatic Programmer*, Ch.1 — *"Your Knowledge Portfolio."*
+
+## sprint-52 — Viewer Finalization Closure CLI 의무 호출 (HARD-RULE 9.nnn / 9.ppp)
+
+`pre_bootup.py` 가 phase 00 직전 박은 *빈 골격* (lineage.json 의 `mermaid_flowchart="cold session 미시작"`, `fingerprint_chain=[]`, `project_run="pending"` 등) 은 본 phase 14 가 *반드시* refresh. 누구도 안 채우면 viewer 가 placeholder 상태로 마감 — sprint-43 declared=invoked 패턴의 finalize 차원 위반.
+
+phase 14 산출 *직후* 의무 호출 (3 종 CLI literal Bash):
+
+```bash
+# HARD-RULE 9.nnn — phase 14 finalize CLI invoke 의무 (Viewer Finalization Closure)
+# .ShipofTheseus/ 재귀 스캔 → fingerprint chain / mermaid / project_run / winner 실값 refresh
+# + dashboard.json + webview/data/webview.json 동시 정정
+python skills/theseus-harness/scoring/lineage_finalize.py refresh \
+    --root .ShipofTheseus/<프로젝트>/ \
+    --strict
+
+# fingerprint chain 무결성 최종 검증 (handoff 본문 §i-2 의 의무 검증)
+python skills/theseus-harness/scoring/fingerprint.py chain \
+    --dir .ShipofTheseus/<프로젝트>/
+
+# HARD-RULE 9.ppp — viewer JSON placeholder 잔존 차단 (sprint-51 placeholder_grep 의 viewer 확장)
+python skills/theseus-harness/scoring/placeholder_grep.py \
+    --target-root .ShipofTheseus/<프로젝트>/ \
+    --include-viewer-json \
+    --max-violation-count 0
+```
+
+- exit 0 (3 종 모두) → handoff 종료
+- exit 1 (어느 하나) → 위반 위치 보강 후 phase 재진입
+
+본 §은 sprint-52 의 *Viewer Finalization Closure* — pre_bootup 의 *emit-skeleton* 과 대칭. cold session 시작 시 빈 골격 emit ↔ 종료 시 실 데이터 refresh 의 양 끝점 (sprint-36 sprint-52 dual closure).
+
+격언: declared = invoked (sprint-43) — 본 §은 그 패턴의 viewer 차원 적용.
