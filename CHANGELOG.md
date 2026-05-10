@@ -2,6 +2,88 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.47 — 2026-05-10 (sprint-42 — Context-and-Effort Hurdles 트랙 6)
+
+### 마일스톤
+
+sprint-41 v0.9.46 마감 직후 0510-2 회차 (mine-throughput, sprint-41 push 전) = **87/100 (-3pt 추가, 95→90→87 cumulative)** 진단. 5 신규 결손 발견:
+- agent 자율 종료 자백 (*"defer to opus-reviewer"*, *"asymptote"*, *"plateaued"*, *"would only fine-tune"*, *"final ground truth"*)
+- 다카포 round N+1 universe 감소 (3→3 re-rate→1)
+- 컨텍스트 전달 0 (`prev_fingerprint` chain 1 단계만, 본문 cross-phase 인용 0)
+- 1단계 이상 과거 phase reference 0
+- stagnation 후 exit 자율 stop (4 시도 evidence 0)
+
+본 sprint = sprint-41 *정량 layer* 위에 **정성 layer** 4 신규 CLI 추가. 사용자 직접 지적 5 항 1:1 정정. ouroboros + 자백 어휘 차단 = *더 깊은* enforcement.
+
+### 변경 — 트랙 6 6 PR (PR-A ~ PR-F)
+
+| PR | scope | 산출 | self_lint |
+|---|---|---|---|
+| PR-A | sprint-42 plan + 0510-2 87 회귀 분석 docs | 2 docs | 0 |
+| PR-B | **cross_phase_context_audit.py** + HARD-RULE 9.uu | scoring + test (10/10 PASS) | (C-CPC 후속) |
+| PR-C | **universe_count_monotonicity.py** + HARD-RULE 9.vv | scoring + test (6/6 PASS) | (C-UCM 후속) |
+| PR-D | **stagnation_breakthrough.py** + HARD-RULE 9.ww | scoring + test (8/8 PASS) | (C-SBR 후속) |
+| PR-E | **surrender_phrase_grep.py** + HARD-RULE 9.xx + 신규 컨벤션 surrender-phrase-forbid | scoring + test (7/7 PASS) + conventions | (C-SPF 후속) |
+| PR-F | sprint 마감 v0.9.47 + CHANGELOG (본 entry) | SKILL.md / orchestrator / plugin.json / CHANGELOG | 0 |
+
+### CLI 4 종 신규 (skills/theseus-harness/scoring/)
+
+| CLI | 역할 | exit code |
+|---|---|---|
+| `cross_phase_context_audit.py` | phase N 본문에 직전 + 1단계 이상 과거 phase 인용 ≥ 1 each | 0/1 |
+| `universe_count_monotonicity.py` | round N+1 ≥ N + impl 단일 universe 시 7-condition 명시 | 0/1 |
+| `stagnation_breakthrough.py` | stagnation + < 0.999 시 exit 자율 차단 + 4 breakthrough 시도 evidence | 0/1 |
+| `surrender_phrase_grep.py` | 8 surrender 어휘 grep + override 메커니즘 | 0/1 |
+
+### HARD-RULE 9 신규 (orchestrator SKILL.md)
+
+- **9.uu** — phase 02-14 exit 시 cross_phase_context_audit.py 자동 호출
+- **9.vv** — phase 06/08 exit 시 universe_count_monotonicity.py 자동 호출
+- **9.ww** — phase 10 sprint iteration 종료 시 stagnation_breakthrough.py 자동 호출
+- **9.xx** — phase 10 / 14 진입 시 surrender_phrase_grep.py 자동 호출
+
+### 신규 컨벤션 (+1, 86 → 87)
+
+| 신규 | 위치 | 기능 |
+|---|---|---|
+| surrender-phrase-forbid | conventions/surrender-phrase-forbid.md | 8 패턴 카탈로그 + override 메커니즘 |
+
+### 테스트 — 31/31 PASS (4 신규 suite 통합)
+
+- test_cross_phase_context_audit (10) + test_universe_count_monotonicity (6) + test_stagnation_breakthrough (8) + test_surrender_phrase_grep (7) = **31**
+
+각 CLI 의 *0510-2 회피 패턴* 직접 회귀 테스트 포함:
+- cross_phase: tournament-impl-01 본문 phase 02/04/05 인용 0 → exit 1 ✓
+- universe_count: round 2 same 3 re-rate (NEW=0) → exit 1 ✓
+- stagnation: sprints/03 stagnation_detected + score 0.97 + decision exit_sprint_loop_per_DEC-autonomy → exit 1 ✓
+- surrender_phrase: lessons_outbound[1] = "0.97 < 0.999 G4 asymptote; defer to opus-reviewer ... final ground truth" → 5 패턴 매치 → exit 1 ✓
+
+### 마감 사실
+
+- 6 PR 모두 main 머지 (commit-immediate + push-immediate)
+- self_lint 후속 +4 (140 → 144 예정)
+- 컨벤션 86 → 87 (+1 surrender-phrase-forbid)
+- HARD-RULE 9.uu / 9.vv / 9.ww / 9.xx 신규 (4)
+
+### 누적 패러다임 (sprint-40 + 41 + 42)
+
+| sprint | layer | enforcement |
+|---|---|---|
+| sprint-40 | 문서 layer | 컨벤션 본문 강화 (명세) |
+| sprint-41 | 정량 layer | CLI 5 종 (점수/산출물/4 layer/chain/골격) |
+| **sprint-42** | **정성 layer** | **CLI 4 종 (context/universe/stagnation/자백)** |
+
+3 layer 결합 = ouroboros + 정량 + 정성. 9 CLI (5+4) 통합 = *진정한* runtime guard.
+
+### 메모리 신규 후보
+
+- `project_sprint42_v0947.md` (sprint 마감)
+- `feedback_surrender_language_enforcement.md` (자백 어휘 차단 원칙)
+
+### 후속
+
+- **sprint-43 검토 후보** — runtime_guard_chain.py 에 9 CLI 모두 통합 dispatch + self_lint.py 8 룰 (sprint-41 4 + sprint-42 4) 본격 통합
+
 ## v0.9.46 — 2026-05-10 (sprint-41 — Hurdle-as-CLI 트랙 5)
 
 ### 마일스톤
