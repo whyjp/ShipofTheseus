@@ -171,20 +171,25 @@ def render_mermaid_gantt(phases: list[dict]) -> str:
 
 
 def find_winner(rows: list[dict]) -> dict | None:
-    """tournament-NN.md frontmatter 에서 winner 추출."""
+    """tournament-NN.md frontmatter 에서 winner 추출.
+
+    검색 키 (sprint-50/51 frontmatter 정합): winner_universe / winner_id / winner.
+    score 키: winner_score_ratio / winner_ratio / ratio.
+    """
     for row in rows:
         rel = row.get("file", "")
-        if "/plan/tournament-" in rel:
-            fm = row.get("fm") or {}
-            wid = fm.get("winner_id") or fm.get("winner")
-            if not wid:
-                continue
-            return {
-                "source": Path(rel).stem,
-                "universe": wid,
-                "philosophy": fm.get("winner_philosophy") or fm.get("philosophy"),
-                "ratio": fm.get("winner_ratio") or fm.get("ratio"),
-            }
+        if "/plan/tournament-" not in rel:
+            continue
+        fm = row.get("fm") or {}
+        wid = fm.get("winner_universe") or fm.get("winner_id") or fm.get("winner")
+        if not wid:
+            continue
+        return {
+            "source": Path(rel).stem,
+            "universe": wid,
+            "philosophy": fm.get("winner_philosophy") or fm.get("philosophy"),
+            "ratio": fm.get("winner_score_ratio") or fm.get("winner_ratio") or fm.get("ratio"),
+        }
     return None
 
 

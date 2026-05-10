@@ -2,6 +2,57 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.52 — 2026-05-10 (sprint-52 — Viewer Finalization Closure)
+
+### 마일스톤
+
+g4-sprint51 cold session 99/100 zero-context Opus 직후 사용자 viewer 진단 — *"하네스가 스스로 결과를 올바르게 채울수 있도록 submission 단계에서 누락된점을 보강"* + *"99점 맞은것과 별개로 본 하네스의 기능인 뷰어들의 구성이 아직 미완성"* + *"0607 페이즈의 간트 시간이 11:00 으로 잘못기록"*.
+
+본 sprint = sprint-36 (pre_bootup emit-skeleton) ↔ phase 14 (refresh) 양 끝점 닫음:
+
+1. **Viewer Finalization Closure** — `lineage_finalize.py` 신규 CLI 가 phase 14-handoff 진입 후 lineage / dashboard / webview JSON 의 placeholder (PENDING fingerprint, "cold session 미시작" mermaid stub, fingerprint_chain=[], project_run="pending") 를 실 데이터로 일괄 refresh.
+2. **declared = invoked finalize 차원** — sprint-43 패턴이 finalize 단계 미커버 갭 직접 닫음. phase 14 본문에 literal Bash invoke 박힘.
+3. **universe candidate frontmatter `created_at` 의무** — `plan/candidates/universe-N/{06-plan.md, 07-cold-read.md}` 정시 stub (`T..:00:00Z`) 차단. g4-sprint51 회차의 0607 페이즈 11:00 잘못 기록 직접 catch.
+4. **viewer JSON sentinel 검증** — `placeholder_grep.py --include-viewer-json` 옵션. cold session 마감 후 placeholder 잔존 = orchestrator fail.
+
+### 변경 — 7 PR
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | sprint-52 plan (`sprints/sprint-52-v0.9.52-viewer-finalization-closure/plan.md`) | plan |
+| PR-B | `lineage_finalize.py` 신규 CLI + tests (8/8 pass) | 1 CLI + 8 tests |
+| PR-C | `phases/14-handoff.md` §sprint-52 literal Bash invoke (lineage_finalize / fingerprint chain / placeholder_grep --include-viewer-json) | phase wiring |
+| PR-D | `phases/06-plan.md` §universe candidate frontmatter created_at 의무 + self_lint C-UNIV-CREATED-AT / C-LFW | phase rule + 2 lint |
+| PR-E | `placeholder_grep.py` --include-viewer-json 옵션 + 3 검증 함수 + tests (6/6 pass) | CLI 확장 + 6 tests |
+| PR-F | HARD-RULE 9.nnn (lineage_finalize 의무) / 9.ooo (universe candidate created_at 의무) / 9.ppp (viewer JSON placeholder 차단) | HARD-CORE 신설 |
+| PR-G | sprint 마감 v0.9.52 + skill_version 동기화 (theseus-harness 0.9.52 / theseus-orchestrator 0.9.39 → 0.9.52) + CHANGELOG | release |
+
+### Layer 4 enforcement 의 finalize 차원
+
+sprint-43 의 declared=invoked 패턴이 phase 06/08/09/10/14 §자동 CLI 호출 까지 박혔지만, *viewer JSON refresh* 책임이 명시적으로 어디에도 박혀있지 않았음. 본 sprint 가 phase 14-handoff 에 그 책임을 명시:
+
+```
+pre_bootup.py bootstrap (phase 00 enter 직전)
+    └─ 빈 골격 emit (mermaid="cold session 미시작" / fingerprint_chain=[] / project_run="pending")
+                     ↕  본 sprint 가 닫는 양 끝점
+phase 14-handoff (cold session 종료)
+    └─ lineage_finalize.py refresh --strict (실 데이터로 일괄 refresh)
+    └─ placeholder_grep.py --include-viewer-json (잔존 catch)
+```
+
+### 비-목표 (sprint 가치 보존)
+
+- 점수 추적 X — viewer 기능 무결성만 (`feedback_score_targeting_taboo.md` 정합)
+- 도메인 의존 fix X — 모든 룰 markdown frontmatter parse + JSON key path (`feedback_harness_strengthening_methodology.md` 정합)
+- 신규 컨벤션 0 — 기존 본체 강화만, HARD-RULE 3 + self_lint 2 (`feedback_convention_diet_paradigm.md` 정합)
+
+### 메모리 cross-link
+
+- `feedback_dual_pressure_json_schema.md` — 본 sprint = 그 닫힘 단계
+- `feedback_hurdle_as_cli_paradigm.md` — `lineage_finalize.py` 가 컨벤션 본문 페어
+- `project_sprint43_v0948.md` — declared=invoked 패턴, 본 sprint 가 finalize 차원 적용
+- `feedback_intent_recursion_paradigm.md` — sprint-51 intent 회귀, 본 sprint = 산출 → viewer 회귀 (대칭)
+
 ## v0.9.51 — 2026-05-10 (sprint-51 — Extension Invoke Closure + Prompt-Driven Harness)
 
 ### 마일스톤

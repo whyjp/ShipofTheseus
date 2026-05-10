@@ -1,7 +1,7 @@
 ---
 name: theseus-orchestrator
-version: 0.9.39
-description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
+version: 0.9.52
+description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페이즈 04 인터뷰 후 인터럽트 0. 본 entry skill = 순서 + 인터럽트 정책 + 그레이드 라우팅 단일 책임. 산출물 내용 컨벤션은 ../theseus-harness/conventions/ 단일 source — 페이즈 진입 시 매핑된 본문만 lookup.
 ---
 
 # theseus-orchestrator — 사용자 entry skill
