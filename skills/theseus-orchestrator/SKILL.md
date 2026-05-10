@@ -93,6 +93,11 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.uu — Cross-phase 컨텍스트 전달 audit CLI (sprint-42 PR-B 신규)**:
+>   - phase 02-14 *exit* 시 orchestrator 가 `python skills/theseus-harness/scoring/cross_phase_context_audit.py --project-root <root> --phase <N>` 자동 호출 의무.
+>   - phase N 본문에 *직전 phase (N-1) 인용 ≥ 1* + *1단계 이상 과거 phase 인용 ≥ 1* 의무. 미달 시 phase exit 차단.
+>   - 인용 패턴 — phase label / decision ID (Q-D, DEC-) / 산출물 path (intent/04-answers.md 류) / 핵심 결정 키워드.
+>   - **증거 회피 사례** — 0510-2 회차 `tournament-impl-01.md` 본문이 phase 02 cold-reread / phase 04 답안 / phase 05 critique 인용 0 + `prev_fingerprint` chain 1 단계만. 본 9.uu CLI = 차단.
 > - **9.tt — Runtime guard chain 자동 호출 의무 (sprint-41 PR-E 신규, 본 sprint 핵심 enforcement 메커니즘)**:
 >   - 매 phase 진입/종료 시 `python skills/theseus-harness/scoring/runtime_guard_chain.py --project-root <root> --phase <N> --transition <entry|exit> --grade <G> --orchestrator-version <V>` 자동 호출 의무.
 >   - exit 1 시 phase advance 차단 — orchestrator 가 fail check 의 fix step 자동 진행 후 chain 재호출.
