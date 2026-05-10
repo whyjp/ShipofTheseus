@@ -192,3 +192,28 @@ d- **primary directive 의 measurement 부재** — proxy metric 우회.
 - 06.b → 08.f: directives.json 의 visibility layer 가 deliverable ↔ directive 매핑 source.
 - 08.f → 09 quality gate: prompt-trace 가 phase 09 의 *intent-impl 정합* 차원 입력.
 - 08.f → 14 handoff: prompt-trace 의 directive coverage 표가 handoff 의 *완료 보고* 입력.
+
+## §자동 CLI 호출 (sprint-43 PR-E)
+
+phase 08 종료 직전 orchestrator 의무 호출 :
+
+```bash
+# HARD-RULE 9.qq — impl 다카포 임계
+python skills/theseus-harness/scoring/dacapo_threshold.py \
+    --tournament-md .ShipofTheseus/<proj>/impl/tournament-impl-01.md \
+    --threshold 0.999 \
+    --output .ShipofTheseus/<proj>/impl/dacapo_threshold.json
+
+# HARD-RULE 9.vv — impl universe 수 검증 (1 universe 시 7-condition 명시 의무)
+python skills/theseus-harness/scoring/universe_count_monotonicity.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_universe_monotonicity_impl.json
+
+# HARD-RULE 9.uu — phase 08 본문에 phase 06 plan + phase 04 답안 인용 ≥ 1 each
+python skills/theseus-harness/scoring/cross_phase_context_audit.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --phase 08 \
+    --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_08.json
+```
+
+본 §은 sprint-43 의 *literal Bash command* 박힘. agent 자율 skip 금지.

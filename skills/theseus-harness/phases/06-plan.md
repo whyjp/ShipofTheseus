@@ -1112,3 +1112,29 @@ d- **applied_to_canonical: false 인 채 phase 07 진입** — derived improveme
 - [`premortem-friction.md`](../conventions/premortem-friction.md) — phase 02/03/07 의 premortem 룰 + 본 06.e 의 *post-decision* 관점 정합 (06.e = 결정 후, premortem-friction = 결정 전).
 - 06.e → 06.f: premortem.md 도 06.f deliverable list.
 - 06.e → 06-plan.md (canonical): derived improvements 반영 후 canonical 작성.
+
+## §자동 CLI 호출 (sprint-43 PR-E)
+
+phase 06 종료 직전 orchestrator 의무 호출 :
+
+```bash
+# HARD-RULE 9.qq — 다카포 임계 강제
+python skills/theseus-harness/scoring/dacapo_threshold.py \
+    --tournament-md .ShipofTheseus/<proj>/plan/tournament-01.md \
+    --threshold 0.999 \
+    --output .ShipofTheseus/<proj>/plan/dacapo_threshold.json
+# exit 1 시 round N+1 자동 진행
+
+# HARD-RULE 9.vv — universe 단조성
+python skills/theseus-harness/scoring/universe_count_monotonicity.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_universe_monotonicity.json
+
+# HARD-RULE 9.uu — cross-phase context
+python skills/theseus-harness/scoring/cross_phase_context_audit.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --phase 06 \
+    --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_06.json
+```
+
+본 §은 sprint-43 의 *literal Bash command* 박힘 — agent 가 prose 가 아니라 명령으로 받아들임. self_lint C-OWL 검증.

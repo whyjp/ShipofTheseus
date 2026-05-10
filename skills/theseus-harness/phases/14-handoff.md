@@ -80,3 +80,40 @@ d- 페이즈별 누적 시간 막대 (텍스트 표)
 e- 스프린트별 소요 표
 
 §timing 본 룰의 전체 정의 (시작 시각 기록, 페이즈 산출물 헤더, 스프린트 보고서 헤더, 도구 사용, 강제 사항) 는 [`./00-naming.md`](./00-naming.md) §timing 참조.
+
+## §자동 CLI 호출 (sprint-43 PR-E)
+
+phase 14 handoff *직후* + dashboard sync *전후* orchestrator 의무 호출 :
+
+```bash
+# HARD-RULE 9.xx — handoff 본문에 surrender 어휘 차단
+python skills/theseus-harness/scoring/surrender_phrase_grep.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_surrender_phrase_handoff.json
+
+# HARD-RULE 9.uu — handoff 본문에 phase 09/10/11 인용 검증
+python skills/theseus-harness/scoring/cross_phase_context_audit.py \
+    --project-root .ShipofTheseus/<proj>/ --phase 14 \
+    --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_14.json
+
+# HARD-RULE 9.zz — phase invoke audit 최종 (모든 declared CLI invoked 검증)
+python skills/theseus-harness/scoring/phase_invoke_audit.py \
+    --orchestrator-skill skills/theseus-orchestrator/SKILL.md \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_phase_invoke_audit_final.json
+
+# HARD-RULE 9.yy — submission 산출물 disk 잔존 (.pyc-only 차단)
+python skills/theseus-harness/scoring/submission_completeness.py \
+    --submission-dir submissions/<id>/ \
+    --eval-report submissions/<id>/results/evaluation_report.json \
+    --grade <G> \
+    --output submissions/<id>/results/gate_submission_completeness.json
+
+# HARD-RULE 9.aaa — dashboard sync 직후, dashboard ↔ disk parity
+python skills/theseus-harness/scoring/dashboard_submission_parity.py \
+    --submission-dir submissions/<id>/ \
+    --dashboard-md dashboard/src/content/submissions/<id>.md \
+    --output submissions/<id>/results/gate_dashboard_parity.json
+```
+
+본 §은 sprint-43 의 *literal Bash command* 박힘. handoff 후 *대량 삭제* / *dashboard mismatch* 차단.

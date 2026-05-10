@@ -289,3 +289,31 @@ c- "rubric 조정" — rubric 은 실행 동안 read-only.
 ## 흔한 실패
 
 > **공통 안티 패턴** (A1~A10) 은 [`../SKILL.md`](../SKILL.md) "안티 패턴 통합 카탈로그" 참조. 본 페이즈 고유 실패는 (현재 발견 없음 — 후속 회차에서 추가).
+
+## §자동 CLI 호출 (sprint-43 PR-E)
+
+phase 10 sprint iteration 종료 직전 orchestrator 의무 호출 :
+
+```bash
+# HARD-RULE 9.ss — 4 layer 종료 조건 (auto + internal + tournament + external)
+python skills/theseus-harness/scoring/sprint_loop_cap.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --current-iteration <N> --max-iterations 10 \
+    --output .ShipofTheseus/<proj>/sprints/<N>/sprint_loop_cap.json
+# exit 1 시 sprint iteration 자동 +1 (continue 의무)
+
+# HARD-RULE 9.ww — stagnation 후 자율 종료 차단
+python skills/theseus-harness/scoring/stagnation_breakthrough.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --current-iteration <N> \
+    --output .ShipofTheseus/<proj>/sprints/<N>/gate_stagnation_breakthrough.json
+# exit 1 시 4 breakthrough 시도 (new_universe / lateral / ensemble / phase_regression) 의무
+
+# HARD-RULE 9.xx — surrender phrase 차단
+python skills/theseus-harness/scoring/surrender_phrase_grep.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_surrender_phrase.json
+# exit 1 시 자백 어휘 제거 또는 override 보강 후 재진입
+```
+
+본 §은 sprint-43 의 *literal Bash command* 박힘. *"이쯤이면 충분해" 자율 종료 패턴* 직접 차단.

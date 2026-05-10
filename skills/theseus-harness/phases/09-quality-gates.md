@@ -726,3 +726,37 @@ phase 09 진입 시 `quality/gate_v8_viewer_readiness.json` 의 `verdict == "pas
 a- **phase 12/13 종료 게이트만 두고 09 사전 차단 skip** — 12 까지 진행한 뒤 fail → sprint loop 대량 자원 낭비. 09 사전 차단이 효율.
 b- **빈 골격 검사를 *내용* 검사로 대체** — 09 = 디렉터리 외피, 12/13 = 내용. 책임 분리.
 c- **`webview/index.md` 마크다운으로 `webview/index.html` 우회** — v0.9.44 회차 직접 사례. 본 §V8 grep 자동 차단 (`.html` 확장자 의무).
+
+## §자동 CLI 호출 (sprint-43 PR-E)
+
+phase 09 진입 + 종료 시 orchestrator 의무 호출 :
+
+```bash
+# === phase 09 entry ===
+# HARD-RULE 9.rr — 13 sprint-40 산출물 file-existence
+python skills/theseus-harness/scoring/cold_session_artefacts.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --grade <G> --domain <D> --domain-matched \
+    --output .ShipofTheseus/<proj>/quality/gate_cold_session_artefacts.json
+
+# HARD-RULE 9.tt — runtime guard chain (skill_version + monotonicity + sub-CLI)
+python skills/theseus-harness/scoring/runtime_guard_chain.py \
+    --project-root .ShipofTheseus/<proj>/ \
+    --phase 09 --transition entry \
+    --grade <G> --domain <D> --orchestrator-version 0.9.48 \
+    --output .ShipofTheseus/<proj>/quality/gate_runtime_guard_chain_entry.json
+
+# === phase 09 exit ===
+# HARD-RULE 9.zz — phase invoke audit (declared ≠ invoked 갭 차단)
+python skills/theseus-harness/scoring/phase_invoke_audit.py \
+    --orchestrator-skill skills/theseus-orchestrator/SKILL.md \
+    --project-root .ShipofTheseus/<proj>/ \
+    --output .ShipofTheseus/<proj>/quality/gate_phase_invoke_audit.json
+
+# HARD-RULE 9.uu — phase 09 본문에 phase 06/08 인용 검증
+python skills/theseus-harness/scoring/cross_phase_context_audit.py \
+    --project-root .ShipofTheseus/<proj>/ --phase 09 \
+    --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_09.json
+```
+
+본 §은 sprint-43 의 *literal Bash command* 박힘. exit 1 시 phase 09 진입/종료 차단.
