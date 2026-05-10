@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.48
-description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-43 — Orchestrator Runtime Invoke 트랙 7. CLI 3 종 신규 (submission_completeness / phase_invoke_audit / dashboard_submission_parity) + HARD-RULE 9.yy/9.zz/9.aaa + phases/06/08/09/10/14 §자동 CLI 호출 literal Bash 박힘. 4 layer 결합 (문서/정량/정성/runtime invoke) — declared = invoked 강제.
+version: 0.9.49
+description: 재귀 멀티 에이전트 코딩 하네스 — 인덱스 전용. 87 컨벤션 / 15 페이즈 / 18 에이전트. sprint-49 — Sprint↔version 명칭 정책 도입 (forward only, sprint-49 = v0.9.49 첫 적용). contracts.md §Sprint↔version 절 + CHANGELOG 정책 entry. 4 layer enforcement (sprint-40~43 누적) 보존.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

@@ -2,6 +2,38 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.49 — 2026-05-10 (sprint-49 — Sprint↔version 명칭 정책 첫 적용)
+
+### 마일스톤
+
+sprint-43 v0.9.48 마감 직후 사용자 지시 — *"스프린트 명칭을 version 와 일치하게 해줘 / 43 이후 다음 스프린트는 49 로만 해도 돼"*. 본 sprint = 정책 도입 + 첫 적용.
+
+**정책 정합 — sprint 번호 = `skill_version` patch 자릿수 일치:**
+- sprint-49 = v0.9.49 (본 sprint, 첫 적용)
+- 이후 모든 sprint = sprint-N → v0.9.N → version bump 의무 (1:1 페어)
+
+### 변경
+
+| 파일 | 변경 |
+|---|---|
+| skills/theseus-harness/conventions/contracts.md | §Sprint ↔ version 명칭 정책 신규 절 (semver 정책 다음) |
+| CHANGELOG.md | 정책 도입 entry + 역사적 매핑 표 (sprint-37 ~ 43 = v0.9.42 ~ 48) + v0.9.49 entry (본 절) |
+| skills/theseus-harness/SKILL.md | version 0.9.49 + description 갱신 |
+| .claude-plugin/plugin.json | version 0.9.49 + description 갱신 |
+| memory/feedback_sprint_version_naming_policy.md | 신규 — forward only 원칙 본문 |
+| memory/MEMORY.md | 인덱스 갱신 |
+
+### Retroactive 적용 X
+
+sprint-37 ~ sprint-43 (= v0.9.42 ~ v0.9.48) 은 *역사적 misalignment* 로 보존:
+- 137 reference (sprint-37: 52, sprint-38: 12, sprint-39: 16, sprint-40: 35, sprint-41: 38, sprint-42: 25, sprint-43: 23) + 4 sprint dir + 4 memory + 4 git tag rename 비용
+- 변경 비용 > 이득 — forward 정책만 활성
+
+### 후속
+
+- **sprint-50** (다음) = v0.9.50 — 외부 검증 후 진입 의제 결정 (사용자 fresh G4 cold session 결과 종속)
+- 4 layer enforcement (sprint-40~43 누적) 보존 — 12 CLI + literal Bash command + 4 HARD-RULE batch (9.qq~9.aaa)
+
 ## 정책 도입 (2026-05-10) — Sprint ↔ version 명칭 일치 (forward only)
 
 sprint-43 v0.9.48 마감 직후, 사용자 지시 — *"스프린트 명칭을 version 와 일치하게 해줘 / 43 이후 이제 다음 스프린트는 49로 만 해도 돼"*.
