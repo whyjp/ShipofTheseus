@@ -93,6 +93,11 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.yy — Submission completeness 검증 CLI (sprint-43 PR-B 신규)**:
+>   - phase 14 handoff *직후* + dashboard sync *전* orchestrator 가 `python skills/theseus-harness/scoring/submission_completeness.py --submission-dir <sub> --eval-report <eval> --grade <G>` 자동 호출 의무.
+>   - 검사: `evaluation_report.json` 의 `output_exists_*` pass 산출물이 *현재* disk 잔존 + `.pyc-only` 패턴 차단 + G3+ governance trail 의무.
+>   - exit 1 시 산출물 재emit 또는 *재실행* 강제. 평가 후 대량 삭제 / scratch cleanup 패턴 차단.
+>   - **증거 회피 사례** — g4-v2 91 회차 = `submissions/.../theseus-orchestrator-g4-v2/` 안에 *10 .pyc 파일만*, README/submission.yaml/conceptual_model/run_experiment/outputs/.ShipofTheseus 모두 부재. 본 9.yy = 차단 (pyc_only + low_survival + governance_missing 3 violation).
 > - **9.xx — Surrender phrase 차단 CLI (sprint-42 PR-E 신규, ouroboros 보다 깊은 enforcement)**:
 >   - phase 10 sprint loop 종료 + phase 14 handoff 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/surrender_phrase_grep.py --project-root <root>` 자동 호출 의무.
 >   - 검사: 8 surrender 패턴 (`defer_to_external` / `plateaued` / `asymptote` / `good_enough` / `sufficient` / `fine_tune_narrative` / `would_only` / `final_ground_truth_external`) grep. 매치 시 frontmatter `surrender_override: true` + `surrender_override_reason` 의무.
