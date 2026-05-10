@@ -93,6 +93,12 @@ description: theseus-harness 의 15 페이즈 자율 driver — entry point. 페
 >   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
 >   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
 >   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.xx — Surrender phrase 차단 CLI (sprint-42 PR-E 신규, ouroboros 보다 깊은 enforcement)**:
+>   - phase 10 sprint loop 종료 + phase 14 handoff 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/surrender_phrase_grep.py --project-root <root>` 자동 호출 의무.
+>   - 검사: 8 surrender 패턴 (`defer_to_external` / `plateaued` / `asymptote` / `good_enough` / `sufficient` / `fine_tune_narrative` / `would_only` / `final_ground_truth_external`) grep. 매치 시 frontmatter `surrender_override: true` + `surrender_override_reason` 의무.
+>   - exit 1 시 phase 진입 거부 — 자백 어휘 제거 또는 override 보강 후 재진입.
+>   - **증거 회피 사례** — 0510-2 회차 `sprints/03/report.json:lessons_outbound[1]` = *"0.97 < 0.999 G4 asymptote; defer to opus-reviewer scoring as final ground truth"* — 4 surrender 어휘 동시 발현. 본 9.xx CLI = 차단.
+>   - 신규 컨벤션 — `surrender-phrase-forbid.md` (8 패턴 카탈로그 + override 메커니즘).
 > - **9.ww — Stagnation 후 자율 종료 차단 CLI (sprint-42 PR-D 신규)**:
 >   - phase 10 sprint iteration 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/stagnation_breakthrough.py --project-root <root> --current-iteration N` 자동 호출 의무.
 >   - 검사: `sprints/N/report.json` 의 `stagnation_detected: true` AND `score < 0.999` 시 *exit_sprint_loop 자율 결정 차단*. 4 breakthrough 시도 (new_universe / lateral_think / ensemble_synthesis / phase_regression) 중 ≥ 1 evidence 의무.
