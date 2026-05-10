@@ -1,3 +1,9 @@
+---
+name: Sprint-50
+sprint_type: rule-addition
+version: 0.9.50
+---
+
 # Sprint-50 — v0.9.50 — Extension Discipline
 
 > 시작: 2026-05-10
