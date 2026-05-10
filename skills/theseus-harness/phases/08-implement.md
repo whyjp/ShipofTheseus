@@ -26,6 +26,52 @@ python skills/theseus-harness/scoring/regression_check.py compare --root .Shipof
 
 `state/regression_log.json` 은 append-only — phase 11 bisect 의 입력 source. 자세한 알고리즘: [`../conventions/regression-tdd-gate.md`](../conventions/regression-tdd-gate.md).
 
+---
+
+## sprint-50 — Deep-Module + DRY (HARD-RULE 9.ddd / 9.eee)
+
+> 격언:
+> - Ousterhout, *A Philosophy of Software Design*, Ch.4 — *"Modules Should Be Deep"* — "A deep module is one that has a lot of functionality hidden behind a simple interface."
+> - Hunt & Thomas, *The Pragmatic Programmer*, Tip 11 — *"DRY"* — "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system."
+
+### 9.ddd — Deep-Module 검사 (`scoring/deep_module_metric.py`)
+
+각 모듈의 (public interface 줄 수) / (내부 functional 줄 수) 비율 ≤ τ=0.4 의무. *얕은 모듈* (interface ≈ implementation) 검출.
+
+vacuous PASS 차단:
+- 모듈 수 = 1 (단일 파일) = automatic fail.
+- 모듈 수 < ⌈sqrt(LOC/100)⌉ = warning.
+
+### 9.eee — DRY 검사 (`scoring/dry_violation_count.py`)
+
+코드 token n-gram (n=8) 중복 ≥ k 회 = violation. violation 비율 ≤ τ=0.05 의무.
+
+boilerplate 제외 catalog: `import` / `class` header / `__init__` / `if __name__ == '__main__'` / decorator / `pass` / 단독 `return` — *재사용 가능한 abstraction* 의 정상 반복은 metric-gaming 으로 카운트하지 않는다.
+
+### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
+
+phase 08 종료 *직전* (multiverse winner 확정 후, phase 09 진입 전) 의무 호출:
+
+```bash
+python skills/theseus-harness/scoring/deep_module_metric.py \
+    --code-root <submission>/src/ \
+    --max-ratio 0.4 \
+    --json-out .ShipofTheseus/<프로젝트>/impl/deep_module_metric.json
+
+python skills/theseus-harness/scoring/dry_violation_count.py \
+    --code-root <submission>/src/ \
+    --n-gram 8 \
+    --max-violation-ratio 0.05 \
+    --json-out .ShipofTheseus/<프로젝트>/impl/dry_violation.json
+```
+
+- exit 0 (둘 다) → phase 09 quality gate 진입
+- exit 1 (어느 하나) → phase 08 step C (implementer) 재진입. lesson_pack 누적 (모듈 분해 또는 중복 제거).
+
+### 다음 sprint 확장 의제 (떠안는 risk)
+
+본 sprint 의 deep_module / dry CLI 는 Python 한정 1 차 휴리스틱. 다른 언어 (Go / TS / Rust / Java) 는 다음 sprint 후속. 본 sprint 마감 시점에서 Python 외 언어로 산출 시 `--lang <name>` flag 로 declare + 사용자 ack 한 회 = 다음 sprint 카탈로그 추가.
+
 ## 입력
 
 - canonical `plan/06-plan.md` (canonical-not-stub 정합 — stub 금지, sprint-37 PR-AH inline). HARD-RULE 9.a 본문 의무 8 항목 (파일 경로 / sequenceDiagram / usecase / interface / TODO DAG / 모듈 의존 / data structure invariants / test surface mapping / error handling / **implementation guidance per TODO**) 가 plan 본문에 박혀 있어야 함 — *별도 impl-design.md 신설 안 함, plan 단일 source*.
