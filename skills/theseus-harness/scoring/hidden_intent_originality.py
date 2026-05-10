@@ -59,8 +59,20 @@ QUOTE_BLOCK_RE = re.compile(r'^>\s.*$', re.MULTILINE)
 
 
 # 자연 카테고리 (prompt 가 *직접* 묻는 영역) — escape 의 *반대*.
+#
+# 본 default = *도메인 무관 meta-카테고리*. 모든 prompt 에 공통 적용:
+# - inputs: prompt 가 명시한 입력 데이터/파일/parameter
+# - outputs: prompt 가 명시한 산출물 file/field
+# - behaviors: prompt 가 명시한 알고리즘/동작
+# - metrics: prompt 가 명시한 측정/평가 지표
+# - constraints: prompt 가 명시한 제약 (시간/리소스/포맷)
+#
+# 이전 default ('data / topology / scenario / metrics / constraints') 는 mine
+# throughput 의 자연 카테고리 — 도메인 의존이라 v0.9.51 에서 제거. 도메인 자연
+# 카테고리는 `--prompt-meta-file` 입력 시 prompt-meta 의 output_schemas 의
+# file 이름들 + decision_questions 의 명사군 에서 자동 도출.
 NATURAL_CATEGORIES = {
-    'data', 'topology', 'scenario', 'metrics', 'constraints',
+    'inputs', 'outputs', 'behaviors', 'metrics', 'constraints',
 }
 
 
@@ -129,7 +141,12 @@ def main() -> int:
     parser.add_argument('--escape-categories-min', type=int, default=1,
                         help='extension 카테고리 (자연 외) 항목 ≥ N 의무')
     parser.add_argument('--natural-categories', type=str, default=None,
-                        help='자연 카테고리 override (comma-separated). default: data,topology,scenario,metrics,constraints')
+                        help='자연 카테고리 override (comma-separated). '
+                             'default: inputs,outputs,behaviors,metrics,constraints')
+    parser.add_argument('--prompt-meta-file', type=Path, default=None,
+                        help='prompt_meta_extractor 산출물 (intent/00-prompt-meta.json). '
+                             '입력 시 output_schemas + decision_questions 에서 도메인 자연 '
+                             '카테고리 자동 도출 + default 5 메타-카테고리에 합침')
     parser.add_argument('--self-test', action='store_true', default=False)
     parser.add_argument('--json-out', type=Path, default=None)
     args = parser.parse_args()
@@ -139,9 +156,24 @@ def main() -> int:
 
     if args.project_root is None:
         parser.error('--project-root required when not --self-test')
-    natural = NATURAL_CATEGORIES
+    natural = set(NATURAL_CATEGORIES)
     if args.natural_categories:
         natural = {c.strip().lower() for c in args.natural_categories.split(',') if c.strip()}
+    elif args.prompt_meta_file and args.prompt_meta_file.exists():
+        # prompt-meta 의 output_schemas file names + decision_questions 의 명사군
+        # 자동으로 자연 카테고리 augment.
+        try:
+            meta = json.loads(args.prompt_meta_file.read_text(encoding='utf-8'))
+        except (json.JSONDecodeError, OSError):
+            meta = {}
+        for sch in meta.get('output_schemas', []):
+            fn = sch.get('file', '').rsplit('.', 1)[0].lower()
+            if fn:
+                natural.add(fn)
+        for q in meta.get('decision_questions', []):
+            for tok in re.findall(r'[A-Za-z]{4,}', q.lower()):
+                if tok not in STOPWORDS:
+                    natural.add(tok)
 
     proj = args.project_root
     p_hi = proj / 'intent' / '01-hidden-intent.md'

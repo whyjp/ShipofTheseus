@@ -1,0 +1,273 @@
+{
+  "schema_version": "0.9.51",
+  "prompt_path": "D:\\github\\simulation-bench\\benchmarks\\001_synthetic_mine_throughput\\prompt.md",
+  "output_schemas": [
+    {
+      "file": "results.csv",
+      "fields": [
+        "scenario_id",
+        "replication",
+        "random_seed",
+        "total_tonnes_delivered",
+        "tonnes_per_hour",
+        "average_truck_cycle_time_min",
+        "average_truck_utilisation",
+        "crusher_utilisation",
+        "average_loader_queue_time_min",
+        "average_crusher_queue_time_min"
+      ],
+      "field_count": 10,
+      "required": true,
+      "extraction_marker": "## `results.csv`"
+    },
+    {
+      "file": "summary.json",
+      "fields": [
+        "benchmark_id",
+        "scenarios",
+        "baseline",
+        "replications",
+        "shift_length_hours",
+        "total_tonnes_mean",
+        "total_tonnes_ci95_low",
+        "total_tonnes_ci95_high",
+        "tonnes_per_hour_mean",
+        "tonnes_per_hour_ci95_low",
+        "tonnes_per_hour_ci95_high",
+        "average_cycle_time_min",
+        "truck_utilisation_mean",
+        "loader_utilisation",
+        "crusher_utilisation",
+        "average_loader_queue_time_min",
+        "average_crusher_queue_time_min",
+        "top_bottlenecks",
+        "key_assumptions",
+        "model_limitations",
+        "additional_scenarios_proposed"
+      ],
+      "field_count": 21,
+      "required": true,
+      "extraction_marker": "## `summary.json`"
+    },
+    {
+      "file": "event_log.csv",
+      "fields": [
+        "time_min",
+        "replication",
+        "scenario_id",
+        "truck_id",
+        "event_type",
+        "from_node",
+        "to_node",
+        "location",
+        "loaded",
+        "payload_tonnes",
+        "resource_id",
+        "queue_length"
+      ],
+      "field_count": 12,
+      "required": true,
+      "extraction_marker": "## `event_log.csv`"
+    }
+  ],
+  "readme_required_items": [
+    "How to install dependencies.",
+    "How to run the simulation.",
+    "How to reproduce the required scenario results.",
+    "The conceptual model.",
+    "The main assumptions.",
+    "The routing and dispatching logic.",
+    "The key results.",
+    "The answers to the operational decision questions.",
+    "The likely bottlenecks.",
+    "The limitations of the model.",
+    "Any suggested improvements or further scenarios."
+  ],
+  "decision_questions": [
+    "What is the expected ore throughput to the crusher during the baseline 8-hour shift?",
+    "What are the likely bottlenecks in the haulage system?",
+    "Does adding more trucks materially improve throughput, or does the system saturate?",
+    "Would improving the narrow ramp materially improve throughput?",
+    "How sensitive is throughput to crusher service time?",
+    "What is the operational impact of losing the main ramp route?"
+  ],
+  "evaluation_dimensions": [
+    {
+      "name": "Conceptual modelling",
+      "criteria": [
+        "clear system boundary",
+        "sensible entity, resource, event, and state definitions",
+        "appropriate assumptions",
+        "clear limitations",
+        "suitable performance measures"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Data and topology handling",
+      "criteria": [
+        "reads the provided input files",
+        "uses the topology meaningfully",
+        "calculates routes and travel times from the graph",
+        "handles constrained road segments appropriately",
+        "avoids hard-coded answers"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Simulation correctness",
+      "criteria": [
+        "uses SimPy properly",
+        "models truck cycles coherently",
+        "models loading, hauling, dumping, and return travel",
+        "represents queues and constrained resources correctly",
+        "records throughput based on completed dump events"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Experimental design",
+      "criteria": [
+        "uses multiple replications",
+        "controls random seeds",
+        "reports uncertainty",
+        "produces reproducible outputs",
+        "handles stochastic behaviour appropriately"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Results and interpretation",
+      "criteria": [
+        "reports the required metrics",
+        "answers the operational decision questions",
+        "identifies likely bottlenecks",
+        "explains operational implications",
+        "avoids overclaiming beyond the model assumptions"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Code quality",
+      "criteria": [
+        "clear structure",
+        "readable code",
+        "configurable parameters",
+        "reasonable separation of model, experiment, analysis, and reporting",
+        "simple dependency management"
+      ],
+      "criteria_count": 5
+    },
+    {
+      "name": "Traceability and auditability",
+      "criteria": [
+        "produces a useful event log",
+        "allows inspection of truck movements and state transitions",
+        "supports validation of queueing and resource behaviour"
+      ],
+      "criteria_count": 3
+    },
+    {
+      "name": "Efficiency",
+      "criteria": [
+        "reasonable runtime",
+        "reasonable code size",
+        "reasonable token and tool usage, where measurable"
+      ],
+      "criteria_count": 3
+    }
+  ],
+  "anti_patterns": [
+    {
+      "phrase": "not sufficient",
+      "context": "culation or simple deterministic spreadsheet-style model is not sufficient.  ---  ## Conceptual model design  Provide a concise concep",
+      "category": "not_sufficient"
+    },
+    {
+      "phrase": "not manually fabricated",
+      "context": "d be generated from the model data or simulation event log, not manually fabricated.  ---  ## Constraints  Use Python.  You may use common pack",
+      "category": "not_fabricated"
+    },
+    {
+      "phrase": "silently producing",
+      "context": "of the topology, the model should fail clearly rather than silently producing misleading results.  ---  ## Required outputs  Your solutio",
+      "category": "silent_failure"
+    },
+    {
+      "phrase": "rather than",
+      "context": "ible because of the topology, the model should fail clearly rather than silently producing misleading results.  ---  ## Required ou",
+      "category": "rather_than"
+    },
+    {
+      "phrase": "Avoid",
+      "context": "xt simpy numpy pandas scipy matplotlib networkx pyyaml ```  Avoid unnecessary dependencies.  The model should run from a clea",
+      "category": "avoid"
+    },
+    {
+      "phrase": "should fail",
+      "context": "If a route is impossible because of the topology, the model should fail clearly rather than silently producing misleading results.",
+      "category": "should_fail"
+    }
+  ],
+  "explicit_constraints": [
+    {
+      "text": "8-hour",
+      "value": "8",
+      "unit": "hour"
+    },
+    {
+      "text": "30 replications",
+      "value": "30",
+      "unit": "replications"
+    },
+    {
+      "text": "95%",
+      "value": "95",
+      "unit": "%"
+    }
+  ],
+  "default_warnings": [
+    {
+      "phrase": "Use meaningful values rather than zeros",
+      "context": "s\": [],   \"model_limitations\": [],   \"additional_scenarios_proposed\": [] } ```  Use meaningful values rather than zeros.  If you choose a different schema, document it clearly.  ---  ## `event_log.cs",
+      "category": "meaningful_not_zero"
+    },
+    {
+      "phrase": "Use meaningful values",
+      "context": "s\": [],   \"model_limitations\": [],   \"additional_scenarios_proposed\": [] } ```  Use meaningful values rather than zeros.  If you choose a different schema, document it clearly.  ---",
+      "category": "meaningful_values"
+    }
+  ],
+  "conditional_obligations": [
+    {
+      "phrase": "where applicable",
+      "context": "io-level and replication-level results.  It should include, where applicable:  - `scenario_id` - `replication` - `random_seed` - `total_",
+      "category": "where_applicable"
+    },
+    {
+      "phrase": "where measurable",
+      "context": "e - reasonable code size - reasonable token and tool usage, where measurable  ---  ## Important note  Correctness, reproducibility, and",
+      "category": "where_measurable"
+    },
+    {
+      "phrase": "where appropriate",
+      "context": "resource - capacity-constrained road segments as resources where appropriate - travel along the mine topology as time-consuming events -",
+      "category": "where_appropriate"
+    },
+    {
+      "phrase": "where appropriate",
+      "context": "4. Include stochastic loading, dumping, and/or travel times where appropriate. 5. Report uncertainty around key outputs, such as 95% conf",
+      "category": "where_appropriate"
+    },
+    {
+      "phrase": "if appropriate",
+      "context": "acity-constrained and should be treated as shared resources if appropriate.  ---  ## Required modelling approach  Your solution must b",
+      "category": "if_appropriate"
+    },
+    {
+      "phrase": "if useful",
+      "context": "You may also include a simple animation of truck movements if useful.  Any visualisation or animation should be generated from t",
+      "category": "if_useful"
+    }
+  ]
+}
