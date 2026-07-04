@@ -1,0 +1,27 @@
+{
+  "check_id": "scoring.solid",
+  "phase": "09",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_submission\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["modules_passing_solid", "modules_total", "dip_violation"],
+  "assertions": [
+    {
+      "expr": "modules_total > 0",
+      "on_fail": "no modules measured (no-work guard, rubric.md solid — 설계 P1 회귀 봉쇄)"
+    },
+    {
+      "expr": "modules_passing_solid <= modules_total",
+      "on_fail": "modules_passing_solid exceeds modules_total (impossible measurement)"
+    },
+    {
+      "expr": "dip_violation == 0",
+      "on_fail": "DIP violation present — rubric.md \"왜 DIP 만 hard cap 인가\"에 따른 hard fail. safe_eval 이 min()을 지원하지 않아 solid_raw를 0.5로 cap하는 대신 이 CheckSpec 자체를 FAIL시켜 강제한다(WP3 min/max 제약 선택 (a)). 총점 0.6 cap은 여전히 WP4 score.py aggregation 책임."
+    }
+  ],
+  "value": "modules_passing_solid / modules_total",
+  "absence_policy": "FAIL"
+}

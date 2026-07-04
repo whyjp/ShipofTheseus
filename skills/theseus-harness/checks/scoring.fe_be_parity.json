@@ -1,0 +1,19 @@
+{
+  "check_id": "scoring.fe_be_parity",
+  "phase": "09",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_submission\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["parity_category"],
+  "assertions": [
+    {
+      "expr": "parity_category == 'full' or parity_category == 'missing_one' or parity_category == 'missing_two' or parity_category == 'smoke_only'",
+      "on_fail": "parity_category must be one of full/missing_one/missing_two/smoke_only for this CheckSpec; 'n/a'(단일 사이드 기능)는 범위 밖 — WP4/WP6 exclusion 처리가 필요하며 침묵리에 0.0으로 채점하지 않는다"
+    }
+  ],
+  "value": "(parity_category == 'full') * 1.0 + (parity_category == 'missing_one') * 0.7 + (parity_category == 'missing_two') * 0.4 + (parity_category == 'smoke_only') * 0.0",
+  "absence_policy": "FAIL"
+}

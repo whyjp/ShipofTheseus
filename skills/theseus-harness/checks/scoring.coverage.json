@@ -1,0 +1,23 @@
+{
+  "check_id": "scoring.coverage",
+  "phase": "09",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_submission\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["be_coverage", "fe_coverage"],
+  "assertions": [
+    {
+      "expr": "be_coverage >= 0 and be_coverage <= 1",
+      "on_fail": "be_coverage out of range [0,1]"
+    },
+    {
+      "expr": "fe_coverage >= 0 and fe_coverage <= 1",
+      "on_fail": "fe_coverage out of range [0,1] (본 CheckSpec은 dual-side 측정 전제 — fe_coverage=null 단일 사이드 케이스는 범위 밖, WP4/WP6 별도 처리 필요)"
+    }
+  ],
+  "value": "(be_coverage + fe_coverage - ((be_coverage - fe_coverage) * (be_coverage - fe_coverage)) ** 0.5) / 2",
+  "absence_policy": "FAIL"
+}
