@@ -37,8 +37,12 @@ from checkspec import CheckSpec, UnsafeExpressionError, safe_eval
 
 SCHEMA_VERSION = "1.0"
 
-# 결과 상태 3종 — 커널은 PASS/FAIL 만 알지만, 정책 레이어는 NA(비게이팅)를 더한다.
+# 결과 상태 4종 — 커널은 PASS/FAIL 만 알지만, 정책 레이어는 NA(적용성 비게이팅)와
+# ADVISORY(동결 비게이팅, WP6/설계 §8)를 더한다. 넷은 상호 배타적이다 —
+# _evaluate_check 가 한 체크당 정확히 하나의 result 문자열만 반환하고,
+# run_meta_audit 의 if/elif 사슬이 그 문자열 하나를 정확히 한 리스트에만 담는다.
 NA = "NA"
+ADVISORY = "ADVISORY"
 
 # WP3 의 checks/ 레지스트리와 pipeline.manifest.json 은 이 파일 기준 두 단계 위
 # (kernel/ -> scoring/ -> theseus-harness/) 에 있다. manifest.py 의 회귀 테스트가
@@ -81,15 +85,33 @@ def _evaluate_check(
     root: Path,
     verified_at: str | None,
 ) -> dict[str, Any]:
-    """한 체크의 정책 판정 → {result: PASS|FAIL|NA, value, reasons}.
+    """한 체크의 정책 판정 → {result: PASS|FAIL|NA|ADVISORY, value, reasons}.
 
-    적용성이 없으면 커널 판정 그대로. 적용성이 있으면:
-      1. evidence 부재 → FAIL(evidence_missing) — 적용성으로 못 구한다(설계 요구).
-      2. 무결성(법칙1~3) 실패 → FAIL — 신뢰 못 하는 evidence 로 NA 를 줄 수 없다.
-      3. 적용성 expr(measured 값 위)이 false → NA(비게이팅). "단일 사이드"라는 사실이
+    우선순위(최상위가 나머지를 가린다 — 설계 §8 "동결은 게이트 자격 정지"):
+      0. status == "frozen" → 커널 5법칙을 그대로 태워 verdict/value/reasons 를
+         정보로 보존하지만(kernel_result), 정책 분류는 항상 ADVISORY(비게이팅).
+         applicability 필드가 같이 있어도 무시한다 — frozen 은 "조건부 면제(NA)"가
+         아니라 "무조건 비게이팅"이라 적용성 판정 자체에 도달하지 않는다.
+      이하는 status != "frozen" 인 체크에만 적용된다.
+      1. 적용성이 없으면 커널 판정 그대로.
+      적용성이 있으면:
+      2. evidence 부재 → FAIL(evidence_missing) — 적용성으로 못 구한다(설계 요구).
+      3. 무결성(법칙1~3) 실패 → FAIL — 신뢰 못 하는 evidence 로 NA 를 줄 수 없다.
+      4. 적용성 expr(measured 값 위)이 false → NA(비게이팅). "단일 사이드"라는 사실이
          producer 가 emit 한 measured 값으로 *입증*되어야만 NA 가 된다.
-      4. true → 커널 완전 판정(PASS/FAIL).
+      5. true → 커널 완전 판정(PASS/FAIL).
     """
+    if spec.status == "frozen":
+        v = kernel.verify(spec, ev, artifact_root=root, verified_at=verified_at)
+        return {
+            "result": ADVISORY,
+            "value": v.value,
+            "reasons": list(v.reasons),
+            # 정보 보존: 동결 체크도 커널이 실제로 낸 PASS/FAIL 을 기록한다 —
+            # 비게이팅이 "검사 안 함"이 아니라 "검사하되 verdict 를 안 쓴다"임을 값으로 증명.
+            "kernel_result": v.result,
+        }
+
     if spec.applicability is None:
         v = kernel.verify(spec, ev, artifact_root=root, verified_at=verified_at)
         return {"result": v.result, "value": v.value, "reasons": list(v.reasons)}
@@ -150,6 +172,7 @@ def run_meta_audit(
     results: dict[str, Any] = {}
     failed: list[str] = []
     na: list[str] = []
+    advisory: list[str] = []
 
     for check_id in active:
         spec_path = Path(checks_dir) / f"{check_id}.json"
@@ -167,12 +190,17 @@ def run_meta_audit(
         ev_path = root / "evidence" / f"{check_id}.json"
         # evidence 부재/공백/파싱불가는 모두 None 으로 흡수된다. 적용성 없는 체크는
         # kernel.verify(spec, None, ...) 이 법칙1(evidence_missing)로 FAIL — 별도 skip
-        # 경로 없음. 적용성 있는 체크의 NA 판정은 _evaluate_check(정책)가 소유한다.
+        # 경로 없음. 적용성 있는 체크의 NA 판정, 동결 체크의 ADVISORY 판정은 각각
+        # _evaluate_check(정책)가 소유한다.
         ev = evidence_mod.try_load_evidence(ev_path)
         outcome = _evaluate_check(spec, ev, root, verified_at)
 
         results[check_id] = outcome
-        if outcome["result"] == NA:
+        # result 는 _evaluate_check 가 PASS|FAIL|NA|ADVISORY 중 정확히 하나만 반환하므로
+        # 이 if/elif 사슬은 각 check_id 를 4개 리스트 중 하나에만 담는다(상호 배타성).
+        if outcome["result"] == ADVISORY:
+            advisory.append(check_id)
+        elif outcome["result"] == NA:
             na.append(check_id)
         elif outcome["result"] != kernel.PASS:
             failed.append(check_id)
@@ -186,6 +214,8 @@ def run_meta_audit(
         "failed": failed,
         # NA 는 비게이팅 — verdict 계산에서 제외한다(§ 적용성 정책, 침묵 skip 아님).
         "na": na,
+        # ADVISORY(frozen) 도 비게이팅 — 설계 §8 동결. A/B 편익 실증 전까지 종료를 막지 않는다.
+        "advisory": advisory,
         "verdict": "pass" if not failed else "fail",
         "evaluated_at": verified_at or _now_iso(),
     }

@@ -35,9 +35,9 @@
   },
   "checks": {
     "G2": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "quality.deep_module", "quality.dry", "quality.define_errors"],
-    "G3": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors"],
-    "G4": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors"],
-    "G5": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors"],
-    "_note": "scoring 6(WP3, §7.1) + WP5 승격 4(plan.dacapo_threshold=G3+, quality.deep_module/dry/define_errors=G2+). plan.dacapo_threshold 는 G2 제외(multiverse_widths G2=1, 토너먼트 없음). producer 없는 run 은 evidence_missing FAIL(§2 원칙2, 올바른 동작). 체크 추가 = 레지스트리 파일 + 이 맵 항목 동시 갱신만으로 meta_audit.py 자동 감사(WP3 §6, 하드코딩 0)."
+    "G3": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "G4": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "G5": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "_note": "scoring 6(WP3, §7.1) + WP5 승격 4(plan.dacapo_threshold=G3+, quality.deep_module/dry/define_errors=G2+) + WP6 동결 2(frozen.multiverse_width_benefit=phase06, frozen.viewer_mandatory=phase13, G3+). frozen.* 는 status:frozen 이라 meta_audit 가 ADVISORY(비게이팅) 처리 — 편익 A/B 실증 전까지 종료를 막지 않음(§8). plan.dacapo_threshold 는 G2 제외(토너먼트 없음). producer 없는 run 은 evidence_missing FAIL(§2 원칙2). 체크 추가 = 레지스트리 파일 + 이 맵 항목 동시 갱신만으로 meta_audit.py 자동 감사(WP3 §6, 하드코딩 0)."
   }
 }
