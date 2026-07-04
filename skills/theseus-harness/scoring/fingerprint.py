@@ -4,13 +4,26 @@
 
 frontmatter 스펙은 conventions/contracts.md 참조.
 
+주의(설계 §10, WP7): compute/verify/chain 의 self-hash 는 비밀 없는 자기 서명이라
+compute 재실행으로 언제든 재서명 가능하다 — 그 자체로는 위조를 못 잡는다(감사 P4).
+위조 차단은 hash 가 아니라 `verify-backed`(backing Evidence Record 검증)에서 일어난다.
+fingerprint 단독으로는 아무것도 보증하지 않는다.
+
 사용법:
     fingerprint.py compute --file <md> --prev <prev-md|none> --skill-version <semver>
+                           [--with-evidence <evidence.json>]
         # frontmatter 의 fingerprint 와 prev_fingerprint 를 채워 in-place 저장.
+        # --with-evidence 를 주면 Evidence Record 의 artifact_digests 를 지문에 섞어
+        #   지문의 뿌리를 자기 본문에서 '실행 artifact 의 content hash'로 옮긴다(§10).
     fingerprint.py verify --file <md>
-        # 저장된 fingerprint 가 본문과 일치하는지 검증. 일치 시 exit 0, 아니면 1.
+        # 저장된 self-hash fingerprint 가 본문과 일치하는지 검증. 일치 시 exit 0, 아니면 1.
+        # (자기 해시 검증일 뿐 — 위조/미실행 판정은 verify-backed 소관.)
     fingerprint.py chain --dir <dir>
         # 디렉터리의 모든 마크다운에 대해 prev_fingerprint 체인 무결성 검증.
+    fingerprint.py verify-backed --file <md> --evidence-dir <run/evidence>
+                                 [--checks-dir <registry>] [--artifact-root <dir>]
+        # 페이즈 산출물이 *통과한 Evidence Record로 뒷받침되는가* 판정(§10, fingerprint_backed).
+        # backed 시 exit 0, 아니면 1. self-hash 유효성만으로는 backed=False.
 """
 
 from __future__ import annotations
@@ -123,19 +136,40 @@ def major_of(version: str) -> str:
     return version.split(".", 1)[0]
 
 
-def compute_fingerprint(fm: dict, body: str) -> str:
-    payload = "\n".join(
-        [
-            fm.get("skill_name", ""),
-            major_of(fm.get("skill_version", "0")),
-            fm.get("phase", ""),
-            fm.get("project_id", ""),
-            fm.get("project_run", ""),
-            fm.get("prev_fingerprint") or "null",
-            canonical_body(body),
-        ]
-    )
+def compute_fingerprint(fm: dict, body: str, evidence_payload: str | None = None) -> str:
+    parts = [
+        fm.get("skill_name", ""),
+        major_of(fm.get("skill_version", "0")),
+        fm.get("phase", ""),
+        fm.get("project_id", ""),
+        fm.get("project_run", ""),
+        fm.get("prev_fingerprint") or "null",
+        canonical_body(body),
+    ]
+    # evidence_payload 미지정 시 payload 는 기존 7-파트와 비트 동일 — self-hash 하위호환.
+    # 지정 시 8번째 파트로 실행 artifact 의 content hash 를 섞어 지문을 실행에 묶는다(§10).
+    if evidence_payload is not None:
+        parts.append(evidence_payload)
+    payload = "\n".join(parts)
     return "sha256:" + hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def evidence_digest_payload(evidence_path: str) -> str:
+    """--with-evidence: Evidence Record 의 artifact_digests 를 지문 payload 로 정규화.
+
+    지문의 뿌리를 자기 본문 해시에서 '그 산출물을 뒷받침하는 실행 artifact 의 content
+    hash'로 옮긴다(설계 §10). backing artifact 가 바뀌면 지문도 바뀐다 → 실행에 묶임.
+    정규화 규칙(경로 정렬 + prefix 제거 + 소문자)은 커널 evidence.normalize_digest 와
+    동일 — kernel import 없이 base 모듈을 자족시키기 위해 여기서 인라인한다."""
+    data = json.loads(Path(evidence_path).read_text(encoding="utf-8"))
+    digests = data.get("artifact_digests") or {}
+    lines = []
+    for path in sorted(digests):
+        raw = str(digests[path]).strip()
+        norm = raw.split(":", 1)[1] if ":" in raw else raw
+        lines.append(f"{path}={norm.strip().lower()}")
+    # 고정 헤더 — artifact_digests 가 비어도 결정적이고 구별되는 payload 를 낸다.
+    return "evidence-artifacts:\n" + "\n".join(lines)
 
 
 def cmd_compute(args) -> int:
@@ -149,7 +183,10 @@ def cmd_compute(args) -> int:
         fm["prev_fingerprint"] = prev_fm.get("fingerprint")
     elif args.prev and args.prev.lower() == "none":
         fm["prev_fingerprint"] = None
-    fm["fingerprint"] = compute_fingerprint(fm, body)
+    evidence_payload = None
+    if getattr(args, "with_evidence", None):
+        evidence_payload = evidence_digest_payload(args.with_evidence)
+    fm["fingerprint"] = compute_fingerprint(fm, body, evidence_payload)
     path.write_text(render_frontmatter(fm) + body, encoding="utf-8")
     print(json.dumps({"file": str(path), "fingerprint": fm["fingerprint"]}, ensure_ascii=False))
     return 0
@@ -195,6 +232,14 @@ def cmd_chain(args) -> int:
     return 0 if not issues else 1
 
 
+def cmd_verify_backed(args) -> int:
+    # 지연 import — base compute/verify/chain 은 커널 없이 동작해야 한다(C8 컴파일 자족).
+    # 커널 의존은 backing 검증을 실제로 쓸 때에만 끌어온다.
+    import fingerprint_backed
+
+    return fingerprint_backed.run_verify_backed(args)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -203,6 +248,11 @@ def main(argv: list[str] | None = None) -> int:
     pc.add_argument("--file", required=True)
     pc.add_argument("--prev", default=None, help="직전 페이즈 산출물 경로 또는 'none'")
     pc.add_argument("--skill-version", default=None)
+    pc.add_argument(
+        "--with-evidence",
+        default=None,
+        help="Evidence Record JSON — artifact_digests 를 지문에 섞어 실행에 묶음 (§10)",
+    )
     pc.set_defaults(func=cmd_compute)
 
     pv = sub.add_parser("verify")
@@ -212,6 +262,19 @@ def main(argv: list[str] | None = None) -> int:
     pch = sub.add_parser("chain")
     pch.add_argument("--dir", required=True)
     pch.set_defaults(func=cmd_chain)
+
+    pvb = sub.add_parser("verify-backed")
+    pvb.add_argument("--file", required=True, help="페이즈 산출물 마크다운")
+    pvb.add_argument("--evidence-dir", required=True, help="run/evidence 디렉터리")
+    pvb.add_argument(
+        "--checks-dir", default=None, help="CheckSpec 레지스트리 (있으면 커널 판정)"
+    )
+    pvb.add_argument(
+        "--artifact-root",
+        default=None,
+        help="artifact 상대경로 해석 기준 (기본: evidence-dir)",
+    )
+    pvb.set_defaults(func=cmd_verify_backed)
 
     args = p.parse_args(argv)
     return args.func(args)
