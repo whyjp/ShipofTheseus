@@ -1,0 +1,43 @@
+{
+  "manifest_schema_version": "1.0",
+  "_authority": "설계 §11.3 단일 매니페스트 — 페이즈/폭/그레이드별 활성 체크의 유일 권위 소스. 러너·메타감사·문서가 모두 이 파일을 읽는다. 스칼라 '페이즈 수'는 어디에도 박지 않는다 — phases 리스트가 곧 개수(14/15/16 드리프트를 구성적으로 제거).",
+  "_phase_source": "phases 열거·이름·active_grades 는 skills/theseus-harness/SKILL.md §1 페이즈 표(라벨 '단일 진실 원천')를 읽어 확정. name 은 phases/<file>.md 파일명에서 파생(기계 안정). order 는 SKILL.md 실행 순서(01.5 는 04 뒤 — clarify 된 의도를 소비하므로). conventions/grades.md 의 페이즈 활성화 표는 stale(14-페이즈, 01.5 결손, handoff 를 13 에 둠)이라 권위 아님.",
+  "phases": [
+    {"id": "00", "name": "naming", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "01", "name": "intent", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "02", "name": "document", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "03", "name": "independent-comprehension", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "04", "name": "clarify", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "01.5", "name": "hidden-intent", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "05", "name": "critique", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "06", "name": "plan", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "07", "name": "plan-recursion", "active_grades": ["G4", "G5"]},
+    {"id": "08", "name": "implement", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "09", "name": "quality-gates", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "10", "name": "test-loop", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "11", "name": "regression-bisect", "active_grades": ["G4", "G5"]},
+    {"id": "12", "name": "webview-assembly", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "13", "name": "interactive-viewer", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "14", "name": "handoff", "active_grades": ["G2", "G3", "G4", "G5"]}
+  ],
+  "multiverse_widths": {
+    "G2": 1,
+    "G3": 3,
+    "G4": 4,
+    "G5": 6,
+    "_note": "실제 강제되는 활성 폭(grades.md '멀티버스 폭 확장 sprint-05-b' + SKILL desc 'G3-3/G4-4/G5-6'). G2 는 멀티버스 없음(단일 우주=1)."
+  },
+  "frozen_widths": {
+    "G3": 5,
+    "G4": 7,
+    "G5": 9,
+    "_note": "편익 미실증 — 설계 §8 동결. A/B 실증 전까지 비활성(advisory). active 폭은 multiverse_widths."
+  },
+  "checks": {
+    "G2": [],
+    "G3": [],
+    "G4": [],
+    "G5": [],
+    "_note": "지금은 빈 배열. 실제 check_id 는 WP3 가 checks/<id>.json 레지스트리 파일을 만들며 이 맵에 채운다(체크 추가 = 레지스트리 파일 + 매니페스트 항목 동시 갱신)."
+  }
+}
