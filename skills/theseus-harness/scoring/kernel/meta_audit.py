@@ -33,8 +33,12 @@ import checkspec
 import evidence as evidence_mod
 import kernel
 import manifest as manifest_mod
+from checkspec import CheckSpec, UnsafeExpressionError, safe_eval
 
 SCHEMA_VERSION = "1.0"
+
+# 결과 상태 3종 — 커널은 PASS/FAIL 만 알지만, 정책 레이어는 NA(비게이팅)를 더한다.
+NA = "NA"
 
 # WP3 의 checks/ 레지스트리와 pipeline.manifest.json 은 이 파일 기준 두 단계 위
 # (kernel/ -> scoring/ -> theseus-harness/) 에 있다. manifest.py 의 회귀 테스트가
@@ -46,6 +50,81 @@ _DEFAULT_CHECKS_DIR = _THESEUS_HARNESS_DIR / "checks"
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _integrity_only_spec(spec: CheckSpec) -> CheckSpec:
+    """assertion/value 를 제거한 무결성 전용 spec — 커널이 법칙1~3(존재·provenance·
+    producer/digest)만 강제하고 법칙4~5(값 술어)는 no-op 이 된다.
+
+    WHY 필요한가: 적용성(NA) 판정은 measured 값을 신뢰해야 하는데, 그 값이 provenance·
+    digest 로 뒷받침되지 않으면 'NA 도 증거로 입증'이 무너진다(가짜 evidence 로 게이트
+    회피). 이 stripped spec 으로 커널을 재사용해 evidence 무결성을 먼저 세운다 —
+    kernel.py 를 수정하지 않고(그대로 쓴다) 법칙1~3 만 태우는 방법.
+    """
+    return CheckSpec(
+        check_id=spec.check_id,
+        phase=spec.phase,
+        grades=spec.grades,
+        status=spec.status,
+        producer=spec.producer,
+        provenance_required=spec.provenance_required,
+        assertions=[],
+        value=None,
+        absence_policy=spec.absence_policy,
+        applicability=None,
+    )
+
+
+def _evaluate_check(
+    spec: CheckSpec,
+    ev: evidence_mod.EvidenceRecord | None,
+    root: Path,
+    verified_at: str | None,
+) -> dict[str, Any]:
+    """한 체크의 정책 판정 → {result: PASS|FAIL|NA, value, reasons}.
+
+    적용성이 없으면 커널 판정 그대로. 적용성이 있으면:
+      1. evidence 부재 → FAIL(evidence_missing) — 적용성으로 못 구한다(설계 요구).
+      2. 무결성(법칙1~3) 실패 → FAIL — 신뢰 못 하는 evidence 로 NA 를 줄 수 없다.
+      3. 적용성 expr(measured 값 위)이 false → NA(비게이팅). "단일 사이드"라는 사실이
+         producer 가 emit 한 measured 값으로 *입증*되어야만 NA 가 된다.
+      4. true → 커널 완전 판정(PASS/FAIL).
+    """
+    if spec.applicability is None:
+        v = kernel.verify(spec, ev, artifact_root=root, verified_at=verified_at)
+        return {"result": v.result, "value": v.value, "reasons": list(v.reasons)}
+
+    # 1. 부재는 적용성과 무관하게 FAIL — 커널 법칙1이 그대로 잡는다.
+    if ev is None:
+        v = kernel.verify(spec, None, artifact_root=root, verified_at=verified_at)
+        return {"result": v.result, "value": v.value, "reasons": list(v.reasons)}
+
+    # 2. 무결성 선검사 — evidence 가 provenance·digest 로 신뢰 가능한가.
+    integ = kernel.verify(
+        _integrity_only_spec(spec), ev, artifact_root=root, verified_at=verified_at
+    )
+    if integ.result != kernel.PASS:
+        return {"result": integ.result, "value": None, "reasons": list(integ.reasons)}
+
+    # 3. 적용성 평가 — 신뢰 가능한 measured 값 위에서.
+    try:
+        applicable = bool(safe_eval(spec.applicability, ev.measured_values()))
+    except (UnsafeExpressionError, ZeroDivisionError, TypeError) as exc:
+        return {
+            "result": kernel.FAIL,
+            "value": None,
+            "reasons": [f"applicability expr error: {spec.applicability!r}: {exc}"],
+        }
+    if not applicable:
+        return {
+            "result": NA,
+            "value": None,
+            "reasons": [f"not applicable (applicability false): {spec.applicability}"],
+        }
+
+    # 4. 적용됨 → 커널 완전 판정.
+    v = kernel.verify(spec, ev, artifact_root=root, verified_at=verified_at)
+    return {"result": v.result, "value": v.value, "reasons": list(v.reasons)}
 
 
 def run_meta_audit(
@@ -70,6 +149,7 @@ def run_meta_audit(
 
     results: dict[str, Any] = {}
     failed: list[str] = []
+    na: list[str] = []
 
     for check_id in active:
         spec_path = Path(checks_dir) / f"{check_id}.json"
@@ -85,17 +165,16 @@ def run_meta_audit(
             continue
 
         ev_path = root / "evidence" / f"{check_id}.json"
-        # evidence 부재/공백/파싱불가는 모두 None 으로 흡수되고, kernel.verify(spec,
-        # None, ...) 이 법칙1(evidence_missing)로 FAIL 처리한다 — 별도 skip 경로 없음.
+        # evidence 부재/공백/파싱불가는 모두 None 으로 흡수된다. 적용성 없는 체크는
+        # kernel.verify(spec, None, ...) 이 법칙1(evidence_missing)로 FAIL — 별도 skip
+        # 경로 없음. 적용성 있는 체크의 NA 판정은 _evaluate_check(정책)가 소유한다.
         ev = evidence_mod.try_load_evidence(ev_path)
-        verdict = kernel.verify(spec, ev, artifact_root=root, verified_at=verified_at)
+        outcome = _evaluate_check(spec, ev, root, verified_at)
 
-        results[check_id] = {
-            "result": verdict.result,
-            "value": verdict.value,
-            "reasons": list(verdict.reasons),
-        }
-        if verdict.result != kernel.PASS:
+        results[check_id] = outcome
+        if outcome["result"] == NA:
+            na.append(check_id)
+        elif outcome["result"] != kernel.PASS:
             failed.append(check_id)
 
     return {
@@ -105,6 +184,8 @@ def run_meta_audit(
         "active_checks": list(active),
         "results": results,
         "failed": failed,
+        # NA 는 비게이팅 — verdict 계산에서 제외한다(§ 적용성 정책, 침묵 skip 아님).
+        "na": na,
         "verdict": "pass" if not failed else "fail",
         "evaluated_at": verified_at or _now_iso(),
     }

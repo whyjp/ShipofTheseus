@@ -7,7 +7,8 @@
     "cmd_pattern": "^python .*measure_submission\\.py",
     "must_exit_zero": true
   },
-  "provenance_required": ["be_coverage", "fe_coverage"],
+  "provenance_required": ["be_coverage", "fe_side_exists"],
+  "applicability": "fe_side_exists == 1",
   "assertions": [
     {
       "expr": "be_coverage >= 0 and be_coverage <= 1",
@@ -15,7 +16,7 @@
     },
     {
       "expr": "fe_coverage >= 0 and fe_coverage <= 1",
-      "on_fail": "fe_coverage out of range [0,1] (본 CheckSpec은 dual-side 측정 전제 — fe_coverage=null 단일 사이드 케이스는 범위 밖, WP4/WP6 별도 처리 필요)"
+      "on_fail": "fe_coverage out of range [0,1] (dual-side 전제 — applicability fe_side_exists==1 에서만 평가; 단일 사이드는 producer 가 fe_side_exists=0 을 emit → meta_audit 이 NA(비게이팅))"
     }
   ],
   "value": "(be_coverage + fe_coverage - ((be_coverage - fe_coverage) * (be_coverage - fe_coverage)) ** 0.5) / 2",

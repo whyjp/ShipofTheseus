@@ -2,7 +2,17 @@
 """
 theseus-harness 스프린트 채점기.
 
-사용법:
+**1차 경로(설계 §5, §7.1, WP4a)**: producer(measure_submission.py) → Evidence Record →
+kernel.verify(scoring.* CheckSpec) → `aggregate_scores(dim_values, dip_violation)`.
+즉 score.py 는 *커널/집계가 호출하는 순수 함수* 다 — 6 차원 커널 verdict 의 value 를
+rubric 가중치로 가중평균하고 DIP 총점 hard cap 0.6 을 적용한다. N/A(None) 차원은 active
+셋에서 제외하고 가중치를 재정규화한다(rubric "active dimensions").
+
+**DEPRECATED**: 아래 `--inputs sprint-inputs.json` 직접 채점 경로는 손으로 쓴 자기 신고
+값을 받는다(설계 P1). 하위호환·자기점검(self_lint --score) 용도로만 유지하며, 새 채점은
+1차 경로를 쓴다. compute_sub_scores/overall_score/apply_caps/main 은 그 얇은 shim 이다.
+
+사용법(deprecated shim):
     score.py --inputs sprint-inputs.json [--prior prior.json] [--regression-threshold 0.05]
 
 inputs JSON 형식 (모든 필드 필수, 명시 표시 외):
@@ -105,6 +115,79 @@ def overall_score(sub: SubScores) -> float:
     active = {k: v for k, v in contribs.items() if v is not None}
     weight_sum = sum(WEIGHTS[k] for k in active)
     return sum(WEIGHTS[k] * v for k, v in active.items()) / weight_sum
+
+
+# scoring CheckSpec id → rubric 차원명(WEIGHTS 키). 커널 verdict(check_id 별)를 집계
+# 입력(차원명별)으로 옮기는 유일 매핑. e2e 는 rubric 상 'e2e_pass'.
+CHECK_ID_TO_DIM = {
+    "scoring.correctness": "correctness",
+    "scoring.scope_fit": "scope_fit",
+    "scoring.solid": "solid",
+    "scoring.coverage": "coverage",
+    "scoring.fe_be_parity": "fe_be_parity",
+    "scoring.e2e": "e2e_pass",
+}
+
+
+def aggregate_scores(dim_values: dict[str, float | None], dip_violation: bool) -> dict:
+    """1차 경로 집계 — 6 차원 커널 verdict value → rubric 가중 총점 + DIP 총점 cap.
+
+    dim_values 는 WEIGHTS 키(correctness/scope_fit/solid/coverage/fe_be_parity/e2e_pass)
+    별 값. None 인 차원은 N/A(적용성 미충족)로 active 셋에서 제외하고 가중치를 active
+    위에서 재정규화한다. DIP 위반 시 총점을 hard cap 0.6 으로 누른다(rubric 문면).
+
+    WHY dip_violation 을 별도 인자로 받나: solid 차원 자체는 WP3 대로 DIP 위반 시 게이트
+    FAIL(scoring.solid CheckSpec)이라 verdict pass 인 run 에서는 DIP=0 이다. 총점 0.6
+    cap 은 그 위의 *이중 방어* — solid 게이트가 어떤 이유로 뚫려도 총점이 0.6 을 넘지
+    못하게 한다(rubric.md "DIP 위반 = solid 게이트 FAIL + 총점 0.6 cap").
+    """
+    active = {k: v for k, v in dim_values.items() if v is not None}
+    unknown = set(active) - set(WEIGHTS)
+    if unknown:
+        raise ValueError(f"unknown scoring dimensions: {sorted(unknown)}")
+    weight_sum = sum(WEIGHTS[k] for k in active)
+    if weight_sum == 0:
+        raise ValueError("no active dimensions to aggregate (all N/A?)")
+    raw = sum(WEIGHTS[k] * v for k, v in active.items()) / weight_sum
+    capped = bool(dip_violation) and raw > DIP_TOTAL_CAP
+    score = DIP_TOTAL_CAP if capped else raw
+    return {
+        "score": round(score, 4),
+        "raw_score": round(raw, 4),
+        "active_dimensions": sorted(active),
+        "na_dimensions": sorted(k for k, v in dim_values.items() if v is None),
+        "weight_sum": round(weight_sum, 4),
+        "dip_violation": bool(dip_violation),
+        "dip_capped": capped,
+    }
+
+
+def aggregate_from_meta_audit(report: dict, *, dip_violation: bool) -> dict:
+    """meta_audit report → aggregate_scores. PASS=value, NA=None(제외). FAIL 은 집계
+    대상이 아니다(게이트 실패한 run 의 총점은 무의미) — ValueError 로 크게 실패시킨다.
+
+    이 어댑터가 1차 경로의 '커널 verdict → 총점' 연결부다. dip_violation 은 solid 측정에서
+    이미 아는 값이라 명시로 받는다(evidence 내부를 다시 뜯지 않는다 — 결합도 최소).
+    """
+    results = report.get("results", {})
+    dim_values: dict[str, float | None] = {}
+    failed_gating: list[str] = []
+    for check_id, dim in CHECK_ID_TO_DIM.items():
+        outcome = results.get(check_id)
+        if outcome is None:
+            continue
+        result = outcome.get("result")
+        if result == "PASS":
+            dim_values[dim] = outcome.get("value")
+        elif result == "NA":
+            dim_values[dim] = None
+        else:  # FAIL
+            failed_gating.append(check_id)
+    if failed_gating:
+        raise ValueError(
+            f"cannot aggregate: gating checks failed: {sorted(failed_gating)}"
+        )
+    return aggregate_scores(dim_values, dip_violation)
 
 
 def apply_caps(score: float, inputs: dict) -> tuple[float, list[str]]:

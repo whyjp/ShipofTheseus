@@ -50,6 +50,12 @@ class CheckSpec:
     assertions: list[Assertion] = field(default_factory=list)
     value: str | None = None
     absence_policy: str = "FAIL"
+    # 적용성(applicability) — measured 값에 대한 술어(safe_eval). None 이면 항상 적용.
+    # WHY 커널이 아니라 여기 표현만 두나: kernel.verify 는 순수 PASS/FAIL 을 유지한다
+    # (설계 §4). "이 체크가 이 run 에 적용되는가"는 게이팅이 아닌 *정책* 판단이라
+    # meta_audit(정책 레이어)가 이 필드를 읽어 NA(비게이팅)를 결정한다. 커널은 이
+    # 필드를 보지 않는다 — 침묵 skip 이 아니라 '증거로 입증된 NA'를 정책이 소유한다.
+    applicability: str | None = None
 
 
 def from_dict(data: Any) -> CheckSpec:
@@ -80,6 +86,7 @@ def from_dict(data: Any) -> CheckSpec:
         assertions=assertions,
         value=data.get("value"),
         absence_policy=data.get("absence_policy", "FAIL"),
+        applicability=data.get("applicability"),
     )
 
 
