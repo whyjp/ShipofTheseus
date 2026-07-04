@@ -88,6 +88,96 @@ def extract_ngrams(lines: list[str], n: int) -> list[tuple[str, ...]]:
     return grams
 
 
+def build_report(
+    code_root: Path,
+    n_gram: int = 8,
+    min_repeat: int = 2,
+    max_violation_ratio: float = 0.05,
+    no_boilerplate_skip: bool = False,
+    ignore_tests: bool = True,
+    top_n: int = 10,
+) -> dict:
+    """code_root 스캔 → DRY 리포트(raw counts + ratio). verdict 는 안 낸다.
+
+    main()(CLI, 하위호환 유지)과 producers/measure_dry_violation.py(evidence 조립기)가
+    공유하는 단일 계산 경로. `module_count`/`scanned_line_count`/`total_ngrams`/
+    `violation_count` 는 모든 분기에 present(0 포함) — 호출자가 string-match 없이
+    분기(모듈 0 / 소규모 skip / 정상측정)를 구분하도록.
+    """
+    files = sorted(code_root.rglob('*.py'))
+    if ignore_tests:
+        files = [
+            f for f in files
+            if 'tests' not in f.parts
+            and not f.name.startswith('test_')
+            and not f.name.endswith('_test.py')
+            and not f.name.startswith('conftest')
+        ]
+    if not files:
+        return {
+            'schema_version': SCHEMA_VERSION, 'pass': False, 'module_count': 0,
+            'scanned_line_count': 0, 'total_ngrams': 0, 'violation_count': 0,
+            'failures': [f'no .py modules found in {code_root}'],
+        }
+
+    if no_boilerplate_skip:
+        BOILERPLATE_RE.clear()
+
+    all_lines: list[tuple[str, str, int]] = []  # (line, file, lineno)
+    for fp in files:
+        try:
+            body = fp.read_text(encoding='utf-8', errors='replace')
+        except (FileNotFoundError, IsADirectoryError, PermissionError):
+            continue
+        for lineno, line in enumerate(body.splitlines(), start=1):
+            normalized = _normalize_line(line)
+            if normalized is None:
+                continue
+            all_lines.append((normalized, str(fp), lineno))
+
+    if len(all_lines) < n_gram + 10:
+        return {
+            'schema_version': SCHEMA_VERSION, 'pass': True,
+            'note': 'token count < n-gram + 10, skipped',
+            'module_count': len(files), 'scanned_line_count': len(all_lines),
+            'total_ngrams': 0, 'violation_count': 0,
+        }
+
+    line_strs = [l[0] for l in all_lines]
+    grams = extract_ngrams(line_strs, n_gram)
+
+    counter = Counter(grams)
+    violations = [(gram, count) for gram, count in counter.most_common()
+                  if count >= min_repeat]
+
+    total_grams = len(grams)
+    violation_count = sum(c for _g, c in violations) - len(violations)  # 첫 등장 제외
+    ratio = violation_count / total_grams if total_grams else 0.0
+
+    failures: list[str] = []
+    if ratio > max_violation_ratio:
+        failures.append(
+            f'DRY violation ratio {ratio:.4f} > max {max_violation_ratio} '
+            f'(violations={violation_count}/{total_grams})'
+        )
+
+    return {
+        'schema_version': SCHEMA_VERSION,
+        'pass': not failures,
+        'module_count': len(files),
+        'scanned_line_count': len(all_lines),
+        'n_gram': n_gram,
+        'total_ngrams': total_grams,
+        'violation_count': violation_count,
+        'violation_ratio': round(ratio, 4),
+        'top_violations': [
+            {'count': c, 'preview': ' / '.join(g[:3]) + '...'}
+            for g, c in violations[:top_n]
+        ],
+        'failures': failures,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--code-root', type=Path, default=None)
@@ -110,85 +200,31 @@ def main() -> int:
     if args.code_root is None:
         parser.error('--code-root required when not --self-test')
 
-    files = sorted(args.code_root.rglob('*.py'))
-    if args.ignore_tests:
-        files = [
-            f for f in files
-            if 'tests' not in f.parts
-            and not f.name.startswith('test_')
-            and not f.name.endswith('_test.py')
-            and not f.name.startswith('conftest')
-        ]
-    if not files:
-        report = {'schema_version': SCHEMA_VERSION, 'pass': False,
-                  'failures': [f'no .py modules found in {args.code_root}']}
-        _emit(report, args.json_out)
-        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
-        return 1
-
-    if args.no_boilerplate_skip:
-        BOILERPLATE_RE.clear()
-
-    all_lines: list[tuple[str, str, int]] = []  # (line, file, lineno)
-    for fp in files:
-        try:
-            body = fp.read_text(encoding='utf-8', errors='replace')
-        except (FileNotFoundError, IsADirectoryError, PermissionError):
-            continue
-        for lineno, line in enumerate(body.splitlines(), start=1):
-            normalized = _normalize_line(line)
-            if normalized is None:
-                continue
-            all_lines.append((normalized, str(fp), lineno))
-
-    if len(all_lines) < args.n_gram + 10:
-        report = {'schema_version': SCHEMA_VERSION, 'pass': True,
-                  'note': 'token count < n-gram + 10, skipped'}
-        _emit(report, args.json_out)
-        print(f'PASS: dry skipped (small codebase, lines={len(all_lines)})')
-        return 0
-
-    line_strs = [l[0] for l in all_lines]
-    grams = extract_ngrams(line_strs, args.n_gram)
-
-    counter = Counter(grams)
-    violations = [(gram, count) for gram, count in counter.most_common()
-                  if count >= args.min_repeat]
-
-    total_grams = len(grams)
-    violation_count = sum(c for _g, c in violations) - len(violations)  # 첫 등장 제외
-    ratio = violation_count / total_grams if total_grams else 0.0
-
-    failures: list[str] = []
-    if ratio > args.max_violation_ratio:
-        failures.append(
-            f'DRY violation ratio {ratio:.4f} > max {args.max_violation_ratio} '
-            f'(violations={violation_count}/{total_grams})'
-        )
-
-    report = {
-        'schema_version': SCHEMA_VERSION,
-        'pass': not failures,
-        'total_ngrams': total_grams,
-        'violation_count': violation_count,
-        'violation_ratio': round(ratio, 4),
-        'top_violations': [
-            {'count': c, 'preview': ' / '.join(g[:3]) + '...'}
-            for g, c in violations[:args.top_n]
-        ],
-        'failures': failures,
-    }
+    report = build_report(
+        args.code_root,
+        n_gram=args.n_gram,
+        min_repeat=args.min_repeat,
+        max_violation_ratio=args.max_violation_ratio,
+        no_boilerplate_skip=args.no_boilerplate_skip,
+        ignore_tests=args.ignore_tests,
+        top_n=args.top_n,
+    )
     _emit(report, args.json_out)
 
-    if failures:
-        print(f'FAIL: dry violation ({len(failures)} fail)', file=sys.stderr)
-        for f in failures:
-            print(f'  - {f}', file=sys.stderr)
-        for g, c in violations[:args.top_n]:
-            preview = ' / '.join(g[:3])
-            print(f'  - x{c}: {preview}...', file=sys.stderr)
+    if report['module_count'] == 0:
+        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
         return 1
-    print(f'PASS: dry (ratio={ratio:.4f} grams={total_grams})')
+    if report.get('note') == 'token count < n-gram + 10, skipped':
+        print(f'PASS: dry skipped (small codebase, lines={report["scanned_line_count"]})')
+        return 0
+    if not report['pass']:
+        print(f'FAIL: dry violation ({len(report["failures"])} fail)', file=sys.stderr)
+        for f in report['failures']:
+            print(f'  - {f}', file=sys.stderr)
+        for v in report.get('top_violations', []):
+            print(f'  - x{v["count"]}: {v["preview"]}', file=sys.stderr)
+        return 1
+    print(f'PASS: dry (ratio={report["violation_ratio"]:.4f} grams={report["total_ngrams"]})')
     return 0
 
 

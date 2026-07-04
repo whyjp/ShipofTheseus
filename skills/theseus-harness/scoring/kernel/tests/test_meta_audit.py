@@ -202,7 +202,9 @@ def test_real_manifest_checks_registry_has_six_scoring_dimensions_and_no_drift()
     """WP3 산출물 회귀 가드: 실 저장소의 6 scoring CheckSpec 이 매니페스트와 정합.
 
     drift_check 가 두 방향(참조된 id가 파일로 실재 / orphan 파일 없음) 모두 정합임을
-    값으로 확인한다 — 6 check_id ↔ 6 파일.
+    값으로 확인한다. 레지스트리는 WP5(promote)/WP6(frozen) 로 성장하므로 '정확히 6개'가
+    아니라 '6 scoring 차원이 존재(부분집합) + drift 0' 로 가드한다 — 성장에 견디되 핵심
+    불변식(6 scoring 차원 상시 존재·drift 없음)은 유지.
     """
     manifest_path = meta_audit._DEFAULT_MANIFEST
     checks_dir = meta_audit._DEFAULT_CHECKS_DIR
@@ -211,7 +213,7 @@ def test_real_manifest_checks_registry_has_six_scoring_dimensions_and_no_drift()
     problems = manifest_mod.drift_check(m, checks_dir)
     assert problems == []
 
-    expected_ids = {
+    scoring_ids = {
         "scoring.correctness",
         "scoring.scope_fit",
         "scoring.solid",
@@ -220,16 +222,17 @@ def test_real_manifest_checks_registry_has_six_scoring_dimensions_and_no_drift()
         "scoring.e2e",
     }
     file_ids = {p.stem for p in checks_dir.glob("*.json")}
-    assert file_ids == expected_ids
+    assert scoring_ids <= file_ids
 
     for grade in ("G2", "G3", "G4", "G5"):
-        assert set(manifest_mod.active_checks(m, grade)) == expected_ids
+        assert scoring_ids <= set(manifest_mod.active_checks(m, grade))
 
 
 def test_real_registry_meta_audit_reports_evidence_missing_for_all_six(tmp_path):
-    """WP4(measure_submission.py)가 아직 없으므로, 실 registry 로 감사하면 evidence
-    부재로 6개 전부 FAIL 이어야 한다 — 이는 결함이 아니라 §2 원칙2("증거 없음=FAIL")의
-    올바른 동작이다(팀 지시 사항 명시)."""
+    """producer 가 없는 run 은 evidence 부재로 게이팅 체크가 FAIL 이어야 한다 — 결함이
+    아니라 §2 원칙2("증거 없음=FAIL")의 올바른 동작이다. 레지스트리 성장(WP5 promote)으로
+    G2 활성 체크가 6 scoring + 3 quality 로 늘었으므로 '정확히 6' 대신 '6 scoring 차원이
+    전부 evidence_missing 으로 FAIL(부분집합)' 로 가드한다."""
     report = meta_audit.run_meta_audit(
         tmp_path / "empty_run", "G2",
         manifest_path=meta_audit._DEFAULT_MANIFEST,
@@ -237,7 +240,11 @@ def test_real_registry_meta_audit_reports_evidence_missing_for_all_six(tmp_path)
         verified_at=FIXED_TS,
     )
     assert report["verdict"] == "fail"
-    assert len(report["failed"]) == 6
+    scoring_ids = {
+        "scoring.correctness", "scoring.scope_fit", "scoring.solid",
+        "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e",
+    }
+    assert scoring_ids <= set(report["failed"])
     for check_id in report["failed"]:
         assert any(
             "evidence_missing" in r for r in report["results"][check_id]["reasons"]

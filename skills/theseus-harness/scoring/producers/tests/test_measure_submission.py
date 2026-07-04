@@ -269,8 +269,26 @@ def test_single_side_marks_coverage_and_parity_na_overall_pass(tmp_path):
     assert cov_ev.measured["fe_side_exists"]["value"] == 0
     assert "fe_coverage" not in cov_ev.measured
 
+    # 이 테스트의 의도는 'NA 가 게이팅을 막지 않는다'는 N/A 메커니즘 자체다. 실 매니페스트에는
+    # WP5 promote 체크(quality.*)가 G2 에 함께 활성이라, scoring evidence 만 준 run 은 그것들의
+    # evidence_missing 으로 overall FAIL 하는 게 올바른 동작이다(불완전 run). N/A 불변식만
+    # 격리 검증하려고 scoring 6 차원으로 스코프한 fixture 매니페스트를 쓴다(checks_dir 는 실 파일).
+    scoped_manifest = tmp_path / "scoped.manifest.json"
+    scoped_manifest.write_text(
+        json.dumps({
+            "manifest_schema_version": "1.0",
+            "phases": [],
+            "multiverse_widths": {"G2": 1},
+            "frozen_widths": {},
+            "checks": {"G2": [
+                "scoring.correctness", "scoring.scope_fit", "scoring.solid",
+                "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e",
+            ]},
+        }),
+        encoding="utf-8",
+    )
     report = meta_audit.run_meta_audit(
-        run_root, "G2", manifest_path=REAL_MANIFEST, checks_dir=REAL_CHECKS_DIR, verified_at=FIXED_TS
+        run_root, "G2", manifest_path=scoped_manifest, checks_dir=REAL_CHECKS_DIR, verified_at=FIXED_TS
     )
     assert set(report["na"]) == {"scoring.coverage", "scoring.fe_be_parity"}
     assert report["failed"] == []

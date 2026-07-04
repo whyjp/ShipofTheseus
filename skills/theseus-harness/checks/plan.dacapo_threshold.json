@@ -1,0 +1,27 @@
+{
+  "check_id": "plan.dacapo_threshold",
+  "phase": "06",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_dacapo_threshold\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["winner_score", "winner_max"],
+  "assertions": [
+    {
+      "expr": "winner_max > 0",
+      "on_fail": "winner_max is 0 (tournament winner score unextractable — no-work guard, 설계 P1 회귀 봉쇄)"
+    },
+    {
+      "expr": "winner_score <= winner_max",
+      "on_fail": "winner_score exceeds winner_max (impossible measurement)"
+    },
+    {
+      "expr": "winner_score / winner_max >= 0.999",
+      "on_fail": "winner ratio < 0.999 threshold — round N+1 강제 (HARD-RULE 9.qq, intra-phase-dacapo-loop.md)"
+    }
+  ],
+  "value": "winner_score / winner_max",
+  "absence_policy": "FAIL"
+}

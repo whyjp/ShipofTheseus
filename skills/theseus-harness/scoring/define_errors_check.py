@@ -95,29 +95,22 @@ def _split_except_clause(clause: str) -> list[str]:
     return out
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    parser.add_argument('--code-root', type=Path, default=None)
-    parser.add_argument('--min-exception-types', type=int, default=1,
-                        help='raise 된 예외 종류 catalog ≥ N')
-    parser.add_argument('--require-handle', action='store_true', default=True,
-                        help='raise 된 모든 예외가 어딘가 handle 의무')
-    parser.add_argument('--allow-bare-except', action='store_true', default=False,
-                        help='bare except / except Exception only 도 handle 로 카운트 '
-                             '(default OFF — Effective Python Item 87 정합)')
-    parser.add_argument('--ignore-tests', action='store_true', default=True)
-    parser.add_argument('--self-test', action='store_true', default=False)
-    parser.add_argument('--json-out', type=Path, default=None)
-    args = parser.parse_args()
+def build_report(
+    code_root: Path,
+    min_exception_types: int = 1,
+    require_handle: bool = True,
+    allow_bare_except: bool = False,
+    ignore_tests: bool = True,
+) -> dict:
+    """code_root 스캔 → define-errors-out 리포트(raw catalog + counts). verdict 는 안 낸다.
 
-    if args.self_test:
-        return _self_test()
-
-    if args.code_root is None:
-        parser.error('--code-root required when not --self-test')
-
-    files = sorted(args.code_root.rglob('*.py'))
-    if args.ignore_tests:
+    main()(CLI, 하위호환 유지)과 producers/measure_define_errors.py(evidence 조립기)가
+    공유하는 단일 계산 경로. `module_count`/`raised_type_count`/`unhandled_type_count`/
+    `bare_except_vacuous_flag` 는 모든 분기에 present — 호출자가 string-match 없이
+    분기를 구분하고 스칼라 값을 assertion 에 바로 쓰도록.
+    """
+    files = sorted(code_root.rglob('*.py'))
+    if ignore_tests:
         files = [
             f for f in files
             if 'tests' not in f.parts
@@ -126,14 +119,16 @@ def main() -> int:
             and not f.name.startswith('conftest')
         ]
     if not files:
-        report = {'schema_version': SCHEMA_VERSION, 'pass': False,
-                  'failures': [f'no .py modules found in {args.code_root}']}
-        _emit(report, args.json_out)
-        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
-        return 1
+        return {
+            'schema_version': SCHEMA_VERSION, 'pass': False, 'module_count': 0,
+            'raise_catalog': {}, 'handled_catalog': {}, 'handled_set_effective': [],
+            'raised_type_count': 0, 'unhandled_type_count': 0,
+            'bare_except_vacuous_flag': False,
+            'failures': [f'no .py modules found in {code_root}'],
+        }
 
-    raise_catalog = Counter()
-    handled_catalog = Counter()
+    raise_catalog: Counter = Counter()
+    handled_catalog: Counter = Counter()
     bare_except_count = 0
     caller_catch_marker = 0
     raise_locations = []
@@ -157,64 +152,103 @@ def main() -> int:
     failures: list[str] = []
     warnings: list[str] = []
 
-    if len(raise_catalog) < args.min_exception_types:
+    if len(raise_catalog) < min_exception_types:
         warnings.append(
             f'exception types catalog {len(raise_catalog)} < min '
-            f'{args.min_exception_types} — implicit propagation only?'
+            f'{min_exception_types} — implicit propagation only?'
         )
 
     # require-handle: raise 된 각 종류가 handle 또는 sentinel 마커
     handled_set = set(handled_catalog.keys())
-    if not args.allow_bare_except:
+    if not allow_bare_except:
         # bare except / Exception 광역 catch 는 handle 카운트에서 제외
         handled_set = {n for n in handled_set
                        if n not in ('Exception', 'BaseException')}
 
-    if args.require_handle:
-        unhandled = []
-        for name in raise_catalog:
-            if name not in handled_set and caller_catch_marker == 0:
-                unhandled.append(name)
-        if unhandled:
-            failures.append(
-                f'raise 후 handle 0 인 예외 종류: {unhandled} '
-                f'(or use `# caller catches` sentinel comment)'
-            )
+    unhandled = [
+        name for name in raise_catalog
+        if name not in handled_set and caller_catch_marker == 0
+    ]
+    if require_handle and unhandled:
+        failures.append(
+            f'raise 후 handle 0 인 예외 종류: {unhandled} '
+            f'(or use `# caller catches` sentinel comment)'
+        )
 
     # bare except only = vacuous handle 의심
-    if (bare_except_count > 0 and not handled_set
-            and not args.allow_bare_except and raise_catalog):
+    bare_except_vacuous = bool(
+        bare_except_count > 0 and not handled_set
+        and not allow_bare_except and raise_catalog
+    )
+    if bare_except_vacuous:
         failures.append(
             f'except 절 모두 bare/Exception only ({bare_except_count} 회) — '
             f'specific exception type 이 handle 0. (use --allow-bare-except 우회)'
         )
 
-    report = {
+    return {
         'schema_version': SCHEMA_VERSION,
         'pass': not failures,
+        'module_count': len(files),
         'raise_catalog': dict(raise_catalog),
         'handled_catalog': dict(handled_catalog),
+        'handled_set_effective': sorted(handled_set),
         'bare_except_count': bare_except_count,
         'caller_catch_marker': caller_catch_marker,
         'raise_locations': raise_locations[:20],
+        'raised_type_count': len(raise_catalog),
+        'unhandled_type_count': len(unhandled),
+        'bare_except_vacuous_flag': bare_except_vacuous,
         'failures': failures,
         'warnings': warnings,
     }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    parser.add_argument('--code-root', type=Path, default=None)
+    parser.add_argument('--min-exception-types', type=int, default=1,
+                        help='raise 된 예외 종류 catalog ≥ N')
+    parser.add_argument('--require-handle', action='store_true', default=True,
+                        help='raise 된 모든 예외가 어딘가 handle 의무')
+    parser.add_argument('--allow-bare-except', action='store_true', default=False,
+                        help='bare except / except Exception only 도 handle 로 카운트 '
+                             '(default OFF — Effective Python Item 87 정합)')
+    parser.add_argument('--ignore-tests', action='store_true', default=True)
+    parser.add_argument('--self-test', action='store_true', default=False)
+    parser.add_argument('--json-out', type=Path, default=None)
+    args = parser.parse_args()
+
+    if args.self_test:
+        return _self_test()
+
+    if args.code_root is None:
+        parser.error('--code-root required when not --self-test')
+
+    report = build_report(
+        args.code_root,
+        min_exception_types=args.min_exception_types,
+        require_handle=args.require_handle,
+        allow_bare_except=args.allow_bare_except,
+        ignore_tests=args.ignore_tests,
+    )
     _emit(report, args.json_out)
 
-    if failures:
-        print(f'FAIL: define-errors-out ({len(failures)} 결손)', file=sys.stderr)
-        for f in failures:
+    if report['module_count'] == 0:
+        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
+        return 1
+    if report['failures']:
+        print(f'FAIL: define-errors-out ({len(report["failures"])} 결손)', file=sys.stderr)
+        for f in report['failures']:
             print(f'  - {f}', file=sys.stderr)
         return 1
     msg = (
-        f'PASS: define-errors-out (raised={dict(raise_catalog)} '
-        f'handled={list(handled_set)})'
+        f'PASS: define-errors-out (raised={report["raise_catalog"]} '
+        f'handled={report["handled_set_effective"]})'
     )
     print(msg)
-    if warnings:
-        for w in warnings:
-            print(f'  WARN: {w}')
+    for w in report.get('warnings', []):
+        print(f'  WARN: {w}')
     return 0
 
 
