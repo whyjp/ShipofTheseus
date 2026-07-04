@@ -30,6 +30,7 @@ description: 재귀 멀티 에이전트 코딩 하네스. sprint-52 = Viewer Fin
 | 02 | 의도 리뷰 | G3+ | Sonnet | [`phases/02-document.md`](phases/02-document.md) | `intent/02-review.md` |
 | 03 | 콜드 재이해 | G3+ | Sonnet | [`phases/03-independent-comprehension.md`](phases/03-independent-comprehension.md) | `intent/03-comprehension.md` |
 | 04 | 사용자 질의 (*유일한 인터럽트*) | G2+ | Sonnet | [`phases/04-clarify.md`](phases/04-clarify.md) | `intent/04-*.md` + refresh-1 (`01-{1..4}-intent`, `01-additional`) |
+| 1.5 | 확장 사고 (Hidden Intent) | G3+ | general-purpose | [`phases/01-5-hidden-intent.md`](phases/01-5-hidden-intent.md) | `intent/01-hidden-intent.md` |
 | 05 | 비평 + refresh-2 | G3+ | Opus | [`phases/05-critique.md`](phases/05-critique.md) | `intent/05-*` + `01-{1..4}-intent.v2`, `04-refreshed`, `05-refreshed` |
 | 06 | AIDE Plan-Tree + 다카포 | G2+ | Opus | [`phases/06-plan.md`](phases/06-plan.md) | `plan/{06-plan, tournament-NN, candidates/, dacapo-rerun-NN, dacapo-flow, shadow-grade-NN}.md` |
 | 07 | 계획 재이해 | G4+ | Sonnet | [`phases/07-plan-recursion.md`](phases/07-plan-recursion.md) | `plan/07-plan-review.md` |

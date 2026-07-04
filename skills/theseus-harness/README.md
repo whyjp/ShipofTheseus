@@ -104,6 +104,10 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-97 [`conventions/prebuilt-shell-runtime-json.md`](conventions/prebuilt-shell-runtime-json.md) — cold session 의 webview / lineage viewer build 0 — `templates/{lineage-viewer,webview}/dist/` prebuilt shell 복사 + JSON injection (sprint-35)
   d-98 [`conventions/pre-cold-session-bootup.md`](conventions/pre-cold-session-bootup.md) — phase 00 이전 3 viewer 부팅 + 빈 골격 JSON + viewer-runtime up. cold session 시작과 viewer 부팅 분리 (sprint-36)
   d-99 [`conventions/viewer-runtime.md`](conventions/viewer-runtime.md) — frontend 폴링 (5초 + Page Visibility + manual button + ETag 304) + backend lifecycle (start/stop script + viewer.lock.json + cross-platform PID kill). observability 본질 상승, PID 누수 차단 (sprint-36, sprint-37 PR-AC 통합)
+  d-100 [`conventions/cross-process-anti-patterns.md`](conventions/cross-process-anti-patterns.md) — 별 process 호출 비결정성 함수/패턴 카탈로그 + phase 09 §V6-Evidence-Bound 자동 grep (sprint-40 PR-B)
+  d-101 [`conventions/modeling-shortcuts.md`](conventions/modeling-shortcuts.md) — 수학적 단축 (휴리스틱/근사/coarse model) 4-tier 분류 + plan/impl 참조 의무 (sprint-40 PR-F)
+  d-102 [`conventions/surrender-phrase-forbid.md`](conventions/surrender-phrase-forbid.md) — cold session 산출물의 자율 종료/책임회피 자백 어휘 8 패턴 차단 (sprint-42 PR-E)
+  d-103 [`conventions/hard-rule-9-extended.md`](conventions/hard-rule-9-extended.md) — HARD-CORE.md HR9 9.d 이후 (Da Capo/Cold validator/Phase state/Prebuilt shell/Emit fidelity/Pre-bootup/Extension Discipline/Prompt-Driven Harness/Viewer Finalization Closure) 전문 lazy load (C-HC1 cap 준수)
 e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
 g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).

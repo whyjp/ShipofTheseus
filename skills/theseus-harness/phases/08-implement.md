@@ -70,7 +70,7 @@ python skills/theseus-harness/scoring/dry_violation_count.py \
 
 ### 다음 sprint 확장 의제 (떠안는 risk)
 
-본 sprint 의 deep_module / dry CLI 는 Python 한정 1 차 휴리스틱. 다른 언어 (Go / TS / Rust / Java) 는 다음 sprint 후속. 본 sprint 마감 시점에서 Python 외 언어로 산출 시 `--lang <name>` flag 로 declare + 사용자 ack 한 회 = 다음 sprint 카탈로그 추가.
+본 sprint 의 deep_module / dry CLI 는 Python 한정 1 차 휴리스틱. 다른 언어 (Go / TS / Rust / Java) 는 다음 sprint 후속. 본 sprint 마감 시점에서 Python 외 언어로 산출 시 invocation 시점 `--lang <name>` flag 로 **사전 위임** declare (phase 08 실행 중 추가 인터럽트 없음) = 다음 sprint 카탈로그 1 회성 추가로 반영.
 
 ## 입력
 

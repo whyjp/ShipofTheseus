@@ -75,7 +75,7 @@ philosophy: modular   # 또는 oop / functional / data-driven / event-driven / a
 ---
 ```
 
-7 카탈로그 외 값은 `--allow-extra` flag + 사용자 ack 필요 (`feedback_no_human_ack.md` 와 충돌 없음 — 카탈로그 *확장* 은 영구 변경이라 ack 1 회).
+7 카탈로그 외 값은 invocation 시점 `--allow-extra` flag 로 **사전 위임** 처리 — phase 06 실행 중 별도 인터럽트 없음 (`feedback_no_human_ack.md` 와 충돌 없음). 플래그 지정 자체가 카탈로그 *확장* (영구 변경) 에 대한 1 회성 승인이며 다음 sprint INDEX 갱신에 반영.
 
 ### universe candidate frontmatter `created_at` 의무 (sprint-52 PR-D, HARD-RULE 9.ooo)
 
