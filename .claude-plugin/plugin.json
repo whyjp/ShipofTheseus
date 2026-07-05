@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.52",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 87 컨벤션 / 16 페이즈 / 18 에이전트. sprint-52 신규: Viewer Finalization Closure — phase 14 의 lineage_finalize.py refresh 로 lineage / dashboard / webview JSON placeholder (PENDING fingerprint, mermaid stub, fingerprint_chain=[]) 차단. universe candidate frontmatter created_at 정시 stub 차단. HARD-RULE 9.nnn / 9.ooo / 9.ppp + sprint-43 declared=invoked finalize 차원 closure. sprint-51 prompt-driven harness 유지.",
+  "version": "0.9.53",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.53: 검증 커널 실배선 — phase 09 가 run_gate.py(producer→meta_audit)로 실제 게이팅, phase 01/04/06/08 선언 아티팩트(intent-criteria/plan-todos/solid-contract) 저작. 종료=manifest stop_policy(점수 절대값이 게이트 아님 — 인플레이션·소각 유인 제거), dacapo 0.999 지뢰 제거. 동결 mandate(멀티버스 폭·viewer·budget-80%) advisory 강등(능력 보존). self_lint 순감 + 진입 지시질량 −9.7%. 판단-게이트 producer 로 correctness/scope_fit/solid 를 자기신고 아닌 실측 backing 으로.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"
