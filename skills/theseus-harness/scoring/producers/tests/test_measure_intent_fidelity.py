@@ -8,7 +8,9 @@
   (3) 저작 오류(JSON 깨짐/화이트리스트 밖 kind/판정 필드/id 중복)는 exit 2, 결손
       (파일 부재/criteria 0개/required 0개)은 exit 0 no-emit — 둘을 구분한다.
   (4) 실 CheckSpec(scoring.correctness)으로 커널이 실제로 재판정 — PASS 시 value 반영,
-      producer 미실행 시 scoring.correctness 결손 유지(skipped).
+      producer 미실행 시 scoring.correctness 결손 유지(skipped). intent_fidelity < 0.7
+      (required 미충족) 은 phase-09 hard gate assertion(intent_fidelity >= 0.7)을 어겨
+      법칙4에서 FAIL(value=None) — 0.7 은 커널 레벨로 고정된 PASS/FAIL 경계.
   (5) 결정성(바이트 동일 + 서로 다른 루트 measured 동일) + CLI subprocess.
 
 실행: python -m pytest skills/theseus-harness/scoring/producers/tests/test_measure_intent_fidelity.py -q
@@ -373,7 +375,10 @@ def test_kernel_round_trip_pass_with_all_three_kinds(tmp_path):
     assert v.value == pytest.approx(1.0)  # (tests_passed/tests_total) * intent_fidelity
 
 
-def test_kernel_round_trip_reflects_zero_value(tmp_path):
+def test_kernel_round_trip_zero_intent_fails_hard(tmp_path):
+    """intent_fidelity=0.0(required 미충족) 은 discretization 이산 화이트리스트에는
+    들지만 phase-09 하드 게이트(intent_fidelity >= 0.7)를 어겨 커널이 FAIL 시켜야
+    한다 — 법칙4 위반이므로 value 는 계산되지 않고 None(법칙5 미도달)."""
     run_root = tmp_path / "run"
     _make_repo(run_root, base={"a.txt": "x"}, changed={})
     junit = _junit(run_root / "junit.xml", [("test_login_ok", None, "passed")])
@@ -401,8 +406,48 @@ def test_kernel_round_trip_reflects_zero_value(tmp_path):
 
     ev = evidence_mod.load_evidence(run_root / "sub_evidence" / "scoring.correctness.json")
     v = kernel.verify(_spec(), ev, artifact_root=run_root, verified_at=FIXED_TS)
-    assert v.result == "PASS", v.reasons  # assertion only checks intent_fidelity ∈ {0,.7,1}
-    assert v.value == pytest.approx(0.0)
+    assert v.result == "FAIL"  # hard gate: intent_fidelity >= 0.7 (법칙4)
+    assert any("intent_fidelity < 0.7" in r for r in v.reasons), v.reasons
+    assert v.value is None  # 법칙4 FAIL 시 법칙5(value) 미도달
+
+
+def test_kernel_round_trip_optional_missing_still_passes_at_boundary(tmp_path):
+    """required 전부 충족 + optional 미충족 → intent_fidelity=0.7(경계) 은
+    hard gate(>= 0.7) 를 통과해야 한다 — 0.7 이 PASS/FAIL 경계임을 커널 레벨로 고정."""
+    run_root = tmp_path / "run"
+    _make_repo(
+        run_root,
+        base={"src/auth/service.py": "# placeholder\n"},
+        changed={"src/auth/service.py": "class AuthService:\n    pass\n"},
+    )
+    junit = _junit(run_root / "junit.xml", [("test_login_ok", None, "passed")])
+    criteria = _criteria(run_root / "criteria.json", [
+        {"id": "c1", "required": True, "backing": {"kind": "symbol", "ref": "AuthService"}},
+        {"id": "c2", "required": False, "backing": {"kind": "test", "ref": "test_missing_optional"}},
+    ])
+    evidence_dir = run_root / "evidence"
+    summary = _run(
+        criteria=criteria, submission=run_root, out_dir=evidence_dir,
+        test_junit=junit, git_base="HEAD",
+    )
+    assert summary["emitted"] is True
+    assert summary["value"] == 0.7
+
+    sub_args = measure_submission.build_parser().parse_args([
+        "--submission", str(run_root),
+        "--test-junit", str(junit),
+        "--from-evidence", str(evidence_dir),
+        "--git-base", "HEAD",
+        "--measured-at", FIXED_TS,
+        "--out-dir", str(run_root / "sub_evidence"),
+    ])
+    sub_summary = measure_submission.run(sub_args)
+    assert "scoring.correctness" in sub_summary["emitted"]
+
+    ev = evidence_mod.load_evidence(run_root / "sub_evidence" / "scoring.correctness.json")
+    v = kernel.verify(_spec(), ev, artifact_root=run_root, verified_at=FIXED_TS)
+    assert v.result == "PASS", v.reasons
+    assert v.value == pytest.approx(1.0 * 0.7)  # (tests_passed/tests_total) * intent_fidelity
 
 
 def test_kernel_deficit_preserved_when_producer_not_run(tmp_path):

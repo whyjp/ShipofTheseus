@@ -20,6 +20,10 @@
     {
       "expr": "intent_fidelity == 1.0 or intent_fidelity == 0.7 or intent_fidelity == 0.0",
       "on_fail": "intent_fidelity not in {1.0, 0.7, 0.0} (invalid phase-09 Gate-1 result, rubric.md correctness)"
+    },
+    {
+      "expr": "intent_fidelity >= 0.7",
+      "on_fail": "intent_fidelity < 0.7 — required intent criterion unverified (phase-09 hard gate, rubric.md correctness Gate-1; B4 실측 갭 #1 클로즈)"
     }
   ],
   "value": "(tests_passed / tests_total) * intent_fidelity",

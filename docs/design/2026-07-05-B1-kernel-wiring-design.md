@@ -185,7 +185,7 @@ python skills/theseus-harness/scoring/run_gate.py \
 
 | 옛 prose 게이트 | 대체 |
 |---|---|
-| 정적 게이트 1 의도 일치 | `scoring.correctness` (intent_fidelity — criteria 기계 재검사) |
+| 정적 게이트 1 의도 일치 | `scoring.correctness` (intent_fidelity — criteria 기계 재검사; assertion `intent_fidelity >= 0.7` 로 0.0=required 미충족 시 하드 FAIL — B4 정정, §7 WP-B1d 정정 노트) |
 | 정적 게이트 2 범위 규율 | `scoring.scope_fit` (files_mapped_to_todos ≤ files_touched) |
 | 정적 게이트 3 SOLID | `scoring.solid` (modules_passing_solid·dip_violation) |
 | 정적 게이트 4 테스트 모양 | `scoring.correctness`(tests) + `scoring.coverage` + `scoring.e2e` 값 |
@@ -364,12 +364,24 @@ WP 는 실패** — 재작업. (개별 파일 순증은 허용 — 01/04/06 은 
 | **WP-B1a** | `run_gate.py` 신설(§2 — dogfood 오케스트레이션 이동 + plan/sprint 단계 + gate_history + exit 의미론) + `meta_audit.py --phase-upto`/`deferred` (§2.4) + dogfood 얇은 wrapper 화 + 테스트 | **opus** | (i) fixture run(임시 git repo + 3 선언 아티팩트 + junit)에서 run_gate exit 0/1 이 verdict 와 일치, (ii) `--phase-upto 09` 시 sprint.regression 이 `deferred` 로 분류(FAIL 아님), (iii) dogfood 재실행 verdict·counts 이동 전과 값 동일, (iv) 같은 `--measured-at` 2회 실행 evidence 바이트 동일, (v) `pytest scoring/ -q` 전건 통과 |
 | **WP-B1b** | phase 09 마이그레이션(§3.1~3.3 — 러너 블록 삽입, A/B/C 삭제·강등, 존치 표 재작성) + orchestrator SKILL.md 09행 교체(§3.5) + phase 10 입력 1줄·phase 14 검사 1줄(§5.2) + self_lint 5룰 삭제(§3.2D) + 스크립트 3종 은퇴(A — define_errors 는 producer 동등성 확인 선행) | sonnet | (i) `self_lint.py` all_ok=True (5룰 삭제 후), (ii) §6 표 after 실측 보고 + 5파일 총량 순감, (iii) 저장소 전체 grep 에서 `check_cold_session\|phase_invoke_audit` 참조 0건, (iv) manifest `drift-check` == [] |
 | **WP-B1c** | phase 01/04/06/08 선언 아티팩트 저작 지시(§4 — 각 ≤15줄) + phase 08 CLI 블록 삭제(§3.2A) | sonnet | (i) 각 phase 파일에 관례 경로·스키마 링크·판정 필드 금지·동결 규칙 포함, (ii) §6 표 반영, (iii) self_lint all_ok 유지 |
-| **WP-B1d** | **발화 리허설** — 소형 실 submission(기존 fixture 급 실코드, 실 git diff·실 pytest) 에 대해 `.ShipofTheseus/<rehearsal>/` run 골격 + 3 선언 아티팩트를 §4 지시대로 저작하고 run_gate 를 실행 | sonnet | (i) **run_gate 가 실 submission 에서 발화해 `quality/gate_meta_audit.json` verdict 를 냄**, (ii) **의도적 결함 1개 주입(예: required criterion 의 backing 미충족) 시 exit 1 = FAIL 이 관측되고, 결함 제거 시 pass 로 전환** — 게이트가 실제로 문을 여닫음을 값으로 증명, (iii) plan.dacapo_threshold/tournament_independence 는 리허설 run 의 실 tournament/shadow artifact 로 채워지거나 evidence 부재 FAIL 로 정직 관측(어느 쪽인지 기록), (iv) cold.isolation NA(dispatch log 부재) 정직 기록 |
+| **WP-B1d** | **발화 리허설** — 소형 실 submission(기존 fixture 급 실코드, 실 git diff·실 pytest) 에 대해 `.ShipofTheseus/<rehearsal>/` run 골격 + 3 선언 아티팩트를 §4 지시대로 저작하고 run_gate 를 실행 | sonnet | (i) **run_gate 가 실 submission 에서 발화해 `quality/gate_meta_audit.json` verdict 를 냄**, (ii) **의도적 결함 1개 주입(리허설 실측: DIP claim 위반 주입 — 아래 정정 노트) 시 exit 1 = FAIL 이 관측되고, 결함 제거 시 pass 로 전환** — 게이트가 실제로 문을 여닫음을 값으로 증명, (iii) plan.dacapo_threshold/tournament_independence 는 리허설 run 의 실 tournament/shadow artifact 로 채워지거나 evidence 부재 FAIL 로 정직 관측(어느 쪽인지 기록), (iv) cold.isolation NA(dispatch log 부재) 정직 기록 |
 
 **의존**: WP-B1a → {WP-B1b, WP-B1c} → WP-B1d. WP-B1a 가 임계 경로.
 **WP-B1d 가 B1 의 완료 게이트다** — (ii) 의 FAIL→pass 왕복 관측 없이는 B1 을 완료로
 선언할 수 없다(개선-여지 평가 B4 드레스 리허설의 선행 축소판이며, B4 full-run 리허설을
 대체하지 않는다).
+
+> **정정 (2026-07-05, B4 드레스 리허설 실측 — 게이팅 갭 #1)**: 본 표 초판의 (ii) 예시
+> "required criterion 의 backing 미충족 시 exit 1"은 당시 배선에서 **성립하지 않았다** —
+> `scoring.correctness` 의 assertion 이 도메인(`intent_fidelity ∈ {1.0,0.7,0.0}`)만 검사해,
+> required 전부 미충족(intent_fidelity=0.0)이어도 correctness 는 value 0.0 인 채 **PASS**
+> 였다(하류 sprint.regression 에서만 간접 발각 — intent_fidelity 는 phase-09 하드 게이트가
+> 아니었다). 실제 B1d 리허설(커밋 17147e6)은 그래서 DIP claim 위반 주입(`scoring.solid`
+> 의 `dip_violation == 0` 하드 assertion, mod_b.py 에 `import sqlite3`)으로 FAIL→pass
+> 왕복을 증명했다. B4 갭 클로즈로 `scoring.correctness` 에 assertion
+> `intent_fidelity >= 0.7` 이 추가되어(도메인 {1.0,0.7,0.0}에서 0.0 만 FAIL — required
+> 충족이면 의도 코어는 지켜진 것이므로 0.7·1.0 통과), 이제 초판 예시 그대로 required
+> 미충족이 phase-09 직접 FAIL 이다.
 
 ---
 
