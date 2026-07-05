@@ -115,3 +115,49 @@ def parse_coverage(path: str | Path) -> float:
                 ) from exc
             return rate
     raise ArtifactParseError(f"coverage has neither branch-rate nor line-rate: {p}")
+
+
+_CASE_STATUS_SEVERITY = {"failed": 3, "error": 2, "skipped": 1, "passed": 0}
+
+
+def parse_junit_cases(path: str | Path) -> dict[str, str]:
+    """junit XML → test id 별 상태 맵. 부재/파싱불가 시 ArtifactParseError(기존 규약).
+
+    키: 각 <testcase> 의 name, 그리고 classname 이 있으면 "classname::name" 도 병기.
+    값: failure 자식 → "failed", error → "error", skipped → "skipped", 없으면 "passed".
+    같은 키가 여러 케이스에서 나오면 나쁜 상태 우선(failed > error > skipped > passed)
+    — ref 하나가 여러 케이스를 가리키면 전부 passed 여야 검증된다(보수적).
+    """
+    p = Path(path)
+    if not p.exists():
+        raise ArtifactParseError(f"junit artifact not found: {p}")
+    try:
+        root = ET.parse(p).getroot()
+    except ET.ParseError as exc:
+        raise ArtifactParseError(f"junit not parseable XML: {p}: {exc}") from exc
+
+    result: dict[str, str] = {}
+
+    def _merge(key: str, status: str) -> None:
+        current = result.get(key)
+        if current is None or _CASE_STATUS_SEVERITY[status] > _CASE_STATUS_SEVERITY[current]:
+            result[key] = status
+
+    for tc in root.iter("testcase"):
+        name = tc.get("name")
+        if not name:
+            continue
+        if tc.find("failure") is not None:
+            status = "failed"
+        elif tc.find("error") is not None:
+            status = "error"
+        elif tc.find("skipped") is not None:
+            status = "skipped"
+        else:
+            status = "passed"
+        _merge(name, status)
+        classname = tc.get("classname")
+        if classname:
+            _merge(f"{classname}::{name}", status)
+
+    return result
