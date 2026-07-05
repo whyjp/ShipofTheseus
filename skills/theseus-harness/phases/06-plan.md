@@ -58,6 +58,13 @@ python skills/theseus-harness/scoring/sub_agent_dispatch.py analyze-todos \
 
 자세한 위상 정렬 알고리즘 + 그레이드별 모드 추천: [`../conventions/subagent-trigger.md`](../conventions/subagent-trigger.md).
 
+### plan-todos.json 저작 (B1 §4.3)
+
+canonical `plan/06-plan.md` 확정 직후 `plan/06-plan-todos.json` 저작: TODO 표의 `ID`/`제목`/`모듈` → `{id, text, paths}` 기계적 변환.
+paths glob 은 본 phase §필수 섹션의 "모듈 분할 + 파일 배치(≥5 파일 경로)" 절에서 그대로 취한다 — 새 정보 생산 없음, 기존 계획의 기계 판독 형식화.
+스키마: judgment-gate-producers 설계 §3.3.
+**판정 필드(verified/score/pass/result/verdict) 절대 금지** — todo 는 paths(어디를 볼지)만 담는다, 매핑 판정은 producer(measure_scope_map)가 git diff 대조로 낸다.
+
 ---
 
 ## sprint-50 — Design-Twice (universe philosophy distinct, HARD-RULE 9.ccc)

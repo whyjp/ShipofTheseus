@@ -60,6 +60,13 @@ enumeration 로직을 재사용하므로 존치.
 
 skip 자백 ("production code holistically before tests" / "tight budget" 등) regex reject ([`../conventions/impl-multiverse-strict.md`](../conventions/impl-multiverse-strict.md) ch 정합).
 
+### solid-contract 저작 + criteria backing 보충 (B1 §4.4)
+
+08-δ(refactor) 종료 시 winner 코드에 대해 `impl/08-solid-contract.json` 저작: 모듈별 DIP(`absent_import`/`import_of`)·SRP(`symbol_count_max`) claim.
+**참인 claim 만** — 거짓 claim 은 producer(measure_solid_static) 디스크 재검사에서 실 FAIL 로 관측된다(저작 인센티브가 정직 쪽으로 정렬). contract 미저작 시 `scoring.solid` 결손 FAIL — 저작이 곧 게이트 통과의 전제. 스키마: judgment-gate-producers 설계 §3.4.
+08-ε(log) 시점에 `intent/01-intent-criteria.json` 의 **backing.ref 만** 실 test id 로 보충 가능(kind=test). **criterion 추가·삭제·required 강등 금지**(페이즈 04 동결, §4.2) — implementer 가 기준을 통과 가능한 것으로 바꿔치기하는 경로 차단.
+**판정 필드(verified/score/pass/result/verdict) 절대 금지** — solid-contract 는 claim(무엇을 볼지)만 담는다, 판정은 producer 디스크 재검사 몫.
+
 ## Multiverse fan-out + 다카포 loop (universe 별 5 서브페이즈 head-to-head)
 
 ```

@@ -102,6 +102,12 @@ i- **Q-D9 — Runtime Prerequisite** (v0.7.0 신규, [`../conventions/runtime-pr
 
 답을 `intent/04-autonomy.md` (9 줄 표) + Q-D8 의 verification 본문은 `intent/04-verification.md`, Q-D9 의 runtime-prereq 본문은 `intent/04-runtime-prereq.md` 에 기록. **9 답 + verification 산출물 + runtime-prereq 산출물 모두 valid 해야 페이즈 05 진입** — 페이즈 04 가 마지막 인터럽트이므로 사전 위임 + 검증 명령 + 실행 사전조건 부재 시 후속 자율 진행이 정의 안 된다.
 
+## intent-criteria 확정 (B1 §4.2)
+
+Q-D9 답 확정 직후 `intent/01-intent-criteria.json` in-place 갱신: 사용자 답으로 required/optional 재분류 + 범위 밖 criterion 삭제.
+**이 시점 이후 criterion 의 id/text/required 집합은 동결** — 이후 페이즈(06/08)는 backing.ref 보충만 가능, criterion 추가·삭제·required 변경 금지.
+**판정 필드(verified/score/pass/result/verdict) 절대 금지** — 정련도 backing.ref(무엇을 볼지) 선언만, 판정은 producer 디스크 재검사 몫.
+
 ## Q-D-AUDIENCE + rubric skeleton
 
 ### Q-D-AUDIENCE — commentary policy ([`../conventions/commentary-policy.md`](../conventions/commentary-policy.md), bh)

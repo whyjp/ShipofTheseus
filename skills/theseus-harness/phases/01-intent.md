@@ -33,6 +33,12 @@ j- **Grade signals 산출 (v0.9.17 신규)** — `intent/01-grade-signals.json` 
   - `mindmap_*` 는 §a~§i 와 별도로 마인드맵 markdown 파싱.
   - boolean 신호 (`multi_scenario` / `external_evaluator` / `fe_be_split`) 는 §a 무엇을 / §d 제약 / §g 성공 지표에서 *명시 표현* 검출 시 True.
 
+k- **intent-criteria 저작** (B1 §4.1) — `intent/01-intent-criteria.json` 산출: §a 관찰 결과 + §g 성공 지표를 criterion 배열로 변환.
+  - 각 항목 `{id, text, required, backing:{kind, ref}}`. kind 화이트리스트(test/symbol/diff/file): judgment-gate-producers 설계 §3.2.
+  - 이 시점 test id 미존재 — kind 는 file/symbol/diff 위주 잠정, test backing 은 페이즈 08 이 보충(§4.4 동결 규칙).
+  - **required criterion ≥ 1 의무** — 0 이면 producer 가 emit 거부 → 커널 FAIL(저작 실패가 조용히 통과되지 않는다).
+  - **판정 필드(verified/score/pass/result/verdict) 절대 금지** — backing.ref(무엇을 볼지)만 담는다, 판정은 producer 디스크 재검사 몫.
+
 ## 성공 기준
 
 a- 문서 자족성 — 원문을 보지 않은 사람이 이 문서만 읽고 무엇을 만들어야 할지 알 수 있다.
