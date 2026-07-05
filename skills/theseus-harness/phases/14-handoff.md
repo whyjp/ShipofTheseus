@@ -22,9 +22,9 @@ f- **추천 후속** — 비평가가 deferred 한 항목 + 범위 외이지만 
 g- **회귀 이력** — 페이즈 11 트리거된 스프린트들과 한 줄 해소.
 **g-2 — Knowledge Portfolio refresh** (sprint-50, HARD-RULE 9.iii) — 본 회차에서 *학습한 통찰* ≥ 3 항목 의무. 각 §-level header (keyword: `lesson` / `learned` / `insight` / `finding` / `takeaway` / `observation` / `discovery` / `학습` / `교훈` / `발견` / `관찰` / `통찰`) + 본문 ≥80 chars. distinct topic ≥ 3. 단순 산출물 list 가 아니라 *insight*. 격언: Hunt & Thomas, Pragmatic Programmer Ch.1 — *"Treat your knowledge as an investment portfolio."* CLI: `scoring/knowledge_portfolio_check.py`.
 h- **시간 요약** — 최초 프롬프트 → 핸드오프 총 경과, 페이즈별 누적 (텍스트 막대 표).
-i- **웹뷰 실행 방법** — sprint-36 부터 prebuilt shell + viewer-runtime 으로 전환. cold session 진행 중 viewer 가 이미 떠 있다 (phase 00 pre-bootup). 종료 시 `bash .ShipofTheseus/<프로젝트>/viewer-runtime/viewer-down.sh` (또는 PowerShell `viewer-down.ps1`) 호출 의무 — PID 누수 차단. dev mode 가 필요한 경우 `cd webview && bun install && bun run dev` 옵션. URL 은 `viewer-runtime/viewer.lock.json` 의 `viewers[].url`.
+i- **웹뷰 실행 방법 (viewer 를 산출한 경우)** — prebuilt shell + viewer-runtime 이 옵션(advisory, §8 동결 B2-F3). phase 00 pre-bootup 으로 떠 있는 경우 종료 시 `bash .ShipofTheseus/<프로젝트>/viewer-runtime/viewer-down.sh`(또는 `viewer-down.ps1`) 호출 — PID 누수 차단(조건부 의무, 부팅한 경우만). dev mode 옵션 `cd webview && bun install && bun run dev`. URL 은 `viewer-runtime/viewer.lock.json` 의 `viewers[].url`.
 
-i-3- **Viewer teardown 의무** (sprint-36) — orchestrator 가 본 phase 14 종료 시 `python skills/theseus-harness/scoring/pre_bootup.py teardown --root .ShipofTheseus/<프로젝트>` 호출. lock 의 PID 종료 + lock 정리. 누수 시 다음 cold session 의 port 충돌 야기.
+i-3- **Viewer teardown (부팅한 경우 조건부 의무)** — 부팅했다면 phase 14 종료 시 `python skills/theseus-harness/scoring/pre_bootup.py teardown --root .ShipofTheseus/<프로젝트>` 호출. lock 의 PID 종료 + lock 정리 — 부팅하지 않은 run 은 해당 없음.
 i-2- **Phase lineage viewer cross-link** ([`../conventions/phase-lineage-viewer.md`](../conventions/phase-lineage-viewer.md), br v0.9.22) — 본 핸드오프 본문에 `.ShipofTheseus/<프로젝트>/lineage.md` cross-link 의무 (G3+). lineage.md 가 phase 00 → 14 전체 흐름 + dacapo 요약 + fingerprint chain 단일 view. 본 페이즈 종료 시점에 orchestrator 가 final_outcome=HANDOFF 박고 fingerprint chain 무결성 최종 검증.
 j- **Decision-support framing** ([`../conventions/decision-support-framing.md`](../conventions/decision-support-framing.md), v0.9.18) — 결정 질문 (Q1~QN) 마다 다음 3 항목 본문 의무 :
   - **Operational implications** — 결과가 운영에 의미하는 것 (1-2 문단)
@@ -135,11 +135,11 @@ python skills/theseus-harness/scoring/knowledge_portfolio_check.py \
 
 격언: Hunt & Thomas, *Pragmatic Programmer*, Ch.1 — *"Your Knowledge Portfolio."*
 
-## sprint-52 — Viewer Finalization Closure CLI 의무 호출 (HARD-RULE 9.nnn / 9.ppp)
+## sprint-52 — Viewer Finalization Closure (HARD-RULE 9.nnn / 9.ppp, 조건부 존치 — B2-F3)
 
-`pre_bootup.py` 가 phase 00 직전 박은 *빈 골격* (lineage.json 의 `mermaid_flowchart="cold session 미시작"`, `fingerprint_chain=[]`, `project_run="pending"` 등) 은 본 phase 14 가 *반드시* refresh. 누구도 안 채우면 viewer 가 placeholder 상태로 마감 — sprint-43 declared=invoked 패턴의 finalize 차원 위반.
+**생산 의무는 §8 동결로 해제됐다** — viewer(lineage.json/webview.json/dashboard.json) 를 산출한 경우에 *한해* 조건부 진실성 의무가 남는다: `pre_bootup.py` 가 phase 00 직전 박은 *빈 골격*(`mermaid_flowchart="cold session 미시작"`, `fingerprint_chain=[]`, `project_run="pending"` 등)을 실 데이터로 refresh 하지 않으면 viewer 가 거짓 placeholder 상태로 마감된다 — 이건 만든 산출물의 진실성 문제이지 산출 자체의 의무가 아니다. **viewer 산출물이 존재하지 않는 run 은 아래 호출 해당 없음.**
 
-phase 14 산출 *직후* 의무 호출 (3 종 CLI literal Bash):
+viewer 산출물이 존재하는 경우, phase 14 산출 직후 호출 (3 종 CLI literal Bash):
 
 ```bash
 # HARD-RULE 9.nnn — phase 14 finalize CLI invoke 의무 (Viewer Finalization Closure)
@@ -160,11 +160,11 @@ python skills/theseus-harness/scoring/placeholder_grep.py \
     --max-violation-count 0
 ```
 
-- exit 0 (3 종 모두) → handoff 종료
-- exit 1 (어느 하나) → 위반 위치 보강 후 phase 재진입
-- **(B1 §5.2)** `quality/gate_meta_audit.json` 존재 + `verdict == "pass"` 확인도 본 산출물
-  존재 검사 목록에 포함 — 부재 시 phase 09 run_gate.py 미호출 신호, phase 09 재진입 강제.
+- viewer 산출물 존재 시: exit 0 (3 종 모두) → handoff 종료 / exit 1(어느 하나) → 보강 후 재진입
+- viewer 미산출 run: 위 3 종 호출 해당 없음(§8 동결 — 강제 아님)
+- **(B1 §5.2)** `quality/gate_meta_audit.json` 존재 + `verdict == "pass"` 확인은 별개로 존치
+  — 부재 시 phase 09 run_gate.py 미호출 신호, phase 09 재진입 강제.
 
-본 §은 sprint-52 의 *Viewer Finalization Closure* — pre_bootup 의 *emit-skeleton* 과 대칭. cold session 시작 시 빈 골격 emit ↔ 종료 시 실 데이터 refresh 의 양 끝점 (sprint-36 sprint-52 dual closure).
+viewer 를 산출하는 경우, pre_bootup 의 *emit-skeleton* 과 본 §의 refresh 가 대칭을 이룬다(cold session 시작 시 빈 골격 emit ↔ 종료 시 실 데이터 refresh).
 
 격언: declared = invoked (sprint-43) — 본 §은 그 패턴의 viewer 차원 적용.

@@ -464,81 +464,11 @@ phase 01 의도 추출 시 `domain` field 가 [`../conventions/domain-pack.md`](
 - [`feedback_analytical_bound_validation.md`](../../../memory/feedback_analytical_bound_validation.md) — *cross-validation* 의 도메인 직교 확장.
 
 
-## §V8 — Viewer-readiness 사전 차단 (sprint-40 PR-C 신규)
+## §V8 — Viewer-readiness (advisory, §8 동결 B2-F3 — 구 사전 차단 게이트)
 
-phase 09 진입 시 phase 12/13 viewer 산출 디렉터리 *외피 존재* 사전 검사. **목적**: pre-cold-session-bootup.md 가 빈 골격을 사전 생성했는지 확인 — 부재 시 phase 00 재실행 트리거. (pre-bootup 누락 → 12/13 종료 게이트 fail → 시간 낭비. 09 사전 차단으로 빠른 실패.)
+phase 12/13 viewer 생산이 옵션(advisory)으로 강등되면서 본 사전 차단도 함께 강등 — **phase 09 진입은 viewer 디렉터리 존재와 무관하게 진행**. viewer 를 산출하기로 한 경우에 한해, `webview/`·`interactive-viewer/` 디렉터리·`index.html` 이 있는지 참고 확인 *가능*(옵션 체크, gate 아님). 빈 골격이든 채워졌든 phase 09 를 막지 않는다 — 내용 검사는 실행하는 경우 phase 12/13 자체 책임.
 
-### 검사 항목
-
-| 검사 | G2 | G3+ | G4+ | fail 시 |
-|---|---|---|---|---|
-| `webview/` 디렉터리 존재 | ✓ | ✓ | ✓ | phase 00 (pre-bootup) 재실행 |
-| `webview/index.html` 빈 골격 또는 채워짐 | ✓ | ✓ | ✓ | 동일 |
-| `interactive-viewer/` 디렉터리 존재 | (도메인 매칭 시) | ✓ | ✓ | 동일 |
-| `interactive-viewer/index.html` 빈 골격 또는 채워짐 | (매칭 시) | ✓ | ✓ | 동일 |
-
-**빈 골격 OK** — phase 12/13 가 *내용* 채움을 보장. §V8 = *디렉터리 존재* 만 검사 (phase 12/13 종료 게이트 = *내용* 검사).
-
-### 검사 알고리즘 (orchestrator phase 09 entry)
-
-```python
-import pathlib
-
-def check_phase09_viewer_readiness(project_root: pathlib.Path, grade: str, domain_matched: bool) -> tuple[bool, list[str]]:
-    missing = []
-    # webview always
-    if not (project_root / 'webview').is_dir():
-        missing.append('webview/ 디렉터리 부재 (pre-cold-session-bootup.md 누락 신호)')
-    if not (project_root / 'webview' / 'index.html').exists():
-        missing.append('webview/index.html 부재')
-    # interactive-viewer
-    require_iv = (grade != 'G2') or domain_matched
-    if require_iv:
-        if not (project_root / 'interactive-viewer').is_dir():
-            missing.append('interactive-viewer/ 디렉터리 부재')
-        if not (project_root / 'interactive-viewer' / 'index.html').exists():
-            missing.append('interactive-viewer/index.html 부재')
-    return (len(missing) == 0, missing)
-```
-
-### 산출물 — `quality/gate_v8_viewer_readiness.json`
-
-```json
-{
-  "schema_version": "0.9.45",
-  "grade": "G4",
-  "domain_matched": true,
-  "checked_at": "...",
-  "checks": [
-    {"path": "webview/", "kind": "dir", "exists": true},
-    {"path": "webview/index.html", "kind": "file", "exists": true, "size": 2451},
-    {"path": "interactive-viewer/", "kind": "dir", "exists": true},
-    {"path": "interactive-viewer/index.html", "kind": "file", "exists": true, "size": 1842}
-  ],
-  "missing": [],
-  "verdict": "pass"
-}
-```
-
-### 게이트 룰
-
-- `missing == []` 의무 — 미달 시 phase 09 진입 거부, phase 00 (pre-cold-session-bootup) 재실행 강제.
-- *빈 골격 OK* — 사전 차단의 목적 = *디렉터리 외피* 만 보장, *내용* 은 12/13 의 종료 게이트 책임.
-
-### phase 09 진입 시 검증 (B1 정정 — self_lint 규칙 아님, phase 12/13 종료 게이트와 통합)
-
-`quality/gate_v8_viewer_readiness.json` 의 `verdict == "pass"` 검증. fail 시 phase 09 진입 거부.
-
-### 메모리 정합
-
-- [`feedback_dual_pressure_json_schema.md`](../../../memory/feedback_dual_pressure_json_schema.md) — *세 단* 압력 (pre-bootup 디렉터리 / phase 12-13 종료 / viewer 자체 빈 화면).
-- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — 컨벤션 선언 ≠ 런타임 집행 갭 직접 정정.
-
-### 안티 패턴
-
-a- **phase 12/13 종료 게이트만 두고 09 사전 차단 skip** — 12 까지 진행한 뒤 fail → sprint loop 대량 자원 낭비. 09 사전 차단이 효율.
-b- **빈 골격 검사를 *내용* 검사로 대체** — 09 = 디렉터리 외피, 12/13 = 내용. 책임 분리.
-c- **`webview/index.md` 마크다운으로 `webview/index.html` 우회** — v0.9.44 회차 직접 사례. 본 §V8 grep 자동 차단 (`.html` 확장자 의무).
+재승격 경로: `frozen.viewer_mandatory` A/B 실증.
 
 ## §자동 CLI 호출 (sprint-43 PR-E)
 

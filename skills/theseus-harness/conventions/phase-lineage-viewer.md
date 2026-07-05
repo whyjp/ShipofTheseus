@@ -3,15 +3,15 @@ id: phase-lineage-viewer
 category: meta
 applies-to-phases: '[all]'
 applies-to-grades: '[all]'
-trigger-when: 'phase exit'
+trigger-when: 'phase exit (advisory, §8 동결 — 산출 시)'
 indexed-in: conventions/INDEX.md
 ---
 
-# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 + Gantt (sprint-16 / v0.9.22 + sprint-34 / v0.9.39 확장)
+# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 + Gantt (how-to, 생산 의무 §8 동결 B2-F3)
 
 ## 한 줄 요약
 
-**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 *Mermaid flowchart + Mermaid gantt* 두 view 로 누적 가시화.** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성. **sprint-34 / v0.9.39 — Mermaid `gantt` chart 추가 (timeline view) + 모든 그레이드 (G1~G5) 의무화**. 거짓 백필/위조 차단 — gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화.
+**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 *Mermaid flowchart + Mermaid gantt* 두 view 로 누적 가시화 *가능*(생산 의무는 §8 동결로 해제 — 산출하는 경우의 how-to).** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성. **sprint-34 / v0.9.39 — Mermaid `gantt` chart 추가 (timeline view), 산출하는 경우 전 그레이드 권장**. 산출한 경우 거짓 백필/위조 차단은 조건부 존치 — gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화.
 
 ## 1. bq vs br 책임 분리
 

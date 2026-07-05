@@ -67,79 +67,20 @@ paths glob 은 본 phase §필수 섹션의 "모듈 분할 + 파일 배치(≥5 
 
 ---
 
-## sprint-50 — Design-Twice (universe philosophy distinct, HARD-RULE 9.ccc)
+## universe philosophy distinct (동결 advisory, 구 HARD-RULE 9.ccc)
 
-> 격언: Ousterhout, *A Philosophy of Software Design*, Ch.11 — *"Design It Twice"*. 같은 문제에 대한 두 번째 설계는 *반드시* 첫 번째와 다른 *철학* 으로 출발해야 한다. 둘 다 modular variant 면 *진짜로 두 번 설계한 게 아니다*.
+Ousterhout *Design It Twice* 취지 — universe 별 *설계 철학* 분기는 **가능하며 권장**(§8 동결: 분기 편익 A/B 미실증, 강제 아님).
 
-기존 multiverse (G3=3 / G4=4 / G5=6 universe) 는 *코드 분기* 만 강제했다. sprint-50 부터는 universe 별 *설계 철학* 도 distinct 의무.
+meta.md frontmatter 에 `philosophy:`(modular/oop/functional/data-driven/event-driven/actor/dsl-first 카탈로그, `--allow-extra` 로 확장 가능) 선언 *가능*. 각 universe `06-plan.md` 의 architectural decision header(Module boundary/Communication/State/Error/Concurrency/Data flow/Extension/Persistence/Event/Control) ≥3 개 작성 *권장* — 검증은 `universe_philosophy_distinct.py`(물리 존치, CLI 로 수동 실행 가능)로 *선택적* 수행. 강제 호출·vacuous-PASS 차단 게이트는 해제됐다.
 
-### universe 별 meta.md frontmatter 의무 신규 필드
+### universe candidate frontmatter created_at 진실성 (조건부 존치, sprint-52 PR-D, HARD-RULE 9.ooo)
 
-```yaml
----
-universe: 1
-philosophy: modular   # 또는 oop / functional / data-driven / event-driven / actor / dsl-first
----
-```
-
-7 카탈로그 외 값은 invocation 시점 `--allow-extra` flag 로 **사전 위임** 처리 — phase 06 실행 중 별도 인터럽트 없음 (`feedback_no_human_ack.md` 와 충돌 없음). 플래그 지정 자체가 카탈로그 *확장* (영구 변경) 에 대한 1 회성 승인이며 다음 sprint INDEX 갱신에 반영.
-
-### universe candidate frontmatter `created_at` 의무 (sprint-52 PR-D, HARD-RULE 9.ooo)
-
-`plan/candidates/universe-N/{meta.md, 06-plan.md, 07-cold-read.md}` 산출 시 frontmatter `created_at` 의무 — *실 ISO timestamp* (초 단위 포함). 정시 stub (`T..:00:00Z`, `T..:00Z`) 금지.
+**candidate 파일을 산출하는 경우** universe candidate frontmatter `created_at` 은 `plan/candidates/universe-N/{meta.md, 06-plan.md, 07-cold-read.md}` 에서 실 ISO timestamp 의무(정시 stub `T..:00:00Z` 금지) — 만든 산출물이 거짓 시각을 담지 않게 하는 진실성 룰이며, universe 산출 자체의 의무와는 별개다. self_lint **C-UNIV-CREATED-AT** 존치.
 
 ```yaml
----
-skill_name: shipoftheseus:theseus-orchestrator
-skill_version: <semver>
-phase: 06-plan-candidate    # 또는 07-cold-read
-universe: universe-N
-created_at: "2026-05-10T11:08:23Z"   # 초 단위 정시 금지
+created_at: "2026-05-10T11:08:23Z"   # 산출하는 경우, 초 단위 정시 금지
 fingerprint: PENDING                  # phase 14 lineage_finalize 가 chain 채움
-prev_fingerprint: PENDING_FROM_<source>
----
 ```
-
-self_lint **C-UNIV-CREATED-AT** 검증 — `plan/candidates/universe-*/{06-plan.md, 07-cold-read.md}` 의 `created_at` 부재 / 정시 stub 감지 시 fail. phase 14 lineage_finalize 가 mtime fallback 으로 처리하지만, *근본 원인* 은 phase 06 산출 시점의 timestamp 누락.
-
-격언: declared = invoked (sprint-43) — 본 §은 그 패턴의 frontmatter 차원. *형식 선언* 만 있고 *실 값* 없으면 finalize 단계에서 stub fallback 부담이 누적.
-
-### universe 별 06-plan.md 본문 의무 — architectural decision header ≥3
-
-각 universe 의 `06-plan.md` 는 다음 중 ≥3 개 §-level 표제 의무 (philosophy 는 *선언* 이고, 본문은 *행동*):
-
-- Module boundary / 모듈 경계
-- Communication style / 통신 방식
-- State management / 상태 관리
-- Error model / 에러 모델
-- Concurrency model / 동시성
-- Data flow / 데이터 흐름
-- Extension point / 확장 지점
-- Persistence / 영속성
-- Event model / 이벤트 모델
-- Control flow / 제어 흐름
-
-universe 간 *unique* 결정 (그 universe 만의 결정) ≥1 보유 비율 ≥ 50%. 이름만 다르고 결정 동질이면 fail (premortem §3-2 정합).
-
-### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
-
-phase 06 tournament 시작 *직전* (universe meta.md 확정 후) 의무 호출:
-
-```bash
-python skills/theseus-harness/scoring/universe_philosophy_distinct.py \
-    --project-root .ShipofTheseus/<프로젝트>/ \
-    --grade <G3|G4|G5> \
-    --json-out .ShipofTheseus/<프로젝트>/plan/universe_philosophy_distinct.json
-```
-
-- exit 0 → tournament 진입
-- exit 1 → universe meta.md 또는 06-plan.md 재작성 강제. `intent/00-violation.md` 기록 + 페이즈 06 재진입.
-
-### vacuous PASS 차단
-
-- universe-N/meta.md 에 `philosophy:` 필드만 있고 본문 결정이 모두 동일 = *결정 동질* fail.
-- universe 수 부족 (G4 인데 universe ≥3 만 있음) = fail (sprint-13 multiverse-width-default-bump 정합).
-- 카탈로그 외 philosophy 를 `--allow-extra` 없이 declare = fail.
 
 ## 입력
 - `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-critique.md`, `intent/05-decisions.md`
@@ -262,18 +203,11 @@ d- HARD-RULE 9.a 본문 의무 강화로 *plan 안에서* implementation guidanc
 
 sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, Truck dataclass, EventQueue heap), 의사코드 (`_dispatch_event(ev)` switch), 클래스 시그니처 (`SchedulerLoop.run(env)`, `EventQueue.push/pop`) 모두 박혀있었음. 본 sprint-05-e 룰은 그 패턴을 *명시 의무* 로 격상.
 
-## 폭 default 5/7/9 + per-module use-case + plan sprint loop
+## 폭 + per-module use-case + plan sprint loop
 
-### 폭 default 격상 ([`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md), bc)
+### 폭 (manifest 단일 권위, [`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md) 동결(advisory))
 
-| Grade | 폭 default | 옵션 default (사용자 명시 ack) | 비고 |
-|---|:-:|:-:|---|
-| G2 | 2 | n/a | single 또는 2 후보 |
-| G3 | **5** (← 3) | 10 | axis 카탈로그 상위 5 활용 |
-| G4 | **7** (← 4) | 12 | 5 시드 + 2 axis (FE+BE × stance) |
-| G5 | **9** (← 6) | 16 | depth 2 자식 분기 + 4 axis 추가 |
-
-budget tight 시 fallback 폭 + `fallback_reason` frontmatter 의무 ([`../conventions/budget-aware-fallback.md`](../conventions/budget-aware-fallback.md)). self_lint C-MWDB 가 검증.
+폭 = `pipeline.manifest.json` `multiverse_widths` 단일 권위(활성 G2=1/G3=3/G4=4/G5=6). 격상 폭(G3=5/G4=7/G5=9)은 `frozen_widths` 참조 — 가능하나 의무 아님(사용자 명시 ack 시 적용).
 
 ### per-module use-case / sequence 다이어그램 default ([`../conventions/per-module-diagram-fan-out.md`](../conventions/per-module-diagram-fan-out.md), bb)
 

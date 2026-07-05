@@ -2892,11 +2892,10 @@ def check_pre_cold_session_bootup(skill_root: Path) -> list[str]:
                "lineage_skeleton", "webview_skeleton", "interactive_skeleton"]:
         if f"def {fn}" not in pbody:
             issues.append(f"pre_bootup.py 함수 {fn} 부재")
-    # phase 00 본문에 pre-bootup step 명시
-    p00 = skill_root / "phases" / "00-naming.md"
-    if p00.exists() and "pre_bootup.py bootstrap" not in _read(p00):
-        issues.append("phases/00-naming.md: 'pre_bootup.py bootstrap' step 누락")
-    # phase 14 본문에 teardown 명시
+    # (B2-F3, sprint-52 이후 동결) phase 00 의 'pre_bootup.py bootstrap' 문자열 요구는
+    # 삭제됨 — 부팅은 advisory(옵션)로 강등, 문자열 존재를 의무의 대리 지표로 삼는
+    # 키워드-핀(P2) 잔재를 남기지 않는다. 능력(CLI) 자체는 pre_bootup.py 존재로 검증됨.
+    # phase 14 본문에 teardown 명시(부팅한 경우 조건부 의무 — 진실성/위생, 존치)
     p14 = skill_root / "phases" / "14-handoff.md"
     if p14.exists() and "pre_bootup.py teardown" not in _read(p14):
         issues.append("phases/14-handoff.md: 'pre_bootup.py teardown' step 누락")

@@ -69,18 +69,18 @@
 | modeling-shortcuts | planning | [02,03,05,06,09] | [all] | heuristic / approximation 사용 시 |
 | models | core | [all] | [all] | always |
 | multiverse-impl-fan-out | impl | [08] | [G3,G4,G5] | always |
-| multiverse-width-default-bump | planning | [06,08] | [G3,G4,G5] | always |
+| multiverse-width-default-bump | planning | [06,08] | [G3,G4,G5] | frozen(advisory) |
 | nfr-derivation | quality | [01,09] | [all] | NFR derived |
 | parallel-cold-review | interview | [03] | [G3,G4,G5] | always |
 | per-module-diagram-fan-out | mindmap | [06,08] | [all] | 모듈 ≥ 4 |
-| phase-lineage-viewer | meta | [all] | [all] | phase exit |
+| phase-lineage-viewer | meta | [all] | [all] | phase exit (advisory, §8 동결 — 산출 시) |
 | phase-state-machine | core | [all] | [all] | phase enter / phase exit |
 | plan-tournament-scoring-strict | tournament | [06] | [all] | tournament 산출 |
 | plan-tree | planning | [06] | [G3,G4,G5] | always |
 | polyglot-code-quality | quality | [09] | [all] | always |
-| prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit |
-| pre-cold-session-bootup | meta | [all] | [all] | phase 00 enter 직전 |
-| viewer-runtime | meta | [all] | [all] | 3 viewer 공통 (auto-refresh) / cold session start/end (lifecycle) |
+| prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit (advisory, §8 동결 — 산출 시) |
+| pre-cold-session-bootup | meta | [all] | [all] | frozen(advisory) — 옵션 부팅 시 |
+| viewer-runtime | meta | [all] | [all] | advisory, §8 동결 — 3 viewer 공통(auto-refresh)/lifecycle, 산출 시 |
 | premortem-friction | interview | [02,03,07] | [G3,G4,G5] | always |
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |

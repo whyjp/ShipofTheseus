@@ -35,7 +35,7 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > | ----- | ---------- |
 > | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/14-handoff.md` (3개) |
 > | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
-> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **refresh 1**: `intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` + **refresh 2**: `intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` + `plan/{tournament-NN.md (≥ 2), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` (plan body 8 항목 의무 — implementation guidance 포함, sprint-21 정공) + `impl/{candidates/universe-N/실 코드 + tests, tournament-impl-NN.md (≥ 1), shadow-grade-impl-NN.json, dacapo-rerun-impl-NN.md (≥ 1), dacapo-flow.md, 08-impl-log.md (canonical, ≥ winner 80% inline 또는 shared schema)}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 45+) |
+> | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **refresh 1**: `intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` + **refresh 2**: `intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` + `plan/{tournament-NN.md (≥ 2), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` (plan body 8 항목 의무 — implementation guidance 포함, sprint-21 정공) + `impl/{candidates/universe-N/실 코드 + tests, tournament-impl-NN.md (≥ 1), shadow-grade-impl-NN.json, dacapo-rerun-impl-NN.md (≥ 1), dacapo-flow.md, 08-impl-log.md (canonical, ≥ winner 80% inline 또는 shared schema)}` + `sprints/01..03/{inputs,report}.json` (webview 옵션 — §8 동결 advisory, B2-F3) (총 37+) |
 > | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + stop_policy(manifest) 충족까지 sprint(설계 B2 §2.2 — 절대 임계 아님) |
 > | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
 >
@@ -61,8 +61,8 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > | 09 게이트 | **(B1) `run_gate.py --phase-upto 09` 호출 → `quality/gate_meta_audit.json` verdict==pass 의무** (커널 CheckSpec: scoring.correctness/scope_fit/solid/coverage/e2e/fe_be_parity — meta_audit 가 the-gate, HARD-RULE 9.f) + 존치 게이트(rubric-targeted-quality-gates · score-rubric-objectivity · test-invariants · nfr-derivation · readme-numbers-from-summary(9.bb) · reproducibility-doublecheck(9.cc) · magic-number-traceability(9.dd) · dead-code-zero(9.ee) · submission-portability(9.ff) · comment_intent_check.py(9.ggg) · extension_to_artifact_trace.py(9.jjj)) — 상세: `../theseus-harness/phases/09-quality-gates.md` |
 > | 10 스프린트 | intent-plan-impl-sprint-trinity · grader-in-sprint · **regression §2** (sprint loop, sprint-37 PR-AE 통합) · budget-saturation-loop · **sprint-narrative §2 §4** (delta + lessons/stagnation, sprint-37 PR-AF 통합) · evidence-driven-sprint-planning · **regression-tdd-gate** (sprint-34, sprint iteration trigger) · **(sprint-50) refactor_not_rewrite_ratio.py (HARD-RULE 9.hhh, sprint_type-aware)** |
 > | 11 회귀 바이섹트 | **regression §3** (lint autogen, sprint-37 PR-AE 통합) · **regression-tdd-gate** (sprint-34, regression_log binary search) |
-> | 12 theseus-view | prebuilt-shell-runtime-json · phase-lineage-viewer · viewer-runtime · **(sprint-40 PR-C) phase 12 §종료 게이트 — webview/{index.html, data/webview.json, assets/{app.js, mermaid.min.js, marked.min.js, styles.css}} 6 파일 강제 + webview/exit_gate.json emit** · webview-builder agent invoke 의무 |
-> | 13 interactive-viewer | prebuilt-shell-runtime-json · viewer-runtime · interactive-viewer-builder agent · **(sprint-40 PR-C) phase 13 §종료 게이트 — interactive-viewer/{index.html, dashboard.json, assets/app.js} 강제 + dashboard.json widgets ≥ 1 (G3+) / ≥ 3 (G4+, kpi_grid+topology+metric_chart 의무) + interactive-viewer/exit_gate.json emit** · **(sprint-40 PR-D) HARD-RULE 9.nn — G4+ phase 13 invoke step 강제** |
+> | 12 theseus-view (옵션, §8 동결 advisory) | prebuilt-shell-runtime-json · phase-lineage-viewer · viewer-runtime — 생산 의무 해제, 산출 시 키 정직성만 조건부 존치(9.oo) |
+> | 13 interactive-viewer (옵션, §8 동결 advisory) | prebuilt-shell-runtime-json · viewer-runtime · interactive-viewer-builder agent — 생산 의무 해제(구 invoke 강제·widget 하한·종료 게이트), 산출 시 키 정직성만 조건부 존치(9.nn) |
 > | 14 핸드오프 | results-decision-mapping · phase-lineage-viewer (**sprint-34 gantt + 모든 그레이드**) · decision-support-framing · **(sprint-50) knowledge_portfolio_check.py — Knowledge Portfolio refresh (HARD-RULE 9.iii)** |
 >
 > **9.a~c 본문 의무 (페이즈 06/08 산출물 구조)** — 본 entry skill 에 직접 박힘 (실 코드 외부 repo 따라 구현 가능 의무):
@@ -78,22 +78,10 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > - 9.d Da Capo산출물 본문 의무 (frontmatter 외): `tournament-NN.md` (6-dim sub-scores 표 + winner reasoning + cross-universe 차이집합), `dacapo-rerun-NN.md` (lesson 본문 + Step F-G detail), `dacapo-flow.md` (bq 의무 — Mermaid + timeline + step trace per round)
 > - 9.b `impl/08-impl-log.md`: TODO ID 매핑 ≥ 3 / 모듈명 명시 / 인터페이스 노출
 > - 9.c G3+ universe N `06-plan.md`: 시드별 의미 분기 ≥ 20 diff 라인 (universe-1 vs universe-2 동일 ≠ 형식적 분기)
-> - **9.nn — G4+ Phase 13 invoke step 강제 (sprint-40 PR-D 신규)**:
->   - phase 12 종료 marker 박힘 후 orchestrator 가 *자동* phase 13 진입 의무 — agent 자율 skip 금지.
->   - phase 13 진입 시 `interactive-viewer-builder` agent invoke 의무 (subagent_type=`interactive-viewer-builder`).
->   - phase 13 종료 marker 박힘 *직전* `interactive-viewer/exit_gate.json` 의 `verdict == "pass"` 검증 (phase 13 §종료 게이트 1:1 정합).
->   - 도메인 미매칭 + skip 시 `handoff/14-handoff.md` 사유 1줄 의무 (regex `phase 13 .* skip|interactive-viewer .* skip`).
->   - **증거 회피 사례** — simulation-bench 001 v0.9.44 g4-v2 회차 (G4) 가 `interactive-viewer/` 디렉터리 자체 부재 + phase 13 종료 marker 자동 진행. 본 9.nn = 그 silent skip 차단.
-> - **9.oo — Phase 12 invoke step 강제 (sprint-40 PR-D 신규, 모든 grade)**:
->   - phase 11 종료 후 (또는 phase 09 종료 후 G2 시) phase 12 자동 진입.
->   - phase 12 진입 시 `webview-builder` agent invoke 의무.
->   - phase 12 종료 marker 박힘 *직전* `webview/exit_gate.json` 의 `verdict == "pass"` 검증.
->   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 `webview/index.md` 마크다운 표 만 박고 `webview/index.html` + `data/webview.json` + `assets/*.{js,css}` 6 파일 통째 부재. 본 9.oo = 차단.
-> - **9.pp — pre-cold-session-bootup 자동 호출 의무 (sprint-40 PR-D 신규)**:
->   - phase 00 진입 *직전* orchestrator 가 `python skills/theseus-harness/scoring/pre_bootup.py bootstrap --root <project>` 자동 호출.
->   - 호출 결과로 lineage / webview / interactive-viewer 빈 골격 디렉터리 + JSON 골격 + viewer-runtime/{up.{sh,ps1}, lock} 자동 생성.
->   - 미호출 시 phase 09 §V8 viewer-readiness 게이트가 fail → phase 00 재실행 강제 (양쪽 압력).
->   - **증거 회피 사례** — v0.9.44 g4-v2 회차 가 pre-bootup 자동 호출 0 → `webview/`, `interactive-viewer/` 디렉터리 통째 부재 → 그러나 phase 09 통과. 본 9.pp = 차단.
+> - **9.nn/9.oo/9.pp — viewer 3종 invoke·부팅 (구 강제, §8 동결 advisory, B2-F3)**:
+>   - phase 12/13 자동 진입·agent invoke·종료 게이트(exit_gate.json)·pre-bootup 자동 호출은 모두 생산 의무 해제 — 실행 *가능*(옵션), silent skip 이 더는 위반이 아니다.
+>   - **산출하는 경우에 한해** 조건부 진실성 존치: emit 하는 키가 dummy/거짓이면 안 됨(9.oo), lineage/webview/dashboard 를 실제로 부팅했다면 teardown 의무(9.pp).
+>   - 재승격 경로: `frozen.viewer_mandatory` A/B 실증.
 > - **9.kkk — Prompt meta extractor CLI (sprint-51 PR-A/C 신규, 도메인 무관 prompt-driven seed)**:
 >   - phase 04 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/prompt_meta_extractor.py --prompt-file <prompt> --output .ShipofTheseus/<proj>/intent/00-prompt-meta.json` 자동 호출 의무.
 >   - 8 메타-카탈로그 추출: output_schemas / readme_required_items / decision_questions / evaluation_dimensions / anti_patterns / explicit_constraints / default_warnings / conditional_obligations.
