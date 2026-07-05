@@ -286,3 +286,245 @@ def test_cli_exit_code_matches_verdict(tmp_path: Path) -> None:
     report = json.loads((run_root / "quality" / "gate_meta_audit.json").read_text(encoding="utf-8"))
     assert proc.returncode == run_gate._verdict_exit(report["verdict"]), proc.stderr
     assert proc.returncode == 1  # 결손 다수 → fail
+
+
+# --- (7) 발화 리허설 (WP-B1d — B1 완료 게이트) ----------------------------------
+#
+# 앞의 (2)~(6) 은 "러너가 발화하고 exit 이 verdict 를 반영한다"를 확인하지만 fixture 가
+# 다수 결손이라 verdict 가 항상 fail 이다 — 즉 게이트가 *열린* 적이 없다. 이 절은
+# "커널이 실제로 게이팅한다(문을 여닫는다)"를 실 submission 왕복으로 증명한다:
+#
+#   1. 전-녹색 baseline — 실 git repo + 실 pytest junit + 실 git diff + coverage/e2e
+#      artifact + 3 선언 아티팩트(참인 claim)를 §4 관례대로 배치하면 G2 게이팅 집합이
+#      전부 PASS/NA → verdict=pass → exit 0. (게이트가 열린다.)
+#   2. 진짜 결함 주입 — solid-contract 가 `absent_import: sqlite3` 를 선언한 모듈에
+#      `import sqlite3` 를 넣으면 producer 가 디스크 재검사에서 DIP claim 미검증을
+#      관측 → dip_violation=1 → scoring.solid 의 `dip_violation == 0` assertion 이 FAIL.
+#      **오직 scoring.solid 만** PASS→FAIL 로 뒤집히고 verdict=fail → exit 1. (문이 닫힌다.)
+#   3. 결함 제거 — 원복하면 scoring.solid 가 PASS 로 복귀 → verdict=pass → exit 0.
+#
+# 옛 self-score 는 "SOLID 잘 지켰습니다" 같은 자기신고를 통과시켰지만, 커널은 선언과
+# 디스크의 불일치를 값으로 잡는다 — 그 차이가 이 왕복의 0↔1 exit 뒤집힘이다.
+
+_MOD_A_V1 = '''"""Running-total accumulator with wraparound at a fixed ceiling."""
+
+
+def accumulate(values, ceiling):
+    total = 0
+    for value in values:
+        total = total + value
+        while total >= ceiling:
+            total = total - ceiling
+    return total
+'''
+
+# 커밋 후 working-tree 변경(diff 비지 않게) — mod_a.py 에 두 번째 deep 함수 추가.
+_MOD_A_V2 = _MOD_A_V1 + '''
+
+def scale(values, factor):
+    scaled = []
+    for value in values:
+        scaled.append(value * factor)
+    return scaled
+'''
+
+_MOD_B_CLEAN = '''"""Pick the largest element, or None when the input is empty."""
+
+
+def largest(items):
+    best = None
+    for item in items:
+        if best is None or item > best:
+            best = item
+    return best
+'''
+
+# 결함 주입판 — solid-contract 의 `absent_import: sqlite3` 를 위반하는 구체 import.
+_MOD_B_FAULT = '''"""Pick the largest element, or None when the input is empty."""
+import sqlite3
+
+
+def largest(items):
+    best = None
+    for item in items:
+        if best is None or item > best:
+            best = item
+    return best
+'''
+
+
+def _e2e_junit(path: Path) -> None:
+    _write(
+        path,
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<testsuite name="e2e" tests="2" failures="0" errors="0" skipped="0">\n'
+        '<testcase classname="e" name="e1"/><testcase classname="e" name="e2"/></testsuite>\n',
+    )
+
+
+def _cobertura(path: Path) -> None:
+    _write(path, '<?xml version="1.0" ?>\n<coverage branch-rate="0.85" line-rate="0.9"></coverage>\n')
+
+
+def _rehearsal_fixture(tmp_path: Path) -> dict:
+    """전-녹색 G2 실 submission + 3 선언 아티팩트 + 실행 산물을 조립한다.
+
+    반환 dict 는 run_gate 인자 + `set_fault(bool)` 헬퍼를 담는다. set_fault(True) 는
+    mod_b.py 에 `import sqlite3` 를 써서 solid-contract 의 DIP claim 을 실 디스크에서
+    위반시키고, set_fault(False) 는 clean 판으로 원복한다(러너는 이 파일을 producer 로
+    재검사하므로 git commit 불필요 — 디스크 상태만 바꾼다)."""
+    code = tmp_path / "repo"
+    _write(code / "mod_a.py", _MOD_A_V1)
+    _write(code / "mod_b.py", _MOD_B_CLEAN)
+    _init_git_repo(code)
+    _write(code / "mod_a.py", _MOD_A_V2)  # working-tree diff → files_touched > 0
+
+    criteria = tmp_path / "intent-criteria.json"
+    _write(criteria, json.dumps({"criteria": [
+        {"id": "c1", "required": True, "backing": {"kind": "file", "ref": "mod_a.py"}},
+        {"id": "c2", "required": True, "backing": {"kind": "diff", "ref": "mod_a.py"}},
+    ]}))
+    todos = tmp_path / "plan-todos.json"
+    _write(todos, json.dumps({"todos": [{"id": "t1", "paths": ["mod_a.py"]}]}))
+    contract = tmp_path / "solid-contract.json"
+    _write(contract, json.dumps({"modules": [
+        {"module": "mod_b.py", "claims": [
+            {"principle": "DIP", "backing": {"kind": "absent_import", "ref": "sqlite3"}}]},
+    ]}))
+
+    junit = tmp_path / "unit-junit.xml"
+    _fixture_junit(junit)
+    e2e = tmp_path / "e2e-junit.xml"
+    _e2e_junit(e2e)
+    coverage = tmp_path / "coverage.xml"
+    _cobertura(coverage)
+
+    def set_fault(on: bool) -> None:
+        _write(code / "mod_b.py", _MOD_B_FAULT if on else _MOD_B_CLEAN)
+
+    return {
+        "kwargs": {
+            "project_root": str(tmp_path / "run"),
+            "grade": "G2",
+            "submission": str(code),
+            "test_target": str(code),
+            "code_root": str(code),
+            "git_base": "HEAD",
+            "junit": str(junit),
+            "e2e_junit": str(e2e),
+            "coverage": str(coverage),
+            "intent_criteria": str(criteria),
+            "plan_todos": str(todos),
+            "solid_contract": str(contract),
+            "phase_upto": "09",
+            # G2 는 plan/sprint/cold/frozen 체크가 없다 — 그 단계를 꺼 왕복을 순수
+            # 디스크-상태 함수로 만든다(각 fire 는 이전 fire 와 독립).
+            "enable_plan": False,
+            "enable_sprint": False,
+            "enable_archive": False,
+            "measured_at": "2026-07-05T00:00:00+00:00",
+            "verified_at": "2026-07-05T00:00:00+00:00",
+        },
+        "set_fault": set_fault,
+    }
+
+
+def _solid_result(report: dict) -> str:
+    return report["results"]["scoring.solid"]["result"]
+
+
+def test_rehearsal_baseline_is_green_gate_opens(tmp_path: Path) -> None:
+    """리허설 baseline: 전-녹색 실 submission 에서 러너가 발화해 verdict=pass → exit 0.
+    게이트가 실제로 *열린다*(앞 절 fixture 들과 달리 결손 없는 왕복의 존재 증명)."""
+    fx = _rehearsal_fixture(tmp_path)
+    result = run_gate.run_gate(**fx["kwargs"])
+    report = result["report"]
+
+    assert result["verdict"] == "pass", report["failed"]
+    assert run_gate._verdict_exit(result["verdict"]) == 0
+    assert (Path(result["run_root"]) / "quality" / "gate_meta_audit.json").exists()
+    assert report["failed"] == []
+    assert _solid_result(report) == "PASS"
+    # 게이트가 실제 실행 산물을 소비했다는 값 증거(자기신고 아님).
+    assert "scoring.solid.json" in set(result["emitted_evidence"])
+    assert "scoring.correctness.json" in set(result["emitted_evidence"])
+
+
+def test_rehearsal_fault_injection_flips_solid_and_exit(tmp_path: Path) -> None:
+    """B1 완료 게이트: 진짜 결함(solid-contract 가 absent_import 선언한 모듈에
+    import sqlite3 주입)이 **scoring.solid 만** PASS→FAIL 로 뒤집고 verdict/exit 이
+    반영되며, 결함 제거 시 원복함을 실 왕복으로 단언한다."""
+    fx = _rehearsal_fixture(tmp_path)
+    run = lambda: run_gate.run_gate(**fx["kwargs"])
+
+    # 1. baseline — 게이트 열림.
+    fx["set_fault"](False)
+    base = run()
+    assert base["verdict"] == "pass"
+    assert run_gate._verdict_exit(base["verdict"]) == 0
+    assert _solid_result(base["report"]) == "PASS"
+    assert "scoring.solid" not in base["report"]["failed"]
+
+    # 2. 결함 주입 — dip_violation=1 → scoring.solid FAIL, exit 1. 게이트 닫힘.
+    fx["set_fault"](True)
+    faulted = run()
+    assert faulted["verdict"] == "fail"
+    assert run_gate._verdict_exit(faulted["verdict"]) == 1
+    assert _solid_result(faulted["report"]) == "FAIL"
+    assert faulted["report"]["failed"] == ["scoring.solid"]  # 오직 solid 만 뒤집힘
+
+    # 3. 결함 제거 — PASS 복귀, exit 0. 게이트 다시 열림.
+    fx["set_fault"](False)
+    reverted = run()
+    assert reverted["verdict"] == "pass"
+    assert run_gate._verdict_exit(reverted["verdict"]) == 0
+    assert _solid_result(reverted["report"]) == "PASS"
+    assert reverted["report"]["failed"] == []
+
+
+def test_rehearsal_cli_process_exit_flips_with_fault(tmp_path: Path) -> None:
+    """리허설을 실제 프로세스로 발화 — run_gate.py 의 실 exit code 가 결함 주입 전후로
+    0↔1 을 오간다(단언만이 아니라 OS 프로세스 반환값 관측)."""
+    fx = _rehearsal_fixture(tmp_path)
+    k = fx["kwargs"]
+
+    def cli() -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [
+                sys.executable, str(Path(run_gate.__file__)),
+                "--project-root", k["project_root"],
+                "--grade", k["grade"],
+                "--submission", k["submission"],
+                "--test-target", k["test_target"],
+                "--code-root", k["code_root"],
+                "--junit", k["junit"],
+                "--e2e-junit", k["e2e_junit"],
+                "--coverage", k["coverage"],
+                "--intent-criteria", k["intent_criteria"],
+                "--plan-todos", k["plan_todos"],
+                "--solid-contract", k["solid_contract"],
+                "--phase-upto", "09",
+                "--no-plan", "--no-sprint", "--no-archive",
+                "--measured-at", k["measured_at"],
+                "--verified-at", k["verified_at"],
+            ],
+            capture_output=True, text=True, encoding="utf-8",
+        )
+
+    fx["set_fault"](False)
+    base = cli()
+    assert base.returncode == 0, base.stderr
+
+    fx["set_fault"](True)
+    faulted = cli()
+    assert faulted.returncode == 1, faulted.stderr
+    # 프로세스 exit 이 gate_meta_audit.json verdict 매핑과 정확히 일치함을 재확인.
+    report = json.loads(
+        (Path(k["project_root"]) / "quality" / "gate_meta_audit.json").read_text(encoding="utf-8")
+    )
+    assert faulted.returncode == run_gate._verdict_exit(report["verdict"])
+    assert report["failed"] == ["scoring.solid"]
+
+    fx["set_fault"](False)
+    reverted = cli()
+    assert reverted.returncode == 0, reverted.stderr
