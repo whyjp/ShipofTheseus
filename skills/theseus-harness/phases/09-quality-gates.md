@@ -1,17 +1,30 @@
 # Phase 09 — 9종 품질 게이트 + runtime enforcement
 
-## 첫 동작 — cold session validator 의무 호출 (HARD-RULE 9.f)
+## 첫 동작 — run_gate.py 커널 게이트 러너 의무 호출 (HARD-RULE 9.f, the-gate)
 
-phase 06/08 종료 → phase 09 진입 *직전* 다음 명령 의무 호출 :
+phase 06/08 종료 → phase 09 진입 *직전* 다음 명령 의무 호출 (설계:
+[`../../../docs/design/2026-07-05-B1-kernel-wiring-design.md`](../../../docs/design/2026-07-05-B1-kernel-wiring-design.md) §2/§3.1):
 
 ```bash
-python skills/theseus-harness/scoring/check_cold_session.py .ShipofTheseus/<프로젝트>/
+python skills/theseus-harness/scoring/run_gate.py \
+    --project-root .ShipofTheseus/<프로젝트>/ --grade <G> \
+    --submission <submission>/ --test-target <submission>/tests/ --phase-upto 09
 ```
 
-- exit 0 → phase 09 진입 허용 (이하 정적/derived 게이트 진행)
-- exit 1 → stderr 의 violation 목록을 `intent/00-violation.md` 에 기록 + 해당 phase (06 또는 08) 재진입 강제
+- exit 0 → `quality/gate_meta_audit.json` verdict `pass` — 이하 §존치 게이트(게이트 6~9 +
+  runtime 검증 layer + RTG + Methodology-Completeness + §V8) 진행.
+- exit 1 → verdict `fail`. `gate_meta_audit.json` 의 `failed[]` 를 remediation TODO
+  (`T-NNN-fix`) 로 phase 08 step C 에 폴드백 후 phase 09 재진입.
+- exit 2 → 러너 자체 크래시(verdict 미산출 — 통과 아닌 별도 실패). phase 09 halt + 진단.
 
-본 호출은 phase 09 의 *첫 sub-step* 이며 quality-gate 본문 진행보다 우선. validator 가 detect 하는 카테고리 (mandatory_first_rerun_satisfied / Round N+1 NEW universes / sentinel regex / impl-plan 격리 / score cap by rerun / improvement_axes_remaining) 는 prose-only enforcement 의 *근본 우회 패턴* — runtime 차단으로만 효과.
+종합 판정 = **meta_audit verdict(pass 의무) AND 존치 게이트 전부 pass** — 판정의 *소스*가
+prose 정적 게이트에서 커널로 교체됐다(§3.2 마이그레이션 표). run_gate 가 내부적으로
+producer 13종 → meta_audit 오케스트레이션을 수행한다. 옛 `check_cold_session.py` 의
+sentinel-regex/파일-개수 검사(prose-only enforcement 의 근본 우회 패턴, P3)는
+`plan.dacapo_threshold` / `plan.tournament_independence` / `cold.isolation` 값 기반
+CheckSpec 로 대체 — **스크립트 자체는 존치**(`producers/measure_cold_isolation.py` 가
+`check_cold_session.build_report()` 를 라이브러리로 실 import, grep 실측 확인). 은퇴한
+것은 phase 09 의 *CLI 의무 호출 한 줄* 뿐이다.
 
 ## runtime 검증 layer (90→100 cap 풀기)
 
@@ -32,21 +45,20 @@ bs/bt/bu/bv/bw/bx (HARD-RULE 9.v~aa) 가 *내용 의무*, 본 5 게이트가 *ru
 
 ---
 
-## sprint-50 — Define-Errors-Out + Comments-Why (HARD-RULE 9.fff / 9.ggg)
+## sprint-50 — Comments-Why (HARD-RULE 9.ggg) + Define-Errors-Out 커널 이관 (9.fff)
 
 > 격언:
 > - Ousterhout, *A Philosophy of Software Design*, Ch.10 — *"Define Errors Out of Existence"*
 > - Ousterhout, Ch.13 — *"Comments Should Describe Things That Are Not Obvious from the Code"*
 
-### 9.fff — Define-Errors-Out 검사 (`scoring/define_errors_check.py`)
+### 9.fff — Define-Errors-Out (커널 이관, phase 09 자체 CLI 호출 은퇴)
 
-raise 된 예외 종류 catalog ≥ 1. 각 raise 가 *어딘가에서* handle (try/except 또는 sentinel comment `# caller catches`) 의무.
+`quality.define_errors` CheckSpec(producer `measure_define_errors`, WP5 승격 완료)이 위
+§첫 동작의 run_gate 호출 안에서 이미 측정한다(raise catalog ≥ 1 + handle 의무 + bare
+except only fail — 알고리즘 동일). `define_errors_check.py` 는 producer 가 `build_report()`
+를 라이브러리로 직접 import 하므로 스크립트 존치 — 은퇴한 것은 phase 09 의 개별 CLI 호출뿐.
 
-vacuous PASS 차단:
-- 0 raise = warning (implicit propagation 의심).
-- bare except / `except Exception:` only = fail (specific type catch ≥ 1 의무, Effective Python Item 87 정합).
-
-### 9.ggg — Comments-Why-Not-What 검사 (`scoring/comment_intent_check.py`)
+### 9.ggg — Comments-Why-Not-What 검사 (`scoring/comment_intent_check.py`, 존치)
 
 comment 와 *바로 다음 코드 줄* 의 token Jaccard overlap ≥ 0.5 = paraphrase. paraphrase 비율 ≤ τ=0.5 의무.
 
@@ -54,16 +66,9 @@ vacuous PASS 차단:
 - sentinel marker (`# why:` / `# 이유:`) 가 escape — *그러나* 전체 comment 중 escape ≥ 80% = 의심 fail (escape 만 사용 우회 차단).
 - comment 수 < 5 = 검사 skip (small codebase).
 
-### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
-
-phase 09 종합 판정 *직전* 의무 호출:
+producer 미존재(승격 후보) — CLI 게이트로 존치. phase 09 종합 판정 *직전* 의무 호출:
 
 ```bash
-python skills/theseus-harness/scoring/define_errors_check.py \
-    --code-root <submission>/src/ \
-    --require-handle \
-    --json-out .ShipofTheseus/<프로젝트>/quality/define_errors.json
-
 python skills/theseus-harness/scoring/comment_intent_check.py \
     --code-root <submission>/src/ \
     --max-paraphrase-ratio 0.5 \
@@ -71,8 +76,8 @@ python skills/theseus-harness/scoring/comment_intent_check.py \
     --json-out .ShipofTheseus/<프로젝트>/quality/comment_intent.json
 ```
 
-- exit 0 (둘 다) → phase 10 sprint loop 진입
-- exit 1 (어느 하나) → phase 08 step C implementer 재진입 (예외 정의 / comment 의도 수정).
+- exit 0 → phase 10 sprint loop 진입
+- exit 1 → phase 08 step C implementer 재진입 (comment 의도 수정).
 
 ## 한 줄 요약
 **테스트 실행 전에 아홉 게이트로 *코드 모양 + 실행 가능성 + 프로세스 정합 + 도메인 결손 부재* 를 감사한다.** 게이트 1~5 = 정적 모양, 게이트 6 = NFR 측정, **게이트 7 = env-satisfied + 실 부팅 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0), **게이트 8 (v0.9.18) = process flow / cycle coherence**, **게이트 9 (v0.9.18) = domain failure patterns 자기 검증**.
@@ -83,14 +88,19 @@ python skills/theseus-harness/scoring/comment_intent_check.py \
 
 ### 정적 게이트 (9)
 
-| # | 게이트 | 무엇을 보는가 | fail 신호 |
+**게이트 1~5 는 커널 verdict 가 판정한다** (§첫 동작의 run_gate 호출 — meta_audit 이
+CheckSpec 을 producer evidence 로 재검사, prose 정적 판독 아님). 아래 표의 "무엇을 보는가"
+열은 대체된 커널 체크 id 참조로 강등 — 상세 producer/schema 는
+[`docs/design/2026-07-05-judgment-gate-producers-design.md`](../../../docs/design/2026-07-05-judgment-gate-producers-design.md) §3.
+
+| # | 게이트 | 커널 체크 id (run_gate 판정) | fail 신호 |
 | - | ----- | ------------ | -------- |
-| 1 | **의도 일치** | 만든 것이 `01-intent.md` + `04-answers.md` + `05-decisions.md` 와 맞는가 | 요청 안 한 기능 등장, 또는 요청 기능 누락 |
-| 2 | **범위 규율** | 계획 외 변경 있는가 | TODO 가 인가하지 않은 파일 변경 |
-| 3 | **SOLID** | 모듈별 SRP/OCP/LSP/ISP/DIP | 변경 사유 2개 클래스, 포트 자리에 콘크리트 |
-| 4 | **테스트 모양** | 모든 public 표면에 단위, 모든 교차 모듈 경로에 통합, 사용자 시나리오 happy-path E2E | public 함수에 테스트 없음, 모듈에 페이크 없음 |
-| 5 | **FE/BE 패리티** | 양쪽 모두 동등한 테스트 깊이 | BE 80% 커버리지 + FE 스냅샷만 |
-| 6 | **NFR 명시 임계 일치** | `intent/01-intent.md` §d 의 ✅ NFR 항목별 페이즈 10 측정 결과 — [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) | p99/가용성/LCP 임계 미달. ⏸ 항목 skip |
+| 1 | **의도 일치** | `scoring.correctness` (intent_fidelity — `intent/01-intent-criteria.json` 기계 재검사) | criterion backing 불충족 |
+| 2 | **범위 규율** | `scoring.scope_fit` (files_mapped_to_todos ≤ files_touched) | TODO 가 인가하지 않은 파일 변경 |
+| 3 | **SOLID** | `scoring.solid` (modules_passing_solid · dip_violation, `impl/08-solid-contract.json` 재검사) | 거짓 claim 실 FAIL 관측 |
+| 4 | **테스트 모양** | `scoring.correctness`(tests) + `scoring.coverage` + `scoring.e2e` | public 함수에 테스트 없음, coverage/e2e 결손 |
+| 5 | **FE/BE 패리티** | `scoring.fe_be_parity` (applicability: fe_side_exists) | BE 80% 커버리지 + FE 스냅샷만 |
+| 6 | **NFR 명시 임계 일치** (존치 — producer 화 후속) | `intent/01-intent.md` §d 의 ✅ NFR 항목별 페이즈 10 측정 결과 — [`../conventions/spec-catalog.md`](../conventions/spec-catalog.md) | p99/가용성/LCP 임계 미달. ⏸ 항목 skip |
 | 7 | **env-satisfied + 실 실행 1회** ([`../conventions/runtime-prereq.md`](../conventions/runtime-prereq.md), v0.7.0) | env / 부팅 / healthz 검증 |
 | 8 | **Process flow / cycle coherence** ([`../conventions/process-flow-coherence.md`](../conventions/process-flow-coherence.md), v0.9.18) — 작업이 process 차원 (workflow / state machine / DES / pipeline / transaction) 이면 활성. `process_flow_applicable: false` 시 skip | all_states_reachable / all_terminal_reachable / no_orphan_states / cycle_invariant_holds / error_paths_explicit / state_visit_count > 0 |
 | 9 | **Domain failure patterns 자기 검증** ([`../conventions/domain-pack.md`](../conventions/domain-pack.md) §4, sprint-37 PR-AG 통합) — 작업 도메인 추정 후 [`../conventions/domain-adapters/<domain>.md`](../conventions/domain-adapters/) 의 `failure_patterns:` 모든 항목 자동 검증. 매칭 어댑터 없으면 skip + 명시 | DFP-* 패턴 매칭 시 severity 별 cap (cap_total / cap_correctness / cap_experimental / cap_results / warning) |
@@ -213,200 +223,22 @@ self_lint C-RTG 검증. fail RTG 자동 → 페이즈 10 sprint NN+1 lesson sour
 - C-RTG (rubric-targeted-gates) — bk
 
 
-## §PNC — Plumbed-Not-Consumed pattern (sprint-39 PR-B inline)
+## §PNC/§Mirror/§Primary/§Literal — 4 감점 메타 패턴 (advisory, sprint-39 PR-B~E, B1 강등)
 
-**4 감점 메타 패턴 A** — 필드/변수 정의 layer ↔ 실효 사용 layer 의 비대칭. 정의 ✓ / 사용 ✗ = PNC 위반.
+producer 0 · 실 run emit 실적 0(sprint-40 "0 emit" 보고 — 옛 §Gate-JSON-Emit-Mandate 자체가
+그 미발화의 patch 였다). 커널 원칙상 producer 없는 검사는 게이트가 아니다 — **게이팅에서
+제외, producer 승격 후보로 강등**(§9 완주 후속). 4 패턴 요지:
 
-### 검사 알고리즘
+| 패턴 | 4 감점 메타 패턴 | 요지 |
+|---|---|---|
+| **§PNC** | A: Plumbed-Not-Consumed | 필드/변수 정의 ✓ / 실효 사용 ✗ 비대칭 |
+| **§Mirror** | B: Workspace ≠ Deliverable | 내부 verification fact ↔ deliverable mirror 비대칭 |
+| **§Primary** | C: Proxy-as-Primary | 06.b primary directive 가 sibling-metric proxy (`1 − queue/shift` 류) |
+| **§Literal** | D: Letter-by-Fallback | 06.b avoid directive 의 literal 이 fallback 무관 재등장 |
 
-1. AST 분석 (Python: `ast` / Go: `go/ast` / TS: `tsc --noEmit + ts-morph`)
-2. dataclass / TypedDict / class field / yaml schema 추출
-3. 각 field 가 어디서 *읽기* 되는지 (read access) 추적
-4. read access 0 = PNC 위반 (define-only)
-
-### 산출물 — `gate_pnc.json`
-
-```json
-{
-  "fields_total": <int>,
-  "fields_consumed": <int>,
-  "fields_orphan": <int>,
-  "violations": [
-    {
-      "field": "warmup_minutes",
-      "defined_at": "config.py:L12",
-      "consumed_at": null,
-      "severity": "cap_correctness"
-    }
-  ]
-}
-```
-
-### 게이트 룰
-
-- violations 0 의무 (cap_correctness — 정의 layer fact 가 코드 실효에 영향 0 = correctness 신뢰 0)
-- false positive allow_list: per-project frontmatter `pnc_allow_list: ["debug_*", "_reserved_*"]`
-- skip 조건: project 가 *외부 schema* (e.g., OpenAPI request body) 정의만 하는 경우 — 내부 read 0 정상
-
-### self_lint C-PNC
-
-phases/09-quality-gates.md 본문에 §PNC 룰 키워드 박힘 검증. cold session 의 gate_pnc.json 산출물 검증은 phase 09 game 단계에서.
-
-### 안티 패턴
-
-a- **field 정의 후 read 0** — orphan field. PNC 위반.
-b- **allow_list 남용** — 모든 field 를 allow 로 우회 = 실효 검사 0. allow_list ≤ 5% 권고.
-c- **AST 분석 skip** — string grep 으로 대체 = false positive/negative 폭증. AST 의무.
-
-
-## §Mirror — Workspace ≠ Deliverable pattern (sprint-39 PR-C inline)
-
-**4 감점 메타 패턴 B** — 내부 verification fact ↔ deliverable mirror 의 비대칭. 내부 압력 강함 / 외부 압력 빈약.
-
-### 검사 알고리즘
-
-1. 내부 산출물 (impl/ 안의 verification fact, 예: `assert ramp_closed_after_30min`) 수집
-2. deliverable (handoff/, README.md, 외부 evaluator 입력) 수집
-3. 매핑 표 생성: 모든 internal fact 가 ≥ 1 deliverable 에 mirror 의무
-4. unmirrored = 위반
-
-### 산출물 — `gate_mirror.json`
-
-```json
-{
-  "internal_facts_total": <int>,
-  "mirrored_count": <int>,
-  "unmirrored_count": <int>,
-  "violations": [
-    {
-      "fact": "ramp_closed_after_30min",
-      "internal_loc": "impl/sim.py:L89",
-      "deliverable_mirror": null,
-      "severity": "cap_results"
-    }
-  ]
-}
-```
-
-### 게이트 룰
-
-- unmirrored_count 0 의무 (cap_results — 내부 fact 가 외부 가시 0 = results 신뢰 0)
-- internal fact 분류: assert 문 + invariant 검증 + sanity check 모두 fact
-- skip 조건: project 가 deliverable 단일 (impl-only spike) 시 — frontmatter `deliverable_mode: workspace_only` 명시
-
-### self_lint C-MIR
-
-phases/09-quality-gates.md 본문에 §Mirror 룰 키워드 박힘 검증.
-
-### 안티 패턴
-
-a- **internal assert 만 있고 README mirror 0** — workspace-only 검증.
-b- **deliverable 본문이 internal fact paraphrase** — *원본 위치 인용* 의무 (file:line). paraphrase 만 = mirror 0.
-c- **external evaluator 가 internal fact 못 봄** — handoff 에 fact list 의무.
-
-
-## §Primary — Proxy-as-Primary pattern (sprint-39 PR-D inline)
-
-**4 감점 메타 패턴 C** — 형제 metric reformulation 을 1차 측정으로 통과 (e.g., `truck_util = 1 − queue/shift`). 직접 측정 아닌 derived metric 의 proxy.
-
-### 검사 알고리즘
-
-1. 06.b directives.json 의 `primary` type directive 추출
-2. 각 primary directive 의 *measurement source* 추적 (산출물 frontmatter `measurement.formula`)
-3. formula 안의 sibling metric 인용 감지 (다른 metric 변수 참조)
-4. sibling overlap 계산: 같은 raw signal 사용 비율
-5. sibling overlap > 50% 시 warn (proxy 의심)
-
-### 산출물 — `gate_primary.json`
-
-```json
-{
-  "primary_directives_total": <int>,
-  "direct_measured": <int>,
-  "proxy_via_sibling": <int>,
-  "violations": [
-    {
-      "directive": "D-009 (primary)",
-      "metric": "truck_util",
-      "formula": "1 - queue/shift",
-      "sibling_overlap": 0.6,
-      "severity": "cap_correctness"
-    }
-  ]
-}
-```
-
-### 게이트 룰
-
-- sibling_overlap > 50% 0 건 의무 (cap_correctness — primary metric 이 proxy = correctness 신뢰 0)
-- direct measurement 정의: signal 이 *시뮬 또는 실측* 직접 출력 (formula 0 또는 단순 단위 변환)
-- skip 조건: primary directive 0 인 작업 (functional-only)
-- override: 사용자 ack 시 sibling_overlap > 50% 허용 — `gate_primary_acked: true` frontmatter (06.f path-policy 정합)
-
-### self_lint C-PRI
-
-phases/09-quality-gates.md 본문에 §Primary 룰 키워드 박힘 검증.
-
-### 안티 패턴
-
-a- **truck_util = 1 - queue/shift** 류 — sibling (queue, shift) 이 truck_util 의 *raw signal* 과 같음. proxy.
-b- **direct measurement 정의 모호** — formula = "throughput / capacity" 인데 capacity 가 derived = chain proxy.
-c- **primary 라벨 없이 "1차" 주장** — 06.b directive 의 type 정합 의무.
-d- **override 남용** — ack 후 violation 누적 = bench cheat. ack ≤ 1 권고.
-
-
-## §Literal — Letter-by-Fallback (Literal-Forbid) pattern (sprint-39 PR-E inline)
-
-**4 감점 메타 패턴 D** — 06.b directives.json 의 `avoid` directive 의 *literal* (e.g., hardcoded path / forbidden API) 가 deliverable source 에 등장. fallback 가 있어도 letter 위반.
-
-### 검사 알고리즘
-
-1. avoid directive 추출 (e.g., "no hardcoded paths", "no /mnt/", "no localhost", "no print()")
-2. regex 자동 추출 (e.g., `r"/mnt/[a-z]/"`, `r"localhost:[0-9]+"`, `r"\bprint\("`)
-3. 모든 deliverable source code grep
-4. 매치 시 위반 (fallback 존재 무관 — letter-strict)
-
-### 산출물 — `gate_literal.json`
-
-```json
-{
-  "avoid_directives_total": <int>,
-  "regex_patterns": [
-    {"directive": "D-005", "pattern": "/mnt/[a-z]/", "source_quote": "no hardcoded /mnt paths"}
-  ],
-  "violations": [
-    {
-      "directive": "D-005",
-      "pattern": "/mnt/[a-z]/",
-      "match": "/mnt/d/data",
-      "file": "src/loader.py:L42",
-      "fallback_present": true,
-      "severity": "cap_correctness"
-    }
-  ]
-}
-```
-
-### 게이트 룰
-
-- violations 0 의무 (cap_correctness — fallback 존재 무관, letter-strict)
-- regex 자동 추출 + 사용자 ack (06.f path-policy 정합) — false positive 회피
-- skip 조건: avoid directive 0 인 작업 (functional-only). avoid 가 *non-textual* (e.g., performance constraint) 인 경우 별도 분류
-
-### self_lint C-LIT
-
-phases/09-quality-gates.md 본문에 §Literal 룰 키워드 박힘 검증.
-
-### 안티 패턴
-
-a- **fallback 존재로 letter 위반 무시** — letter-strict. fallback 보장 != letter 통과.
-b- **regex 추출 자동화 skip** + 수동 grep — false negative 폭증.
-c- **avoid 의 의도가 *행동 패턴*** (e.g., "no synchronous wait") 인데 regex 로 매치 안 됨 — 행동 패턴은 별도 분류 (sprint-40 검토 후보).
-d- **regex pattern 사용자 ack 0** (06.f path-policy 정합) + 자동 fail — false positive 폭증. ack 게이트 통과 후 enforce.
-
-## sprint-39 4 패턴 통합 (트랙 3 마감)
-
-§PNC (A) + §Mirror (B) + §Primary (C) + §Literal (D) — phase 09 cold session 자동 검출 4 패턴. self_lint C-PNC / C-MIR / C-PRI / C-LIT 4 룰 동시 통과 의무.
+게이팅·JSON 골격 의무(`gate_pnc/mirror/primary/literal.json`)·self_lint 연동
+(C-PNC/C-MIR/C-PRI/C-LIT) 은 제거 — B1 은 커널이 인수한 것과 검증 대상이 소멸한 것만
+지운다(무게이트 공백 금지 원칙, 본 4패턴은 애초 producer 부재로 게이팅 실효 0 이었다).
 
 
 ## §V6-Evidence-Bound — Cross-process reproducibility evidence (sprint-40 PR-B 강화)
@@ -482,9 +314,8 @@ d- **regex pattern 사용자 ack 0** (06.f path-policy 정합) + 자동 fail —
     └── summary.run2.json                    # subprocess 2 의 outputs/summary.json 복사본
 ```
 
-### self_lint C-V6X (sprint-40 PR-B 신규)
+### phase 09 진입 시 검증 (B1 정정 — self_lint 규칙 아님, phase 09 본문 자체 검사)
 
-phase 09 진입 시 :
 - `quality/gate_v6_reproducibility.json` 존재 확인
 - 본 JSON 의 `verdict == "pass"` 확인
 - `cross_process.summary_byte_equal == true` 확인
@@ -567,65 +398,6 @@ phase 09 진입 시 `quality/gate_readme_summary_consistency.json` 의 `verdict 
 - [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — atomic step 강제로 *컨벤션 선언 ≠ 런타임* 갭 G-2 layer 정정.
 
 
-## §Gate-JSON-Emit-Mandate — sprint-39 4 게이트 자동 emit (sprint-40 PR-E 강화)
-
-**증거 회피 사례.** simulation-bench 001 v0.9.44 g4-v2 회차 — sprint-39 가 도입한 4 패턴 게이트 (§PNC / §Mirror / §Primary / §Literal) 의 JSON 산출물 (`gate_pnc.json` / `gate_mirror.json` / `gate_primary.json` / `gate_literal.json`) **0 emit**. 컨벤션 선언만 박히고 cold session 이 *통째 skip*. **본 절 = 런타임 집행 layer.**
-
-### 의무
-
-phase 09 *진입* 시 (그러나 게이트 본문 진행 전) 다음 4 JSON 골격을 *자동* emit. cold session 이 skip 할 수 없음 — 골격 부재 시 phase 09 진입 거부.
-
-```python
-# orchestrator phase 09 entry hook
-GATE_JSONS = ['gate_pnc.json', 'gate_mirror.json', 'gate_primary.json', 'gate_literal.json']
-
-for fname in GATE_JSONS:
-    path = quality_dir / fname
-    if not path.exists():
-        # 빈 골격 emit — cold session 이 본문 채움
-        skeleton = SKELETONS[fname]   # 컨벤션 본문 §산출물 참조
-        path.write_text(json.dumps(skeleton, indent=2))
-```
-
-### 4 골격 스키마
-
-phase 09 §PNC / §Mirror / §Primary / §Literal 본문 §산출물 절 정합. 빈 골격 형식:
-
-```json
-// gate_pnc.json (PNC) 골격
-{"schema_version": "0.9.45", "fields_total": 0, "fields_consumed": 0, "fields_orphan": 0, "violations": [], "verdict": "pending"}
-
-// gate_mirror.json 골격
-{"schema_version": "0.9.45", "internal_facts_total": 0, "mirrored_count": 0, "unmirrored_count": 0, "violations": [], "verdict": "pending"}
-
-// gate_primary.json 골격
-{"schema_version": "0.9.45", "primary_directives_total": 0, "direct_measured": 0, "proxy_via_sibling": 0, "violations": [], "verdict": "pending"}
-
-// gate_literal.json 골격
-{"schema_version": "0.9.45", "avoid_directives_total": 0, "regex_patterns": [], "violations": [], "verdict": "pending"}
-```
-
-cold session 진행 중 phase 09 본문이 각 게이트의 *실제 검사* 후 `verdict` 를 `pass` / `fail` 로 갱신.
-
-### 게이트 룰
-
-- 4 JSON 모두 *존재* 의무 (phase 09 entry 시 자동 골격 emit)
-- 모든 `verdict == "pass"` 의무 (phase 09 종합 판정 통과 조건)
-- `verdict == "pending"` 인 채로 phase 10 진입 시도 = silent skip 신호 → phase 09 재진입 강제
-
-### self_lint C-GJM (sprint-40 PR-E 신규 — Gate-JSON-emit Mandate)
-
-phase 09 종료 직전 :
-- 4 JSON 파일 존재 확인
-- 4 JSON 모두 `verdict == "pass"` 확인
-- 미달 시 phase 09 종료 거부
-
-### 메모리 정합
-
-- [`feedback_dual_pressure_json_schema.md`](../../../memory/feedback_dual_pressure_json_schema.md) — *이중 압력* 패러다임 (게이트 + JSON evidence). 본 §Gate-JSON-Emit-Mandate = 4 게이트의 런타임 활성.
-- [`feedback_convention_runtime_gap.md`](../../../memory/feedback_convention_runtime_gap.md) — sprint-39 4 패턴 inline 의 *런타임* layer 닫음.
-
-
 ## §Methodology-Completeness — 도메인 매칭 시 methodology checklist enforcement (sprint-40 PR-G 신규)
 
 본 절 = [`../conventions/nfr-derivation.md`](../conventions/nfr-derivation.md) §도메인 sub-checklist (sprint-40 PR-G) 의 phase 09 enforcement layer. *형용사 → NFR* 채널 (nfr-derivation 본 컨벤션) 과 직교 — *도메인 매칭* 시 *methodology* 차원의 checklist 자동 활성.
@@ -673,9 +445,8 @@ phase 01 의도 추출 시 `domain` field 가 [`../conventions/domain-pack.md`](
 - evidence_path 미존재 또는 빈 파일 → fail.
 - 미달 시 phase 09 verdict = `halt` → phase 06 plan 재진입 (해당 도메인 methodology 항목 보강).
 
-### self_lint C-MCC (sprint-40 PR-G — Methodology Completeness Catalogue, sprint-40 fix 일반화)
+### phase 09 진입 시 검증 (B1 정정 — self_lint 규칙 아님, phase 09 본문 자체 검사)
 
-phase 09 진입 시 :
 - domain 매칭 시 `quality/gate_methodology_completeness.json` 존재 확인
 - 4 skeleton 항목 모두 verdict == "pass" 확인
 - evidence_path 실제 파일 존재 확인
@@ -754,9 +525,9 @@ def check_phase09_viewer_readiness(project_root: pathlib.Path, grade: str, domai
 - `missing == []` 의무 — 미달 시 phase 09 진입 거부, phase 00 (pre-cold-session-bootup) 재실행 강제.
 - *빈 골격 OK* — 사전 차단의 목적 = *디렉터리 외피* 만 보장, *내용* 은 12/13 의 종료 게이트 책임.
 
-### self_lint C-VEX (phase 12/13 종료 게이트와 통합)
+### phase 09 진입 시 검증 (B1 정정 — self_lint 규칙 아님, phase 12/13 종료 게이트와 통합)
 
-phase 09 진입 시 `quality/gate_v8_viewer_readiness.json` 의 `verdict == "pass"` 검증. fail 시 phase 09 진입 거부.
+`quality/gate_v8_viewer_readiness.json` 의 `verdict == "pass"` 검증. fail 시 phase 09 진입 거부.
 
 ### 메모리 정합
 
@@ -789,16 +560,16 @@ python skills/theseus-harness/scoring/runtime_guard_chain.py \
     --output .ShipofTheseus/<proj>/quality/gate_runtime_guard_chain_entry.json
 
 # === phase 09 exit ===
-# HARD-RULE 9.zz — phase invoke audit (declared ≠ invoked 갭 차단)
-python skills/theseus-harness/scoring/phase_invoke_audit.py \
-    --orchestrator-skill skills/theseus-orchestrator/SKILL.md \
-    --project-root .ShipofTheseus/<proj>/ \
-    --output .ShipofTheseus/<proj>/quality/gate_phase_invoke_audit.json
-
 # HARD-RULE 9.uu — phase 09 본문에 phase 06/08 인용 검증
 python skills/theseus-harness/scoring/cross_phase_context_audit.py \
     --project-root .ShipofTheseus/<proj>/ --phase 09 \
     --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_09.json
 ```
+
+9.zz (phase invoke audit, phase 09 exit 분) 은 **은퇴** — `meta_audit`(생성형 레지스트리) 가
+kernelized CheckSpec 의 declared≠invoked 갭을 더 강하게 잡는다(§첫 동작의 run_gate verdict).
+`phase_invoke_audit.py` 는 phase 14 최종 감사(전체 phase 대상 broader audit)가 여전히
+호출하므로 **스크립트는 존치**(grep 실측 — 다른 호출자 존재) — 은퇴한 것은 phase 09
+자체의 개별 호출뿐.
 
 본 §은 sprint-43 의 *literal Bash command* 박힘. exit 1 시 phase 09 진입/종료 차단.

@@ -162,6 +162,8 @@ python skills/theseus-harness/scoring/placeholder_grep.py \
 
 - exit 0 (3 종 모두) → handoff 종료
 - exit 1 (어느 하나) → 위반 위치 보강 후 phase 재진입
+- **(B1 §5.2)** `quality/gate_meta_audit.json` 존재 + `verdict == "pass"` 확인도 본 산출물
+  존재 검사 목록에 포함 — 부재 시 phase 09 run_gate.py 미호출 신호, phase 09 재진입 강제.
 
 본 §은 sprint-52 의 *Viewer Finalization Closure* — pre_bootup 의 *emit-skeleton* 과 대칭. cold session 시작 시 빈 골격 emit ↔ 종료 시 실 데이터 refresh 의 양 끝점 (sprint-36 sprint-52 dual closure).
 

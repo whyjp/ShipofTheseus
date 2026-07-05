@@ -2282,77 +2282,6 @@ def check_canonical_not_stub(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_literal_forbid(skill_root: Path) -> list[str]:
-    """C-LIT (sprint-39 PR-E) — 4 감점 메타 패턴 D: Letter-by-Fallback (Literal-Forbid).
-
-    phase 09 본문에 §Literal 룰 (avoid directive literal regex 검사) 박힘 검증.
-    """
-    issues: list[str] = []
-    p09 = skill_root / "phases" / "09-quality-gates.md"
-    if not p09.exists():
-        return ["phases/09-quality-gates.md 부재"]
-    body = _read(p09)
-    for kw in ["§Literal", "Letter-by-Fallback", "Literal-Forbid",
-               "regex_patterns", "avoid_directives_total",
-               "gate_literal.json", "letter-strict"]:
-        if kw not in body:
-            issues.append(f"phases/09-quality-gates.md: §Literal '{kw}' 키워드 누락 (sprint-39 PR-E)")
-    return issues
-
-
-def check_primary_source(skill_root: Path) -> list[str]:
-    """C-PRI (sprint-39 PR-D) — 4 감점 메타 패턴 C: Proxy-as-Primary.
-
-    phase 09 본문에 §Primary 룰 (formula sibling overlap > 50% warn) 박힘 검증.
-    """
-    issues: list[str] = []
-    p09 = skill_root / "phases" / "09-quality-gates.md"
-    if not p09.exists():
-        return ["phases/09-quality-gates.md 부재"]
-    body = _read(p09)
-    for kw in ["§Primary", "Proxy-as-Primary",
-               "sibling_overlap", "proxy_via_sibling",
-               "gate_primary.json", "direct_measured"]:
-        if kw not in body:
-            issues.append(f"phases/09-quality-gates.md: §Primary '{kw}' 키워드 누락 (sprint-39 PR-D)")
-    return issues
-
-
-def check_mirror(skill_root: Path) -> list[str]:
-    """C-MIR (sprint-39 PR-C) — 4 감점 메타 패턴 B: Workspace ≠ Deliverable mirror.
-
-    phase 09 본문에 §Mirror 룰 (internal fact ↔ deliverable mirror) 박힘 검증.
-    """
-    issues: list[str] = []
-    p09 = skill_root / "phases" / "09-quality-gates.md"
-    if not p09.exists():
-        return ["phases/09-quality-gates.md 부재"]
-    body = _read(p09)
-    for kw in ["§Mirror", "Workspace ≠ Deliverable",
-               "internal_facts_total", "unmirrored_count",
-               "gate_mirror.json", "cap_results"]:
-        if kw not in body:
-            issues.append(f"phases/09-quality-gates.md: §Mirror '{kw}' 키워드 누락 (sprint-39 PR-C)")
-    return issues
-
-
-def check_pnc(skill_root: Path) -> list[str]:
-    """C-PNC (sprint-39 PR-B) — 4 감점 메타 패턴 A: Plumbed-Not-Consumed.
-
-    phase 09 본문에 §PNC 룰 (정의 ↔ 사용 비대칭 검사) 박힘 검증.
-    """
-    issues: list[str] = []
-    p09 = skill_root / "phases" / "09-quality-gates.md"
-    if not p09.exists():
-        return ["phases/09-quality-gates.md 부재"]
-    body = _read(p09)
-    for kw in ["§PNC", "Plumbed-Not-Consumed", "AST 분석",
-               "fields_orphan", "gate_pnc.json", "cap_correctness"]:
-        if kw not in body:
-            issues.append(f"phases/09-quality-gates.md: §PNC '{kw}' 키워드 누락 (sprint-39 PR-B)")
-    return issues
-
-
 def check_diet_grace(skill_root: Path) -> list[str]:
     """C-DIET (sprint-38 PR-K) — deprecated 컨벤션 grace 1 sprint 후 자동 삭제 검증.
 
@@ -2678,33 +2607,6 @@ def check_conventions_index_completeness(skill_root: Path) -> list[str]:
         issues.append(f"conventions/{x}.md 가 INDEX 에 누락")
     for x in sorted(extra_in_index):
         issues.append(f"INDEX 에 '{x}' row 있으나 conventions/{x}.md 부재")
-    return issues
-
-
-def check_cold_session_validator(skill_root: Path) -> list[str]:
-    """C-CSV (sprint-32 v0.9.37) — check_cold_session.py 스크립트 존재 + 의무 함수 구비.
-
-    cold session artifact validator (외부 cold session 의 dacapo NEW universe / mandatory rerun /
-    sentinel pattern / score cap 검증). orchestrator 가 phase 09 진입 직전 의무 호출 (HARD-RULE 9.f).
-    """
-    issues: list[str] = []
-    p = skill_root / "scoring" / "check_cold_session.py"
-    if not p.exists():
-        return ["scoring/check_cold_session.py 누락 (sprint-32)"]
-    body = _read(p)
-    for kw in [
-        "check_mandatory_first_rerun_plan",
-        "check_mandatory_first_rerun_impl",
-        "check_sentinel_patterns",
-        "check_round2_universes_new",
-        "check_impl_universe_isolation",
-        "check_score_cap",
-        "check_improvement_axes_remaining",
-        "SCORE_CAP_BY_RERUN",
-        "SENTINEL_PATTERNS",
-    ]:
-        if kw not in body:
-            issues.append(f"check_cold_session.py: '{kw}' 함수/상수 누락 (sprint-32)")
     return issues
 
 
@@ -3302,10 +3204,6 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-DIET", "conventions/MIGRATION.md (sprint-38 PR-K) — deprecated 컨벤션 grace ≤ 1 sprint 검증", check_diet_grace),
     ("C-PHASE-LEN", "phases/*.md (sprint-38 PR-K) — 페이즈 본문 길이 임계 (5000 chars 강제)", check_phase_len),
     ("C-MIGRATION", "conventions/MIGRATION.md (sprint-38 PR-K) — 매핑 무결성 (deprecated 삭제 + successor 존재)", check_migration_integrity),
-    ("C-PNC", "phases/09-quality-gates.md §PNC (sprint-39 PR-B) — Plumbed-Not-Consumed (정의 ↔ 사용 비대칭)", check_pnc),
-    ("C-MIR", "phases/09-quality-gates.md §Mirror (sprint-39 PR-C) — Workspace ≠ Deliverable (internal ↔ deliverable mirror)", check_mirror),
-    ("C-PRI", "phases/09-quality-gates.md §Primary (sprint-39 PR-D) — Proxy-as-Primary (formula sibling overlap > 50% warn)", check_primary_source),
-    ("C-LIT", "phases/09-quality-gates.md §Literal (sprint-39 PR-E) — Letter-by-Fallback (avoid directive literal regex 검사)", check_literal_forbid),
     ("C-IMS", "impl-multiverse-strict.md (ch, sprint-19) — phase 08 G4+ multiverse + tournament + 5 sub-phase TDD 7 조건 게이트", check_impl_multiverse_strict),
     ("C-IRPC", "intent-refresh.md (sprint-19 ci + sprint-37 PR-AA 통합) — phase 05 후 2차 intent refresh + 04/05 cascade", check_intent_refresh_post_critique),
     ("C-CPSC", "cross-phase-shared-context.md (cj, sprint-19) — shared 정보 단일 위치 + asof_fingerprint 인용 의무", check_cross_phase_shared_context),
@@ -3319,7 +3217,6 @@ CHECKS: list[tuple[str, str, callable]] = [
     # 현재 docs 의 광범위 cross-ref 가 다수 false-positive — 후속 sprint 에서 INDEX router applies-to-phases
     # 확장 또는 STRONG/WEAK section 정합 후 활성화. 함수 자체는 호출 가능 (운영자 manual run).
     ("C-IDX-4", "INDEX applies-to-grades vocabulary (sprint-31 v0.9.36) — G1-G5/all 외 invalid grade token 차단", check_idx_grade_vocabulary),
-    ("C-CSV", "check_cold_session.py (sprint-32 v0.9.37) — cold session artifact validator (mandatory rerun + NEW universes + sentinel + cap)", check_cold_session_validator),
     # ─── sprint-34 / v0.9.39 신규 5 checks ───────────────────────────────────────────────
     ("C-PSM", "phase-state-machine.md + scoring/phase_state.py — runtime 단조성 게이트 (백필/위조 차단, sprint-34)", check_phase_state_machine),
     ("C-STT", "subagent-trigger.md + sub_agent_dispatch.py analyze-todos — TODO DAG 위상 정렬 (sprint-34)", check_subagent_trigger),

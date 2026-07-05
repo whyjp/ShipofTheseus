@@ -3,6 +3,11 @@
 ## 한 줄 요약
 **점수 ≥ 0.999 가 나올 때까지 무한 반복한다 + axis 별 ≥ 2 sprint 강제 (intent / plan / impl trinity).** 회수 캡 없음 — 단, *전체 budget cap 80% 사용 + axis 별 sprint ≥ 2* 충족 시 soft-converge. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
 
+## 진입 전제 (B1 §5.2 — honor-system 완화)
+
+phase 09 의 `quality/gate_meta_audit.json` (verdict == "pass") 존재 의무 — run_gate.py 를
+안 불렀으면 이 파일이 없고, phase 10 진입이 정의되지 않는다(호출 부재의 하류 발각).
+
 ---
 
 ## sprint-50 — Refactor-not-Rewrite (HARD-RULE 9.hhh)
