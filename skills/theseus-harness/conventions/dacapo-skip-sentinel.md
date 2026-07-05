@@ -244,7 +244,7 @@ c- dacapo-flow.md 갱신 — SENTINEL_REGRESSION 이벤트 추가
 (이전 violation 기록 ...)
 ```
 
-## 5. self_lint C-DCL-SENTINEL 룰
+## 5. sentinel 검사 함수 (참고 구현)
 
 ```python
 def check_dacapo_skip_sentinels(artifact_dir: Path) -> list[str]:
@@ -297,7 +297,7 @@ c- 로그 패턴 = 자연어 skip 흔적 (도메인 X), regex 일반 패턴.
 a- **sentinel 결과 무시 ack** — sentinel 매치 후 사용자 confirm 으로 진행 → autonomy.md 위반. 매치 = 강제 회귀, 3회 미만은 자율.
 b- **로그 패턴 회피 자연어** — agent 가 "Winner clear" 대신 "winner-is-noticeable" 같은 회피 표현. SENTINEL_C 패턴 확장 가능 (skip 의도 카탈로그).
 c- **violation_count 수동 reset** — 위반 횟수 임의 0 리셋 → 무한 회귀 가드 무력화. counter 파일 fingerprint chain 의무.
-d- **sentinel 검사 일부만 실행** — Sentinel A/B/C 모두 의무. 1개만 실행 시 self_lint C-DCL-SENTINEL fail.
+d- **sentinel 검사 일부만 실행** — Sentinel A/B/C 모두 의무. 1개만 실행 시 fail.
 
 ## 9. cold session 검증 — 외부 winner=0.892 케이스
 

@@ -130,7 +130,7 @@ def check_rubric_is_generic(shadow) -> bool:
 
 rubric 자체가 winner self-rubric 이면 self-rating 복사. generic-bench-rubric.md 만 허용.
 
-## 4. self_lint C-DCL-SHADOW-CONTEXT 룰
+## 4. 무결성 검증 함수 (참고 구현)
 
 ```python
 def check_shadow_grader_zero_context(artifact_dir: Path) -> list[str]:
@@ -226,7 +226,7 @@ winner_score: 0.892   # 89.2 환산
 
 차이 = |92 - 89.2| = 2.8pt < 3pt threshold. 본 컨벤션 적용 시 :
 - `shadow_independence_suspicious` warn 발생
-- shadow-grade-NN.json 부재 → C-DCL-SHADOW-CONTEXT 모든 필드 fail
+- shadow-grade-NN.json 부재 → 무결성 필드 전부 fail
 - agent_call_id 부재 → unique call 검증 불가
 - loaded_artifacts 부재 → 무엇을 채점했는지 불명
 

@@ -155,7 +155,7 @@ Most recent:
 
 매 회차 누적 = 본 하네스가 *진짜 더 단단해진다* 의 객관 측정.
 
-### 3.5 self_lint C-RDLR
+### 3.5 문서 정합 검증 함수 (참고 구현)
 
 ```python
 def lint_regression_derived_rule_autogen(skill_root: Path) -> list[str]:

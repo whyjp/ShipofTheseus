@@ -543,11 +543,8 @@ phase 06 종료 시점에 자동 검출 :
 
 self_lint 신규 (sprint-16) :
 
-- **C-DCL-GATE** — phase 06 → 07 게이트 6 조건 검증
 - **C-DCL-FRONTMATTER** — tournament/shadow-grade/dacapo-rerun frontmatter 의무 필드
 - **C-DCL-CROSS-VAL** — 거짓 frontmatter cross-validation (산술 + 파일시스템)
-- **C-DCL-SHADOW-CONTEXT** — shadow grader zero-context 5 룰
-- **C-DCL-SENTINEL** — 3 sentinel 매치 검출
 - **C-DCL-FLOW-LOG** — dacapo-flow.md Mermaid + timeline + rerun subgraph 의무
 
 ## §canonical 산출물 룰 (sprint-37 PR-AH inline, prev: canonical-not-stub.md, sprint-19 cg, HARD-RULE 9.ii)

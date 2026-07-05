@@ -1426,18 +1426,7 @@ def check_phase08_tdd_subphases(skill_root: Path) -> list[str]:
 
 
 # === sprint-05-b 신규 룰 (TDD test-first — multi-universe 폭 확장 + impl head-to-head) ===
-
-def check_grades_multiverse_width_expanded(skill_root: Path) -> list[str]:
-    """C-MV1 — conventions/grades.md 의 G3/G4/G5 멀티버스 폭 확장 (sprint-05-b)."""
-    text = _read(skill_root / "conventions" / "grades.md")
-    issues: list[str] = []
-    needed = ["폭 3", "폭 4", "폭 6", "sprint-05-b"]
-    for kw in needed:
-        if kw not in text:
-            issues.append(f"conventions/grades.md: '{kw}' 멀티버스 폭 확장 키워드 누락")
-    return issues
-
-
+# (grades multiverse 폭 확장 룰 — B3 삭제, manifest 대체, 설계 §1.2)
 def check_phase08_universe_head_to_head(skill_root: Path) -> list[str]:
     """C-MV2 — phases/08-implement.md 본문에 universe 별 5 서브페이즈 사이클 + head-to-head (sprint-05-b)."""
     text = _read(skill_root / "phases" / "08-implement.md")
@@ -1628,24 +1617,7 @@ def check_cross_universe_lesson_distillation(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_regression_derived_lint_rule_autogen(skill_root: Path) -> list[str]:
-    """C-RDLR (sprint-10 v0.9.16, sprint-37 PR-AE 통합) — regression.md §3 lint autogen + phase 11 cross-ref."""
-    issues: list[str] = []
-    rdlr_path = skill_root / "conventions" / "regression.md"
-    p11_path = skill_root / "phases" / "11-regression-bisect.md"
-    if not rdlr_path.exists():
-        issues.append("conventions/regression.md 누락 (sprint-37 PR-AE 통합)")
-        return issues
-    rdlr = _read(rdlr_path)
-    p11 = _read(p11_path)
-    required = ["lint_rule_proposal", "rule_id", "regression_lint_registry", "C-RDR"]
-    for kw in required:
-        if kw not in rdlr:
-            issues.append(f"regression.md: '{kw}' 키워드 누락 (§3 lint autogen)")
-    if "regression" not in p11:
-        issues.append("phases/11-regression-bisect.md: regression cross-ref 누락")
-    return issues
-
+# (regression lint autogen 룰 — B3 삭제, regression_lint_registry 미구현 선언. 실체는 sprint.regression + 커밋레벨 회귀 로그, 설계 §1.2)
 
 def check_grade_assess_v2(skill_root: Path) -> list[str]:
     """C-GAv2 — grade_assess.py 의 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)."""
@@ -1710,26 +1682,7 @@ def check_polyglot_code_quality(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_dacapo_enforcement(skill_root: Path) -> list[str]:
-    """C-DCL-GATE — dacapo-enforcement.md (bm, sprint-16 v0.9.22) — 의사코드 → runtime guard."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "dacapo-enforcement.md"
-    if not p.exists():
-        issues.append("conventions/dacapo-enforcement.md 누락 (bm, v0.9.22)")
-        return issues
-    body = _read(p)
-    for kw in [
-        "HARD-RULE 9.o", "gate_phase06_to_07", "dacapo_loop_executed",
-        "step_d_tournament_pass", "step_d_shadow_pass", "fallback_reason",
-        "intent/00-violation.md", "force_re_enter_phase",
-    ]:
-        if kw not in body:
-            issues.append(f"dacapo-enforcement.md: '{kw}' 키워드 누락")
-    orch = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
-    if orch.exists() and "HARD-RULE 9.p" not in _read(orch):
-        issues.append("orchestrator/SKILL.md: HARD-RULE 9.p (dacapo-enforcement) 누락")
-    return issues
-
+# (dacapo-enforcement 게이트 룰 — B3 삭제. 게이트 실체 = run_gate.py + plan.dacapo_threshold/tournament_independence, 설계 §1.2)
 
 def check_dacapo_frontmatter_schema(skill_root: Path) -> list[str]:
     """C-DCL-FRONTMATTER — dacapo-frontmatter-schema.md (bn, sprint-16 v0.9.22)."""
@@ -1751,43 +1704,7 @@ def check_dacapo_frontmatter_schema(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_shadow_grader_zero_context(skill_root: Path) -> list[str]:
-    """C-DCL-SHADOW-CONTEXT — shadow-grader-zero-context.md (bo, sprint-16 v0.9.22)."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "shadow-grader-zero-context.md"
-    if not p.exists():
-        issues.append("conventions/shadow-grader-zero-context.md 누락 (bo, v0.9.22)")
-        return issues
-    body = _read(p)
-    for kw in [
-        "prior_context_token_count", "agent_call_id", "loaded_artifacts",
-        "subagent_type", "rubric_path", "check_shadow_independence",
-        "check_unique_agent_call", "3pt", "복사 의심",
-    ]:
-        if kw not in body:
-            issues.append(f"shadow-grader-zero-context.md: '{kw}' 키워드 누락")
-    return issues
-
-
-def check_dacapo_skip_sentinel(skill_root: Path) -> list[str]:
-    """C-DCL-SENTINEL — dacapo-skip-sentinel.md (bp, sprint-16 v0.9.22)."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "dacapo-skip-sentinel.md"
-    if not p.exists():
-        issues.append("conventions/dacapo-skip-sentinel.md 누락 (bp, v0.9.22)")
-        return issues
-    body = _read(p)
-    for kw in [
-        "Sentinel A", "Sentinel B", "Sentinel C",
-        "SENTINEL_A_PATTERNS", "SENTINEL_B_PATTERNS", "SENTINEL_C_LOG_PATTERNS",
-        "force_re_enter_phase", "intent/00-violation.md",
-        "Winner clear", "skip dacapo", "0회 충분", "단일 탑",
-        "universe_skip", "sprint_trinity_skip",
-    ]:
-        if kw not in body:
-            issues.append(f"dacapo-skip-sentinel.md: '{kw}' 키워드 누락")
-    return issues
-
+# (shadow-grader zero-context 룰 + skip-sentinel 룰 — B3 삭제. 독립성=plan.tournament_independence variance / skip=stop_policy+sprint.regression, 설계 §1.2)
 
 def check_domain_model_completeness(skill_root: Path) -> list[str]:
     """C-DMC (sprint-16 v0.9.22, sprint-37 PR-AG 통합) — domain-pack.md §2 (model completeness) — Conceptual modelling 만점 push."""
@@ -1884,30 +1801,7 @@ def check_idiomatic_code_quality(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_phase_lineage_viewer(skill_root: Path) -> list[str]:
-    """C-PLV — phase-lineage-viewer.md (br, sprint-16 v0.9.22 + sprint-34 / v0.9.39 gantt 확장)."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "phase-lineage-viewer.md"
-    if not p.exists():
-        issues.append("conventions/phase-lineage-viewer.md 누락 (br, v0.9.22)")
-        return issues
-    body = _read(p)
-    for kw in [
-        "lineage.md", "phase 00", "phase 14", "fingerprint chain",
-        "Da Capo loop 요약", "Sentinel 위반 이벤트",
-        "update_phase_lineage", "final_outcome", "HANDOFF",
-        "bypass", "drill-down", "페이즈 04 답안 매핑",
-        # sprint-34 / v0.9.39 — gantt 확장 + 모든 그레이드
-        "gantt", "dateFormat", "axisFormat", "phase_state.py",
-        "G1", "G2", "minimal",
-    ]:
-        if kw not in body:
-            issues.append(f"phase-lineage-viewer.md: '{kw}' 키워드 누락")
-    skill = _read(skill_root / "SKILL.md")
-    if "phase-lineage-viewer" not in skill:
-        issues.append("SKILL.md: phase-lineage-viewer.md 인덱스 누락")
-    return issues
-
+# (phase-lineage-viewer 룰 — B3 삭제. emit 정합은 C-PSR 서브체크 6 이 중복 검증 — 잔여는 의사코드+stale mandate, 설계 §1.2)
 
 def check_phase_state_machine(skill_root: Path) -> list[str]:
     """C-PSM — phase-state-machine.md + scoring/phase_state.py (sprint-34 / v0.9.39)."""
@@ -1924,7 +1818,7 @@ def check_phase_state_machine(skill_root: Path) -> list[str]:
     pbody = _read(py)
     for kw in [
         "단조성", "frontmatter", "forgery", "phase_state.json",
-        "schema_version", "monotonic", "check_cold_session",
+        "schema_version", "monotonic",
     ]:
         if kw not in cbody:
             issues.append(f"phase-state-machine.md: '{kw}' 키워드 누락")
@@ -1940,7 +1834,7 @@ def check_phase_state_machine(skill_root: Path) -> list[str]:
 
 
 def check_subagent_trigger(skill_root: Path) -> list[str]:
-    """C-STT — subagent-trigger.md + sub_agent_dispatch.py analyze-todos (sprint-34 / v0.9.39)."""
+    """C-SAT (구 C-STT — B3 ID 위생, subagent-trigger 쪽) — subagent-trigger.md + sub_agent_dispatch.py analyze-todos (sprint-34 / v0.9.39)."""
     issues: list[str] = []
     conv = skill_root / "conventions" / "subagent-trigger.md"
     py = skill_root / "scoring" / "sub_agent_dispatch.py"
@@ -2022,9 +1916,7 @@ def check_dacapo_flow_trace(skill_root: Path) -> list[str]:
     ]:
         if kw not in body:
             issues.append(f"dacapo-flow-trace.md: '{kw}' 키워드 누락")
-    phase06 = skill_root / "phases" / "06-plan.md"
-    if phase06.exists() and "v0.9.22" not in _read(phase06):
-        issues.append("phases/06-plan.md: v0.9.22 sprint-16 절 누락")
+    # B3 — "v0.9.22" 버전-라벨 서브체크 삭제(P2 취약, §1.3). phase08 포맷 서브체크는 존치.
     phase08 = skill_root / "phases" / "08-implement.md"
     if phase08.exists():
         body = _read(phase08)
@@ -2056,22 +1948,7 @@ def check_dacapo_no_forward_projection(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_dacapo_min_loop_attempt(skill_root: Path) -> list[str]:
-    """C-DCL-MIN-LOOP-ATTEMPT (sprint-17) — rerun_count >= 1 의무 (cap 발동 전 최소 1 회 실 rerun)."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "dacapo-enforcement.md"
-    if not p.exists():
-        return issues
-    body = _read(p)
-    for kw in [
-        "C-DCL-MIN-LOOP-ATTEMPT",
-        "최소 1 회 실 rerun",
-        "min loop attempt",
-    ]:
-        if kw not in body:
-            issues.append(f"dacapo-enforcement.md: sprint-17 '{kw}' 키워드 누락")
-    return issues
-
+# (dacapo 최소 loop attempt 룰 — B3 삭제. B2 §2.2-3 이 rerun 을 advisory 강등 — stale mandate 핀, 설계 §1.2)
 
 def check_diagrams_and_coverage(skill_root: Path) -> list[str]:
     """C-DIAG-AND-COVERAGE (sprint-17) — HARD-RULE 9.a OR → AND.
@@ -2231,19 +2108,7 @@ def check_submission_portability(skill_root: Path) -> list[str]:
     return issues
 
 
-def check_dacapo_mandatory_rerun(skill_root: Path) -> list[str]:
-    """C-DCMR (sprint-19, ce) — winner score 임계 도달해도 무조건 ≥ 1 rerun (high-score promote 우회 차단)."""
-    issues: list[str] = []
-    p = skill_root / "conventions" / "dacapo-mandatory-rerun.md"
-    if not p.exists():
-        issues.append("conventions/dacapo-mandatory-rerun.md 누락 (ce, sprint-19)")
-        return issues
-    body = _read(p)
-    for kw in ["dacapo-mandatory-rerun", "mandatory_first_rerun_satisfied", "rerun_count >= 1", "예외 0", "C-DCMR", "Step F", "Step G"]:
-        if kw not in body:
-            issues.append(f"dacapo-mandatory-rerun.md: '{kw}' 키워드 누락")
-    return issues
-
+# (dacapo-mandatory-rerun 룰 — B3 삭제. B2 §2.3 가 컨벤션을 advisory 로 강등 — "예외 0" 핀은 모순, 설계 §1.2)
 
 def check_plan_tournament_scoring_strict(skill_root: Path) -> list[str]:
     """C-PTSS (sprint-19, cf) — tournament 6-dim weighted 의무 + 1-5 cold-read coarse reject."""
@@ -2359,7 +2224,7 @@ def check_migration_integrity(skill_root: Path) -> list[str]:
 
 
 def check_prompt_trace(skill_root: Path) -> list[str]:
-    """C-PT (sprint-38 PR-J) — phase 08.f prompt-trace.
+    """C-PTRC (구 C-PT — B3 ID 위생, prompt-trace 쪽) — phase 08.f prompt-trace.
 
     모든 deliverable 산출물 → 06.b directives.json 의 어느 directive 충족인지 매핑.
     unmapped_count: 0 의무.
@@ -3152,7 +3017,6 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-WV3", "phase14 handoff renamed from 13 (sprint-05-a C)", check_phase14_handoff_renamed),
     ("C-AGENT-IVB", "interactive-viewer-builder agent present (sprint-05-a C)", check_interactive_viewer_builder_agent),
     ("C-TDD-08", "phase08 5 sub-phases + RED-GREEN-REFACTOR + universe trigger (sprint-05-a TDD)", check_phase08_tdd_subphases),
-    ("C-MV1", "grades multiverse 폭 확장 G3 폭3 / G4 폭4 / G5 폭6 (sprint-05-b)", check_grades_multiverse_width_expanded),
     ("C-MV2", "phase08 universe 별 5 서브페이즈 head-to-head (sprint-05-b)", check_phase08_universe_head_to_head),
     ("C-MV3", "plan-tree 분기 축 카탈로그 ≥6 axis (sprint-05-b)", check_plan_tree_axis_catalog),
     ("C-MV4", "competition 자동 머지 알고리즘 + 차원별 sub-score (sprint-05-b)", check_competition_auto_merge_algorithm),
@@ -3165,15 +3029,10 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-SDT", "sprint-narrative.md §2 (delta tracking) + budget-saturation cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AF 통합)", check_sprint_score_delta_tracking),
     ("C-EDP", "evidence-driven-sprint-planning.md + SRO/BSL cross-ref (v0.9.16 sprint-10 #3)", check_evidence_driven_sprint_planning),
     ("C-CULD", "sprint-narrative.md §3 (cross-universe) + plan-tree/ensemble cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AF 통합)", check_cross_universe_lesson_distillation),
-    ("C-RDLR", "regression.md §3 lint autogen + phase 11 cross-ref (sprint-10 v0.9.16 + sprint-37 PR-AE 통합)", check_regression_derived_lint_rule_autogen),
     ("C-PCQ", "polyglot-code-quality.md + 9 언어 카탈로그 + 6 메트릭 (v0.9.16 sprint-10 #6)", check_polyglot_code_quality),
     ("C-GAv2", "grade_assess v2 — 키워드 매칭 폐기 + default G4 + 다중 신호 (v0.9.17 sprint-11)", check_grade_assess_v2),
-    ("C-DCL-GATE", "dacapo-enforcement.md — phase 06/08 핸드오프 6 조건 의무 게이트 (bm, v0.9.22 sprint-16)", check_dacapo_enforcement),
     ("C-DCL-FRONTMATTER", "dacapo-frontmatter-schema.md — tournament/shadow-grade/dacapo-rerun 의무 필드 (bn, v0.9.22)", check_dacapo_frontmatter_schema),
-    ("C-DCL-SHADOW-CONTEXT", "shadow-grader-zero-context.md — Step C 무결성 5 룰 (bo, v0.9.22)", check_shadow_grader_zero_context),
-    ("C-DCL-SENTINEL", "dacapo-skip-sentinel.md — 3 sentinel 자동 회귀 + 로그 패턴 (bp, v0.9.22)", check_dacapo_skip_sentinel),
     ("C-DCL-FLOW-LOG", "dacapo-flow-trace.md — 단일 마크다운 가시화 누적 갱신 (bq, v0.9.22)", check_dacapo_flow_trace),
-    ("C-PLV", "phase-lineage-viewer.md — 프로젝트 전체 phase 00~14 lineage 단일 마크다운 가시화 (br, v0.9.22)", check_phase_lineage_viewer),
     ("C-DMC", "domain-pack.md §2 (model completeness) — Conceptual modelling 5 차원 (entity/state/transition/invariant/boundary) (sprint-16 v0.9.22 + sprint-37 PR-AG 통합)", check_domain_model_completeness),
     ("C-DSI", "data-structure-invariants.md — Invariants/Topology/Access/Bounds 4 항목 (bt, v0.9.22)", check_data_structure_invariants_conv),
     ("C-SPI", "simulation-physical-invariants.md — 5 invariant 런타임 assert (bu, v0.9.22)", check_simulation_physical_invariants),
@@ -3181,7 +3040,6 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-RDM", "results-decision-mapping.md — 결과 → 결정 1:1 매핑 (bw, v0.9.22)", check_results_decision_mapping),
     ("C-ICQ", "idiomatic-code-quality.md — naming/preferred/stdlib/readability 4 차원 (bx, v0.9.22)", check_idiomatic_code_quality),
     ("C-DCL-NO-FORWARD-PROJECT", "dacapo-enforcement.md sprint-17 — forward time projection 차단", check_dacapo_no_forward_projection),
-    ("C-DCL-MIN-LOOP-ATTEMPT", "dacapo-enforcement.md sprint-17 — rerun ≥ 1 최소 loop attempt", check_dacapo_min_loop_attempt),
     ("C-DIAG-AND-COVERAGE", "diagrams.md sprint-17 — HARD-RULE 9.a OR → AND (sequence + usecase + interface 셋 다)", check_diagrams_and_coverage),
     ("C-IRPI", "intent-refresh.md (sprint-17 by + sprint-37 PR-AA 통합) — phase 04 → 05 1차 refresh 4 framing universe + 01-additional", check_intent_refresh_post_interview),
     ("C-RNFS", "readme-numbers-from-summary.md (bz, sprint-18) — doc 숫자 vs measurement artifact ±0.01% 일치", check_readme_numbers_from_summary),
@@ -3189,7 +3047,6 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-MNT", "magic-number-traceability.md (cb, sprint-18) — code literal → A_i 또는 데이터 출처 1:1 매핑", check_magic_number_traceability),
     ("C-DCZ", "dead-code-zero.md (cc, sprint-18) — 언어별 dead-code analyzer 위반 0", check_dead_code_zero),
     ("C-SPB", "submission-portability.md (cd, sprint-18) — entry script --data-dir CLI + DATA_DIR env var fallback", check_submission_portability),
-    ("C-DCMR", "dacapo-mandatory-rerun.md (ce, sprint-19) — winner ≥ 임계 도달해도 무조건 ≥ 1 rerun (polishing pass 강제)", check_dacapo_mandatory_rerun),
     ("C-PTSS", "plan-tournament-scoring-strict.md (cf, sprint-19) — tournament 6-dim weighted 의무, 1-5 coarse reject", check_plan_tournament_scoring_strict),
     ("C-CNS", "phases/06,08,14 §canonical inline (sprint-19 cg + sprint-37 PR-AH inline) — canonical ≥ winner 80% inline 또는 shared schema mode", check_canonical_not_stub),
     ("C-PPC", "phases/06-plan.md §06.f (sprint-38 PR-B) — path-policy + user-confirm gate (경로 후보 ≥ 2 + 줄거리 + AskUserQuestion + 사용자 ack)", check_path_policy),
@@ -3199,7 +3056,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-STT", "phases/06-plan.md §06.d (sprint-38 PR-F) — sub-tree TODO (max_depth ≥ 3 + leaf 매핑 의무 + dispatch 1:1)", check_sub_tree_todo),
     ("C-PMT", "phases/06-plan.md §06.e (sprint-38 PR-G) — post-decision premortem (격언 동·서 + 시뮬레이션 + derived improvements ≥ 1)", check_premortem),
     ("C-DPT", "phases/07-plan-recursion.md (sprint-38 PR-I) — phase 07 dispatch 3 sub-phase (table + trace + cross-agent invariant)", check_phase07_dispatch),
-    ("C-PT", "phases/08-implement.md §08.f (sprint-38 PR-J) — prompt-trace (deliverable → directive 매핑, unmapped 0)", check_prompt_trace),
+    ("C-PTRC", "phases/08-implement.md §08.f (sprint-38 PR-J) — prompt-trace (deliverable → directive 매핑, unmapped 0) (구 C-PT, B3 ID 위생)", check_prompt_trace),
     ("C-DIET", "conventions/MIGRATION.md (sprint-38 PR-K) — deprecated 컨벤션 grace ≤ 1 sprint 검증", check_diet_grace),
     ("C-PHASE-LEN", "phases/*.md (sprint-38 PR-K) — 페이즈 본문 길이 임계 (5000 chars 강제)", check_phase_len),
     ("C-MIGRATION", "conventions/MIGRATION.md (sprint-38 PR-K) — 매핑 무결성 (deprecated 삭제 + successor 존재)", check_migration_integrity),
@@ -3218,10 +3075,9 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IDX-4", "INDEX applies-to-grades vocabulary (sprint-31 v0.9.36) — G1-G5/all 외 invalid grade token 차단", check_idx_grade_vocabulary),
     # ─── sprint-34 / v0.9.39 신규 5 checks ───────────────────────────────────────────────
     ("C-PSM", "phase-state-machine.md + scoring/phase_state.py — runtime 단조성 게이트 (백필/위조 차단, sprint-34)", check_phase_state_machine),
-    ("C-STT", "subagent-trigger.md + sub_agent_dispatch.py analyze-todos — TODO DAG 위상 정렬 (sprint-34)", check_subagent_trigger),
+    ("C-SAT", "subagent-trigger.md + sub_agent_dispatch.py analyze-todos — TODO DAG 위상 정렬 (sprint-34) (구 C-STT, B3 ID 위생)", check_subagent_trigger),
     ("C-RTG", "regression-tdd-gate.md + scoring/regression_check.py — commit-level test+boot+lint 재실행 (sprint-34)", check_regression_tdd_gate),
     ("C-IOD", "intent-optional-disambiguation.md — '추가로/해도 좋음' 4-option 강제 (sprint-34)", check_intent_optional_disambiguation),
-    # C-PLV (위) sprint-34 확장 — gantt + 모든 그레이드. 별도 신규 check 없음 (기존 함수 본문 갱신).
     ("C-PSR", "prebuilt-shell-runtime-json + templates/{lineage-viewer,webview}/dist/ — cold session build 0 (sprint-35)", check_prebuilt_shell_runtime_json),
     ("C-EFS", "emit fidelity samples + emit_fidelity.py CLI — 의무 키 + sprint-35-extra 룰 (sprint-35-extra)", check_emit_fidelity_samples),
     ("C-PCB", "pre-cold-session bootup — phase 00 이전 viewer 부팅 + 빈 골격 (sprint-36)", check_pre_cold_session_bootup),

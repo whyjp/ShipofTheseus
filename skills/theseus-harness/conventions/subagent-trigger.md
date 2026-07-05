@@ -94,7 +94,7 @@ else:   # G5
 
 G5 에서 max_parallel ≥ 3 시 competition 권장 — 같은 level 내 TODO 들을 *경쟁* universe 로 분기해 best winner 선택 ([`competition.md`](competition.md) 알고리즘).
 
-## 6. self_lint C-STT 룰
+## 6. self_lint C-SAT 룰 (구 C-STT)
 
 ```python
 def lint_subagent_trigger(skill_root: Path) -> list[str]:
@@ -113,7 +113,7 @@ def lint_subagent_trigger(skill_root: Path) -> list[str]:
     return issues
 ```
 
-CHECKS 등록 — `("C-STT", "subagent-trigger TODO DAG analyze-todos (sprint-34 / v0.9.39)", check_subagent_trigger)`.
+CHECKS 등록 — `("C-SAT", "subagent-trigger TODO DAG analyze-todos (sprint-34 / v0.9.39)", check_subagent_trigger)`.
 
 ## 7. 본 컨벤션이 *케이스 종속이 아닌* 이유
 

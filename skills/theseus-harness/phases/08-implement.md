@@ -186,11 +186,11 @@ b- **모든 must directive 가 ≥ 1 deliverable** — must directive 가 delive
 c- **모든 canonical directive 가 정확히 1 deliverable** — canonical 정의 위치 단일.
 d- **모든 primary directive 가 ≥ 1 deliverable + ≥ 1 measurement** — proxy 우회 차단.
 
-### self_lint C-PT
+### self_lint C-PTRC (구 C-PT)
 
 ```python
 def check_prompt_trace(skill_root: Path) -> list[str]:
-    """C-PT (sprint-38 PR-J) — phase 08.f prompt-trace."""
+    """C-PTRC (sprint-38 PR-J) — phase 08.f prompt-trace."""
     issues = []
     p08 = skill_root / "phases" / "08-implement.md"
     body = p08.read_text(encoding="utf-8")

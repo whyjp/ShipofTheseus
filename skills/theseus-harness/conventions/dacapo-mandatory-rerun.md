@@ -21,9 +21,9 @@ Da Capo rerun 결정 = "직전 라운드 대비 winner delta ≥ eps 인 동안"
 
 신호(delta)가 있을 때 rerun 하면: Step F(lesson 도출) → Step G(anonymized prev winner + width-1 fresh) → Step A 재진입. 절차는 그대로 쓸 수 있다 — 무조건 호출 의무만 해제.
 
-## C-DCMR (self_lint)
+## self_lint 검증 이력 (참고)
 
-컨벤션 파일 존재만 검증(advisory 표기 확인) — 구 키워드 목록은 강등 서술 안에 자연 잔존.
+구 개별 룰은 B3 삭제 — advisory 강등과 모순되는 stale mandate 핀이었다.
 
 ## 안티 패턴 (재정정)
 
