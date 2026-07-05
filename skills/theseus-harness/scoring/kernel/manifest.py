@@ -21,6 +21,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+# kernel/ 디렉터리 안이라 평면 import(CLI 실행 시 sys.path[0], conftest.py 가 pytest 경로 보장).
+from _stdio import force_utf8_stdio
+
 # 맵(widths/checks)에서 '_' 로 시작하는 키는 인라인 주석·메타데이터 — 그레이드가 아니다.
 # JSON 이 문서를 품되 그레이드 맵을 오염시키지 않도록 로드 시 걸러낸다.
 _META_PREFIX = "_"
@@ -183,6 +186,7 @@ def drift_check(manifest: Manifest, checks_dir: str | Path) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 비-ASCII print 크래시 방지(공유 헬퍼)
     parser = argparse.ArgumentParser(
         description="Pipeline Manifest — 로더 + 매니페스트↔레지스트리 드리프트 체크"
     )

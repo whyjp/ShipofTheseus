@@ -33,6 +33,7 @@ import checkspec
 import evidence as evidence_mod
 import kernel
 import manifest as manifest_mod
+from _stdio import force_utf8_stdio
 from checkspec import CheckSpec, UnsafeExpressionError, safe_eval
 
 SCHEMA_VERSION = "1.0"
@@ -222,6 +223,7 @@ def run_meta_audit(
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 리포트의 비-ASCII print 크래시 방지(공유 헬퍼)
     parser = argparse.ArgumentParser(
         description="meta_audit — 레지스트리 열거 기반 생성형 메타 감사 (P5 구조적 제거, 설계 §6)"
     )

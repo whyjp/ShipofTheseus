@@ -61,6 +61,13 @@ _KERNEL_DIR = _SCORING_DIR / "kernel"
 # scoring -> theseus-harness -> skills -> <repo root>.
 _REPO_ROOT = _SCORING_DIR.parents[2]
 
+# kernel/_stdio 의 공유 UTF-8 강제 헬퍼를 import 하기 위해 kernel/ 을 sys.path 에 올린다
+# (dogfood 는 producer/meta_audit 를 subprocess 로 부르지만, 자기 stdout 출력도 같은
+# 가드가 필요 — cp949 콘솔에서 분류표의 em-dash·한글 print 크래시 방지).
+if str(_KERNEL_DIR) not in sys.path:
+    sys.path.insert(0, str(_KERNEL_DIR))
+from _stdio import force_utf8_stdio  # noqa: E402
+
 # 이 저장소에 실재하는 유일한 genuine cold-read/source 쌍(v0919 self-run 의 phase-07 계획
 # 재이해 vs 그 원본 계획). scoring 코드 자체의 cold re-read 는 없으므로, cold.isolation
 # producer 를 실 파일로 end-to-end 돌려 NA 경로(§7.4)를 실증하기 위한 기본 입력이다.
@@ -433,6 +440,17 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     for d in (run_root, evidence_dir, run_root / "results", run_root / "quality"):
         d.mkdir(parents=True, exist_ok=True)
 
+    # 이전 실행 잔재 청소 — 이번 실행의 producer/meta_audit 이 낳은 것만 남게 해,
+    # `_meta_audit` fallback 이 절대 이전 성공 실행의 stale gate/evidence 를 읽지 못하게
+    # 구조적으로 봉쇄한다(meta_audit 이 크래시하면 gate 부재로 verdict=None 으로 정직하게
+    # 실패해야 한다 — 이 프로젝트가 싸우는 'stale verdict 를 재현으로 착각' 그 자체를 차단).
+    # results/(junit) 는 --junit 재사용 seam 을 위해 보존한다.
+    for stale in list(evidence_dir.glob("*.json")):
+        stale.unlink()
+    stale_gate = run_root / "quality" / "gate_meta_audit.json"
+    if stale_gate.exists():
+        stale_gate.unlink()
+
     cwd = _REPO_ROOT
     code_root = Path(args.code_root).resolve()
     submission = Path(args.submission).resolve()
@@ -571,6 +589,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 분류표 비-ASCII print 크래시 방지(공유 헬퍼)
     args = build_parser().parse_args(argv)
     summary = run(args)
     _print_human(summary)

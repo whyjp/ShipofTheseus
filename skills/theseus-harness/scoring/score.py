@@ -50,6 +50,14 @@ import argparse
 import json
 import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+# kernel/_stdio 의 공유 UTF-8 강제 헬퍼 — argparse 한글 help/에러 등 자기 출력도
+# cp949 콘솔에서 크래시하지 않도록. kernel/ 을 sys.path 에 올려 import.
+_KERNEL_DIR = Path(__file__).resolve().parent / "kernel"
+if str(_KERNEL_DIR) not in sys.path:
+    sys.path.insert(0, str(_KERNEL_DIR))
+from _stdio import force_utf8_stdio  # noqa: E402
 
 WEIGHTS = {
     "correctness": 0.25,
@@ -213,6 +221,7 @@ def apply_caps(score: float, inputs: dict) -> tuple[float, list[str]]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 비-ASCII print 크래시 방지(공유 헬퍼)
     p = argparse.ArgumentParser()
     p.add_argument("--inputs", required=True, help="sprint-inputs.json 경로")
     p.add_argument("--prior", help="이전 스프린트 score 출력 경로 (회귀 판정용)")

@@ -43,6 +43,7 @@ import deep_module_metric  # noqa: E402
 
 import _evidence_common as ec  # noqa: E402
 import claims  # noqa: E402
+from _stdio import force_utf8_stdio  # noqa: E402
 
 CHECK_ID = "gate.solid_static"
 DEFAULT_PHASE = "08"
@@ -259,6 +260,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 비-ASCII print 크래시 방지(공유 헬퍼)
     args = build_parser().parse_args(argv)
     try:
         summary = run(args)

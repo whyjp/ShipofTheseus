@@ -37,6 +37,13 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
+# kernel/_stdio 의 공유 UTF-8 강제 헬퍼 — 본 linter 자기 출력(한글 issue 메시지의
+# em-dash 등)도 cp949 콘솔에서 크래시하지 않도록. kernel/ 을 sys.path 에 올려 import.
+_KERNEL_DIR = Path(__file__).resolve().parent / "kernel"
+if str(_KERNEL_DIR) not in sys.path:
+    sys.path.insert(0, str(_KERNEL_DIR))
+from _stdio import force_utf8_stdio  # noqa: E402
+
 
 def _read(p: Path) -> str:
     return p.read_text(encoding="utf-8")
@@ -3434,11 +3441,10 @@ def compute_self_score(repo_root: Path) -> dict:
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    # 본 스크립트가 직접 실행될 때 stdout 이 OS 로케일(cp949) 로 떨어지면 한국어
-    # issue 메시지의 em-dash 같은 문자에서 UnicodeEncodeError 가 발생한다 — C35
-    # 가 잡으려는 회귀와 같은 부류. 자기 출력도 같은 가드로.
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    # 본 스크립트가 직접 실행될 때 stdout/stderr 이 OS 로케일(cp949) 로 떨어지면 한국어
+    # issue 메시지의 em-dash 같은 문자에서 UnicodeEncodeError 가 발생한다 — C35 가
+    # 잡으려는 회귀와 같은 부류. 자기 출력도 같은 공유 가드로(stdout·stderr 양쪽).
+    force_utf8_stdio()
     p = argparse.ArgumentParser()
     p.add_argument(
         "--repo-root",
