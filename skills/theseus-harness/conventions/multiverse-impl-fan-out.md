@@ -98,7 +98,7 @@ After all N universes complete:
 
 ## 4. 안티 패턴
 
-a- **winner only impl** — v0.9.9 의 default 패턴. 본 컨벤션 핵심 위반. self_lint C-MIF (multiverse impl fan-out) 가 G4+ 시 code/universe-N/ 디렉터리 갯수 = plan/candidates/universe-N/ 갯수 검증.
+a- **winner only impl** — v0.9.9 의 default 패턴. 본 컨벤션 핵심 위반. G4+ 시 code/universe-N/ 디렉터리 갯수 = plan/candidates/universe-N/ 갯수 검증 의무 (C-MIF, self_lint 미등록).
 b- **code/universe-N/ 형식만 박고 내용 동일** — *symbolic fan-out*. 각 universe 의 코드가 plan/candidates/universe-N/06-plan.md 의 architecture seed 와 *의미적 매칭* 검증 (LSP / AST diff).
 c- **tournament merge 가 *plan 만* 비교** — 실 측정 차원 누락. 본 컨벤션 §2-step 3 의 5 차원 모두 의무.
 d- **wall clock budget 으로 N universe 중 일부 skip** — silent. budget-aware-fallback.md 의 fallback_reason frontmatter 명시 의무 (skip 시).

@@ -1,7 +1,12 @@
-# Phase 10 — 무한 스프린트 루프 (v0.9.19 sprint-13: 3 axis trinity)
+# Phase 10 — 스프린트 루프 (v0.9.19 sprint-13: 3 axis trinity, 설계 B2 §2.2 stop_policy 재정정)
 
 ## 한 줄 요약
-**점수 ≥ 0.999 가 나올 때까지 무한 반복한다 + axis 별 ≥ 2 sprint 강제 (intent / plan / impl trinity).** 회수 캡 없음 — 단, *전체 budget cap 80% 사용 + axis 별 sprint ≥ 2* 충족 시 soft-converge. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
+**정지 권위는 manifest `stop_policy`(게이트 pass AND 무회귀 AND (plateau OR budget≥95%)) 단일 소스다.** intent/plan/impl 3 axis 로 분배(각 ≥2 sprint 권장, 강제 아님 — [`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md) 강등 참조). 절대 점수 임계(구 0.999)와 budget 80% 강제는 폐지 — plateau 는 정직한 정지 신호다. 점수가 직전 스프린트 대비 0.05 이상 떨어지면 즉시 페이즈 11(회귀 바이섹트) — Q-D1 사전 위임 답에 따라 자동 적용 (인터럽트 없음, 자동 매핑).
+
+## 진입 전제 (B1 §5.2 — honor-system 완화)
+
+phase 09 의 `quality/gate_meta_audit.json` (verdict == "pass") 존재 의무 — run_gate.py 를
+안 불렀으면 이 파일이 없고, phase 10 진입이 정의되지 않는다(호출 부재의 하류 발각).
 
 ---
 
@@ -61,7 +66,7 @@ budget_default_split:
     "<dim_name>": {"score": 18, "max": 20, "gap": 2}
   },
   "total_score": 94,
-  "threshold_target": 0.999,
+  "last_delta": null,
   "weakest_dimension": "<name>",
   "lesson_type": "content_depth | enforcement_structure | content_evidence | integrated_insight",
   "lesson_applied": "<one-line description>",
@@ -70,19 +75,19 @@ budget_default_split:
 }
 ```
 
-### early stop violation (강화 — sprint-14 dual-objective AND)
+### 정지 판정 (설계 B2 §2.2 — stop_policy 단일 권위로 재정정)
 
 ```python
 def should_stop_sprint(state) -> bool:
-  # sprint-14 v0.9.20 — grader-in-sprint be 의 dual-objective AND
-  auto_pass    = state.auto_proxy_pass_rate >= 0.999
-  shadow_pass  = state.shadow_grader_predicted_score >= state.target_score  # default 95
-  axis_pass    = all(c >= 2 for c in state.axis_sprint_counts.values())     # bd v0.9.19
-  budget_pass  = state.budget_used_total >= 0.80                             # an v0.9.15
-  return auto_pass AND shadow_pass AND axis_pass AND budget_pass
+  # stop_policy(manifest) 3조건 — 절대 점수 임계 없음(perverse incentive 제거)
+  gate_pass       = state.meta_audit_verdict == "pass"
+  no_regression   = state.sprint_regression_pass
+  plateau         = state.recent_score_delta < state.plateau_eps  # N=plateau_window[grade] 회 연속
+  budget_hard_cap = state.budget_used_total >= 0.95
+  return gate_pass AND no_regression AND (plateau OR budget_hard_cap)
 ```
 
-**4 conjunction 만 PASS** — 어느 하나 미달 시 sprint 추가. self_lint C-IPI 가 axis 별 sprint ≥ 2, C-BSL 이 budget 80%, C-GIS 가 shadow_grader 호출 + 종료점 검증.
+axis 분배(intent/plan/impl 각 ≥2)와 shadow_grader 호출은 참고 신호로 report 에 기록되며, plateau 판정을 보강한다 — 어느 하나 미달이 sprint 정지를 막지 않는다(handoff 사유 기록으로 충분).
 
 ## Grader-in-Sprint Dual-Objective ([`../conventions/grader-in-sprint.md`](../conventions/grader-in-sprint.md), be)
 
@@ -147,7 +152,7 @@ shadow_grader:
 | G4 (default) | 95 |
 | G5 | 98 |
 
-[`../conventions/grades.md`](../conventions/grades.md) 의 *automated 임계 0.999* 와 *human-rubric target* row 직교.
+[`../conventions/grades.md`](../conventions/grades.md) 의 *stop_policy 구조(plateau_window)* 와 *human-rubric target* row 직교.
 
 ## 매 스프린트 테스트 매트릭스
 
@@ -203,8 +208,8 @@ while True:
     for d, v in sub.items(): dim_history[d].append(v)
     report_to_user_with_timing(sprint, score, prev_scores)
 
-    if score >= 0.999:
-        return "pass"
+    if should_stop_sprint(build_stop_state(score, prev_scores, gate_results)):
+        return "pass"   # stop_policy 3조건 충족(설계 B2 §2.2) — 절대 점수 임계 아님
 
     # 1- 회귀 우선 — 페이즈 11 (sprint-narrative.md §4 의 정체와 별 트리거)
     if len(prev_scores) >= 2 and score < prev_scores[-2] - 0.05:
@@ -215,7 +220,7 @@ while True:
 
     # 2- 정체 감지 — sprint-narrative.md §4 / scoring/stagnation.py
     history_json = build_history(prev_scores, dim_history)
-    stag = stagnation.detect(prev_scores, dim_history, threshold=0.999)
+    stag = stagnation.detect(prev_scores, dim_history)  # threshold 인자 없음 = 비게이팅(설계 B2 §2.2-4)
     lesson_pack = stagnation.build_lesson_pack(
         sprint=sprint,
         history=history_records,

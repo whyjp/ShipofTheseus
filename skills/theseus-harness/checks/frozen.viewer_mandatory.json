@@ -1,0 +1,19 @@
+{
+  "check_id": "frozen.viewer_mandatory",
+  "phase": "13",
+  "grades": ["G3", "G4", "G5"],
+  "status": "frozen",
+  "producer": {
+    "cmd_pattern": "^python scoring/producers/measure_viewer_benefit_ab\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["viewer_impact_score"],
+  "assertions": [
+    {
+      "expr": "viewer_impact_score > 0",
+      "on_fail": "viewer 3종 의무 편익 A/B 미실증 (설계 §8 동결 — measure_viewer_benefit_ab.py 미구현)"
+    }
+  ],
+  "value": "viewer_impact_score",
+  "absence_policy": "FAIL"
+}

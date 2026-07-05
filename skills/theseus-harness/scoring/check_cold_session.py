@@ -18,8 +18,9 @@ Exit codes:
 참조:
 - sprint-28 (intra-phase-dacapo-loop 안티 패턴 g/h/i/j/k)
 - sprint-29 (impl-multiverse-strict 안티 패턴 e/f/g)
-- sprint-30 (conservative-margin-judging cap + sentinel)
-- sprint-19 (dacapo-mandatory-rerun ce, mandatory ≥ 1 rerun)
+- sprint-30 (conservative-margin-judging cap + sentinel — cap 은 설계 B2 §2.2-5 로 폐지,
+  check_score_cap() 은 이제 추적용 관측만이며 assertion 대상 아님, 아래 주석 참조)
+- sprint-19 (dacapo-mandatory-rerun ce — advisory 로 강등, 설계 B2 §2.2-3)
 
 orchestrator 가 phase 09 진입 직전 의무 호출 (HARD-RULE 9.f, sprint-32 v0.9.37 신규).
 """
@@ -32,7 +33,10 @@ import sys
 from pathlib import Path
 
 
-# rerun-별 score cap (sprint-30 conservative-margin-judging)
+# rerun-별 score cap (sprint-30 conservative-margin-judging) — 설계 B2 §2.2-5 로 이 cap 은
+# 폐지됐다(방향 불문 점수 성형 강제는 부정직). check_score_cap() 은 build_report() 를 통해
+# cold_session_artifact_report 로만 첨부되며(측정_cold_isolation.py 주석 참조), 커널
+# assertion 대상이 아닌 추적용 관측일 뿐이다 — 남겨진 값은 참고 정보로만 읽는다.
 SCORE_CAP_BY_RERUN = {0: 0.90, 1: 0.95, 2: 0.99}
 
 
@@ -225,21 +229,41 @@ def check_improvement_axes_remaining(plan_dir: Path) -> list[str]:
     return issues
 
 
+def build_report(cold_session_path: Path) -> dict:
+    """cold session artifact 스캔 → 원시 관측 리포트(issues + counts). verdict/exit 없음.
+
+    main()(CLI, 하위호환) 과 producers/measure_cold_isolation.py(evidence 조립기)가
+    공유하는 단일 계산 경로 — dry_violation_count.build_report ← measure_dry_violation 와
+    동일 방향(스크립트가 순수 계산을 노출, producer 가 소비). 여기서 verdict 는 내지
+    않는다 — issues 리스트 + violation_count 라는 원시 관측만 낸다."""
+    plan_dir = cold_session_path / "plan"
+    impl_dir = cold_session_path / "impl"
+    issues: list[str] = []
+    if plan_dir.exists():
+        issues += check_mandatory_first_rerun_plan(plan_dir)
+        issues += check_round2_universes_new(plan_dir)
+        issues += check_score_cap(plan_dir)
+        issues += check_improvement_axes_remaining(plan_dir)
+    issues += check_mandatory_first_rerun_impl(impl_dir)
+    issues += check_sentinel_patterns(plan_dir, impl_dir)
+    issues += check_impl_universe_isolation(plan_dir, impl_dir)
+    return {
+        "path": str(cold_session_path),
+        "path_exists": cold_session_path.exists(),
+        "plan_tournament_count": len(sorted(plan_dir.glob("tournament-*.md"))) if plan_dir.exists() else 0,
+        "plan_rerun_count": len(sorted(plan_dir.glob("dacapo-rerun-*.md"))) if plan_dir.exists() else 0,
+        "impl_tournament_count": len(sorted(impl_dir.glob("tournament-impl-*.md"))) if impl_dir.exists() else 0,
+        "issues": issues,
+        "violation_count": len(issues),
+    }
+
+
 def main(cold_session_path: Path) -> int:
     if not cold_session_path.exists():
         print(f"ERROR: cold session path 부재: {cold_session_path}", file=sys.stderr)
         return 2
-    plan_dir = cold_session_path / "plan"
-    impl_dir = cold_session_path / "impl"
-    all_issues: list[str] = []
-    if plan_dir.exists():
-        all_issues += check_mandatory_first_rerun_plan(plan_dir)
-        all_issues += check_round2_universes_new(plan_dir)
-        all_issues += check_score_cap(plan_dir)
-        all_issues += check_improvement_axes_remaining(plan_dir)
-    all_issues += check_mandatory_first_rerun_impl(impl_dir)
-    all_issues += check_sentinel_patterns(plan_dir, impl_dir)
-    all_issues += check_impl_universe_isolation(plan_dir, impl_dir)
+    report = build_report(cold_session_path)
+    all_issues = report["issues"]
     if all_issues:
         print(f"FAIL — {len(all_issues)} cold session violation(s):", file=sys.stderr)
         for i in all_issues:

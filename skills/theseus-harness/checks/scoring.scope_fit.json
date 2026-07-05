@@ -1,0 +1,23 @@
+{
+  "check_id": "scoring.scope_fit",
+  "phase": "09",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_submission\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["files_touched", "files_mapped_to_todos"],
+  "assertions": [
+    {
+      "expr": "files_touched > 0",
+      "on_fail": "no files touched (no-work perfect-score guard — 설계 P1 _safe_div(default=1.0)이 files_touched=0 을 만점 처리하던 결함 봉쇄)"
+    },
+    {
+      "expr": "files_mapped_to_todos <= files_touched",
+      "on_fail": "files_mapped_to_todos exceeds files_touched (impossible measurement)"
+    }
+  ],
+  "value": "files_mapped_to_todos / files_touched",
+  "absence_policy": "FAIL"
+}

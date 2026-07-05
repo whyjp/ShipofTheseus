@@ -89,7 +89,7 @@ magnitude_known_ratio: 0.50    # 4 중 2 row 정량
 
 [`grader-in-sprint.md`](grader-in-sprint.md) (be) 의 shadow grader 가 본 frontmatter 를 *명시적으로 평가* — direction_known_ratio < 1.0 시 lesson_candidate 자동 생성.
 
-### C. self_lint 룰 신규 — C-DS
+### C. C-DS (미등록)
 
 ```
 C-DS:
@@ -137,7 +137,7 @@ mindmap
       reason_빈_row_금지
       cold_session_retro_정합
     기능
-      C-DS_self_lint
+      C-DS_검증
       페이즈_05_본문_의무_표
       frontmatter_sync_자동
       페이즈_09_게이트_1_후크

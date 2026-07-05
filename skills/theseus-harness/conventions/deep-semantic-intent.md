@@ -93,9 +93,9 @@ c- verification protocol = 의미군 단위, 케이스 X.
 
 ## 4. 안티 패턴
 
-a- **Surface 만 적용 (v0.9.6 한정)** — adjective 추출하고 implied framing 추출 0. self_lint C-DSI (deep semantic intent) 가 §i 절에 *adjective + implied 두 절 분리* 검증.
+a- **Surface 만 적용 (v0.9.6 한정)** — adjective 추출하고 implied framing 추출 0. §i 절에 *adjective + implied 두 절 분리* 검증 의무 (주의: self_lint 의 `C-DSI` 는 data-structure-invariants.md 룰과 동명이인 — 미등록).
 b- **Implied framing 매칭 0인데 functional-only 명시 누락** — 본 컨벤션의 drift 가드 위반.
-c- **Verification protocol 이 surface 와 동일** — 형식적 implied 박힘, *질적 차이 0*. self_lint C-DSI-VERIFY 가 surface verification 과 implied verification 의 텍스트 차이 ≥ 50% 검증.
+c- **Verification protocol 이 surface 와 동일** — 형식적 implied 박힘, *질적 차이 0*. 텍스트 차이 ≥ 50% 검증 의무 (C-DSI-VERIFY, 미등록).
 
 ## 5. v0.9.13 효과 추정
 

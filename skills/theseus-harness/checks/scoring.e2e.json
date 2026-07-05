@@ -1,0 +1,23 @@
+{
+  "check_id": "scoring.e2e",
+  "phase": "09",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_submission\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["e2e_total", "e2e_passing"],
+  "assertions": [
+    {
+      "expr": "e2e_total > 0",
+      "on_fail": "no e2e tests executed (no-work guard, rubric.md e2e_pass)"
+    },
+    {
+      "expr": "e2e_passing <= e2e_total",
+      "on_fail": "e2e_passing exceeds e2e_total (impossible measurement)"
+    }
+  ],
+  "value": "e2e_passing / e2e_total",
+  "absence_policy": "FAIL"
+}

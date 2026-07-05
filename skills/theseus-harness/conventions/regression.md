@@ -17,7 +17,7 @@ indexed-in: conventions/INDEX.md
 
 ### 1.1 sprint loop 결손 (sprint-08 v0.9.8 도입 동기)
 
-페이즈 10 ([`../phases/10-test-loop.md`](../phases/10-test-loop.md)) 의 SKILL.md 인덱스가 "무한 스프린트 (임계 0.999)" 로 명시되어 있으나, *실 운영에서 단일 sprint 통과 후 정상 종료* 케이스 발생. cold 회차 (`synthetic_mine_throughput_cold`) 에서 sprint-01 의 자체 추정 92-95 / 100 이 임계 (0.97 G3 / 0.999 G4) 미달임에도 *재실행 0 회* — 본 스킬의 self-polishing 의도 누락.
+페이즈 10 ([`../phases/10-test-loop.md`](../phases/10-test-loop.md)) 의 정지 권위는 이제 manifest `stop_policy`(설계 B2 §2.2 — 게이트 pass AND 무회귀 AND (plateau OR budget≥95%)) 다. 본 절이 도입된 sprint-08 당시엔 "무한 스프린트(임계 0.999)" 로 명시돼 있었으나 *실 운영에서 단일 sprint 통과 후 정상 종료* 케이스가 발생했다 — cold 회차 (`synthetic_mine_throughput_cold`) 에서 sprint-01 자체 추정 92-95/100 이 당시 임계(0.97 G3/0.999 G4) 미달인데도 재실행 0 회. 도달 불가 임계 자체가 원인이었음이 이후 판명(설계 B2 §2) — self-polishing 의지는 stop_policy 의 plateau 신호로 이어받는다.
 
 ### 1.2 lint autogen 결손 (sprint-10 v0.9.16 도입 동기)
 
@@ -43,10 +43,10 @@ self_estimate:
 
 ### 2.2 gap-from-threshold 검사
 
-- 모든 dimension `score / max ≥ threshold` → **CONVERGED** (sprint 종료, phase 14 진입).
-- 어느 한 dimension `score / max < threshold` → **REGRESS** (sprint NN+1 진입).
+- `stop_policy` 3조건(게이트 pass AND 무회귀 AND (plateau OR budget≥95%)) 충족 → **CONVERGED** (sprint 종료, phase 14 진입).
+- plateau 미도달 + 무회귀 → **CONTINUE** (sprint NN+1 진입, 개선 신호가 있는 동안).
 
-threshold 는 grade 별 (G3=0.97 / G4=0.999 / G5=0.99999) — [`grades.md`](grades.md) 정합.
+절대 dimension 임계는 게이트가 아니다 — [`budget-saturation-loop.md`](budget-saturation-loop.md) §2 `stop_policy` 가 유일 권위(설계 B2 §2.2, [`grades.md`](grades.md) 참고 target 은 보고용).
 
 ### 2.3 weakest-dimension lesson 적용
 
@@ -155,7 +155,7 @@ Most recent:
 
 매 회차 누적 = 본 하네스가 *진짜 더 단단해진다* 의 객관 측정.
 
-### 3.5 self_lint C-RDLR
+### 3.5 문서 정합 검증 함수 (참고 구현)
 
 ```python
 def lint_regression_derived_rule_autogen(skill_root: Path) -> list[str]:
@@ -201,7 +201,7 @@ d- **Budget 초과 후 gap 은닉** — handoff 에 *gap 명시* 의무. 임계 
 e- **회귀 정정 commit 에 lint_rule_proposal 누락** — 본 컨벤션 핵심 위반.
 f- **rule_id 중복** — registry 가 ValueError raise.
 g- **신규 룰이 정정 산출물에 fail** — 룰 자체가 잘못 = 페이즈 11 재진입.
-h- **bench 도메인 키워드 룰** (예: "plan must contain crusher") — 도메인 종속 룰. self_lint C-RDR-DOMAIN-AGNOSTIC (TBD) 검증.
+h- **bench 도메인 키워드 룰** (예: "plan must contain crusher") — 도메인 종속 룰. C-RDR-DOMAIN-AGNOSTIC (미등록, TBD) 검증 대상.
 
 ## 6. 본 하네스 *우로보로스 자기 강화* 의 메커니즘화
 
@@ -213,7 +213,7 @@ sprint loop (§2) + lint autogen (§3) 결합 = "self-polishing 임계 도달 + 
 
 ## 7. 호환성
 
-- [`budget-saturation-loop.md`](budget-saturation-loop.md) — 본 §2 의 *조기 종료 회피* + 임계 0.999 정정 (default 임계 + 80% budget 사용 강제).
+- [`budget-saturation-loop.md`](budget-saturation-loop.md) — 정지 판정 권위(stop_policy). 구 "임계 0.999 + 80% 강제"는 폐지(설계 B2 §2.2).
 - [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) — 본 §2 의 *impl 단위만* → trinity 3 axis 로 확장 (intent / plan / impl 각 ≥ 2 sprint).
 - [`tournament-blind-rerun.md`](tournament-blind-rerun.md) — 본 §2 의 sprint-level 임계 미달 시 *project-wide* lesson 적용 + 임계 미달 시 anonymize 재경합.
 - [`domain-pack.md`](domain-pack.md) §4 (sprint-37 PR-AG 통합) — 본 §3 정합 (회귀 정정 시 도메인 어댑터 failure_patterns 누적).

@@ -3,15 +3,15 @@ id: prebuilt-shell-runtime-json
 category: meta
 applies-to-phases: '[all]'
 applies-to-grades: '[all]'
-trigger-when: 'observability HTML emit'
+trigger-when: 'advisory, §8 동결 — observability HTML emit, 산출 시'
 indexed-in: conventions/INDEX.md
 ---
 
-# Prebuilt Shell + Runtime JSON Injection — observability viewer 표준
+# Prebuilt Shell + Runtime JSON Injection — observability viewer 표준 (how-to, 생산 의무 §8 동결 B2-F3)
 
 ## 한 줄 요약
 
-**cold session 은 webview / lineage 의 HTML/JS/CSS shell 을 *빌드하지 않는다*.** 본 하네스가 패키징한 prebuilt shell (`templates/lineage-viewer/dist/`, `templates/webview/dist/`) 을 산출 디렉토리로 *복사* + 데이터 JSON 만 emit. shell 은 `window.__LINEAGE__` / `window.__WEBVIEW__` inline 주입 또는 `fetch('./lineage.json')` / `fetch('./data/webview.json')` fallback 으로 로드. cold session 부팅 시간 대폭 감소 + bun/npm 의존 제거. **다만 *옵션 dev mode* (`bun run dev` + `server.ts`) 는 보존** — 라이브 폴링/SSE 가 필요한 contributor 시나리오용.
+**viewer 를 산출하기로 한 경우, cold session 은 webview / lineage 의 HTML/JS/CSS shell 을 *빌드하지 않는다*(how-to — 생산 자체는 옵션).** 본 하네스가 패키징한 prebuilt shell (`templates/lineage-viewer/dist/`, `templates/webview/dist/`) 을 산출 디렉토리로 *복사* + 데이터 JSON 만 emit. shell 은 `window.__LINEAGE__` / `window.__WEBVIEW__` inline 주입 또는 `fetch('./lineage.json')` / `fetch('./data/webview.json')` fallback 으로 로드. cold session 부팅 시간 대폭 감소 + bun/npm 의존 제거. **다만 *옵션 dev mode* (`bun run dev` + `server.ts`) 는 보존** — 라이브 폴링/SSE 가 필요한 contributor 시나리오용.
 
 ## 1. 동기 — sprint-35 / v0.9.40 변경
 

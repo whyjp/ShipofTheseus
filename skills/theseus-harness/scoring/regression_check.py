@@ -176,6 +176,52 @@ def cmd_compare(args) -> int:
     return 1 if out["regressed"] else 0
 
 
+# --- evidence-emit 경로 seam (설계 §7.3, WP4b) --------------------------------
+# 아래 두 순수 함수는 producers/measure_regression.py(증거 조립기)가 import 해 쓰는
+# 재사용 지점이다 — dry_violation_count.build_report ← measure_dry_violation 와 동일
+# 방향(스크립트가 순수 계산을 노출, producer 가 소비). 위 CLI/subcommand/exit-code 는
+# 손대지 않는다(하위호환). verdict 는 여기서도 커널 몫이라 내지 않는다 — 이 함수들은
+# 원시 delta 값만 낸다.
+
+
+def extract_score(data: object, score_key: str | None = None) -> float | None:
+    """커널 Verdict(또는 score Evidence Record) dict 에서 정규 score 값을 뽑는다.
+
+    우선순위:
+      1. 최상위 `value` 가 숫자면 그것(kernel Verdict.value = 측정값의 결정 함수, §4.1).
+      2. `measured[score_key].value` 가 숫자면 그것(score Evidence 의 measured 스칼라).
+    둘 다 아니면 None — 상상하지 않는다(호출자가 결손 처리해 커널 법칙1로 FAIL).
+    bool 은 int 서브클래스라 명시적으로 배제(True 를 1.0 으로 오인 금지)."""
+    if not isinstance(data, dict):
+        return None
+    val = data.get("value")
+    if isinstance(val, (int, float)) and not isinstance(val, bool):
+        return float(val)
+    if score_key:
+        measured = data.get("measured")
+        if isinstance(measured, dict):
+            entry = measured.get(score_key)
+            if isinstance(entry, dict):
+                mv = entry.get("value")
+                if isinstance(mv, (int, float)) and not isinstance(mv, bool):
+                    return float(mv)
+    return None
+
+
+def build_delta_report(prior_score: float, current_score: float) -> dict:
+    """두 커널 검증 score → 원시 delta 리포트(verdict 없음). regression_threshold 판정
+    (delta >= -0.05, §7.3)은 커널이 CheckSpec `checks/sprint.regression.json` 으로 내린다 —
+    여기서는 계산량(delta)만 낸다. `regressed` 는 정보용 관측이며 measured 로 emit 되지
+    않는다(게이트는 커널이 delta 로 직접)."""
+    delta = current_score - prior_score
+    return {
+        "prior_score": prior_score,
+        "current_score": current_score,
+        "score_delta": delta,
+        "regressed_hint": delta < -0.05,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)

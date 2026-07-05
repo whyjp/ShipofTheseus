@@ -9,7 +9,7 @@
 
 ## 동작 (지휘자)
 
-0- **(sprint-36 신규) pre-cold-session bootup** — phase 00 enter *직전* `python skills/theseus-harness/scoring/pre_bootup.py bootstrap --root .ShipofTheseus/<프로젝트명_가확정>` 호출. 3 viewer (lineage / webview / interactive) shell 복사 + 빈 골격 JSON emit + viewer-runtime HTTP server 시작. 사용자에게 viewer URL 출력. 이때부터 cold session 진행이 5초 polling 으로 자동 viewer 반영. [`../conventions/pre-cold-session-bootup.md`](../conventions/pre-cold-session-bootup.md) 정합.
+0- **(advisory, §8 동결 B2-F3)** viewer 실시간 관측이 필요하면 `pre_bootup.py bootstrap` 으로 phase 00 enter 직전 부팅 *가능*(옵션 — 강제 아님). [`../conventions/pre-cold-session-bootup.md`](../conventions/pre-cold-session-bootup.md) how-to 참조.
 1- 시간 기록 시작 — `.ShipofTheseus/__pending/timing/start.json` 임시 작성 (프로젝트명 확정 후 실제 폴더로 이동).
 2- `Agent(subagent_type="general-purpose")` 에 [`../agents/project-namer.md`](../agents/project-namer.md) 프롬프트로 호출 — 후보 3~5 개 생성.
 3- 후보 산출물을 받아 `.ShipofTheseus/__pending/naming/00-candidates.md` 로 기록.

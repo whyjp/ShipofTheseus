@@ -58,81 +58,29 @@ python skills/theseus-harness/scoring/sub_agent_dispatch.py analyze-todos \
 
 자세한 위상 정렬 알고리즘 + 그레이드별 모드 추천: [`../conventions/subagent-trigger.md`](../conventions/subagent-trigger.md).
 
+### plan-todos.json 저작 (B1 §4.3)
+
+canonical `plan/06-plan.md` 확정 직후 `plan/06-plan-todos.json` 저작: TODO 표의 `ID`/`제목`/`모듈` → `{id, text, paths}` 기계적 변환.
+paths glob 은 본 phase §필수 섹션의 "모듈 분할 + 파일 배치(≥5 파일 경로)" 절에서 그대로 취한다 — 새 정보 생산 없음, 기존 계획의 기계 판독 형식화.
+스키마: judgment-gate-producers 설계 §3.3.
+**판정 필드(verified/score/pass/result/verdict) 절대 금지** — todo 는 paths(어디를 볼지)만 담는다, 매핑 판정은 producer(measure_scope_map)가 git diff 대조로 낸다.
+
 ---
 
-## sprint-50 — Design-Twice (universe philosophy distinct, HARD-RULE 9.ccc)
+## universe philosophy distinct (동결 advisory, 구 HARD-RULE 9.ccc)
 
-> 격언: Ousterhout, *A Philosophy of Software Design*, Ch.11 — *"Design It Twice"*. 같은 문제에 대한 두 번째 설계는 *반드시* 첫 번째와 다른 *철학* 으로 출발해야 한다. 둘 다 modular variant 면 *진짜로 두 번 설계한 게 아니다*.
+Ousterhout *Design It Twice* 취지 — universe 별 *설계 철학* 분기는 **가능하며 권장**(§8 동결: 분기 편익 A/B 미실증, 강제 아님).
 
-기존 multiverse (G3=3 / G4=4 / G5=6 universe) 는 *코드 분기* 만 강제했다. sprint-50 부터는 universe 별 *설계 철학* 도 distinct 의무.
+meta.md frontmatter 에 `philosophy:`(modular/oop/functional/data-driven/event-driven/actor/dsl-first 카탈로그, `--allow-extra` 로 확장 가능) 선언 *가능*. 각 universe `06-plan.md` 의 architectural decision header(Module boundary/Communication/State/Error/Concurrency/Data flow/Extension/Persistence/Event/Control) ≥3 개 작성 *권장* — 검증은 `universe_philosophy_distinct.py`(물리 존치, CLI 로 수동 실행 가능)로 *선택적* 수행. 강제 호출·vacuous-PASS 차단 게이트는 해제됐다.
 
-### universe 별 meta.md frontmatter 의무 신규 필드
+### universe candidate frontmatter created_at 진실성 (조건부 존치, sprint-52 PR-D, HARD-RULE 9.ooo)
+
+**candidate 파일을 산출하는 경우** universe candidate frontmatter `created_at` 은 `plan/candidates/universe-N/{meta.md, 06-plan.md, 07-cold-read.md}` 에서 실 ISO timestamp 의무(정시 stub `T..:00:00Z` 금지) — 만든 산출물이 거짓 시각을 담지 않게 하는 진실성 룰이며, universe 산출 자체의 의무와는 별개다. self_lint **C-UNIV-CREATED-AT** 존치.
 
 ```yaml
----
-universe: 1
-philosophy: modular   # 또는 oop / functional / data-driven / event-driven / actor / dsl-first
----
-```
-
-7 카탈로그 외 값은 `--allow-extra` flag + 사용자 ack 필요 (`feedback_no_human_ack.md` 와 충돌 없음 — 카탈로그 *확장* 은 영구 변경이라 ack 1 회).
-
-### universe candidate frontmatter `created_at` 의무 (sprint-52 PR-D, HARD-RULE 9.ooo)
-
-`plan/candidates/universe-N/{meta.md, 06-plan.md, 07-cold-read.md}` 산출 시 frontmatter `created_at` 의무 — *실 ISO timestamp* (초 단위 포함). 정시 stub (`T..:00:00Z`, `T..:00Z`) 금지.
-
-```yaml
----
-skill_name: shipoftheseus:theseus-orchestrator
-skill_version: <semver>
-phase: 06-plan-candidate    # 또는 07-cold-read
-universe: universe-N
-created_at: "2026-05-10T11:08:23Z"   # 초 단위 정시 금지
+created_at: "2026-05-10T11:08:23Z"   # 산출하는 경우, 초 단위 정시 금지
 fingerprint: PENDING                  # phase 14 lineage_finalize 가 chain 채움
-prev_fingerprint: PENDING_FROM_<source>
----
 ```
-
-self_lint **C-UNIV-CREATED-AT** 검증 — `plan/candidates/universe-*/{06-plan.md, 07-cold-read.md}` 의 `created_at` 부재 / 정시 stub 감지 시 fail. phase 14 lineage_finalize 가 mtime fallback 으로 처리하지만, *근본 원인* 은 phase 06 산출 시점의 timestamp 누락.
-
-격언: declared = invoked (sprint-43) — 본 §은 그 패턴의 frontmatter 차원. *형식 선언* 만 있고 *실 값* 없으면 finalize 단계에서 stub fallback 부담이 누적.
-
-### universe 별 06-plan.md 본문 의무 — architectural decision header ≥3
-
-각 universe 의 `06-plan.md` 는 다음 중 ≥3 개 §-level 표제 의무 (philosophy 는 *선언* 이고, 본문은 *행동*):
-
-- Module boundary / 모듈 경계
-- Communication style / 통신 방식
-- State management / 상태 관리
-- Error model / 에러 모델
-- Concurrency model / 동시성
-- Data flow / 데이터 흐름
-- Extension point / 확장 지점
-- Persistence / 영속성
-- Event model / 이벤트 모델
-- Control flow / 제어 흐름
-
-universe 간 *unique* 결정 (그 universe 만의 결정) ≥1 보유 비율 ≥ 50%. 이름만 다르고 결정 동질이면 fail (premortem §3-2 정합).
-
-### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
-
-phase 06 tournament 시작 *직전* (universe meta.md 확정 후) 의무 호출:
-
-```bash
-python skills/theseus-harness/scoring/universe_philosophy_distinct.py \
-    --project-root .ShipofTheseus/<프로젝트>/ \
-    --grade <G3|G4|G5> \
-    --json-out .ShipofTheseus/<프로젝트>/plan/universe_philosophy_distinct.json
-```
-
-- exit 0 → tournament 진입
-- exit 1 → universe meta.md 또는 06-plan.md 재작성 강제. `intent/00-violation.md` 기록 + 페이즈 06 재진입.
-
-### vacuous PASS 차단
-
-- universe-N/meta.md 에 `philosophy:` 필드만 있고 본문 결정이 모두 동일 = *결정 동질* fail.
-- universe 수 부족 (G4 인데 universe ≥3 만 있음) = fail (sprint-13 multiverse-width-default-bump 정합).
-- 카탈로그 외 philosophy 를 `--allow-extra` 없이 declare = fail.
 
 ## 입력
 - `intent/01-intent.md`, `intent/04-answers.md`, `intent/05-critique.md`, `intent/05-decisions.md`
@@ -255,18 +203,11 @@ d- HARD-RULE 9.a 본문 의무 강화로 *plan 안에서* implementation guidanc
 
 sprint-05-c 의 universe-3 plan 569 lines 에 데이터 구조 (TruckPool dict, Truck dataclass, EventQueue heap), 의사코드 (`_dispatch_event(ev)` switch), 클래스 시그니처 (`SchedulerLoop.run(env)`, `EventQueue.push/pop`) 모두 박혀있었음. 본 sprint-05-e 룰은 그 패턴을 *명시 의무* 로 격상.
 
-## 폭 default 5/7/9 + per-module use-case + plan sprint loop
+## 폭 + per-module use-case + plan sprint loop
 
-### 폭 default 격상 ([`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md), bc)
+### 폭 (manifest 단일 권위, [`../conventions/multiverse-width-default-bump.md`](../conventions/multiverse-width-default-bump.md) 동결(advisory))
 
-| Grade | 폭 default | 옵션 default (사용자 명시 ack) | 비고 |
-|---|:-:|:-:|---|
-| G2 | 2 | n/a | single 또는 2 후보 |
-| G3 | **5** (← 3) | 10 | axis 카탈로그 상위 5 활용 |
-| G4 | **7** (← 4) | 12 | 5 시드 + 2 axis (FE+BE × stance) |
-| G5 | **9** (← 6) | 16 | depth 2 자식 분기 + 4 axis 추가 |
-
-budget tight 시 fallback 폭 + `fallback_reason` frontmatter 의무 ([`../conventions/budget-aware-fallback.md`](../conventions/budget-aware-fallback.md)). self_lint C-MWDB 가 검증.
+폭 = `pipeline.manifest.json` `multiverse_widths` 단일 권위(활성 G2=1/G3=3/G4=4/G5=6). 격상 폭(G3=5/G4=7/G5=9)은 `frozen_widths` 참조 — 가능하나 의무 아님(사용자 명시 ack 시 적용).
 
 ### per-module use-case / sequence 다이어그램 default ([`../conventions/per-module-diagram-fan-out.md`](../conventions/per-module-diagram-fan-out.md), bb)
 
@@ -293,7 +234,7 @@ graph LR
 (모듈 ≥ 4 만큼 반복)
 ```
 
-self_lint C-PMDF 가 검증.
+검증 (C-PMDF, 미등록).
 
 ### plan sprint loop ([`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md), bd)
 
@@ -329,7 +270,7 @@ self_lint C-PMDF 가 검증.
 | fe_be_parity | 0.10 |
 | **decision_coverage** (신규) | **0.20** |
 
-`decision_coverage < 0.6` universe 즉시 탈락. self_lint C-CDM 검증.
+`decision_coverage < 0.6` universe 즉시 탈락. 검증 (C-CDM, 미등록).
 
 ### Measurement Contract — 본문 의무 섹션 ([`../conventions/measurement-contract.md`](../conventions/measurement-contract.md), bi)
 
@@ -357,7 +298,7 @@ reconstruct_justified_ratio: <0.0-1.0>
 ---
 ```
 
-작업이 non-metric (pure refactor / UI 변경) 시 표 빈 + reason (no-op). self_lint C-MC 검증. 페이즈 09 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85). 페이즈 11 회귀 분류에 plan_method vs impl 비교가 입력.
+작업이 non-metric (pure refactor / UI 변경) 시 표 빈 + reason (no-op). 검증 (C-MC, 미등록). 페이즈 09 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85). 페이즈 11 회귀 분류에 plan_method vs impl 비교가 입력.
 
 ### plan 본문 의무 (HARD-RULE 9.a 강화 — sprint-14 추가)
 
@@ -602,11 +543,8 @@ phase 06 종료 시점에 자동 검출 :
 
 self_lint 신규 (sprint-16) :
 
-- **C-DCL-GATE** — phase 06 → 07 게이트 6 조건 검증
 - **C-DCL-FRONTMATTER** — tournament/shadow-grade/dacapo-rerun frontmatter 의무 필드
 - **C-DCL-CROSS-VAL** — 거짓 frontmatter cross-validation (산술 + 파일시스템)
-- **C-DCL-SHADOW-CONTEXT** — shadow grader zero-context 5 룰
-- **C-DCL-SENTINEL** — 3 sentinel 매치 검출
 - **C-DCL-FLOW-LOG** — dacapo-flow.md Mermaid + timeline + rerun subgraph 의무
 
 ## §canonical 산출물 룰 (sprint-37 PR-AH inline, prev: canonical-not-stub.md, sprint-19 cg, HARD-RULE 9.ii)
@@ -1213,4 +1151,4 @@ python skills/theseus-harness/scoring/cross_phase_context_audit.py \
     --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_06.json
 ```
 
-본 §은 sprint-43 의 *literal Bash command* 박힘 — agent 가 prose 가 아니라 명령으로 받아들임. self_lint C-OWL 검증.
+본 §은 sprint-43 의 *literal Bash command* 박힘 — agent 가 prose 가 아니라 명령으로 받아들임 (C-OWL, 미등록).

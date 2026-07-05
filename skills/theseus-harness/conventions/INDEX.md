@@ -1,6 +1,6 @@
 # Convention Router — 단일 진실 원천
 
-**87 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail.
+**88 컨벤션 router.** 페이즈 본문 cross-ref / [`grades.md`](grades.md) 매트릭스 / 컨벤션 frontmatter `applies-to` 모두 본 표 참조. drift 시 self_lint C-IDX-1 fail.
 
 본 표는 *현재* 활성 컨벤션의 라우팅 정보 (sprint/version history → [`../../../CHANGELOG.md`](../../../CHANGELOG.md) 단일 위치).
 
@@ -52,6 +52,7 @@
 | fragmentation | meta | [all] | [all] | always |
 | grader-in-sprint | sprint | [10] | [all] | sprint stop |
 | grades | core | [all] | [all] | always |
+| hard-rule-9-extended | meta | [all] | [all] | phase 진입 시 매칭 (HARD-CORE.md HR9 9.d 이후 전문) |
 | idiomatic-code-quality | quality | [09] | [all] | code present |
 | impl-multiverse-strict | impl | [08,09] | [G4,G5] | phase 09 진입 |
 | indexing | core | [all] | [all] | always |
@@ -68,18 +69,18 @@
 | modeling-shortcuts | planning | [02,03,05,06,09] | [all] | heuristic / approximation 사용 시 |
 | models | core | [all] | [all] | always |
 | multiverse-impl-fan-out | impl | [08] | [G3,G4,G5] | always |
-| multiverse-width-default-bump | planning | [06,08] | [G3,G4,G5] | always |
+| multiverse-width-default-bump | planning | [06,08] | [G3,G4,G5] | frozen(advisory) |
 | nfr-derivation | quality | [01,09] | [all] | NFR derived |
 | parallel-cold-review | interview | [03] | [G3,G4,G5] | always |
 | per-module-diagram-fan-out | mindmap | [06,08] | [all] | 모듈 ≥ 4 |
-| phase-lineage-viewer | meta | [all] | [all] | phase exit |
+| phase-lineage-viewer | meta | [all] | [all] | phase exit (advisory, §8 동결 — 산출 시) |
 | phase-state-machine | core | [all] | [all] | phase enter / phase exit |
 | plan-tournament-scoring-strict | tournament | [06] | [all] | tournament 산출 |
 | plan-tree | planning | [06] | [G3,G4,G5] | always |
 | polyglot-code-quality | quality | [09] | [all] | always |
-| prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit |
-| pre-cold-session-bootup | meta | [all] | [all] | phase 00 enter 직전 |
-| viewer-runtime | meta | [all] | [all] | 3 viewer 공통 (auto-refresh) / cold session start/end (lifecycle) |
+| prebuilt-shell-runtime-json | meta | [all] | [all] | observability HTML emit (advisory, §8 동결 — 산출 시) |
+| pre-cold-session-bootup | meta | [all] | [all] | frozen(advisory) — 옵션 부팅 시 |
+| viewer-runtime | meta | [all] | [all] | advisory, §8 동결 — 3 viewer 공통(auto-refresh)/lifecycle, 산출 시 |
 | premortem-friction | interview | [02,03,07] | [G3,G4,G5] | always |
 | process-flow-coherence | quality | [09] | [all] | process 차원 |
 | readme-numbers-from-summary | quality | [09,14] | [all] | doc + summary |
@@ -104,7 +105,7 @@
 | test-invariants | quality | [09,10] | [all] | always |
 | tournament-blind-rerun | tournament | [06,08,11] | [G3,G4,G5] | 임계 미달 |
 
-총 **87 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
+총 **88 컨벤션**. self_lint C-IDX-1 가 `conventions/*.md` ↔ INDEX row 1:1 매칭 검증.
 
 ## 사용 규약
 

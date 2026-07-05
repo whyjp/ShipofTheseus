@@ -37,14 +37,26 @@ def test_no_stagnation_when_steady_climb():
     assert out["report"]["stagnation_overall"] is False
 
 
-def test_overall_stagnation_triggers_full_rewrite():
+def test_overall_plateau_is_stop_signal_non_gating():
+    # 설계 B2 §2.2-4 — plateau 는 정지 신호(비게이팅). exit 0, stop_signal True.
     rc, out = _run(_hist([0.910, 0.912, 0.913], correctness=[0.95, 0.95, 0.95]))
-    assert rc == 1
+    assert rc == 0  # 보고 모드 — 점수 절대값은 게이트가 아니다
     assert out["report"]["stagnation_overall"] is True
+    assert out["report"]["stop_signal"] is True
+    assert out["report"]["last_delta"] is not None
     assert out["report"]["recommended_action"] == "rewrite_full"
 
 
-def test_dim_stagnation_triggers_module_rewrite():
+def test_plateau_decoupled_from_absolute_score():
+    """절대 점수가 낮아도(0.999 미달) plateau 판정은 delta 만으로 — 임계 분리(§2.2-4)."""
+    # 점수가 0.999 훨씬 미달(0.60 대)이라도 delta<eps 면 plateau=정지 신호.
+    rc, out = _run(_hist([0.601, 0.602, 0.603], correctness=[0.60, 0.60, 0.60]))
+    assert rc == 0
+    assert out["report"]["stagnation_overall"] is True
+    assert out["report"]["stop_signal"] is True
+
+
+def test_dim_stagnation_reports_module_advice_non_gating():
     rc, out = _run(
         _hist(
             [0.95, 0.96, 0.97],
@@ -53,7 +65,7 @@ def test_dim_stagnation_triggers_module_rewrite():
             e2e_pass=[0.90, 0.95, 1.0],    # 건강
         )
     )
-    assert rc == 1
+    assert rc == 0  # 보고 모드(비게이팅) — 차원 정체는 조언 데이터
     assert out["report"]["stagnation_overall"] is False
     assert any(d["dim"] == "coverage" for d in out["report"]["stagnant_dims"])
     assert out["report"]["recommended_action"] == "rewrite_module"
@@ -86,11 +98,14 @@ def test_lesson_pack_includes_rewrite_rule():
         _hist([0.910, 0.912, 0.913], correctness=[0.95, 0.95, 0.95]),
         lesson_pack=True,
     )
-    assert rc == 1
+    assert rc == 0  # 보고 모드(비게이팅)
     pack = out["lesson_pack"]
     assert pack["recommended_action"] == "rewrite_full"
     assert pack["rewrite_rule"]["preserve"] is False
     assert pack["rewrite_rule"]["start_from"] == "phase-06-replan"
+    # delta_to_threshold(도달 불가 임계 거리)는 last_delta(직전 대비 실측)로 교체됨.
+    assert "last_delta" in pack
+    assert "delta_to_threshold" not in pack
 
 
 def test_lesson_pack_module_rewrite():
@@ -102,7 +117,7 @@ def test_lesson_pack_module_rewrite():
         ),
         lesson_pack=True,
     )
-    assert rc == 1
+    assert rc == 0  # 보고 모드(비게이팅)
     pack = out["lesson_pack"]
     assert pack["recommended_action"] == "rewrite_module"
     assert pack["rewrite_rule"]["preserve"] is False

@@ -117,7 +117,7 @@ magnitude_known_ratio: 0.50
 ---
 ```
 
-self_lint C-DS 가 frontmatter / 본문 / row 정합 검증.
+frontmatter / 본문 / row 정합 검증 의무 (C-DS, self_lint 미등록).
 
 ### Contested Decisions Source 산출 ([`../conventions/contested-decision-multiverse.md`](../conventions/contested-decision-multiverse.md), bf)
 

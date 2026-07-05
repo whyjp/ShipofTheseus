@@ -118,13 +118,27 @@ class TestMain(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_cli_exit_1_on_block(self):
+    def test_cli_reporting_mode_exit_0_by_default(self):
+        """설계 B2 §2.2-4 — default 보고 모드(비게이팅). 차단 패턴이라도 exit 0."""
         p = self.root / 'sprints' / '03' / 'report.json'
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(REPORT_0510_2), encoding='utf-8')
         rc = main([
             '--project-root', str(self.root),
             '--current-iteration', '3',
+            '--quiet',
+        ])
+        self.assertEqual(rc, 0)
+
+    def test_cli_gate_opt_in_exit_1_on_block(self):
+        """--gate opt-in 시 예전 차단 동작 복원 — verdict fail → exit 1."""
+        p = self.root / 'sprints' / '03' / 'report.json'
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(REPORT_0510_2), encoding='utf-8')
+        rc = main([
+            '--project-root', str(self.root),
+            '--current-iteration', '3',
+            '--gate',
             '--quiet',
         ])
         self.assertEqual(rc, 1)

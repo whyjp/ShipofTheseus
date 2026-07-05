@@ -89,7 +89,7 @@ Q3: expected_loss_vs_optimal_pct 추정값이 명시되어 있는가?
     No  → placeholder
 ```
 
-## self_lint C-MSC (sprint-40 PR-F 신규 — Modeling Shortcuts Catalogue)
+## C-MSC (self_lint 미등록 — sprint-40 PR-F 신규)
 
 phase 02 종료 시:
 - `intent/modeling_shortcuts.json` 존재 확인

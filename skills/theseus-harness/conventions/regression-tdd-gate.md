@@ -18,7 +18,7 @@ indexed-in: conventions/INDEX.md
 기존 자산:
 - `phases/08-implement.md` — 5 sub-phase TDD (test-architect / test-writer / implementer / runtime-detector / refactorer)
 - [`scoring/boot_check.py`](../scoring/boot_check.py) — runtime/healthz 검증 (게이트 7)
-- [`scoring/check_cold_session.py`](../scoring/check_cold_session.py) (HARD-RULE 9.f) — phase 09 진입 직전 cold session 검사
+- `run_gate.py` `cold.isolation` CheckSpec (9.f 은퇴) — phase 09 cold session 정합 검사 (값 기반)
 - [`dacapo-mandatory-rerun.md`](dacapo-mandatory-rerun.md) (HARD-RULE 9.gg) — phase 06/08 다카포 ≥ 1 회 의무
 
 **갭** — 페이즈 08 *사이* 의 매 sub-impl 산출 + dacapo step F 시점 + sprint iteration 시점에 *test 재실행* 강제 layer 부재. v0.9.22 이후 cold session 들에서 :
@@ -166,7 +166,7 @@ phase 08 의 implementer sub-phase 가 *한 universe 의 코드 산출* 을 한 
 
 - [`phases/08-implement.md`](../phases/08-implement.md) — 5 sub-phase TDD (페이즈 단위 layer).
 - [`scoring/boot_check.py`](../scoring/boot_check.py) — boot 검증 helper (본 컨벤션 의 `--boot-cmd` 호출 alternative).
-- [`scoring/check_cold_session.py`](../scoring/check_cold_session.py) (HARD-RULE 9.f) — phase 09 직전 post-hoc layer.
+- `run_gate.py` `cold.isolation` CheckSpec (9.f 은퇴) — phase 09 post-hoc layer (값 기반).
 - [`scoring/phase_state.py`](../scoring/phase_state.py) (sprint-34 #1) — runtime entry-time gate.
 - [`phases/11-regression-bisect.md`](../phases/11-regression-bisect.md) — regression_log entries 사이 binary search 로 *깨진 commit/module* 식별 (G4+).
 - [`runtime-prereq.md`](runtime-prereq.md) — Q-D9 runtime-prereq 답 → boot-cmd 자동 매핑.

@@ -28,49 +28,18 @@ python skills/theseus-harness/scoring/regression_check.py compare --root .Shipof
 
 ---
 
-## sprint-50 — Deep-Module + DRY (HARD-RULE 9.ddd / 9.eee)
+## sprint-50 — Deep-Module + DRY (커널 이관, HARD-RULE 9.ddd / 9.eee — B1 §3.2A)
 
 > 격언:
-> - Ousterhout, *A Philosophy of Software Design*, Ch.4 — *"Modules Should Be Deep"* — "A deep module is one that has a lot of functionality hidden behind a simple interface."
-> - Hunt & Thomas, *The Pragmatic Programmer*, Tip 11 — *"DRY"* — "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system."
+> - Ousterhout, *A Philosophy of Software Design*, Ch.4 — *"Modules Should Be Deep"*
+> - Hunt & Thomas, *The Pragmatic Programmer*, Tip 11 — *"DRY"*
 
-### 9.ddd — Deep-Module 검사 (`scoring/deep_module_metric.py`)
-
-각 모듈의 (public interface 줄 수) / (내부 functional 줄 수) 비율 ≤ τ=0.4 의무. *얕은 모듈* (interface ≈ implementation) 검출.
-
-vacuous PASS 차단:
-- 모듈 수 = 1 (단일 파일) = automatic fail.
-- 모듈 수 < ⌈sqrt(LOC/100)⌉ = warning.
-
-### 9.eee — DRY 검사 (`scoring/dry_violation_count.py`)
-
-코드 token n-gram (n=8) 중복 ≥ k 회 = violation. violation 비율 ≤ τ=0.05 의무.
-
-boilerplate 제외 catalog: `import` / `class` header / `__init__` / `if __name__ == '__main__'` / decorator / `pass` / 단독 `return` — *재사용 가능한 abstraction* 의 정상 반복은 metric-gaming 으로 카운트하지 않는다.
-
-### CLI 의무 호출 — *§자동 CLI 호출 literal Bash* (sprint-43 패러다임)
-
-phase 08 종료 *직전* (multiverse winner 확정 후, phase 09 진입 전) 의무 호출:
-
-```bash
-python skills/theseus-harness/scoring/deep_module_metric.py \
-    --code-root <submission>/src/ \
-    --max-ratio 0.4 \
-    --json-out .ShipofTheseus/<프로젝트>/impl/deep_module_metric.json
-
-python skills/theseus-harness/scoring/dry_violation_count.py \
-    --code-root <submission>/src/ \
-    --n-gram 8 \
-    --max-violation-ratio 0.05 \
-    --json-out .ShipofTheseus/<프로젝트>/impl/dry_violation.json
-```
-
-- exit 0 (둘 다) → phase 09 quality gate 진입
-- exit 1 (어느 하나) → phase 08 step C (implementer) 재진입. lesson_pack 누적 (모듈 분해 또는 중복 제거).
-
-### 다음 sprint 확장 의제 (떠안는 risk)
-
-본 sprint 의 deep_module / dry CLI 는 Python 한정 1 차 휴리스틱. 다른 언어 (Go / TS / Rust / Java) 는 다음 sprint 후속. 본 sprint 마감 시점에서 Python 외 언어로 산출 시 `--lang <name>` flag 로 declare + 사용자 ack 한 회 = 다음 sprint 카탈로그 추가.
+`quality.deep_module`(모듈별 interface/impl 줄수 비율 ≤ τ=0.4, 모듈 수=1 automatic fail) +
+`quality.dry`(token n-gram(n=8) 중복 비율 ≤ τ=0.05, boilerplate 제외 catalog 동일) 커널
+CheckSpec 이 phase 09 진입 시 `run_gate.py` 호출 안에서 1회 측정한다(producer:
+`measure_deep_module` / `measure_dry_violation` — 알고리즘 동일). **phase 08 자체 CLI 의무
+호출은 은퇴** — `deep_module_metric.py` / `dry_violation_count.py` 스크립트는 producer 가
+enumeration 로직을 재사용하므로 존치.
 
 ## 입력
 
@@ -90,6 +59,13 @@ python skills/theseus-harness/scoring/dry_violation_count.py \
 | **08-ε log** | impl-log 작성 | implementer (Sonnet) | impl/08-impl-log.md | TODO ID 매핑 ≥ 3 + 모듈명 + 인터페이스 노출 |
 
 skip 자백 ("production code holistically before tests" / "tight budget" 등) regex reject ([`../conventions/impl-multiverse-strict.md`](../conventions/impl-multiverse-strict.md) ch 정합).
+
+### solid-contract 저작 + criteria backing 보충 (B1 §4.4)
+
+08-δ(refactor) 종료 시 winner 코드에 대해 `impl/08-solid-contract.json` 저작: 모듈별 DIP(`absent_import`/`import_of`)·SRP(`symbol_count_max`) claim.
+**참인 claim 만** — 거짓 claim 은 producer(measure_solid_static) 디스크 재검사에서 실 FAIL 로 관측된다(저작 인센티브가 정직 쪽으로 정렬). contract 미저작 시 `scoring.solid` 결손 FAIL — 저작이 곧 게이트 통과의 전제. 스키마: judgment-gate-producers 설계 §3.4.
+08-ε(log) 시점에 `intent/01-intent-criteria.json` 의 **backing.ref 만** 실 test id 로 보충 가능(kind=test). **criterion 추가·삭제·required 강등 금지**(페이즈 04 동결, §4.2) — implementer 가 기준을 통과 가능한 것으로 바꿔치기하는 경로 차단.
+**판정 필드(verified/score/pass/result/verdict) 절대 금지** — solid-contract 는 claim(무엇을 볼지)만 담는다, 판정은 producer 디스크 재검사 몫.
 
 ## Multiverse fan-out + 다카포 loop (universe 별 5 서브페이즈 head-to-head)
 
@@ -210,11 +186,11 @@ b- **모든 must directive 가 ≥ 1 deliverable** — must directive 가 delive
 c- **모든 canonical directive 가 정확히 1 deliverable** — canonical 정의 위치 단일.
 d- **모든 primary directive 가 ≥ 1 deliverable + ≥ 1 measurement** — proxy 우회 차단.
 
-### self_lint C-PT
+### self_lint C-PTRC (구 C-PT)
 
 ```python
 def check_prompt_trace(skill_root: Path) -> list[str]:
-    """C-PT (sprint-38 PR-J) — phase 08.f prompt-trace."""
+    """C-PTRC (sprint-38 PR-J) — phase 08.f prompt-trace."""
     issues = []
     p08 = skill_root / "phases" / "08-implement.md"
     body = p08.read_text(encoding="utf-8")
@@ -244,12 +220,6 @@ d- **primary directive 의 measurement 부재** — proxy metric 우회.
 phase 08 종료 직전 orchestrator 의무 호출 :
 
 ```bash
-# HARD-RULE 9.qq — impl 다카포 임계
-python skills/theseus-harness/scoring/dacapo_threshold.py \
-    --tournament-md .ShipofTheseus/<proj>/impl/tournament-impl-01.md \
-    --threshold 0.999 \
-    --output .ShipofTheseus/<proj>/impl/dacapo_threshold.json
-
 # HARD-RULE 9.vv — impl universe 수 검증 (1 universe 시 7-condition 명시 의무)
 python skills/theseus-harness/scoring/universe_count_monotonicity.py \
     --project-root .ShipofTheseus/<proj>/ \
@@ -263,3 +233,11 @@ python skills/theseus-harness/scoring/cross_phase_context_audit.py \
 ```
 
 본 §은 sprint-43 의 *literal Bash command* 박힘. agent 자율 skip 금지.
+
+9.qq (impl 다카포 임계, `dacapo_threshold.py --tournament-md impl/tournament-impl-01.md`)
+CLI 는 B1 §3.2A 지정에 따라 은퇴 — `plan.dacapo_threshold` 커널 CheckSpec 이 phase 09
+run_gate 호출에서 대체 측정한다는 것이 설계 전제다. **주의(정직 고지)**: 실측 확인 결과
+`checks/plan.dacapo_threshold.json` 은 manifest 상 `"phase": "06"`(plan tournament) 전용
+스코프다 — phase 08 impl-tournament 자체에 대한 커널 동등 게이트는 현재 미등록(B1a/후속
+확인 대상). 스크립트 `dacapo_threshold.py` 는 producer `measure_dacapo_threshold` 가
+재사용하므로 존치.

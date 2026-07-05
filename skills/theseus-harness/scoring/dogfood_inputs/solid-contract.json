@@ -1,0 +1,19 @@
+{
+  "modules": [
+    {
+      "module": "producers/_evidence_common.py",
+      "claims": [
+        {"principle": "DIP", "backing": {"kind": "absent_import", "ref": "requests"}},
+        {"principle": "SRP", "backing": {"kind": "symbol_count_max", "ref": {"symbol": "public_class", "max": 0}}}
+      ]
+    },
+    {
+      "module": "producers/claims.py",
+      "claims": [
+        {"principle": "DIP", "backing": {"kind": "absent_import", "ref": "sqlite3"}},
+        {"principle": "DIP", "backing": {"kind": "import_of", "ref": "Callable"}},
+        {"principle": "SRP", "backing": {"kind": "symbol_count_max", "ref": {"symbol": "public_class", "max": 2}}}
+      ]
+    }
+  ]
+}

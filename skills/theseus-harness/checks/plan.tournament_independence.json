@@ -1,0 +1,24 @@
+{
+  "check_id": "plan.tournament_independence",
+  "phase": "06",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_tournament\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["grader_count", "grader_score_variance", "winner_ratio"],
+  "applicability": "grader_count >= 2",
+  "assertions": [
+    {
+      "expr": "winner_ratio > 0",
+      "on_fail": "winner_ratio is 0 (no shadow-grade score extractable — no-work guard, 설계 P1 회귀 봉쇄)"
+    },
+    {
+      "expr": "grader_score_variance > 0",
+      "on_fail": "grader_score_variance is 0 (≥2 독립 shadow grader 가 동일 점수 — zero-context 위반/self-rating 복사 의심, 설계 §7.2 / shadow-grader-zero-context.md 룰1)"
+    }
+  ],
+  "value": "winner_ratio",
+  "_dimension_note": "독립성(변량) 차원만. plan.dacapo_threshold 는 tournament-md 의 winner_score/winner_max 비율(서로 다른 artifact·차원)을 value 로 emit 한다 — 구 ≥0.999 게이트 assertion 은 도달 불가 임계 perverse incentive 라 삭제됐다(설계 B2 §2.3; 정지 판정 권위는 manifest stop_policy). 여기 winner_ratio 는 shadow grader 패널의 평균 정규 점수(합의 추정)로 애초부터 gating assertion 대상이 아니라 value(정보)일 뿐 — 어느 쪽도 절대 임계로 게이트하지 않는다. applicability 는 grader_count>=2 (변량은 2인 이상 패널에서만 측정 가능; 단일 grader 는 NA, 침묵 skip 아님)."
+}

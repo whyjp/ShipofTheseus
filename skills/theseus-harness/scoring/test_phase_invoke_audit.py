@@ -20,18 +20,11 @@ ORCH_SAMPLE_FULL_DECLARED = """# theseus-orchestrator
 python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md ...
 \\`\\`\\`
 
-## HARD-RULE 9.rr
-
-\\`\\`\\`bash
-python skills/theseus-harness/scoring/cold_session_artefacts.py --project-root ...
-\\`\\`\\`
-
 ## HARD-RULE 9.ss
 
 \\`\\`\\`bash
 python skills/theseus-harness/scoring/sprint_loop_cap.py ...
 python skills/theseus-harness/scoring/runtime_guard_chain.py ...
-python skills/theseus-harness/scoring/generate_sprint40_artefacts.py ...
 \\`\\`\\`
 """
 
@@ -51,8 +44,7 @@ class TestExtractDeclared(unittest.TestCase):
         self.assertTrue(info['present'])
         self.assertEqual(
             sorted(info['declared_clis']),
-            sorted(['cold_session_artefacts', 'dacapo_threshold', 'generate_sprint40_artefacts',
-                    'runtime_guard_chain', 'sprint_loop_cap']),
+            sorted(['dacapo_threshold', 'runtime_guard_chain', 'sprint_loop_cap']),
         )
 
     def test_orchestrator_missing(self):
@@ -68,15 +60,15 @@ class TestCheckInvocationTrace(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_cold_session_artefacts_invoked(self):
-        p = self.root / 'quality' / 'gate_cold_session_artefacts.json'
+    def test_runtime_guard_chain_invoked(self):
+        p = self.root / 'quality' / 'gate_runtime_guard_chain.json'
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps({'verdict': 'pass', 'evaluated_at': '2026-05-10T10:00:00Z'}), encoding='utf-8')
-        result = check_invocation_trace(self.root, 'cold_session_artefacts')
+        result = check_invocation_trace(self.root, 'runtime_guard_chain')
         self.assertTrue(result['invoked'])
 
     def test_not_invoked(self):
-        result = check_invocation_trace(self.root, 'cold_session_artefacts')
+        result = check_invocation_trace(self.root, 'runtime_guard_chain')
         self.assertFalse(result['invoked'])
 
     def test_sprint_loop_cap_glob(self):
@@ -98,22 +90,20 @@ class TestEvaluate(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_g4v2_pattern_5_declared_0_invoked(self):
-        """g4-v2 회피 패턴 — 5 CLI declared, 0 trace."""
+    def test_g4v2_pattern_declared_none_invoked(self):
+        """g4-v2 회피 패턴 — declared CLI 전부 0 trace."""
         self.orch.write_text(ORCH_SAMPLE_FULL_DECLARED, encoding='utf-8')
         verdict = evaluate(self.orch, self.proj)
         self.assertEqual(verdict['verdict'], 'fail')
-        self.assertEqual(len(verdict['not_invoked']), 5)
+        self.assertEqual(len(verdict['not_invoked']), 3)
 
     def test_all_invoked_passes(self):
         self.orch.write_text(ORCH_SAMPLE_FULL_DECLARED, encoding='utf-8')
-        # 5 CLI 의 trace 모두 박음
+        # 3 CLI 의 trace 모두 박음
         traces = [
             ('plan/dacapo_threshold.json', {'verdict': 'pass'}),
-            ('quality/gate_cold_session_artefacts.json', {'verdict': 'pass'}),
             ('sprints/03/sprint_loop_cap.json', {'verdict': 'stop'}),
             ('quality/gate_runtime_guard_chain.json', {'verdict': 'pass'}),
-            ('quality/gate_v6_reproducibility.json', {'verdict': 'pass'}),  # generate_sprint40_artefacts trace
         ]
         for rel, content in traces:
             p = self.proj / rel

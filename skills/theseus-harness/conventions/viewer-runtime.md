@@ -3,15 +3,15 @@ id: viewer-runtime
 category: meta
 applies-to-phases: '[all]'
 applies-to-grades: '[all]'
-trigger-when: '3 viewer 공통 (auto-refresh) / cold session start/end (lifecycle)'
+trigger-when: 'advisory, §8 동결 — 3 viewer 공통 (auto-refresh) / cold session start/end (lifecycle), 산출 시'
 indexed-in: conventions/INDEX.md
 ---
 
-# Viewer Runtime — frontend 폴링 (auto-refresh) + backend lifecycle (lock + scripts)
+# Viewer Runtime — frontend 폴링 (auto-refresh) + backend lifecycle (lock + scripts, how-to)
 
 ## 한 줄 요약
 
-**3 viewer (lineage / webview / interactive) 의 runtime 두 layer 단일 컨벤션.** ① **frontend** — JSON 파일 변경 자동 감지 + 5초 polling + Page Visibility + 수동 button + ETag 304. ② **backend** — `viewer-up/down.{sh,ps1}` + `viewer.lock.json` (PID/port/URL) + cross-platform PID kill (SIGTERM grace → SIGKILL). 두 layer 결합 = "사용자가 *체감* 하는 갱신 + PID 누수 차단" — observability 본질 상승.
+**3 viewer (lineage / webview / interactive) 의 runtime 두 layer 단일 컨벤션 — 생산 의무는 §8 동결(B2-F3)로 해제, 본 how-to 는 viewer 를 산출하는 경우에 적용.** ① **frontend** — JSON 파일 변경 자동 감지 + 5초 polling + Page Visibility + 수동 button + ETag 304. ② **backend** — `viewer-up/down.{sh,ps1}` + `viewer.lock.json` (PID/port/URL) + cross-platform PID kill (SIGTERM grace → SIGKILL). 두 layer 결합 = "사용자가 *체감* 하는 갱신 + PID 누수 차단" — observability 본질 상승.
 
 ## 1. 동기 — sprint-36 변경
 
@@ -220,7 +220,7 @@ m- **dashboard.json widget 0 또는 1 (G4+)** — phase 13 종료 게이트의 G
 
 ## 5.4 산출물 file-existence 게이트 일람 (sprint-40 PR-C 추가)
 
-| phase | 게이트 위치 | 검사 산출물 | self_lint |
+| phase | 게이트 위치 | 검사 산출물 | 검증 규칙 (미등록) |
 |---|---|---|---|
 | 09 entry | [`../phases/09-quality-gates.md`](../phases/09-quality-gates.md) §V8 | webview/ + interactive-viewer/ 디렉터리 외피 | C-VEX |
 | 12 exit | [`../phases/12-webview-assembly.md`](../phases/12-webview-assembly.md) §종료 게이트 | webview/{index.html, data/webview.json, assets/*.{js,css}} | C-VEX |

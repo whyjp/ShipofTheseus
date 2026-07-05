@@ -1,0 +1,27 @@
+{
+  "check_id": "quality.define_errors",
+  "phase": "08",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_define_errors\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["module_count", "raised_type_count", "unhandled_type_count", "bare_except_vacuous_flag"],
+  "assertions": [
+    {
+      "expr": "module_count > 0",
+      "on_fail": "no .py modules found (no-work guard — 0 모듈은 raise 0/unhandled 0 을 vacuous 하게 만족하므로 별도 assert 필요, 원본 스크립트의 exit 1 보존)"
+    },
+    {
+      "expr": "unhandled_type_count == 0",
+      "on_fail": "raise 후 handle 0 인 예외 종류 존재 (require-handle 위반, Ousterhout Ch.10 \"Define Errors Out of Existence\")"
+    },
+    {
+      "expr": "not bare_except_vacuous_flag",
+      "on_fail": "except 절 모두 bare/Exception only — specific exception type handle 0 (vacuous handle 의심, Effective Python Item 87)"
+    }
+  ],
+  "value": "raised_type_count - unhandled_type_count",
+  "absence_policy": "FAIL"
+}

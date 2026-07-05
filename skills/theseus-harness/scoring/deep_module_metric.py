@@ -121,6 +121,92 @@ def analyze_module(path: Path) -> dict:
     }
 
 
+def enumerate_modules(code_root: Path, ignore_tests: bool = True) -> list[Path]:
+    """code_root 아래 '모듈'로 계수되는 .py 파일의 정렬된 목록 — module_count 정의의
+    단일 소스. build_report(deep_module)와 measure_solid_static(JW4)가 공유해
+    modules_total 브릿지 정합(설계 §4.1)을 보장한다.
+
+    필터(동작 불변 — 기존 build_report 인라인과 파일 단위 동일):
+      - `code_root.rglob('*.py')` 정렬.
+      - ignore_tests 시 tests/ 디렉터리 · test_*.py · *_test.py · conftest* 제외.
+      - `__init__.py` 는 100바이트 초과일 때만 계수(빈 패키지 마커 제외).
+    """
+    files = sorted(code_root.rglob('*.py'))
+    if ignore_tests:
+        files = [
+            f for f in files
+            if 'tests' not in f.parts
+            and not f.name.startswith('test_')
+            and not f.name.endswith('_test.py')
+            and not f.name.startswith('conftest')
+        ]
+    files = [f for f in files if f.name != '__init__.py' or f.stat().st_size > 100]
+    return files
+
+
+def build_report(
+    code_root: Path,
+    max_ratio: float = 0.4,
+    min_modules: int = 2,
+    ignore_tests: bool = True,
+) -> dict:
+    """code_root 스캔 → deep-module 리포트(raw counts + ratio). verdict 는 안 낸다.
+
+    main()(CLI, 하위호환 유지)과 producers/measure_deep_module.py(evidence 조립기)가
+    공유하는 단일 계산 경로 — 같은 입력이 사람용 리포트와 Evidence Record 양쪽에서
+    갈라지지 않게 한다. `module_count` 는 모든 분기에 present(0 포함) — 호출자가
+    string-match 없이 분기를 구분하도록.
+    """
+    files = enumerate_modules(code_root, ignore_tests=ignore_tests)
+
+    if not files:
+        return {
+            'schema_version': SCHEMA_VERSION, 'pass': False, 'module_count': 0,
+            'failures': [f'no .py modules found in {code_root}'],
+        }
+
+    if len(files) < min_modules:
+        return {
+            'schema_version': SCHEMA_VERSION, 'pass': False,
+            'module_count': len(files),
+            'failures': [f'module count {len(files)} < min {min_modules}'],
+        }
+
+    results = [analyze_module(f) for f in files]
+    total_loc = sum(r['total_lines'] for r in results)
+    recommended_modules = max(2, math.ceil(math.sqrt(total_loc / 100))) if total_loc else 2
+
+    failures: list[str] = []
+    warnings: list[str] = []
+    shallow_modules = []
+    for r in results:
+        if r['functional_lines'] >= 5 and r['ratio'] > max_ratio:
+            shallow_modules.append((r['path'], r['ratio']))
+            failures.append(
+                f'{Path(r["path"]).name}: ratio {r["ratio"]} > max {max_ratio} '
+                f'(interface={r["interface_lines"]} / functional={r["functional_lines"]})'
+            )
+
+    if len(files) < recommended_modules:
+        warnings.append(
+            f'module count {len(files)} < recommended ⌈sqrt(LOC/100)⌉={recommended_modules} '
+            f'(LOC={total_loc})'
+        )
+
+    return {
+        'schema_version': SCHEMA_VERSION,
+        'pass': not failures,
+        'module_count': len(files),
+        'recommended_modules': recommended_modules,
+        'total_loc': total_loc,
+        'max_shallow_ratio': max((r['ratio'] for r in results if r['functional_lines'] >= 5), default=0.0),
+        'shallow_modules': [m[0] for m in shallow_modules],
+        'per_module': results,
+        'failures': failures,
+        'warnings': warnings,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--code-root', type=Path, default=None)
@@ -141,78 +227,31 @@ def main() -> int:
     if args.code_root is None:
         parser.error('--code-root required when not --self-test')
 
-    files = sorted(args.code_root.rglob('*.py'))
-    if args.ignore_tests:
-        files = [
-            f for f in files
-            if 'tests' not in f.parts
-            and not f.name.startswith('test_')
-            and not f.name.endswith('_test.py')
-            and not f.name.startswith('conftest')
-        ]
-    files = [f for f in files if f.name != '__init__.py' or f.stat().st_size > 100]
-
-    if not files:
-        report = {'schema_version': SCHEMA_VERSION, 'pass': False,
-                  'failures': [f'no .py modules found in {args.code_root}']}
-        _emit(report, args.json_out)
-        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
-        return 1
-
-    if len(files) < args.min_modules:
-        report = {'schema_version': SCHEMA_VERSION, 'pass': False,
-                  'module_count': len(files),
-                  'failures': [f'module count {len(files)} < min {args.min_modules}']}
-        _emit(report, args.json_out)
-        print(f'FAIL: 모듈 수 {len(files)} < {args.min_modules}', file=sys.stderr)
-        return 1
-
-    results = [analyze_module(f) for f in files]
-    total_loc = sum(r['total_lines'] for r in results)
-    recommended_modules = max(2, math.ceil(math.sqrt(total_loc / 100))) if total_loc else 2
-
-    failures: list[str] = []
-    warnings: list[str] = []
-    shallow_modules = []
-    for r in results:
-        if r['functional_lines'] >= 5 and r['ratio'] > args.max_ratio:
-            shallow_modules.append((r['path'], r['ratio']))
-            failures.append(
-                f'{Path(r["path"]).name}: ratio {r["ratio"]} > max {args.max_ratio} '
-                f'(interface={r["interface_lines"]} / functional={r["functional_lines"]})'
-            )
-
-    if len(files) < recommended_modules:
-        warnings.append(
-            f'module count {len(files)} < recommended ⌈sqrt(LOC/100)⌉={recommended_modules} '
-            f'(LOC={total_loc})'
-        )
-
-    report = {
-        'schema_version': SCHEMA_VERSION,
-        'pass': not failures,
-        'module_count': len(files),
-        'recommended_modules': recommended_modules,
-        'total_loc': total_loc,
-        'shallow_modules': [m[0] for m in shallow_modules],
-        'per_module': results,
-        'failures': failures,
-        'warnings': warnings,
-    }
+    report = build_report(
+        args.code_root,
+        max_ratio=args.max_ratio,
+        min_modules=args.min_modules,
+        ignore_tests=args.ignore_tests,
+    )
     _emit(report, args.json_out)
 
-    if failures:
-        print(f'FAIL: deep-module ({len(failures)} 얕은 모듈)', file=sys.stderr)
-        for f in failures:
+    if report['module_count'] == 0:
+        print(f'FAIL: {args.code_root} 에 모듈 0', file=sys.stderr)
+        return 1
+    if not report['pass'] and report['module_count'] < args.min_modules:
+        print(f'FAIL: 모듈 수 {report["module_count"]} < {args.min_modules}', file=sys.stderr)
+        return 1
+    if not report['pass']:
+        print(f'FAIL: deep-module ({len(report["failures"])} 얕은 모듈)', file=sys.stderr)
+        for f in report['failures']:
             print(f'  - {f}', file=sys.stderr)
         return 1
     print(
-        f'PASS: deep-module (modules={len(files)} '
-        f'recommended={recommended_modules} loc={total_loc})'
+        f'PASS: deep-module (modules={report["module_count"]} '
+        f'recommended={report["recommended_modules"]} loc={report["total_loc"]})'
     )
-    if warnings:
-        for w in warnings:
-            print(f'  WARN: {w}')
+    for w in report.get('warnings', []):
+        print(f'  WARN: {w}')
     return 0
 
 

@@ -50,12 +50,13 @@ def dacapo_loop(
     inputs: PhaseInputs,         # 06: prompt + intent_artifacts / 08: plan_winner + plan_universes
     artifact_dir: Path,          # 06: plan/  /  08: impl/ + code/
 ):
-    # ── 임계 매트릭스 (grades.md + be target_score 매트릭스) ──────────
-    threshold     = {G3: 0.97,  G4: 0.999,    G5: 0.99999}[grade]
+    # ── 참고 target 매트릭스 (grades.md + be target_score) — 절대 게이트 아님.
+    #    정지 판정의 실제 권위는 manifest stop_policy(설계 B2 §2.2) 단일 소스.
+    threshold     = {G3: 0.97,  G4: 0.999,    G5: 0.99999}[grade]   # 참고값(레거시 grade 표기)
     shadow_target = {G3: 90,    G4: 95,       G5: 98     }[grade]
     width         = {G3: 5,     G4: 7,        G5: 9      }[grade]   # bc default
-    max_rerun     = {G3: 2,     G4: 3,        G5: 5      }[grade]   # 참고용 가드 (sprint-28 — budget 충분 시 임계 도달까지 *무한 회귀*, budget cap 만이 진짜 종료 조건)
-    budget_cap    = 0.95   # an budget-saturation-loop 정합
+    max_rerun     = {G3: 2,     G4: 3,        G5: 5      }[grade]   # 참고용 가드 — "budget 충분 시 임계 도달까지 무한 회귀" 프레이밍은 폐기(설계 B2 §2.2), 실제 종료는 stop_policy budget_hard_cap
+    budget_cap    = 0.95   # budget-saturation-loop stop_policy 정합
 
     # ── Step A. 초기 multiverse fan-out (Da Capo 의 *처음* 지점) ───────
     universes = initial_fan_out(phase, inputs, width)
@@ -342,7 +343,7 @@ g- **survivors rerun (Da Capo 오해 — 가장 빈번한 회귀)** — Round N+
    - C-DCL-FRESH-UNIVERSE 강제.
 h- **dacapo-rerun-NN.md 역순 작성** — tournament-(NN+1).md *이후* 작성 → "Round N+1 universe spec" 의 의미 상실. **올바른 순서**: tournament-NN.md → dacapo-rerun-NN.md (NEW universe pool spec) → tournament-(NN+1).md.
 i- **fresh universe 가 재라벨링** — 본문이 Round N universe 본문과 semantic diff < 30% → fresh 위반. lesson_pack 적용 + framing 변경 의무.
-j- **max_rerun cap 으로 조기 종료 (sprint-28 정정)** — 본 의사코드는 *budget cap* 만 (`budget_used_total >= 0.95`). max_rerun (G3=2/G4=3/G5=5) 는 *조기 종료 가드 (참고용)* — budget 충분 시 임계 (G4=0.999 / G5=0.99999) 도달까지 *무한 회귀*. 임계 미달 + budget 여유 + rerun >= max_rerun 인데 promote = **차단** (mandatory rerun ce 정합).
+j- **max_rerun cap 으로 조기 종료 (sprint-28 정정, 설계 B2 §2.2 재정정)** — 실제 종료 권위는 manifest `stop_policy`(gate AND no_regression AND (plateau OR budget≥0.95)) 뿐이다. max_rerun (G3=2/G4=3/G5=5) 는 *조기 종료 가드(참고용)*. 구판의 "임계 도달까지 무한 회귀" 프레이밍은 도달 불가 임계 perverse incentive 라 폐기 — rerun 은 [`dacapo-mandatory-rerun.md`](dacapo-mandatory-rerun.md) 재정정대로 delta 신호가 있을 때 advisory 로 계속한다.
 k- **scoring granularity coarse** — `0-3 4 단계 정수` / `0-10 정수` 등 coarse rating 으로 6-dim weighted (cf plan-tournament-scoring-strict) 우회. 0.0-1.0 연속값 의무. `각 criterion 0–3` 패턴 자동 reject (cf 정합).
 
 ## 9. 적용 페이즈

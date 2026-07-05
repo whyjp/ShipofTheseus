@@ -73,7 +73,7 @@
 
 ## 마인드맵 — Mermaid 의무
 
-text tree (ASCII) 형태로 작성하면 self_lint C-MQG fail. 의무 형식:
+text tree (ASCII) 형태로 작성하면 C-MQG 위반 (미등록). 의무 형식:
 
 ````markdown
 ```mermaid

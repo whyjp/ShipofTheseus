@@ -87,9 +87,7 @@ def check_intent_completeness(intent_md: Path) -> list[str]:
 
 매 페이즈 01 산출물 작성 시 9 sub 모두 박힘 검증. 누락 시 페이즈 02 진입 거부.
 
-## 3. self_lint 룰
-
-`scoring/self_lint.py` C-IC (신규):
+## 3. C-IC (미등록, 신규)
 
 ```python
 def lint_intent_completeness(skill_root: Path) -> list[str]:
@@ -117,7 +115,7 @@ c- data-derived vs introduced 분리 = *정직성 룰*, 도메인 무관.
 
 ## 5. 안티 패턴
 
-a- **§k 통째 누락** — 의도 §a~§i 만 작성하고 §k 없음. self_lint C-IC fail.
+a- **§k 통째 누락** — 의도 §a~§i 만 작성하고 §k 없음 (C-IC 위반, 미등록).
 b- **§g limitations 절에 "없음" 만** — 한계가 *없는* 모델은 거짓. 최소 1 항목 의무.
 c- **§i data-derived/introduced 분리 안 함** — 모든 fact 를 한 표에 섞어 정직성 위반. 두 표 분리.
 d- **assumptions == limitations 혼동** — assumptions = *전제로 가정* (load time normal), limitations = *못 다루는 영역* (no breakdowns).

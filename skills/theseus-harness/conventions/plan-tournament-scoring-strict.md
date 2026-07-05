@@ -37,14 +37,9 @@ winner_score: <weighted total, 0.0~1.0>
 산식:
 `winner_score = 0.20·feasibility + 0.20·invariant + 0.20·decision_coverage + 0.15·modular + 0.15·determinism + 0.10·measurement`
 
-### Step D 매핑 (sprint-19 정정)
+### Step D 매핑 (sprint-19, 설계 B2 §2.3 재정정)
 
-```
-tournament_pass = (winner_score >= grade_threshold)
-  G2 = 0.85 / G3 = 0.97 / G4 = 0.999 / G5 = 0.99999
-shadow_pass = (shadow_grade-NN.json.predicted_score >= shadow_target)
-  G3 = 90 / G4 = 95 / G5 = 98
-```
+`winner_score`/`shadow_grade-NN.json.predicted_score` 는 6-dim weighted 측정값으로 계속 emit 된다 — 단 절대 임계(구 G4=0.999/G5=0.99999) 는 게이트가 아니다. 정지 판정 권위는 manifest `stop_policy`(gate AND no_regression AND (plateau OR budget≥95%)) 이며, 본 표는 값의 *참고 target* 으로만 남는다 (G2=0.85/G3=0.97, G4/G5 의 도달 불가 임계는 폐지).
 
 ## 의무 — universe table 6-dim
 

@@ -1,0 +1,28 @@
+{
+  "check_id": "cold.isolation",
+  "phase": "03",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_cold_isolation\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["computed_overlap", "dispatch_log_present"],
+  "applicability": "dispatch_log_present == 1",
+  "assertions": [
+    {
+      "expr": "computed_overlap <= 0.6",
+      "on_fail": "computed_overlap > 0.6 (콜드 재이해가 참조 텍스트와 어휘 과다 공유 — 하류 오염/누출 의심, 설계 §7.4 값 기반 오염 검사)"
+    },
+    {
+      "expr": "prior_context_token_count == 0",
+      "on_fail": "prior_context_token_count != 0 (콜드 에이전트가 사전 conversation 컨텍스트를 들고 호출됨 — 격리 위반, 설계 §7.4 / P3)"
+    },
+    {
+      "expr": "allowed_file_count >= 1",
+      "on_fail": "allowed_file_count < 1 (콜드 에이전트에 접근 허용 파일 0 — 무엇을 재이해했는지 불명)"
+    }
+  ],
+  "value": "computed_overlap",
+  "_dimension_note": "applicability=dispatch_log_present==1 (설계 §7.4 정직 고지: 이 저장소 콜드 세션은 LLM 주도라 구조화된 dispatch 로그가 아직 없다 — 로그 부재 시 prior_context_token_count/allowed_file_count 는 deficit 이고 상상하지 않는다). 로그가 실재해 dispatch_log_present==1 로 입증될 때만 격리 assertion 이 게이팅되고, 부재 시 meta_audit 가 '증거로 입증된 NA'(비게이팅) — 침묵 skip 아님. computed_overlap 은 두 텍스트가 주어지면 항상 backable(실측), 격리 키는 로그 실재 시에만 emit."
+}

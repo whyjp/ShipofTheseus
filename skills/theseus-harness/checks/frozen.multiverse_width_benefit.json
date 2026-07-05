@@ -1,0 +1,19 @@
+{
+  "check_id": "frozen.multiverse_width_benefit",
+  "phase": "06",
+  "grades": ["G3", "G4", "G5"],
+  "status": "frozen",
+  "producer": {
+    "cmd_pattern": "^python scoring/producers/measure_multiverse_width_ab\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["width_benefit_delta"],
+  "assertions": [
+    {
+      "expr": "width_benefit_delta > 0",
+      "on_fail": "frozen_widths(G3=5/G4=7/G5=9) 편익 A/B 미실증 (설계 §8 동결 — measure_multiverse_width_ab.py 미구현, .ShipofTheseus 실행 흔적 0)"
+    }
+  ],
+  "value": "width_benefit_delta",
+  "absence_policy": "FAIL"
+}

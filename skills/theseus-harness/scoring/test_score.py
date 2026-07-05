@@ -46,34 +46,40 @@ def _green_inputs() -> dict:
     }
 
 
-def test_perfect_inputs_pass_at_999_threshold():
+def test_perfect_inputs_report_high_score_exit_zero():
+    # 보고 모드(default, 설계 B2 §2.3) — 점수는 측정·보고, exit 0(비게이팅).
     rc, out = _run(_green_inputs())
     assert rc == 0
-    assert out["passes_threshold"] is True
     assert out["score"] >= 0.999
+    assert out["passes_threshold"] is True  # default 임계 0.0 → 보고 필드 True
 
 
-def test_near_perfect_misses_999_threshold():
+def test_absolute_score_never_gates_exit():
+    """설계 B2 §2.3 — 점수 절대값은 exit 을 좌우하지 않는다(도달 불가 0.999 게이트 제거)."""
     inputs = _green_inputs()
     inputs["be_coverage"] = 0.95
     inputs["fe_coverage"] = 0.92
+    # 보고 모드 default(임계 0.0) — passes_threshold True, exit 0.
     rc, out = _run(inputs)
-    # 임계 0.999 기본값에서는 통과 못 함 — 자율 최대 결과 지향
-    assert rc == 1
-    assert out["passes_threshold"] is False
-    # 같은 입력이 임계 0.9 에서는 통과해야 함
-    rc, out = _run(inputs, threshold=0.9)
     assert rc == 0
     assert out["passes_threshold"] is True
+    # 명시 임계 0.999 로 보고 필드는 False 가 되지만 exit 은 여전히 0(게이트 아님).
+    rc, out = _run(inputs, threshold=0.999)
+    assert rc == 0
+    assert out["passes_threshold"] is False
 
 
-def test_failing_e2e_drops_score_below_threshold():
+def test_failing_e2e_drops_score_but_reports_exit_zero():
     inputs = _green_inputs()
     inputs["e2e_passing"] = 0
     rc, out = _run(inputs)
-    assert rc == 1
+    # 측정 존치 — e2e_pass 0.0 반영, 낮은 점수 보고. 그러나 exit 0(비게이팅).
+    assert rc == 0
     assert out["sub_scores"]["e2e_pass"] == 0.0
-    assert out["passes_threshold"] is False
+    # 명시 임계 0.999 에서 보고 필드만 False, exit 은 여전히 0.
+    rc2, out2 = _run(inputs, threshold=0.999)
+    assert rc2 == 0
+    assert out2["passes_threshold"] is False
 
 
 def test_coverage_uses_min_of_be_and_fe():
@@ -139,10 +145,22 @@ def test_dip_violation_caps_total_at_06():
     inputs = _green_inputs()
     inputs["dip_violation"] = True
     rc, out = _run(inputs)
-    assert rc == 1
+    # DIP cap(측정) 존치 — score 0.6. exit 은 비게이팅(0, 회귀 아님).
+    assert rc == 0
     assert out["score"] == 0.6
     assert out["dip_violation"] is True
     assert any("dip_violation" in c for c in out["caps_applied"])
+
+
+def test_delta_field_reports_change_vs_prior():
+    """delta 필드(직전 대비 변화량) 보고 — 값 기반 정지/회귀 신호의 원천(설계 B2 §2.3)."""
+    prior = {"score": 0.90}
+    inputs = _green_inputs()
+    rc, out = _run(inputs, prior=prior, threshold=0.9)
+    assert out["prior_score"] == 0.90
+    assert out["delta"] is not None and out["delta"] > 0  # 개선(상승)
+    assert out["regression_triggered"] is False
+    assert rc == 0
 
 
 def test_dip_violation_caps_solid_subscore_at_05():

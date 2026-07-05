@@ -102,7 +102,7 @@ d- 본 컨벤션은 *모든 회차* (simulation-bench / 외부 repo / 본 저장
 ## 5. 안티 패턴
 
 a- **`applied_conventions` 누락한 산출물** — frontmatter 가 자동 fail (C14 의 확장).
-b- **모든 컨벤션을 무차별 등재** — *실제 인용* 만 등재 의무. 형식 통과 위한 dump 는 self_lint C-CT-HONEST 추가 검증 (TBD).
+b- **모든 컨벤션을 무차별 등재** — *실제 인용* 만 등재 의무. 형식 통과 위한 dump 는 C-CT-HONEST 추가 검증 대상 (미등록, TBD).
 c- **expected 카탈로그 변경 없이 컨벤션 신규 추가** — 신규 컨벤션이 어느 페이즈의 expected 인지 contracts.md 에 명시 의무.
 d- **zero-applied 컨벤션 무시** — 회차 종료 시 zero-applied 가 *expected* 와 교집합이면 페이즈 11 회귀 분류 (impl defect) 트리거.
 

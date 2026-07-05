@@ -2,7 +2,17 @@
 """
 theseus-harness 스프린트 채점기.
 
-사용법:
+**1차 경로(설계 §5, §7.1, WP4a)**: producer(measure_submission.py) → Evidence Record →
+kernel.verify(scoring.* CheckSpec) → `aggregate_scores(dim_values, dip_violation)`.
+즉 score.py 는 *커널/집계가 호출하는 순수 함수* 다 — 6 차원 커널 verdict 의 value 를
+rubric 가중치로 가중평균하고 DIP 총점 hard cap 0.6 을 적용한다. N/A(None) 차원은 active
+셋에서 제외하고 가중치를 재정규화한다(rubric "active dimensions").
+
+**DEPRECATED**: 아래 `--inputs sprint-inputs.json` 직접 채점 경로는 손으로 쓴 자기 신고
+값을 받는다(설계 P1). 하위호환·자기점검(self_lint --score) 용도로만 유지하며, 새 채점은
+1차 경로를 쓴다. compute_sub_scores/overall_score/apply_caps/main 은 그 얇은 shim 이다.
+
+사용법(deprecated shim):
     score.py --inputs sprint-inputs.json [--prior prior.json] [--regression-threshold 0.05]
 
 inputs JSON 형식 (모든 필드 필수, 명시 표시 외):
@@ -28,10 +38,15 @@ inputs JSON 형식 (모든 필드 필수, 명시 표시 외):
   }
 }
 
-stdout 으로 결과 JSON, exit code:
-  0  = 임계 통과 (기본 임계 0.999 — 자율 최대 결과 지향)
-  1  = 임계 미달
-  2  = 회귀 트리거 (--prior 비교)
+stdout 으로 결과 JSON, exit code (보고 모드 — 설계 B2 §2.3):
+  0  = 정상 (점수 절대값은 게이트가 아니다 — 측정·보고 전용)
+  2  = 회귀 트리거 (--prior 대비 regression_threshold 초과 하락 — 값 기반 delta 게이트)
+
+점수 절대값은 어디서도 종료·차단 게이트가 아니다(도달 불가 임계 0.999 제거). `--threshold`
+는 하위호환 보고 필드 `passes_threshold` 계산용으로만 남으며(default 0.0 = 보고 모드),
+exit code 를 좌우하지 않는다. 종료 판정의 유일 권위는 manifest `stop_policy`(§2.2) —
+gate(meta_audit verdict) + no_regression + plateau/budget cap. 여기서 게이팅하는 유일
+신호는 회귀(delta 하락)이며, 이는 절대 점수가 아니라 이전 대비 변화량이다.
 """
 
 from __future__ import annotations
@@ -40,6 +55,14 @@ import argparse
 import json
 import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+# kernel/_stdio 의 공유 UTF-8 강제 헬퍼 — argparse 한글 help/에러 등 자기 출력도
+# cp949 콘솔에서 크래시하지 않도록. kernel/ 을 sys.path 에 올려 import.
+_KERNEL_DIR = Path(__file__).resolve().parent / "kernel"
+if str(_KERNEL_DIR) not in sys.path:
+    sys.path.insert(0, str(_KERNEL_DIR))
+from _stdio import force_utf8_stdio  # noqa: E402
 
 WEIGHTS = {
     "correctness": 0.25,
@@ -107,6 +130,79 @@ def overall_score(sub: SubScores) -> float:
     return sum(WEIGHTS[k] * v for k, v in active.items()) / weight_sum
 
 
+# scoring CheckSpec id → rubric 차원명(WEIGHTS 키). 커널 verdict(check_id 별)를 집계
+# 입력(차원명별)으로 옮기는 유일 매핑. e2e 는 rubric 상 'e2e_pass'.
+CHECK_ID_TO_DIM = {
+    "scoring.correctness": "correctness",
+    "scoring.scope_fit": "scope_fit",
+    "scoring.solid": "solid",
+    "scoring.coverage": "coverage",
+    "scoring.fe_be_parity": "fe_be_parity",
+    "scoring.e2e": "e2e_pass",
+}
+
+
+def aggregate_scores(dim_values: dict[str, float | None], dip_violation: bool) -> dict:
+    """1차 경로 집계 — 6 차원 커널 verdict value → rubric 가중 총점 + DIP 총점 cap.
+
+    dim_values 는 WEIGHTS 키(correctness/scope_fit/solid/coverage/fe_be_parity/e2e_pass)
+    별 값. None 인 차원은 N/A(적용성 미충족)로 active 셋에서 제외하고 가중치를 active
+    위에서 재정규화한다. DIP 위반 시 총점을 hard cap 0.6 으로 누른다(rubric 문면).
+
+    WHY dip_violation 을 별도 인자로 받나: solid 차원 자체는 WP3 대로 DIP 위반 시 게이트
+    FAIL(scoring.solid CheckSpec)이라 verdict pass 인 run 에서는 DIP=0 이다. 총점 0.6
+    cap 은 그 위의 *이중 방어* — solid 게이트가 어떤 이유로 뚫려도 총점이 0.6 을 넘지
+    못하게 한다(rubric.md "DIP 위반 = solid 게이트 FAIL + 총점 0.6 cap").
+    """
+    active = {k: v for k, v in dim_values.items() if v is not None}
+    unknown = set(active) - set(WEIGHTS)
+    if unknown:
+        raise ValueError(f"unknown scoring dimensions: {sorted(unknown)}")
+    weight_sum = sum(WEIGHTS[k] for k in active)
+    if weight_sum == 0:
+        raise ValueError("no active dimensions to aggregate (all N/A?)")
+    raw = sum(WEIGHTS[k] * v for k, v in active.items()) / weight_sum
+    capped = bool(dip_violation) and raw > DIP_TOTAL_CAP
+    score = DIP_TOTAL_CAP if capped else raw
+    return {
+        "score": round(score, 4),
+        "raw_score": round(raw, 4),
+        "active_dimensions": sorted(active),
+        "na_dimensions": sorted(k for k, v in dim_values.items() if v is None),
+        "weight_sum": round(weight_sum, 4),
+        "dip_violation": bool(dip_violation),
+        "dip_capped": capped,
+    }
+
+
+def aggregate_from_meta_audit(report: dict, *, dip_violation: bool) -> dict:
+    """meta_audit report → aggregate_scores. PASS=value, NA=None(제외). FAIL 은 집계
+    대상이 아니다(게이트 실패한 run 의 총점은 무의미) — ValueError 로 크게 실패시킨다.
+
+    이 어댑터가 1차 경로의 '커널 verdict → 총점' 연결부다. dip_violation 은 solid 측정에서
+    이미 아는 값이라 명시로 받는다(evidence 내부를 다시 뜯지 않는다 — 결합도 최소).
+    """
+    results = report.get("results", {})
+    dim_values: dict[str, float | None] = {}
+    failed_gating: list[str] = []
+    for check_id, dim in CHECK_ID_TO_DIM.items():
+        outcome = results.get(check_id)
+        if outcome is None:
+            continue
+        result = outcome.get("result")
+        if result == "PASS":
+            dim_values[dim] = outcome.get("value")
+        elif result == "NA":
+            dim_values[dim] = None
+        else:  # FAIL
+            failed_gating.append(check_id)
+    if failed_gating:
+        raise ValueError(
+            f"cannot aggregate: gating checks failed: {sorted(failed_gating)}"
+        )
+    return aggregate_scores(dim_values, dip_violation)
+
+
 def apply_caps(score: float, inputs: dict) -> tuple[float, list[str]]:
     flags = inputs.get("hard_exit_flags") or {}
     caps: list[tuple[str, float]] = []
@@ -130,10 +226,20 @@ def apply_caps(score: float, inputs: dict) -> tuple[float, list[str]]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    force_utf8_stdio()  # cp949 등 로캘 콘솔에서 비-ASCII print 크래시 방지(공유 헬퍼)
     p = argparse.ArgumentParser()
     p.add_argument("--inputs", required=True, help="sprint-inputs.json 경로")
     p.add_argument("--prior", help="이전 스프린트 score 출력 경로 (회귀 판정용)")
-    p.add_argument("--threshold", type=float, default=0.999)
+    p.add_argument(
+        "--threshold",
+        type=float,
+        default=0.0,
+        help=(
+            "보고 필드 passes_threshold 계산용 참조 임계 (default 0.0 = 보고 모드, 비게이팅). "
+            "설계 B2 §2.3 — 점수 절대값은 exit code 를 좌우하지 않는다. 종료는 manifest "
+            "stop_policy 권위. 하위호환·수동 점검용으로만 임계 비교 필드를 남긴다."
+        ),
+    )
     p.add_argument("--regression-threshold", type=float, default=0.05)
     p.add_argument(
         "--out",
@@ -176,7 +282,10 @@ def main(argv: list[str] | None = None) -> int:
         "caps_applied": caps_applied,
         "dip_violation": bool(inputs.get("dip_violation")),
         "prior_score": prior_score,
+        # delta = 이전 대비 변화량(값 기반 정지/회귀 신호의 원천). prior 없으면 None.
+        "delta": (None if prior_score is None else round(score - prior_score, 4)),
         "regression_triggered": regression,
+        # 보고 필드(하위호환) — exit code 를 좌우하지 않는다(설계 B2 §2.3, 비게이팅).
         "passes_threshold": score >= args.threshold,
     }
     json.dump(output, sys.stdout, indent=2, ensure_ascii=False)
@@ -188,9 +297,8 @@ def main(argv: list[str] | None = None) -> int:
             json.dump(output, f, indent=2, ensure_ascii=False)
             f.write("\n")
 
-    if regression:
-        return 2
-    return 0 if output["passes_threshold"] else 1
+    # 점수 절대값은 게이트가 아니다 — 유일한 비-0 exit 는 회귀(값 기반 delta 게이트).
+    return 2 if regression else 0
 
 
 if __name__ == "__main__":

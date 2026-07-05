@@ -84,7 +84,7 @@ c- diversity score = 정량 메트릭 (M/N), 도메인 X.
 
 a- **N=1 회피** — "1 framing 으로 충분" 으로 본 컨벤션 우회. 페이즈 03 의무 N=4 (G4+) 또는 N=3 (G3) 강제.
 b- **framing 통합** — 4 sub-agent 가 *같은 컨텍스트 공유* → framing 다양성 0. 각 agent *fresh* (HARD-RULE 03 페이즈 b 정합).
-c- **diversity score 미측정** — composite 산출물에 metric 누락 = self_lint C-PCR fail.
+c- **diversity score 미측정** — composite 산출물에 metric 누락 (C-PCR 위반, 미등록).
 
 ## 7. 그레이드 별 활성
 
@@ -178,7 +178,7 @@ def attach_l2_catalogue(framing_prompt: str, domain: str) -> str:
     return framing_prompt + suffix
 ```
 
-### self_lint C-PCR-L2 (sprint-40 PR-F 신규 — Parallel Cold Review L2)
+### C-PCR-L2 (self_lint 미등록 — sprint-40 PR-F 신규)
 
 phase 05 종료 시 :
 - `intent/05-critique.md` 의 `l2_catalogue_applied == true` 확인

@@ -1,0 +1,19 @@
+{
+  "check_id": "sprint.regression",
+  "phase": "10",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_regression\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["prior_score", "current_score", "score_delta"],
+  "assertions": [
+    {
+      "expr": "score_delta >= -0.05",
+      "on_fail": "score_delta < -0.05 (커널 검증된 이전 대비 현재 점수가 0.05 초과 하락 — 회귀, 설계 §7.3)"
+    }
+  ],
+  "value": "score_delta",
+  "_dimension_note": "prior/current 두 커널 Verdict(또는 score Evidence)의 value 를 비교한 delta 를 게이트한다. skipped==FAIL 규율(§2 원칙2): 두 입력 중 하나라도 없으면 producer 가 evidence 를 안 써 커널 법칙1(evidence_missing) FAIL — '측정 안 함'이 통과가 아니라 실패다. applicability 없음(활성 grade 에서 항상 적용)."
+}

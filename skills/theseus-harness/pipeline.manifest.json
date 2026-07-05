@@ -1,0 +1,51 @@
+{
+  "manifest_schema_version": "1.0",
+  "_authority": "설계 §11.3 단일 매니페스트 — 페이즈/폭/그레이드별 활성 체크의 유일 권위 소스. 러너·메타감사·문서가 모두 이 파일을 읽는다. 스칼라 '페이즈 수'는 어디에도 박지 않는다 — phases 리스트가 곧 개수(14/15/16 드리프트를 구성적으로 제거).",
+  "_phase_source": "phases 열거·이름·active_grades 는 skills/theseus-harness/SKILL.md §1 페이즈 표(라벨 '단일 진실 원천')를 읽어 확정. name 은 phases/<file>.md 파일명에서 파생(기계 안정). order 는 SKILL.md 실행 순서(01.5 는 04 뒤 — clarify 된 의도를 소비하므로). conventions/grades.md 의 페이즈 활성화 표는 stale(14-페이즈, 01.5 결손, handoff 를 13 에 둠)이라 권위 아님.",
+  "phases": [
+    {"id": "00", "name": "naming", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "01", "name": "intent", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "02", "name": "document", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "03", "name": "independent-comprehension", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "04", "name": "clarify", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "01.5", "name": "hidden-intent", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "05", "name": "critique", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "06", "name": "plan", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "07", "name": "plan-recursion", "active_grades": ["G4", "G5"]},
+    {"id": "08", "name": "implement", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "09", "name": "quality-gates", "active_grades": ["G2", "G3", "G4", "G5"]},
+    {"id": "10", "name": "test-loop", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "11", "name": "regression-bisect", "active_grades": ["G4", "G5"]},
+    {"id": "12", "name": "webview-assembly", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "13", "name": "interactive-viewer", "active_grades": ["G3", "G4", "G5"]},
+    {"id": "14", "name": "handoff", "active_grades": ["G2", "G3", "G4", "G5"]}
+  ],
+  "multiverse_widths": {
+    "G2": 1,
+    "G3": 3,
+    "G4": 4,
+    "G5": 6,
+    "_note": "실제 강제되는 활성 폭(grades.md '멀티버스 폭 확장 sprint-05-b' + SKILL desc 'G3-3/G4-4/G5-6'). G2 는 멀티버스 없음(단일 우주=1)."
+  },
+  "frozen_widths": {
+    "G3": 5,
+    "G4": 7,
+    "G5": 9,
+    "_note": "편익 미실증 — 설계 §8 동결. A/B 실증 전까지 비활성(advisory). active 폭은 multiverse_widths."
+  },
+  "stop_policy": {
+    "gate": "meta_audit_verdict_pass",
+    "no_regression": true,
+    "plateau_eps": 0.005,
+    "plateau_window": {"G3": 2, "G4": 2, "G5": 3},
+    "budget_hard_cap": 0.95,
+    "_note": "종료 단일 권위(설계 B2 §2.2). 종료 = gate AND no_regression AND (plateau OR budget_hard_cap). 점수는 보고 측정값 — 게이트 아님(도달 불가 임계 0.999/0.99999 제거, perverse incentive 봉쇄). plateau_eps/window 는 초기 스냅샷 파라미터(§2.3 정직 고지) — 리허설/벤치 run 마다 관측 delta 분포로 재추정. 종료 조건 판정은 이 블록을 유일 권위로 소비(드리프트 재발 차단)."
+  },
+  "checks": {
+    "G2": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "quality.deep_module", "quality.dry", "quality.define_errors"],
+    "G3": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "plan.tournament_independence", "sprint.regression", "cold.isolation", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "G4": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "plan.tournament_independence", "sprint.regression", "cold.isolation", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "G5": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "plan.tournament_independence", "sprint.regression", "cold.isolation", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],
+    "_note": "scoring 6(WP3, §7.1) + WP5 승격 4(plan.dacapo_threshold=G3+, quality.deep_module/dry/define_errors=G2+) + WP4b 판단성 3(plan.tournament_independence=phase06 독립성/변량, sprint.regression=phase10 score delta, cold.isolation=phase03 overlap+격리; 모두 G3+) + WP6 동결 2(frozen.multiverse_width_benefit=phase06, frozen.viewer_mandatory=phase13, G3+). frozen.* 는 status:frozen 이라 meta_audit 가 ADVISORY(비게이팅) 처리 — 편익 A/B 실증 전까지 종료를 막지 않음(§8). plan.tournament_independence 는 dacapo_threshold 와 다른 차원(변량 vs 품질 plateau). cold.isolation 은 applicability=dispatch_log_present==1 — 로그 부재 시 NA(§7.4 정직 고지). plan.* 는 G2 제외(토너먼트 없음). producer 없는 run 은 evidence_missing FAIL(§2 원칙2). 체크 추가 = 레지스트리 파일 + 이 맵 항목 동시 갱신만으로 meta_audit.py 자동 감사(WP3 §6, 하드코딩 0)."
+  }
+}

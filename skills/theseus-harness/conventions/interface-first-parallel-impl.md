@@ -34,7 +34,7 @@ a- **모든 모듈** 이 자기 인터페이스 (Port / Protocol / abstract base
 b- 인터페이스 = *공개 API 만* (private helper 제외). 메서드명 + 파라미터 + 반환 타입.
 c- 다른 모듈에 의존 시 — 의존 대상의 *인터페이스* 만 인용 (구현 0). 예: `from .topology import Topology  # interface only` 가 plan 본문에 명시.
 
-self_lint C-IF-PLAN (신규) — 페이즈 06 plan/06-plan.md 의 모든 모듈 정의가 *인터페이스 절* 가지는지 검증.
+C-IF-PLAN (미등록, 신규) — 페이즈 06 plan/06-plan.md 의 모든 모듈 정의가 *인터페이스 절* 가지는지 검증 의무.
 
 ### Step 2 — 페이즈 08 impl 의 sub-agent 병렬 fan-out
 
@@ -105,7 +105,7 @@ v01_cold audit :
 
 ## 6. 안티 패턴
 
-a- **인터페이스 정의 후 *구현 인용* 으로 sub-agent 가 다른 모듈의 본문 모방** — DIP 우회. self_lint C-IF-DIP 가 cross-module import 검증 (only interface symbols).
+a- **인터페이스 정의 후 *구현 인용* 으로 sub-agent 가 다른 모듈의 본문 모방** — DIP 우회. cross-module import 검증 의무 (C-IF-DIP, 미등록 — only interface symbols).
 b- **N sub-agent 병렬 호출 후 통합 적용 누락** — 본 §2-step 3 위반. integration adapter test ≥ 1 의무.
 c- **각 sub-agent 가 자기 모듈 외 *마스터 코드* 도 작성** — sub-agent context 분리 위반. instruction 의무 명시.
 d- **단일 monolithic agent 로 phase 08 진행 후 *형식적* 모듈 분할** — 본 컨벤션 핵심 위반. 페이즈 08-γ 진입 시 *fan-out 산출 evidence* 의무 (각 sub-agent 의 separate log).

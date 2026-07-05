@@ -82,7 +82,7 @@ docstring_obligation: module + function + dataclass
 
 implementer 서브에이전트가 본 frontmatter 를 *프롬프트 prefix* 로 받음 → CLAUDE.md "Default to writing no comments" 룰을 audience 별로 swap.
 
-### D. self_lint 룰 신규 — C-CP
+### D. C-CP (self_lint 미등록)
 
 ```
 C-CP:
@@ -137,7 +137,7 @@ mindmap
       mixed_core_명시_의무
       density_target_정량
     기능
-      C-CP_self_lint
+      C-CP_검증
       페이즈_04_객관식_신규
       페이즈_06_frontmatter_sync
       페이즈_08_프롬프트_swap

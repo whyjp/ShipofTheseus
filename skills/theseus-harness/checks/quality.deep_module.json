@@ -1,0 +1,23 @@
+{
+  "check_id": "quality.deep_module",
+  "phase": "08",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_deep_module\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["module_count", "max_shallow_ratio"],
+  "assertions": [
+    {
+      "expr": "module_count >= 2",
+      "on_fail": "module count < 2 (min_modules 미달 — vacuous 단일파일 우회 차단, Ousterhout Ch.4 \"Modules Should Be Deep\")"
+    },
+    {
+      "expr": "max_shallow_ratio <= 0.4",
+      "on_fail": "interface/functional ratio > 0.4 인 얕은 모듈 존재 (deep-module 원칙 위반)"
+    }
+  ],
+  "value": "max_shallow_ratio",
+  "absence_policy": "FAIL"
+}

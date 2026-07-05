@@ -262,7 +262,7 @@ classification: defensible-coarse → gold-standard 전환
 사용자 답: lower-bound 0.5 (3-sigma 가능성 0)
 ```
 
-### self_lint C-CSQ (sprint-40 PR-F 신규 — Cascading Sub-Q)
+### C-CSQ (미등록 — sprint-40 PR-F 신규, Cascading Sub-Q)
 
 phase 04 종료 시 :
 - 모든 Q-D 답 본문에서 keyword grep

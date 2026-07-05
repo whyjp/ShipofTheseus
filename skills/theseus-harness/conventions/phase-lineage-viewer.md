@@ -3,15 +3,15 @@ id: phase-lineage-viewer
 category: meta
 applies-to-phases: '[all]'
 applies-to-grades: '[all]'
-trigger-when: 'phase exit'
+trigger-when: 'phase exit (advisory, §8 동결 — 산출 시)'
 indexed-in: conventions/INDEX.md
 ---
 
-# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 + Gantt (sprint-16 / v0.9.22 + sprint-34 / v0.9.39 확장)
+# Phase Lineage Viewer — 프로젝트 전체 페이즈 흐름 + Gantt (how-to, 생산 의무 §8 동결 B2-F3)
 
 ## 한 줄 요약
 
-**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 *Mermaid flowchart + Mermaid gantt* 두 view 로 누적 가시화.** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성. **sprint-34 / v0.9.39 — Mermaid `gantt` chart 추가 (timeline view) + 모든 그레이드 (G1~G5) 의무화**. 거짓 백필/위조 차단 — gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화.
+**프로젝트 전체 (페이즈 00 → 14) 흐름을 단일 마크다운 (`.ShipofTheseus/<프로젝트>/lineage.md`) 에 *Mermaid flowchart + Mermaid gantt* 두 view 로 누적 가시화 *가능*(생산 의무는 §8 동결로 해제 — 산출하는 경우의 how-to).** [`dacapo-flow-trace.md`](dacapo-flow-trace.md) (bq) 가 *phase 06 / 08 per-phase* 만 가시화 — 본 컨벤션은 *프로젝트 전체* 페이즈 lineage + universe 분기 + dacapo loop + sentinel 회귀 + 산출물 fingerprint chain + 핸드오프 결정을 한 view 로 통합. 디버깅 시 "이 프로젝트가 어떤 결정의 흐름을 거쳐 최종 산출물에 도달했는지" 한 파일에서 즉시 재구성. **sprint-34 / v0.9.39 — Mermaid `gantt` chart 추가 (timeline view), 산출하는 경우 전 그레이드 권장**. 산출한 경우 거짓 백필/위조 차단은 조건부 존치 — gantt timeline 이 [`phase_state.py`](../scoring/phase_state.py) 의 entered_at/exited_at 직접 시각화.
 
 ## 1. bq vs br 책임 분리
 
@@ -266,7 +266,7 @@ def update_phase_lineage(
 
 매 페이즈 진입/종료 + dacapo loop 진행 + sentinel 매치 + 핸드오프 시점에 호출. 수동 편집 금지.
 
-## 7. self_lint C-PLV 룰
+## 7. lineage.md 무결성 검증 함수 (참고 구현)
 
 ```python
 def check_phase_lineage_viewer(artifact_dir: Path) -> list[str]:
@@ -348,7 +348,7 @@ c- Da Capo 요약 표 = bq 의 final 결과 누적, 도메인 X.
 
 a- **lineage.md 가 *개별 산출물 링크 모음만***  — Mermaid 다이어그램 부재. 흐름 재구성 불가. flowchart ≥ 1 의무.
 b- **bypass 페이즈 누락** — 회귀 미발생으로 phase 11 skip → bypass 노드도 의무 (bypass 클래스 + dashed 엣지).
-c- **fingerprint chain 표 mismatch 무시** — sentinel ★ 노드 추가 안 함 → 무결성 우회. C-PLV 강제.
+c- **fingerprint chain 표 mismatch 무시** — sentinel ★ 노드 추가 안 함 → 무결성 우회. 본 컨벤션 §7 강제.
 d- **dacapo flow 와 lineage 의 cross-link 부재** — drill-down 불가능. plan/dacapo-flow.md cross-link 의무.
 e- **수동 편집** — 사람이 손으로 행 추가 → orchestrator 자동 갱신과 drift. fingerprint mismatch 로 검출.
 f- **Mermaid 노드 라벨에 unquoted parens** (sprint-35 v0.9.40 회귀 정정) — `[Phase 11 — 회귀 바이섹트<br/>(미발생)]` 형태는 Mermaid 가 `(` 를 stadium shape 으로 오해, parse error. **노드 라벨에 parens / `=` / 한글 + 특수문자 혼용 시 반드시 `["..."]` 인용 의무**. 예: `P11["Phase 11 — 회귀 바이섹트<br/>미발생"]:::bypass`. subgraph / edge 라벨 / Done(\[...\]) stadium 도 동일.
@@ -428,9 +428,9 @@ c- inline 주입 패턴 채택 시 `lineage.html` 의 `<script src="./assets/app
 
 스키마 + 패턴 A/B 상세는 [`prebuilt-shell-runtime-json.md`](prebuilt-shell-runtime-json.md) §3.1.
 
-### 14.3 self_lint C-PLV 확장
+### 14.3 lineage.html 검증 확장
 
-§7 의 기존 C-PLV 룰에 다음 항목 추가 :
+§7 의 기존 검증 함수에 다음 항목 추가 :
 
 ```python
 # G3+ 의무 (sprint-35 / v0.9.40)

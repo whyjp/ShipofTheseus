@@ -1,0 +1,28 @@
+{
+  "check_id": "quality.dry",
+  "phase": "08",
+  "grades": ["G2", "G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_dry_violation\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["module_count", "total_ngrams", "violation_count", "scanned_line_count", "n_gram"],
+  "applicability": "module_count == 0 or scanned_line_count >= n_gram + 10",
+  "assertions": [
+    {
+      "expr": "module_count > 0",
+      "on_fail": "no .py modules found (no-work guard — module_count==0 은 applicability 를 강제로 참으로 만들어 NA 가 아니라 이 assertion 으로 FAIL, 원본 스크립트의 exit 1 보존)"
+    },
+    {
+      "expr": "total_ngrams > 0",
+      "on_fail": "total_ngrams is 0 (n-gram 추출 실패 — no-work guard)"
+    },
+    {
+      "expr": "violation_count / total_ngrams <= 0.05",
+      "on_fail": "DRY violation ratio > 0.05 (Pragmatic Programmer Tip 11 \"DRY\" 위반)"
+    }
+  ],
+  "value": "violation_count / total_ngrams",
+  "absence_policy": "FAIL"
+}
