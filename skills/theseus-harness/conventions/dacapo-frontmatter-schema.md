@@ -33,7 +33,7 @@ rerun: 00                                     # 0-padded, 첫 시도 = 00
 rerun_count: 0                                # 누적 다카포 횟수
 grade: G4
 multiverse_width: 7
-threshold: 0.999                              # grade matrix
+stop_policy_ref: budget-saturation-loop.md    # 구 threshold: 0.999 대체(설계 B2 §2.3) — 정지 권위는 manifest stop_policy
 shadow_target: 95
 max_rerun: 3                                  # G3=2/G4=3/G5=5
 

@@ -96,7 +96,7 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-89 [`conventions/cross-phase-shared-context.md`](conventions/cross-phase-shared-context.md) — shared 정보 단일 위치 + asof_fingerprint 인용 의무 (sprint-19)
   d-90 [`conventions/INDEX.md`](conventions/INDEX.md) — 93 컨벤션 router (단일 진실 원천, sprint-20+)
   d-91 [`HARD-CORE.md`](HARD-CORE.md) — always-load supremacy 본문 (≤ 4000 chars, sprint-20)
-  d-92 [`conventions/conservative-margin-judging.md`](conventions/conservative-margin-judging.md) — 모든 internal judge 보수적 prior + 0.999 마진 보존 + 무한 회귀 polishing 동력 (sprint-30)
+  d-92 [`conventions/conservative-margin-judging.md`](conventions/conservative-margin-judging.md) — 모든 internal judge 보수적 prior + 측정값 그대로 보고, rerun-별 score cap 폐지 (sprint-30, 설계 B2 §2.2-5 재정정)
   d-93 [`conventions/phase-state-machine.md`](conventions/phase-state-machine.md) — runtime 단조성 게이트 + frontmatter forgery 차단 ([`scoring/phase_state.py`](scoring/phase_state.py), sprint-34 v0.9.39)
   d-94 [`conventions/subagent-trigger.md`](conventions/subagent-trigger.md) — TODO DAG 위상 정렬 → sub-todo level 병렬 그룹 (sub_agent_dispatch.py analyze-todos, sprint-34)
   d-95 [`conventions/regression-tdd-gate.md`](conventions/regression-tdd-gate.md) — commit-level test+boot+lint 재실행 + regression_log.json append-only ([`scoring/regression_check.py`](scoring/regression_check.py), sprint-34)
@@ -108,9 +108,9 @@ d- [`conventions/`](conventions/) — 47 컨벤션 모듈 (각 파일 명시):
   d-101 [`conventions/modeling-shortcuts.md`](conventions/modeling-shortcuts.md) — 수학적 단축 (휴리스틱/근사/coarse model) 4-tier 분류 + plan/impl 참조 의무 (sprint-40 PR-F)
   d-102 [`conventions/surrender-phrase-forbid.md`](conventions/surrender-phrase-forbid.md) — cold session 산출물의 자율 종료/책임회피 자백 어휘 8 패턴 차단 (sprint-42 PR-E)
   d-103 [`conventions/hard-rule-9-extended.md`](conventions/hard-rule-9-extended.md) — HARD-CORE.md HR9 9.d 이후 (Da Capo/Cold validator/Phase state/Prebuilt shell/Emit fidelity/Pre-bootup/Extension Discipline/Prompt-Driven Harness/Viewer Finalization Closure) 전문 lazy load (C-HC1 cap 준수)
-e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점, **임계 0.999** (G3/G4 통일, v0.9.15) / **0.99999** (G5), **DIP 위반 단독 hard cap 0.6**.
+e- [`scoring/rubric.md`](scoring/rubric.md) + [`scoring/score.py`](scoring/score.py) — 6 차원 채점 보고(정지 권위는 manifest **stop_policy**, 설계 B2 §2.2 — 절대 임계 게이트 폐지), **DIP 위반 단독 hard cap 0.6**.
 f- [`scoring/fingerprint.py`](scoring/fingerprint.py) — frontmatter 핑거프린트 계산·검증·체인 무결성.
-g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 모드, 임계 **0.99999** (자기 표준).
+g- [`scoring/self_lint.py`](scoring/self_lint.py) + [`scoring/test_self_lint.py`](scoring/test_self_lint.py) — 본 저장소 자기 평가 60+ 룰 + `--score` 보고 모드(판정은 `all_ok`, 설계 B2 §2.3).
 h- [`scoring/tournament.py`](scoring/tournament.py) — universe 점수 산출 + auto_resolve. 페이즈 06 plan-tree + v0.9.10 multi-phase 확장 (페이즈 02/05/08/11/13) 모두 활용.
 i- [`scoring/grade_assess.py`](scoring/grade_assess.py) — 호출 직후 그레이드 자동 추정 (Q-G1 객관식 사용자 확정).
 j- [`templates/`](templates/) — intent / plan / sprint-report / naming / universe-meta 템플릿 + bun 기반 webview 스캐폴드.

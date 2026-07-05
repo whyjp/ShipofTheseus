@@ -32,6 +32,8 @@ indexed-in: conventions/INDEX.md
 
 ### Sentinel A — Frontmatter 모순 (게이트 보강)
 
+`threshold` fallback 기본값(0.999)은 레거시 grade 표기 참고값이다 — 정지 판정의 실제 권위는 manifest `stop_policy`(설계 B2 §2.2)이며, 본 sentinel 은 절대값 자체가 아니라 "선언된 threshold 미달 + rerun 0 + fallback 사유 없음"이라는 *frontmatter 자기모순*을 잡는다(threshold 값이 무엇이든 적용되는 정직성 검사).
+
 ```python
 SENTINEL_A_PATTERNS = [
     # winner 미달 + rerun=0 + fallback 부재 = 다카포 skip

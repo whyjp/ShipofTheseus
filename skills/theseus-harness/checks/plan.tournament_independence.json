@@ -20,5 +20,5 @@
     }
   ],
   "value": "winner_ratio",
-  "_dimension_note": "독립성(변량) 차원만. plan.dacapo_threshold 는 tournament-md 의 winner_score/winner_max 로 '품질 plateau 도달(≥0.999)' 을 게이트한다 — 서로 다른 artifact·차원이다. 여기 winner_ratio 는 shadow grader 패널의 평균 정규 점수(합의 추정)로 gating assertion 대상이 아니라 value(정보)일 뿐 — 0.999 임계와 충돌하지 않는다. applicability 는 grader_count>=2 (변량은 2인 이상 패널에서만 측정 가능; 단일 grader 는 NA, 침묵 skip 아님)."
+  "_dimension_note": "독립성(변량) 차원만. plan.dacapo_threshold 는 tournament-md 의 winner_score/winner_max 비율(서로 다른 artifact·차원)을 value 로 emit 한다 — 구 ≥0.999 게이트 assertion 은 도달 불가 임계 perverse incentive 라 삭제됐다(설계 B2 §2.3; 정지 판정 권위는 manifest stop_policy). 여기 winner_ratio 는 shadow grader 패널의 평균 정규 점수(합의 추정)로 애초부터 gating assertion 대상이 아니라 value(정보)일 뿐 — 어느 쪽도 절대 임계로 게이트하지 않는다. applicability 는 grader_count>=2 (변량은 2인 이상 패널에서만 측정 가능; 단일 grader 는 NA, 침묵 skip 아님)."
 }

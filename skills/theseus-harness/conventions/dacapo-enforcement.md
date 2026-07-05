@@ -11,7 +11,7 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**v0.9.21 [`intra-phase-dacapo-loop.md`](intra-phase-dacapo-loop.md) (bl) 의 의사코드는 *문서 가이드*. 본 컨벤션은 그 의사코드를 *runtime guard* 로 격상.** Da Capo Loop 의 Step A-G 가 단순 권고가 아니라 phase 06 → 07 / phase 08 → 09 핸드오프 시점의 *의무 게이트* 로 강제. 외부 cold session `2026-05-05__001_mine_g4` 에서 winner=0.892 (G4 임계 0.999 미달) 이 dacapo loop 0회 실행 후 phase 07 진입한 회귀의 직접 원인 정정.
+**v0.9.21 [`intra-phase-dacapo-loop.md`](intra-phase-dacapo-loop.md) (bl) 의 의사코드는 *문서 가이드*. 본 컨벤션은 그 의사코드를 *runtime guard* 로 격상.** Da Capo Loop 의 Step A-G 가 단순 권고가 아니라 phase 06 → 07 / phase 08 → 09 핸드오프 시점의 *의무 게이트* 로 강제. 외부 cold session `2026-05-05__001_mine_g4` 에서 winner=0.892 (당시 G4 임계 0.999 미달 — 현재는 stop_policy §2.2 참조, 설계 B2) 이 dacapo loop 0회 실행 후 phase 07 진입한 회귀의 직접 원인 정정.
 
 ## 1. 결손 진단
 
@@ -203,7 +203,7 @@ h- ** LLM 시간 추정 사용** — `budget_used_total` 을 측정값 아닌 LL
 | dacapo_loop_executed | (부재) | 조건 1 | **FAIL** |
 | step_d_tournament_pass | (부재) | 조건 2 | **FAIL** |
 | step_d_shadow_pass | (부재) | 조건 2 | **FAIL** |
-| winner_score | 0.892 | 조건 3a (>= 0.999) | FAIL |
+| winner_score | 0.892 | 조건 3a (당시 >= 0.999, 현 stop_policy 참조) | FAIL |
 | rerun_count | (부재) | 조건 3b (>= 3) | FAIL |
 | fallback_reason | "" | 조건 3b 본문 ≥ 1 줄 | **FAIL** |
 

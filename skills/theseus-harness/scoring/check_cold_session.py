@@ -18,8 +18,9 @@ Exit codes:
 참조:
 - sprint-28 (intra-phase-dacapo-loop 안티 패턴 g/h/i/j/k)
 - sprint-29 (impl-multiverse-strict 안티 패턴 e/f/g)
-- sprint-30 (conservative-margin-judging cap + sentinel)
-- sprint-19 (dacapo-mandatory-rerun ce, mandatory ≥ 1 rerun)
+- sprint-30 (conservative-margin-judging cap + sentinel — cap 은 설계 B2 §2.2-5 로 폐지,
+  check_score_cap() 은 이제 추적용 관측만이며 assertion 대상 아님, 아래 주석 참조)
+- sprint-19 (dacapo-mandatory-rerun ce — advisory 로 강등, 설계 B2 §2.2-3)
 
 orchestrator 가 phase 09 진입 직전 의무 호출 (HARD-RULE 9.f, sprint-32 v0.9.37 신규).
 """
@@ -32,7 +33,10 @@ import sys
 from pathlib import Path
 
 
-# rerun-별 score cap (sprint-30 conservative-margin-judging)
+# rerun-별 score cap (sprint-30 conservative-margin-judging) — 설계 B2 §2.2-5 로 이 cap 은
+# 폐지됐다(방향 불문 점수 성형 강제는 부정직). check_score_cap() 은 build_report() 를 통해
+# cold_session_artifact_report 로만 첨부되며(측정_cold_isolation.py 주석 참조), 커널
+# assertion 대상이 아닌 추적용 관측일 뿐이다 — 남겨진 값은 참고 정보로만 읽는다.
 SCORE_CAP_BY_RERUN = {0: 0.90, 1: 0.95, 2: 0.99}
 
 

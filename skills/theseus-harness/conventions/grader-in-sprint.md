@@ -11,7 +11,7 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**페이즈 10 sprint loop 의 종료 조건 = `auto_proxy_pass_rate ≥ 0.999` AND `shadow_grader_predicted_score ≥ target` (둘 다).** v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) + v0.9.19 [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) 가 *automated proxy 만* 종료 결정 — 인간/외부 채점이 보는 차원 (서술 깊이 / 한계 정량화 / 해석 깊이) 은 sprint 안에서 측정 안 됨. 본 컨벤션이 *zero-context shadow grader* 를 sprint 안으로 끌어와 dual-objective AND 종료 강제.
+**페이즈 10 sprint loop 의 정지 권위는 [`budget-saturation-loop.md`](budget-saturation-loop.md) §2 `stop_policy`(게이트 pass AND 무회귀 AND (plateau OR budget≥95%)) 다 — automated proxy 만으로는 인간/외부 채점이 보는 차원(서술 깊이/한계 정량화/해석 깊이)이 sprint 안에서 측정 안 된다.** 본 컨벤션이 *zero-context shadow grader* 를 sprint 안으로 끌어와 `stop_policy` 의 plateau/신호 판정에 shadow 관측을 보탠다(설계 B2 §2.3 — 절대 점수는 게이트가 아니다).
 
 ## 1. 결손 진단
 
@@ -43,18 +43,9 @@ cold session 회차에서 일관된 패턴 :
 
 ## 2. 운영 룰 — Dual-Objective Stop
 
-### A. Stop Condition (둘 다 AND)
+### A. Stop 신호 = stop_policy + shadow 관측
 
-```python
-def should_stop_sprint(state) -> bool:
-  auto_pass = state.auto_proxy_pass_rate >= 0.999
-  shadow_pass = state.shadow_grader_predicted_score >= state.target_score  # default 95
-  axis_pass = all(c >= 2 for c in state.axis_sprint_counts.values())       # v0.9.19 trinity 호환
-  budget_pass = state.budget_used_total >= 0.80                             # v0.9.15 saturation 호환
-  return auto_pass AND shadow_pass AND axis_pass AND budget_pass
-```
-
-**4 conjunction 만 PASS** — 어느 하나 미달 시 sprint 추가 (lesson type = weakest dim).
+정지 판정 자체는 `stop_policy`(gate AND no_regression AND (plateau OR budget≥95%)) 가 유일 권위다. shadow grader 는 그 판정에 쓰이는 *plateau 관측* 을 보강한다 — `shadow_grader_predicted_score` 의 delta 가 plateau_eps 이내로 수렴하면 plateau 신호에 합류(절대 점수 자체는 게이트 아님). axis 분배 상태·budget 비율은 참고 정보로 sprint report 에 기록.
 
 ### B. Shadow Grader 호출 — sprint 마다 1 회
 
@@ -92,23 +83,7 @@ def next_sprint_lesson(shadow_output, axis_counts):
 
 [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) (v0.9.16) 의 `evidence_missing` 자동 매핑 메커니즘 그대로 사용 — 단, source 가 `score-rubric-objectivity` 의 self-rating 이 아니라 *zero-context shadow grader* 로 격상.
 
-### D. self_lint 룰 신규 — C-GIS
-
-```
-C-GIS:
-  검증: sprints/{intent,plan,impl}-NN/report.json 의 frontmatter / 본문
-  PASS 조건:
-    - 매 sprint report 에 shadow_grader_predicted_score 필드 (0~100)
-    - 매 sprint report 에 shadow_grader_call_id 필드 (audit trail)
-    - 종료 sprint 의 shadow_grader_predicted_score >= target_score (default 95)
-    - axis 별 ≥ 2 sprint (v0.9.19 trinity 호환)
-  fail 조건:
-    - shadow_grader 미호출 sprint 존재
-    - 종료 sprint 의 shadow_grader < target 인데 종료
-  bench scope: 페이즈 10 sprint loop 전체
-```
-
-### E. target_score 매트릭스
+### D. target_score 매트릭스 (참고 target — 게이트 아님)
 
 | Grade | shadow target | source |
 |---|:-:|---|
@@ -152,14 +127,7 @@ bench rubric 부재 시 [`scoring/rubric.md`](../scoring/rubric.md) fallback. [`
 mindmap
   root((grader-in-sprint))
     목표
-      dual-objective_AND_stop
-        auto_pass
-          0.999_proxy
-        shadow_pass
-          target_95_default
-        axis_pass_v0.9.19_호환
-        budget_pass_v0.9.15_호환
-      94_plateau_돌파
+      stop_policy_plateau_보강
       sprint_안_zero-context_grader
       lesson_source_격상
     제약
@@ -168,58 +136,47 @@ mindmap
       conversation_누적_금지
       precise_score_아닌_delta_direction
     기능
-      C-GIS_self_lint
       shadow_prompt_template
       lesson_candidates_top3
         weakest_category_명시
         evidence_citation_의무
         suggestions_2_line_cap
-      target_score_매트릭스
-        G2_80
-        G3_90
-        G4_95_default
-        G5_98
+      target_score_매트릭스_참고
       rubric-driven-doc-skeleton_연결
     품질
-      cold_session_retro
-        v0915_94_vs_93
-        v0916_94_vs_90
-      evidence-driven-sprint-planning_v0.9.16_상위호환
-      budget-saturation-loop_v0.9.15_AND_조건
-      sprint-trinity_v0.9.19_AND_조건
-      be_ID_v0.9.20
+      evidence-driven-sprint-planning_상위호환
+      budget-saturation-loop_stop_policy_결합
       Karpathy_judge_inside_loop_철학
 ```
 
 ## 4. 호환성
 
-- v0.9.15 [`budget-saturation-loop.md`](budget-saturation-loop.md) — early stop 조건에 `shadow_pass` AND 추가 (자동 imply)
-- v0.9.16 [`score-rubric-objectivity.md`](score-rubric-objectivity.md) — self-rating 의 noise 정정 + 본 컨벤션의 zero-context grader 가 *external* layer 추가 (self vs external 2 layer)
-- v0.9.16 [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) — `evidence_missing` source 가 self-rating 외에 shadow grader 출력도 합산
-- v0.9.19 [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) — axis 별 sprint 종료에 본 dual-objective AND 적용
+- [`budget-saturation-loop.md`](budget-saturation-loop.md) — `stop_policy` plateau 판정에 shadow 관측 결합
+- [`score-rubric-objectivity.md`](score-rubric-objectivity.md) — self-rating 의 noise 정정 + 본 컨벤션의 zero-context grader 가 *external* layer 추가 (self vs external 2 layer)
+- [`evidence-driven-sprint-planning.md`](evidence-driven-sprint-planning.md) — `evidence_missing` source 가 self-rating 외에 shadow grader 출력도 합산
+- [`intent-plan-impl-sprint-trinity.md`](intent-plan-impl-sprint-trinity.md) — axis 배분 참고에 shadow 관측 결합
 - [`rubric-driven-doc-skeleton.md`](rubric-driven-doc-skeleton.md) (bj) — bench rubric 노출 시 본 컨벤션의 grader 입력 자동 갱신
 
 ## 5. 본 컨벤션이 *케이스 종속이 아닌* 이유
 
-a- `auto_pass AND shadow_pass` = generic dual-objective. 어떤 task 든 downstream judge (pytest / eval.py / hidden tests / human reviewer / compile/lint) 존재.
+a- shadow grader 는 generic dual-signal. 어떤 task 든 downstream judge (pytest / eval.py / hidden tests / human reviewer / compile/lint) 존재.
 b- shadow grader 의 입력 = rubric + artifacts → 도메인 무관 (rubric 만 갈아 끼움).
-c- target_score 매트릭스 = 그레이드별 정량.
+c- target_score 매트릭스 = 그레이드별 참고 정량(게이트 아님).
 
 SWE-bench / MLE-bench / synthetic_mine_throughput / refactor task 모두 동일 메커니즘 — *judge 의 cheap shadow* 만 다른 source.
 
 ## 6. 안티 패턴
 
-a- shadow grader 호출 0 — auto_pass 만으로 종료 (v0.9.15-v0.9.19 default 회귀). C-GIS fail.
+a- shadow grader 호출 0 — plateau 판정이 automated proxy 만으로 이뤄져 사각 발생.
 b- shadow grader = self-rating 동일 모델 + 동일 컨텍스트 — *zero-context* 강제 위반. agent re-spawn (Sonnet fresh) 의무.
-c- shadow predicted_score 가 target 미달인데 budget 95% 도달했다고 fast-stop — `EARLY_STOP_VIOLATION` 마킹.
+c- shadow predicted_score 를 이유로 정직한 stop_policy 정지를 막음 — plateau 는 벌이 아니라 정지 신호(설계 B2 §2.2-4).
 d- shadow grader 출력의 lesson_candidates 무시 → 다음 sprint lesson 이 stale evidence_missing 만 — `evidence-driven-sprint-planning.md` 자동 매핑 우회.
-e- shadow predicted_score 를 자기 self-estimate 로 *덮어쓰기* — honest 라벨링 (sprint-narrative.md §2 delta tracking, sprint-37 PR-AF 통합) 위반.
+e- shadow predicted_score 를 자기 self-estimate 로 *덮어쓰기* — honest 라벨링(sprint-narrative.md §2 delta tracking) 위반.
 
 ## 7. 적용 페이즈
 
-- 페이즈 10 (sprint loop) — *home* (dual-objective AND 종료)
+- 페이즈 10 (sprint loop) — *home* (stop_policy plateau 보강)
 - 페이즈 14 (handoff) — `shadow_grader_predicted_score` 종합 frontmatter 의무
-- 페이즈 09 (게이트) — C-GIS 검증 위치
 
 ## 8. 도입 배경 (sprint-14 / v0.9.20)
 

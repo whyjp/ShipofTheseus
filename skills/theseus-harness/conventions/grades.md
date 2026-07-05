@@ -18,13 +18,15 @@ indexed-in: conventions/INDEX.md
 
 ## 5 그레이드
 
-| Grade | 별칭 | 진입 조건 | 페이즈 | 컨벤션 | 멀티버스 | 임계 |
+**임계 컬럼은 폐지 — 정지 권위는 manifest `stop_policy`(설계 B2 §2.2) 단일 소스다.** G5 의 엄격성은 도달 불가 숫자가 아니라 *구조*로 낸다: `plateau_window[G5]=3`(무개선 3회 연속 확인 후에만 정지 — G3/G4 의 2회보다 엄격) + G5 전용 게이팅 체크 셋(frozen.\* 포함 확장).
+
+| Grade | 별칭 | 진입 조건 | 페이즈 | 컨벤션 | 멀티버스 | stop_policy 구조 |
 | ----- | ---- | ------ | ------ | -----: | -------- | ---: |
 | **1** | Trivial | TBD (v0.5.x 후속) | TBD | 0 | X | TBD |
-| **2** | Simple | G3 단순 증명 + mindmap nodes ≤5 + 단일 모듈 + 단일 도메인 용어 — 사용자 ack 의무 | 01+04+06+08+09 (5) | 7 | X | 0.95 |
-| **3** | Standard | 12 차원 단순 증명 (외부 evaluator X / measured metrics X / multi-scenario X / NFR X / single stakeholder / mindmap 실재 작음) — 사용자 ack 의무. *G3 작업은 본 하네스 없이도 진행 가능 — 본 하네스 가치 부분만 활용* | 00-09 + 10(3 sprint cap) + 13 (12) | 12 | X | 0.999 |
-| **4** | **Complex (default)** | **default — 단순함 증명 미달 시 자동.** 본 하네스 호출 자체가 G4+ 의도 신호. escalation trigger (external evaluator / measured value / multi-scenario / domain adapter / FE+BE) 1+ 매칭 시 default 강화 | 15 풀 + sprint regression loop 의무 | 47 | 옵션 (Q-D7=1 시) | 0.999 |
-| **5** | Mission Critical | 사용자 *명시 ack* (`safety_critical` 또는 `irreversible_change`) 만 — 자율 키워드 매칭 X | 15 풀 + 빡빡 모드 | 47 + 추가 가드 | 강제 | 0.99999 |
+| **2** | Simple | G3 단순 증명 + mindmap nodes ≤5 + 단일 모듈 + 단일 도메인 용어 — 사용자 ack 의무 | 01+04+06+08+09 (5) | 7 | X | — |
+| **3** | Standard | 12 차원 단순 증명 (외부 evaluator X / measured metrics X / multi-scenario X / NFR X / single stakeholder / mindmap 실재 작음) — 사용자 ack 의무. *G3 작업은 본 하네스 없이도 진행 가능 — 본 하네스 가치 부분만 활용* | 00-09 + 10(3 sprint cap) + 13 (12) | 12 | X | plateau_window 2 |
+| **4** | **Complex (default)** | **default — 단순함 증명 미달 시 자동.** 본 하네스 호출 자체가 G4+ 의도 신호. escalation trigger (external evaluator / measured value / multi-scenario / domain adapter / FE+BE) 1+ 매칭 시 default 강화 | 15 풀 + sprint regression loop 의무 | 47 | 옵션 (Q-D7=1 시) | plateau_window 2 |
+| **5** | Mission Critical | 사용자 *명시 ack* (`safety_critical` 또는 `irreversible_change`) 만 — 자율 키워드 매칭 X | 15 풀 + 빡빡 모드 | 47 + 추가 가드 | 강제 | plateau_window 3(구조 엄격화) |
 
 ### 빡빡 모드 (Grade 5 추가 가드)
 
@@ -110,10 +112,10 @@ python scoring/grade_assess.py --signals '{"external_evaluator":true,"measured_m
 
 선택지:
 1. Grade 1 (Trivial) — TBD (v0.5.x 후속)
-2. Grade 2 (Simple) — 5 페이즈 / 7 컨벤션 / 임계 0.95
-3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / 임계 0.999
-4. Grade 4 (Complex, default) — 15 페이즈 풀 / 47 컨벤션 / 임계 0.999 (자동 추정)
-5. Grade 5 (Mission Critical) — 빡빡 모드 / 임계 0.99999
+2. Grade 2 (Simple) — 5 페이즈 / 7 컨벤션
+3. Grade 3 (Standard) — 12 페이즈 / 12 컨벤션 / stop_policy plateau_window 2
+4. Grade 4 (Complex, default) — 15 페이즈 풀 / 47 컨벤션 / stop_policy plateau_window 2 (자동 추정)
+5. Grade 5 (Mission Critical) — 빡빡 모드 / stop_policy plateau_window 3(구조 엄격화)
 ```
 
 G3·G2 하향 선택 시 grade_assess 가 단순함 증명 reasons 를 함께 보여주어 사용자가 *근거 있는* 선택. 답을 `intent/04-grade.md` 에 기록.
@@ -205,7 +207,7 @@ e- **빡빡 모드 (G5) 인데 Q-D 답이 옵션 1 (최대 자율)** — G5 는 
 
 본 저장소 (`theseus-self`) 의 자기 평가 그레이드 = **Grade 5 (Mission Critical)** — 본 하네스 자체는 *다른 모든 프로젝트의 신뢰 담보 도구* 이므로 가장 빡빡한 표준 적용.
 
-a- 임계 0.99999 (G5 표준).
+a- stop_policy plateau_window 3 (G5 표준 — 구조 엄격화, 도달 불가 숫자 아님).
 b- 모든 26 컨벤션 적용.
 c- 멀티버스 강제 (회차마다 분기 가능).
 d- DIP cap 0.4 (현재 0.6 보다 빡빡).

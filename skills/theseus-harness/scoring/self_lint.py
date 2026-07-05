@@ -2702,9 +2702,11 @@ def check_idx_grade_vocabulary(skill_root: Path) -> list[str]:
 
 
 def check_conservative_margin_judging(skill_root: Path) -> list[str]:
-    """C-CMJ (sprint-30 v0.9.35) — conservative-margin-judging.md 본문 의무 keyword.
+    """C-CMJ (sprint-30, 설계 B2 §2.2-5/§4 재정정) — conservative-margin-judging.md 본문 keyword.
 
-    모든 internal judge (tournament/shadow/sprint stop) 보수적 prior + 0.999 마진 보존 + Da Capo 무한 회귀.
+    rerun-별 score cap(0.999 마진 강제)은 폐지 대상 자체라 검증 키워드에서 제거했다(방향
+    불문 점수 성형은 부정직 — 설계 B2 perverse incentive 진단 (iii)). 존치 검증 대상은
+    "보수적 prior 로 심사하되 측정값 그대로 보고"라는 정정된 원칙과 judge 자신감 sentinel.
     """
     issues: list[str] = []
     p = skill_root / "conventions" / "conservative-margin-judging.md"
@@ -2714,11 +2716,9 @@ def check_conservative_margin_judging(skill_root: Path) -> list[str]:
     for kw in [
         "C-CMJ",
         "보수적 prior",
-        "0.999 마진",
-        "improvement_axes_remaining",
+        "측정값 그대로 보고",
         "judge 자신감 sentinel",
         "rerun-별 score cap",
-        "no further sprints required",
     ]:
         if kw not in body:
             issues.append(f"conservative-margin-judging.md: '{kw}' 키워드 누락 (sprint-30)")
@@ -3212,7 +3212,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IDX-2", "conventions/*.md frontmatter (sprint-27 v0.9.32) — router metadata backfill + INDEX drift detection", check_conventions_frontmatter_drift),
     ("C-DCL-FRESH-UNIVERSE", "intra-phase-dacapo-loop.md (sprint-28) — Round N+1 = NEW fresh universes (NOT survivors rerun, NOT 재라벨링)", check_dacapo_fresh_universe),
     ("C-IMS-SEMANTICS", "impl-multiverse-strict.md (sprint-29) — impl multiverse = plan winner 코드 구현 변형 (NOT plan multiverse 손자)", check_impl_multiverse_semantics),
-    ("C-CMJ", "conservative-margin-judging.md (sprint-30) — 모든 internal judge 보수적 prior + 0.999 마진 보존 + 무한 회귀 동력", check_conservative_margin_judging),
+    ("C-CMJ", "conservative-margin-judging.md (sprint-30, 설계 B2 §2.2-5 재정정) — 보수적 prior 로 심사하되 측정값 그대로 보고, rerun-별 score cap 폐지", check_conservative_margin_judging),
     # C-IDX-3 (sprint-31 v0.9.36) — informational only. STRONG cross-ref drift detection 함수 보존,
     # 현재 docs 의 광범위 cross-ref 가 다수 false-positive — 후속 sprint 에서 INDEX router applies-to-phases
     # 확장 또는 STRONG/WEAK section 정합 후 활성화. 함수 자체는 호출 가능 (운영자 manual run).
@@ -3254,10 +3254,11 @@ def run(repo_root: Path) -> dict:
 
 def compute_self_score(repo_root: Path) -> dict:
     """
-    자기 평가 점수 계산 — 본 하네스가 자기 자신에게 강제하는 점수.
+    자기 평가 점수 계산 — 본 하네스가 자기 자신에게 강제하는 점수(보고 모드, 설계 B2 §2.3).
 
-    임계 0.99999 (사용자 프로젝트 임계 0.999 보다 한 단계 빡빡 — "내가 강제하는 모든
-    것을 내가 100% 통과한다" 는 자기 표준).
+    구판은 도달 불가 임계 0.99999 를 게이트로 썼다 — perverse incentive(점수 인플레이션
+    유인) 동일 구조. self_score 는 이제 *보고 전용*: 값 기반 판정 권위는 이미 존재하는
+    `all_ok`(lint 전건 pass, boolean) 다. "0.99999 도달"이라는 자기 평가 세리머니는 제거.
 
     계산:
       lint_score   = lint_pass_count / lint_total_count
@@ -3332,7 +3333,9 @@ def compute_self_score(repo_root: Path) -> dict:
         "pytest_pass": pytest_pass_count,
         "pytest_total": pytest_total_count,
         "sample_score": round(sample_score, 6),
-        "passes_threshold_99999": self_score >= 0.99999,
+        # 판정 권위 = all_ok(값 boolean, lint 전건 pass) — self_score 는 보고 전용
+        # (설계 B2 §2.3, 0.99999 게이트 폐지). exit code 는 이 필드가 결정한다.
+        "all_ok": lint["all_ok"],
         "lint_failures": [c for c in lint["checks"] if not c["ok"]],
     }
 
@@ -3351,14 +3354,17 @@ def main(argv: Iterable[str] | None = None) -> int:
     p.add_argument(
         "--score",
         action="store_true",
-        help="lint + pytest + sample 가중 평균으로 자기 평가 점수 산출 (임계 0.99999)",
+        help=(
+            "lint + pytest + sample 가중 평균으로 자기 평가 점수 산출 (보고 모드 — "
+            "설계 B2 §2.3, 0.99999 게이트 폐지). exit code 는 all_ok(lint 전건 pass) 로 판정."
+        ),
     )
     args = p.parse_args(list(argv) if argv is not None else None)
     if args.score:
         out = compute_self_score(Path(args.repo_root))
         json.dump(out, sys.stdout, indent=2, ensure_ascii=False)
         sys.stdout.write("\n")
-        return 0 if out["passes_threshold_99999"] else 1
+        return 0 if out["all_ok"] else 1
     out = run(Path(args.repo_root))
     json.dump(out, sys.stdout, indent=2, ensure_ascii=False)
     sys.stdout.write("\n")

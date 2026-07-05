@@ -36,7 +36,7 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > | **G1** Trivial | `timing/start.json` + `intent/01-intent.md` + `handoff/14-handoff.md` (3개) |
 > | **G2** Simple | G1 + `intent/04-{questions,answers,autonomy,stack,verification,runtime-prereq}.md` + `plan/06-plan.md` + `impl/08-impl-log.md` + `quality/09-quality-gate.md` (총 11개) |
 > | **G3** Standard | G2 + `naming/00-naming.md` + `intent/{02,03,05}*.md` + **refresh 1**: `intent/01-{1,2,3,4}-intent.md` + `intent/01-additional.md` + **refresh 2**: `intent/01-{1,2,3,4}-intent.v2.md` + `intent/04-refreshed.md` + `intent/05-refreshed.md` + `plan/{tournament-NN.md (≥ 2), candidates/universe-{1,2}/{meta,06-plan,07-cold-read}.md, 07-plan-review.md, dacapo-rerun-NN.md (≥ 1), dacapo-flow.md, shadow-grade-NN.json}` (plan body 8 항목 의무 — implementation guidance 포함, sprint-21 정공) + `impl/{candidates/universe-N/실 코드 + tests, tournament-impl-NN.md (≥ 1), shadow-grade-impl-NN.json, dacapo-rerun-impl-NN.md (≥ 1), dacapo-flow.md, 08-impl-log.md (canonical, ≥ winner 80% inline 또는 shared schema)}` + `sprints/01..03/{inputs,report}.json` + `webview/` (8 탭) (총 45+) |
-> | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + 임계 0.999 도달까지 무한 sprint |
+> | **G4** Complex | G3 + `intent/05-decisions.md` + `plan/candidates/universe-3*` + `sprints/NN/bisect.md` (회귀 발생 시) + stop_policy(manifest) 충족까지 sprint(설계 B2 §2.2 — 절대 임계 아님) |
 > | **G5** Critical | G4 + `plan/candidates/universe-{1..5}/children/...` (깊이 2) + 멀티버스 강제 + 빡빡 모드 가드 |
 >
 > **자발적 조기 종료 금지** — 실행 에이전트 가 페이즈 06 까지만 만들고 "끝" 으로 보고하면 본 스킬 위반. 위 표의 의무 산출물을 *모두* 박아야 정상 종료.
@@ -162,8 +162,8 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 >   - 신규 컨벤션 — `surrender-phrase-forbid.md` (8 패턴 카탈로그 + override 메커니즘).
 > - **9.ww — Stagnation 후 자율 종료 차단 CLI (sprint-42 PR-D 신규)**:
 >   - phase 10 sprint iteration 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/stagnation_breakthrough.py --project-root <root> --current-iteration N` 자동 호출 의무.
->   - 검사: `sprints/N/report.json` 의 `stagnation_detected: true` AND `score < 0.999` 시 *exit_sprint_loop 자율 결정 차단*. 4 breakthrough 시도 (new_universe / lateral_think / ensemble_synthesis / phase_regression) 중 ≥ 1 evidence 의무.
->   - exit 1 시 sprint iteration 자동 +1 + breakthrough 시도 강제.
+>   - 검사(설계 B2 §2.2-4 재정정): `sprints/N/report.json` 의 `stagnation_detected: true` 는 이제 *정지 신호*(벌 아님) — CLI default 는 보고 모드(exit 0). `--gate` opt-in 시에만 예전 차단(exit 1 + 4 breakthrough 시도 evidence ≥1) 복원.
+>   - opt-in `--gate` 사용 시에만 sprint iteration 자동 +1 + breakthrough 시도 강제.
 >   - **증거 회피 사례** — 0510-2 회차 `sprints/03/report.json`: `score: 0.97, stagnation_detected: true, decision: exit_sprint_loop_per_DEC-autonomy`, 4 시도 0. 본 9.ww = 차단.
 > - **9.vv — Universe 단조성 강제 CLI (sprint-42 PR-C 신규)**:
 >   - phase 06 / 08 exit 시 orchestrator 가 `python skills/theseus-harness/scoring/universe_count_monotonicity.py --project-root <root>` 자동 호출 의무.
@@ -185,7 +185,7 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > - **9.ss — Sprint loop 4-layer 종료 조건 CLI (sprint-41 PR-D 신규)**:
 >   - phase 10 sprint iteration 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/sprint_loop_cap.py --project-root <root> --current-iteration N --max-iterations 10` 자동 호출 의무.
 >   - exit 1 시 sprint iteration 자동 +1 + 미달 layer 의 fix-TODO 자동 생성.
->   - **4 layer 종합** — Auto (evaluation_report pass_rate) + Internal (quality/09 verdict==proceed) + Tournament (plan/impl dacapo_threshold both pass) + External (zero_context_review ≥ 0.95). 각 layer 임계 0.999 (external 0.95 자율 / 0.99 강제).
+>   - **4 layer 종합** — Auto (evaluation_report pass_rate) + Internal (quality/09 verdict==proceed) + Tournament (plan/impl dacapo_threshold both pass) + External (zero_context_review ≥ 0.95). CLI default 는 보고 모드(exit 0, 설계 B2 §2.3) — 정지 권위는 manifest `stop_policy`. `--gate` opt-in 시에만 예전 4-layer 절대 임계 차단 복원.
 >   - max_iterations 도달 시 `sprint_loop_terminated_by_max_iter: true` + 미달 layer list 정직 기록.
 >   - **자동 평가 ≠ 휴먼 품질 ≠ 다카포** 3 layer 분리 원칙 — *단순 iteration count cap* 아님.
 >   - **증거 회피 사례** — 0510 회차 *"Given 100% on evaluator, sprint cap = 1 (re-validation only)"* 자율 결정. Auto 100% 만 보고 stop, Tournament 0.95 + External 0.90 미고려. 본 9.ss CLI = 차단.
@@ -198,7 +198,7 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 >   - 본 CLI = ouroboros 패러다임 직접 적용 — 컨벤션 본문 = 명세, CLI = 집행.
 > - **9.qq — Tournament 다카포 임계 강제 CLI (sprint-41 PR-B 신규)**:
 >   - phase 06 (plan tournament) + phase 08 (impl tournament) 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md <path>` 자동 호출 의무.
->   - exit 1 (winner ratio < 0.999) 시 round N+1 자동 진행 — agent 자율 skip 금지. 본 CLI 의 verdict 가 phase advance gatekeeper.
+>   - CLI default 는 보고 모드(exit 0 + ratio 보고, 설계 B2 §2.3) — `--threshold` 명시 opt-in 시에만 예전 gating(ratio<threshold → exit 1 → round N+1 자동 진행) 복원. 정지 판정의 실제 권위는 manifest `stop_policy`.
 >   - 2 round 후에도 ratio < threshold → ensemble synthesis 시도 ([`../theseus-harness/conventions/ensemble-synthesis-default.md`](../theseus-harness/conventions/ensemble-synthesis-default.md) 정합).
 >   - 3 round 후에도 미달 → frontmatter `dacapo_threshold_reached_after_3_rounds: false` + phase 09 verdict cap 0.95 (정직 기록).
 >   - **증거 회피 사례** — 0510 회차 `tournament-impl-01.md` winner 57/60 = 0.95 → round 2 = 0 자율 lock. 본 9.qq CLI = 차단 (exit 1 → orchestrator 재진입 의무).

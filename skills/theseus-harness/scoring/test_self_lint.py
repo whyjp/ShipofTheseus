@@ -46,11 +46,17 @@ def test_lint_check_count_at_least_18():
     assert len(out["checks"]) >= 18
 
 
-def test_self_score_meets_99999():
+def test_self_score_reports_without_99999_gate():
+    """설계 B2 §2.3 — self_score 는 보고 전용, 판정 권위는 all_ok(값 boolean).
+
+    구 0.99999 게이트(passes_threshold_99999)는 도달 불가 임계라 perverse incentive
+    (점수 인플레이션 유인)를 만들었다 — 필드째 폐지했으므로 부재를 값으로 확인한다.
+    """
     out = _run_score()
-    assert out["passes_threshold_99999"], (
-        f"self_score={out['self_score']} 가 임계 0.99999 미달. "
-        f"lint={out['lint_pass']}/{out['lint_total']}, "
+    assert "passes_threshold_99999" not in out, "0.99999 게이트 필드가 잔존 — 보고모드 위반"
+    assert isinstance(out["self_score"], (int, float))
+    assert out["all_ok"], (
+        f"all_ok=False — lint={out['lint_pass']}/{out['lint_total']}, "
         f"pytest={out['pytest_pass']}/{out['pytest_total']}, "
         f"sample={out['sample_score']}"
     )
