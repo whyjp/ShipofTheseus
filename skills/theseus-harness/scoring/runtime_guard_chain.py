@@ -8,13 +8,12 @@ Chain 구성:
     [phase entry]
         - skill_version major + minor ≥ orchestrator
         - phase 단조성 (직전 phase fingerprint 정합)
-        - phase entry hook (e.g., phase 09 = cold_session_artefacts.py)
     [phase exit]
         - phase exit hook (e.g., phase 06/08 = dacapo_threshold.py, phase 10 = sprint_loop_cap.py)
         - frontmatter 박힘 (skill_name / skill_version / phase / fingerprint / prev_fingerprint / created_at)
         - 산출물 emit 확인 (phase별 의무 산출물 list)
 
-본 CLI = sprint-41 의 *통합 진입점*. 다른 3 CLI (dacapo_threshold / cold_session_artefacts /
+본 CLI = sprint-41 의 *통합 진입점*. 다른 2 CLI (dacapo_threshold /
 sprint_loop_cap) 가 sub-call.
 
 사용:
@@ -31,7 +30,6 @@ Exit codes:
 
 References:
 - sprint-41 PR-B (dacapo_threshold)
-- sprint-41 PR-C (cold_session_artefacts)
 - sprint-41 PR-D (sprint_loop_cap)
 - sprint-41 PR-E (본 PR — chain dispatcher)
 """
@@ -194,40 +192,6 @@ def run_subprocess(cmd: list[str]) -> dict[str, Any]:
     }
 
 
-def check_entry_hook(
-    project_root: Path,
-    phase: str,
-    grade: str,
-    domain: str | None,
-    domain_matched: bool,
-    skill_root: Path,
-) -> dict[str, Any] | None:
-    """phase entry hook — 09 진입 = cold_session_artefacts.py."""
-    if phase != '09':
-        return None  # 현재 09 entry 만 hook (확장 가능)
-
-    cmd = [
-        sys.executable,
-        str(skill_root / 'scoring' / 'cold_session_artefacts.py'),
-        '--project-root', str(project_root),
-        '--grade', grade,
-        '--quiet',
-    ]
-    if domain:
-        cmd.extend(['--domain', domain])
-    if domain_matched:
-        cmd.append('--domain-matched')
-
-    result = run_subprocess(cmd)
-    return {
-        'check': 'entry_hook_phase_09',
-        'sub_cli': 'cold_session_artefacts.py',
-        'exit_code': result['exit_code'],
-        'parsed_verdict': (result.get('parsed_json') or {}).get('verdict'),
-        'passed': result['exit_code'] == 0,
-    }
-
-
 def check_exit_hook(
     project_root: Path,
     phase: str,
@@ -337,12 +301,10 @@ def evaluate(
     checks.append(check_skill_version(project_root, orchestrator_version))
     checks.append(check_phase_monotonicity(project_root, phase))
 
-    # transition 별 hook
-    if transition == 'entry':
-        hook = check_entry_hook(project_root, phase, grade, domain, domain_matched, skill_root)
-        if hook:
-            checks.append(hook)
-    elif transition == 'exit':
+    # transition 별 exit hook (06/08 = dacapo_threshold, 10 = sprint_loop_cap).
+    # 구 phase 09 entry hook 은 은퇴 — entry 는 skill_version + monotonicity 만.
+    # cold session 정합은 run_gate (cold.isolation) 가 값 기반으로 대체.
+    if transition == 'exit':
         hook = check_exit_hook(project_root, phase, skill_root, iteration, max_iterations)
         if hook:
             checks.append(hook)

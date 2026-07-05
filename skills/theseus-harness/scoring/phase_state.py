@@ -8,8 +8,8 @@ orchestrator 가 매 페이즈 enter/exit 시점에 호출. `.ShipofTheseus/<pro
 를 검증해 v0.9.22 의 백필/위조 (페이즈 01-06 사후 frontmatter 9-12 분 위조) 를
 runtime 시점에 차단한다.
 
-`check_cold_session.py` 가 *post-hoc* artifact 검사를 한다면, 본 모듈은 *runtime
-entry-time* gate — 두 layer 가 상보적.
+cold session 정합은 `run_gate.py` 의 `cold.isolation` CheckSpec(값 기반, 9.f 은퇴) 이
+*post-hoc* 검사를 하고, 본 모듈은 *runtime entry-time* gate — 두 layer 가 상보적.
 
 명령:
     phase_state.py init --root <proj> --grade G [--project-id ID]

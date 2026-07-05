@@ -11,19 +11,19 @@ indexed-in: conventions/INDEX.md
 
 ## 한 줄 요약
 
-**orchestrator 가 매 페이즈 enter/exit 시점에 `scoring/phase_state.py` 호출 의무. `state/phase_state.json` 누적 + 단조성 (entered_at strict-monotonic) + 산출물 frontmatter `created_at` cross-check 로 v0.9.22 의 백필/위조 (페이즈 01-06 사후 frontmatter 9-12 분 위조) 를 *runtime* 시점에 차단.** [`check_cold_session.py`](../scoring/check_cold_session.py) (sprint-32) 가 *post-hoc* artifact 검사를 한다면, 본 모듈은 *runtime entry-time* gate — 두 layer 가 상보적.
+**orchestrator 가 매 페이즈 enter/exit 시점에 `scoring/phase_state.py` 호출 의무. `state/phase_state.json` 누적 + 단조성 (entered_at strict-monotonic) + 산출물 frontmatter `created_at` cross-check 로 v0.9.22 의 백필/위조 (페이즈 01-06 사후 frontmatter 9-12 분 위조) 를 *runtime* 시점에 차단.** cold session 산출물 정합은 `run_gate.py` 의 `cold.isolation` CheckSpec(meta_audit, 값 기반, 9.f 은퇴) 이 *post-hoc* 검사를 하고, 본 모듈은 *runtime entry-time* gate — 두 layer 가 상보적.
 
 ## 1. 결손 진단
 
 기존 자산:
 - [`checkpoint.py`](../scoring/checkpoint.py) — failure_kind → 회귀 페이즈 매핑 (사후 회귀)
-- [`check_cold_session.py`](../scoring/check_cold_session.py) — phase 09 진입 직전 *cold session artifact* 검사 (post-hoc)
+- `run_gate.py` `cold.isolation` CheckSpec — phase 09 *cold session 정합* 검사 (post-hoc, 값 기반)
 - [`phase-lineage-viewer.md`](phase-lineage-viewer.md) (br) — 프로젝트 종료 후 lineage.md mermaid + fingerprint chain
 - [`contracts.md`](contracts.md) — frontmatter prev_fingerprint 체인
 
 **갭** — 페이즈 *진입/종료 시점* 에 단조성을 강제하는 runtime gate 부재. v0.9.22 사고 (페이즈 01-06 백필 + frontmatter created_at 9-12 분 위조) 는 :
 - artifact 자체는 self_lint 통과 (frontmatter 형식 OK)
-- check_cold_session.py 는 *cold session 만* 검사
+- `cold.isolation` CheckSpec 는 *cold session 정합만* 검사
 - contracts.md fingerprint chain 은 *값 일치* 만 보지 *시간 단조성* 안 봄
 
 → 페이즈 단위 enter/exit 시각을 *별도 state 파일* 에 기록하고, 산출물 frontmatter `created_at` 가 그 *진입~종료 윈도* 내인지 cross-check 가 필요.
@@ -158,12 +158,12 @@ c- **artifact_path 누락** — exit 시 산출물 경로 안 박음 → frontma
 d- **created_at 이 ISO8601 비표준** — `2026-05-09 13:00` (T 누락) / `13:00:00+09:00` (timezone 변형). cross-check parse 실패 → 경고만 (현 구현). 후속: ISO8601 strict 강제.
 e- **다카포 rerun 시 같은 페이즈 재진입을 단조성 위반으로 reject** — 페이즈 06/08 다카포 loop 는 *같은 phase 번호* 의 재진입이 의도. 본 구현은 시각만 단조이면 OK (phase 번호 중복 OK).
 
-## 9. check_cold_session.py 와의 layer 분리
+## 9. cold.isolation CheckSpec 와의 layer 분리
 
 | Layer | 컨벤션 | 검증 시점 | 검증 대상 |
 |---|---|---|---|
 | **runtime entry-time** | **본 컨벤션 (C-PSM)** | 매 페이즈 enter/exit 시점 | phase_state.json 단조성 + frontmatter cross-check |
-| **post-hoc artifact** | [`check_cold_session.py`](../scoring/check_cold_session.py) (HARD-RULE 9.f) | phase 09 진입 직전 | cold session artifact 7 항목 (sentinel / universe count / impl tournament / shadow cap) |
+| **post-hoc artifact** | `run_gate.py` `cold.isolation` CheckSpec (meta_audit, 9.f 은퇴) | phase 09 | cold session 정합 (값 기반 — isolation 관측) |
 
 두 layer 가 *상보적*. runtime 은 시각/순서, post-hoc 은 산출물 내용. 둘 다 통과해야 phase 09 진입.
 
@@ -177,5 +177,5 @@ e- **다카포 rerun 시 같은 페이즈 재진입을 단조성 위반으로 re
 
 - [`contracts.md`](contracts.md) — fingerprint chain 무결성 = 본 phase_state.json 의 fingerprint 필드 입력.
 - [`phase-lineage-viewer.md`](phase-lineage-viewer.md) (br) — lineage.md fingerprint chain 표 = phase_state.json 변환 view.
-- [`check_cold_session.py`](../scoring/check_cold_session.py) (HARD-RULE 9.f) — post-hoc layer, 본 컨벤션 = runtime layer (직교).
+- `run_gate.py` `cold.isolation` CheckSpec (9.f 은퇴) — post-hoc layer, 본 컨벤션 = runtime layer (직교).
 - [`autonomy.md`](autonomy.md) — ABORT 시 페이즈 재진입 = 자율 (사용자 ack 없음).

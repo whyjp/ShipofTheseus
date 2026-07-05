@@ -476,12 +476,6 @@ phase 09 진입 + 종료 시 orchestrator 의무 호출 :
 
 ```bash
 # === phase 09 entry ===
-# HARD-RULE 9.rr — 13 sprint-40 산출물 file-existence
-python skills/theseus-harness/scoring/cold_session_artefacts.py \
-    --project-root .ShipofTheseus/<proj>/ \
-    --grade <G> --domain <D> --domain-matched \
-    --output .ShipofTheseus/<proj>/quality/gate_cold_session_artefacts.json
-
 # HARD-RULE 9.tt — runtime guard chain (skill_version + monotonicity + sub-CLI)
 python skills/theseus-harness/scoring/runtime_guard_chain.py \
     --project-root .ShipofTheseus/<proj>/ \

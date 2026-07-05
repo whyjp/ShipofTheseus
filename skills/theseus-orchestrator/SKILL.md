@@ -132,7 +132,7 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 >   - exit 1 시 *dashboard 재생성* 또는 *disk 복구* 강제. parity 불일치 = 데이터 무결성 실패.
 >   - **증거 회피 사례** — g4-v2 91 회차 = dashboard md 11 declared (`requirements.txt` / `run_experiment.py` / `src/mine_sim/*.py` 등), submission disk 0. 본 9.aaa = 11/11 missing → fail.
 > - **9.zz — Phase invoke audit CLI (sprint-43 PR-C 신규, *declared ≠ invoked* 갭 차단)**:
->   - phase 09 진입 + phase 14 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/phase_invoke_audit.py --orchestrator-skill <path> --project-root <root>` 자동 호출 의무.
+>   - phase 14 진입 시 orchestrator 가 `python skills/theseus-harness/scoring/phase_invoke_audit.py --orchestrator-skill <path> --project-root <root>` 자동 호출 의무. (phase 09 분은 은퇴 — meta_audit 의 kernelized declared≠invoked 갭 검사가 대체.)
 >   - 검사: orchestrator SKILL.md 본문에서 *literal Bash command* (`python skills/.../<NAME>.py`) 정규식 추출 + cold session 산출물의 *호출 trace* (gate_<NAME>.json 존재 + evaluated_at) 검증.
 >   - exit 1 시 미호출 CLI *전체 재호출* + phase 재진입.
 >   - **증거 회피 사례** — g4-v2 91 회차 = sprint-41/42 9 CLI declared (HARD-RULE 9.qq~9.xx), cold session 산출물 0 trace. *declared 9, invoked 0*. 본 9.zz = 차단.
@@ -166,8 +166,8 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 > - **9.tt — Runtime guard chain 자동 호출 의무 (sprint-41 PR-E 신규, 본 sprint 핵심 enforcement 메커니즘)**:
 >   - 매 phase 진입/종료 시 `python skills/theseus-harness/scoring/runtime_guard_chain.py --project-root <root> --phase <N> --transition <entry|exit> --grade <G> --orchestrator-version <V>` 자동 호출 의무.
 >   - exit 1 시 phase advance 차단 — orchestrator 가 fail check 의 fix step 자동 진행 후 chain 재호출.
->   - **chain 구성** — skill_version semver tuple 비교 + phase 단조성 + sub-CLI hook (phase 09 entry = cold_session_artefacts / phase 06/08 exit = dacapo_threshold / phase 10 exit = sprint_loop_cap).
->   - 본 룰 = sprint-41 의 핵심 enforcement 메커니즘 — 위 9.qq / 9.rr / 9.ss 모두 본 chain 의 sub-call.
+>   - **chain 구성** — skill_version semver tuple 비교 + phase 단조성 + sub-CLI hook (phase 06/08 exit = dacapo_threshold / phase 10 exit = sprint_loop_cap).
+>   - 본 룰 = sprint-41 의 핵심 enforcement 메커니즘 — 위 9.qq / 9.ss 모두 본 chain 의 sub-call.
 >   - phase-state-machine 컨벤션 의 *runtime guard* 직접 구현.
 >   - **증거 회피 사례** — 0510 회차 의 모든 메타-허들 미동작 (skill_version stale silent skip + 13 산출물 0 + 다카포 round 2 = 0 + sprint cap = 1 자율) — 본 9.tt 활성 시 매 transition 차단으로 일괄 정정.
 > - **9.ss — Sprint loop 4-layer 종료 조건 CLI (sprint-41 PR-D 신규)**:
@@ -177,13 +177,6 @@ description: theseus-harness 의 16 페이즈 자율 driver — entry point. 페
 >   - max_iterations 도달 시 `sprint_loop_terminated_by_max_iter: true` + 미달 layer list 정직 기록.
 >   - **자동 평가 ≠ 휴먼 품질 ≠ 다카포** 3 layer 분리 원칙 — *단순 iteration count cap* 아님.
 >   - **증거 회피 사례** — 0510 회차 *"Given 100% on evaluator, sprint cap = 1 (re-validation only)"* 자율 결정. Auto 100% 만 보고 stop, Tournament 0.95 + External 0.90 미고려. 본 9.ss CLI = 차단.
-> - **9.rr — Cold session 산출물 file-existence 강제 CLI (sprint-41 PR-C 신규)**:
->   - phase 09 진입 직전 orchestrator 가 `python skills/theseus-harness/scoring/cold_session_artefacts.py --project-root <root> --grade <grade> --domain <domain>` 자동 호출 의무.
->   - exit 1 시 결손 산출물 emit 후 phase 09 재진입 — agent 자율 통과 금지.
->   - **자동 평가 53/53 (100%) ≠ 산출물 통과** 명확 분리. phase 09 진입 *전* 의 게이트.
->   - 13 산출물 (gate_v6 / gate_v8 / gate_readme_summary / gate_methodology_completeness / gate_pnc/mirror/primary/literal / modeling_shortcuts / cascaded_subq / webview/exit_gate / iv/exit_gate / iv/dashboard) 모두 *존재 + valid JSON + verdict pass* 의무.
->   - **증거 회피 사례** — 0510 회차 skill_version 0.9.45 frontmatter 박힘에도 13 산출물 모두 부재 + phase 09 GREEN 자율 통과. 본 9.rr CLI = 차단.
->   - 본 CLI = ouroboros 패러다임 직접 적용 — 컨벤션 본문 = 명세, CLI = 집행.
 > - **9.qq — Tournament 다카포 임계 강제 CLI (sprint-41 PR-B 신규)**:
 >   - phase 06 (plan tournament) + phase 08 (impl tournament) 종료 직전 orchestrator 가 `python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md <path>` 자동 호출 의무.
 >   - CLI default 는 보고 모드(exit 0 + ratio 보고, 설계 B2 §2.3) — `--threshold` 명시 opt-in 시에만 예전 gating(ratio<threshold → exit 1 → round N+1 자동 진행) 복원. 정지 판정의 실제 권위는 manifest `stop_policy`.

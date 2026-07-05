@@ -49,15 +49,8 @@ CLI_TRACE_PATHS = {
         'plan/dacapo_threshold.json',
         'impl/dacapo_threshold.json',
     ],
-    'cold_session_artefacts': ['quality/gate_cold_session_artefacts.json'],
     'sprint_loop_cap': ['sprints/*/sprint_loop_cap.json'],  # glob
     'runtime_guard_chain': ['quality/gate_runtime_guard_chain.json'],
-    'generate_sprint40_artefacts': [
-        # 13 산출물 중 하나라도 존재 = generate 호출 완료 신호
-        'quality/gate_v6_reproducibility.json',
-        'quality/gate_v8_viewer_readiness.json',
-        'intent/modeling_shortcuts.json',
-    ],
     'cross_phase_context_audit': ['quality/gate_cross_phase_context.json'],
     'universe_count_monotonicity': ['quality/gate_universe_monotonicity.json'],
     'stagnation_breakthrough': ['sprints/*/gate_stagnation_breakthrough.json'],
