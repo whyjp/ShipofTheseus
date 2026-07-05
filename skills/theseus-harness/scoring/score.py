@@ -38,10 +38,15 @@ inputs JSON 형식 (모든 필드 필수, 명시 표시 외):
   }
 }
 
-stdout 으로 결과 JSON, exit code:
-  0  = 임계 통과 (기본 임계 0.999 — 자율 최대 결과 지향)
-  1  = 임계 미달
-  2  = 회귀 트리거 (--prior 비교)
+stdout 으로 결과 JSON, exit code (보고 모드 — 설계 B2 §2.3):
+  0  = 정상 (점수 절대값은 게이트가 아니다 — 측정·보고 전용)
+  2  = 회귀 트리거 (--prior 대비 regression_threshold 초과 하락 — 값 기반 delta 게이트)
+
+점수 절대값은 어디서도 종료·차단 게이트가 아니다(도달 불가 임계 0.999 제거). `--threshold`
+는 하위호환 보고 필드 `passes_threshold` 계산용으로만 남으며(default 0.0 = 보고 모드),
+exit code 를 좌우하지 않는다. 종료 판정의 유일 권위는 manifest `stop_policy`(§2.2) —
+gate(meta_audit verdict) + no_regression + plateau/budget cap. 여기서 게이팅하는 유일
+신호는 회귀(delta 하락)이며, 이는 절대 점수가 아니라 이전 대비 변화량이다.
 """
 
 from __future__ import annotations
@@ -225,7 +230,16 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--inputs", required=True, help="sprint-inputs.json 경로")
     p.add_argument("--prior", help="이전 스프린트 score 출력 경로 (회귀 판정용)")
-    p.add_argument("--threshold", type=float, default=0.999)
+    p.add_argument(
+        "--threshold",
+        type=float,
+        default=0.0,
+        help=(
+            "보고 필드 passes_threshold 계산용 참조 임계 (default 0.0 = 보고 모드, 비게이팅). "
+            "설계 B2 §2.3 — 점수 절대값은 exit code 를 좌우하지 않는다. 종료는 manifest "
+            "stop_policy 권위. 하위호환·수동 점검용으로만 임계 비교 필드를 남긴다."
+        ),
+    )
     p.add_argument("--regression-threshold", type=float, default=0.05)
     p.add_argument(
         "--out",
@@ -268,7 +282,10 @@ def main(argv: list[str] | None = None) -> int:
         "caps_applied": caps_applied,
         "dip_violation": bool(inputs.get("dip_violation")),
         "prior_score": prior_score,
+        # delta = 이전 대비 변화량(값 기반 정지/회귀 신호의 원천). prior 없으면 None.
+        "delta": (None if prior_score is None else round(score - prior_score, 4)),
         "regression_triggered": regression,
+        # 보고 필드(하위호환) — exit code 를 좌우하지 않는다(설계 B2 §2.3, 비게이팅).
         "passes_threshold": score >= args.threshold,
     }
     json.dump(output, sys.stdout, indent=2, ensure_ascii=False)
@@ -280,9 +297,8 @@ def main(argv: list[str] | None = None) -> int:
             json.dump(output, f, indent=2, ensure_ascii=False)
             f.write("\n")
 
-    if regression:
-        return 2
-    return 0 if output["passes_threshold"] else 1
+    # 점수 절대값은 게이트가 아니다 — 유일한 비-0 exit 는 회귀(값 기반 delta 게이트).
+    return 2 if regression else 0
 
 
 if __name__ == "__main__":

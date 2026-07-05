@@ -3,10 +3,12 @@
 
 dacapo_threshold.py(수정하지 않는다 — 그대로 재사용)의 `extract_winner_score()` 를
 호출해 tournament-md 의 winner_score/winner_max 를 파싱하고, 그 raw 값 + provenance
-(artifact_path=tournament_md 자신)만 Evidence Record 로 emit 한다. ratio 판정(≥0.999,
-HARD-RULE 9.qq)은 커널이 CheckSpec `checks/plan.dacapo_threshold.json` 으로 내린다 —
-이 스크립트는 verdict 를 내지 않는다(`evaluate()` 가 아니라 `extract_winner_score()` 만
-쓰는 이유 — evaluate() 는 verdict/next_round_required 까지 계산해 반환한다).
+(artifact_path=tournament_md 자신)만 Evidence Record 로 emit 한다. 판정은 커널이
+CheckSpec `checks/plan.dacapo_threshold.json` 으로 내린다 — 측정 유효성 assertion
+(winner_max>0, winner_score<=winner_max)만 게이팅하고 ratio(winner_score/winner_max)는
+`value` 로 계속 emit·보고한다(도달 불가 0.999 게이트는 설계 B2 §2.3 으로 제거 — 점수
+절대값은 종료 게이트가 아니다). 이 스크립트는 verdict 를 내지 않는다(`evaluate()` 가 아니라
+`extract_winner_score()` 만 쓰는 이유 — evaluate() 는 verdict 까지 계산해 반환한다).
 
 dacapo_threshold.py 자체는 수정하지 않는다 — `extract_winner_score()` 가 이미 재사용
 가능한 순수 함수라 리팩터가 불필요하고, 기존 test_dacapo_threshold.py·

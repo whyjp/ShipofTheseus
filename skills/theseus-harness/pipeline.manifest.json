@@ -33,6 +33,14 @@
     "G5": 9,
     "_note": "편익 미실증 — 설계 §8 동결. A/B 실증 전까지 비활성(advisory). active 폭은 multiverse_widths."
   },
+  "stop_policy": {
+    "gate": "meta_audit_verdict_pass",
+    "no_regression": true,
+    "plateau_eps": 0.005,
+    "plateau_window": {"G3": 2, "G4": 2, "G5": 3},
+    "budget_hard_cap": 0.95,
+    "_note": "종료 단일 권위(설계 B2 §2.2). 종료 = gate AND no_regression AND (plateau OR budget_hard_cap). 점수는 보고 측정값 — 게이트 아님(도달 불가 임계 0.999/0.99999 제거, perverse incentive 봉쇄). plateau_eps/window 는 초기 스냅샷 파라미터(§2.3 정직 고지) — 리허설/벤치 run 마다 관측 delta 분포로 재추정. 종료 조건 판정은 이 블록을 유일 권위로 소비(드리프트 재발 차단)."
+  },
   "checks": {
     "G2": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "quality.deep_module", "quality.dry", "quality.define_errors"],
     "G3": ["scoring.correctness", "scoring.scope_fit", "scoring.solid", "scoring.coverage", "scoring.fe_be_parity", "scoring.e2e", "plan.dacapo_threshold", "plan.tournament_independence", "sprint.regression", "cold.isolation", "quality.deep_module", "quality.dry", "quality.define_errors", "frozen.multiverse_width_benefit", "frozen.viewer_mandatory"],

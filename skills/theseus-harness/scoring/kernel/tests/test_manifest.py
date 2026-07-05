@@ -18,6 +18,7 @@ from manifest import (
     load_manifest,
     multiverse_width,
     phases_for_grade,
+    stop_policy,
 )
 
 
@@ -218,6 +219,53 @@ def test_cli_drift_check_exit_codes(tmp_path):
     assert any("scoring.solid" in p for p in out["problems"])
 
 
+# --- stop_policy 블록 (설계 B2 §2.2 종료 단일 권위, additive) -------------------
+
+
+def test_stop_policy_absent_defaults_empty(tmp_path):
+    """fixture 에 stop_policy 없으면 빈 dict — 선택 필드(하위호환)."""
+    m = load_manifest(_write_manifest(tmp_path))
+    assert m.stop_policy == {}
+    assert stop_policy(m) == {}
+
+
+def test_stop_policy_loaded_and_exposed_when_present(tmp_path):
+    """stop_policy 블록이 있으면 로드·노출 — _note·plateau_window 중첩 구조 보존."""
+    data = _manifest_dict()
+    data["stop_policy"] = {
+        "gate": "meta_audit_verdict_pass",
+        "no_regression": True,
+        "plateau_eps": 0.005,
+        "plateau_window": {"G3": 2, "G4": 2, "G5": 3},
+        "budget_hard_cap": 0.95,
+        "_note": "종료 단일 권위.",
+    }
+    m = load_manifest(_write_manifest(tmp_path, data))
+    sp = stop_policy(m)
+    assert sp["gate"] == "meta_audit_verdict_pass"
+    assert sp["budget_hard_cap"] == 0.95
+    # 그레이드 맵 아님 — _note·중첩 window 를 필터하지 않고 그대로 노출.
+    assert sp["plateau_window"] == {"G3": 2, "G4": 2, "G5": 3}
+    assert "_note" in sp
+
+
+def test_stop_policy_non_object_raises(tmp_path):
+    data = _manifest_dict()
+    data["stop_policy"] = ["not", "an", "object"]
+    with pytest.raises(ManifestError):
+        load_manifest(_write_manifest(tmp_path, data))
+
+
+def test_stop_policy_does_not_affect_drift_check(tmp_path):
+    """stop_policy 는 additive — drift-check(manifest↔checks 정합)에 무영향."""
+    data = _manifest_dict()
+    data["stop_policy"] = {"gate": "meta_audit_verdict_pass", "budget_hard_cap": 0.95}
+    m = load_manifest(_write_manifest(tmp_path, data))
+    checks_dir = tmp_path / "checks"
+    _write_registry(checks_dir, ["scoring.correctness", "scoring.solid"])
+    assert drift_check(m, checks_dir) == []
+
+
 # --- 실제 저장소 매니페스트 정합 (드리프트 판정 근거 회귀 가드) ----------------
 
 
@@ -236,3 +284,8 @@ def test_real_manifest_loads_and_enumerates_16_phases():
     assert multiverse_width(m, "G3") == 3
     assert multiverse_width(m, "G5") == 6
     assert m.frozen_widths == {"G3": 5, "G4": 7, "G5": 9}
+    # stop_policy 종료 단일 권위 블록(B2 §2.2) 이 실 매니페스트에 존재.
+    sp = stop_policy(m)
+    assert sp.get("gate") == "meta_audit_verdict_pass"
+    assert sp.get("budget_hard_cap") == 0.95
+    assert sp.get("plateau_window", {}).get("G5") == 3

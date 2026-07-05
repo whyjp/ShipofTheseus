@@ -55,6 +55,7 @@ class Manifest:
     multiverse_widths: dict[str, int]
     frozen_widths: dict[str, int]
     checks: dict[str, list[str]]
+    stop_policy: dict[str, Any] = field(default_factory=dict)
     raw: dict[str, Any] = field(default_factory=dict, repr=False)
 
 
@@ -96,12 +97,20 @@ def from_dict(data: Any) -> Manifest:
             raise ManifestError(f"checks[{grade}] must be an array")
         checks[grade] = list(ids)
 
+    # stop_policy 는 선택 필드(설계 B2 §2.2 종료 단일 권위 블록) — 부재하면 빈 dict.
+    # 그레이드 맵이 아니라 중첩 정책 블록이라 '_' 메타 키 필터를 적용하지 않는다
+    # (_note·plateau_window 구조를 그대로 노출). drift-check 는 checks 만 보므로 무영향.
+    stop_policy_raw = data.get("stop_policy", {})
+    if not isinstance(stop_policy_raw, dict):
+        raise ManifestError("stop_policy must be an object")
+
     return Manifest(
         manifest_schema_version=data["manifest_schema_version"],
         phases=phases,
         multiverse_widths={k: int(v) for k, v in widths.items()},
         frozen_widths={k: int(v) for k, v in frozen.items()},
         checks=checks,
+        stop_policy=dict(stop_policy_raw),
         raw=data,
     )
 
@@ -129,6 +138,18 @@ def active_checks(manifest: Manifest, grade: str) -> list[str]:
 def phases_for_grade(manifest: Manifest, grade: str) -> list[dict[str, Any]]:
     """해당 그레이드가 active_grades 에 포함된 페이즈만, 매니페스트 순서대로."""
     return [p for p in manifest.phases if grade in p["active_grades"]]
+
+
+def stop_policy(manifest: Manifest) -> dict[str, Any]:
+    """종료 정책 블록(설계 B2 §2.2). 부재 시 빈 dict.
+
+    소비자(오케스트레이터/stop 판정)가 종료 조건의 유일 권위로 읽는다:
+    종료 = gate(meta_audit verdict pass) AND no_regression AND
+    (plateau delta<plateau_eps N회 OR budget ≥ budget_hard_cap). 점수 절대값은
+    이 정책 어디에도 게이트로 들어가지 않는다 — 도달 불가 임계(0.999/0.99999)를
+    값 기반 정지 신호로 교체(§2.2). 빈 dict 는 '정책 미선언'이지 '무조건 정지'가 아니다.
+    """
+    return dict(manifest.stop_policy)
 
 
 def multiverse_width(manifest: Manifest, grade: str) -> int:

@@ -104,8 +104,10 @@ def test_producer_emits_raw_values_no_verdict_mixed_in(tmp_path):
     assert '"pass"' not in dumped
 
 
-def test_kernel_fails_below_threshold_but_evidence_is_valid(tmp_path):
-    """요구(2): 57/60 < 0.999 → 커널 FAIL(assertion). producer 자체는 정상 실행(측정 성공)."""
+def test_kernel_passes_below_old_threshold_and_reports_ratio(tmp_path):
+    """요구(2)[B2 §2.3 재설정]: 57/60 = 0.95 는 도달 불가 0.999 게이트가 제거돼 유효성
+    assertion(winner_max>0, winner_score<=winner_max)만 통과 → 커널 PASS + ratio 를
+    value 로 보고. 측정=측정(점수 절대값은 게이트 아님, 비게이팅). producer 는 정상 실행."""
     run_root = tmp_path / "run"
     tmd = _write(run_root / "impl" / "tournament-impl-01.md", TOURNAMENT_57_60)
     summary = _run(tmd, run_root / "evidence")
@@ -113,8 +115,10 @@ def test_kernel_fails_below_threshold_but_evidence_is_valid(tmp_path):
 
     ev = evidence_mod.load_evidence(run_root / "evidence" / f"{CHECK_ID}.json")
     v = kernel.verify(_spec(), ev, artifact_root=run_root, verified_at=FIXED_TS)
-    assert v.result == "FAIL"
-    assert any("0.999" in r for r in v.reasons)
+    assert v.result == "PASS", v.reasons
+    assert abs(v.value - 0.95) < 1e-9
+    # 도달 불가 임계 게이트가 삭제됐으므로 어떤 사유에도 0.999 가 남지 않는다.
+    assert not any("0.999" in r for r in v.reasons)
 
 
 def test_kernel_passes_at_perfect_score(tmp_path):

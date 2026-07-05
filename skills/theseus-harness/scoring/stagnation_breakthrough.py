@@ -22,9 +22,18 @@ orchestrator 가 phase 10 sprint iteration 종료 시 의무 호출 (HARD-RULE 9
         --current-iteration 3 \\
         --output sprints/03/gate_stagnation_breakthrough.json
 
+보고 모드(설계 B2 §2.2-4, default) — exit 0. plateau(정직한 수렴)를 절대 점수 미달로
+벌하고 breakthrough 를 강제하던 게이트를 해제한다. verdict('pass'/'fail')는 여전히
+측정·보고되지만 CLI 가 게이팅하지 않는다. breakthrough 는 budget 여유 + 사용자 opt-in
+시에만 옵션이며, 종료 판정 권위는 manifest `stop_policy`(§2.2)다.
+
+--gate 를 명시하면(능력 보존) 예전 차단 동작 복원 — verdict fail 시 exit 1.
+
 Exit codes:
-    0 — stagnation 미감지 OR score ≥ 0.999 OR 4 시도 evidence ≥ 1
-    1 — stagnation + < 0.999 + 0 시도 evidence (자율 종료 차단)
+    default(보고 모드): 항상 0 (verdict 는 stdout JSON 으로 보고)
+    --gate 지정 시:
+        0 — stagnation 미감지 OR 4 시도 evidence ≥ 1
+        1 — stagnation + 0 시도 evidence (자율 종료 차단 — opt-in 강제)
 """
 
 from __future__ import annotations
@@ -239,6 +248,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--threshold', type=float, default=DEFAULT_THRESHOLD)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--quiet', action='store_true')
+    parser.add_argument(
+        '--gate',
+        action='store_true',
+        help=(
+            '예전 차단 동작 복원(능력 보존, opt-in) — verdict fail 시 exit 1. '
+            '기본은 보고 모드(비게이팅, 설계 B2 §2.2-4).'
+        ),
+    )
 
     ns = parser.parse_args(argv)
 
@@ -257,15 +274,19 @@ def main(argv: list[str] | None = None) -> int:
 
     if not ns.quiet and verdict_obj['verdict'] == 'fail':
         print(
-            f"\n[stagnation_breakthrough] FAIL: {verdict_obj['reason']}",
+            f"\n[stagnation_breakthrough] verdict=fail(보고): {verdict_obj['reason']}",
             file=sys.stderr,
         )
-        print(
-            f"[stagnation_breakthrough] orchestrator 의무 — exit_loop 차단 + 4 시도 ≥ 1 (HARD-RULE 9.ww).",
-            file=sys.stderr,
-        )
+        if ns.gate:
+            print(
+                "[stagnation_breakthrough] --gate opt-in — exit_loop 차단 + 4 시도 ≥ 1.",
+                file=sys.stderr,
+            )
 
-    return 0 if verdict_obj['verdict'] == 'pass' else 1
+    # 보고 모드(default) — 점수 절대값은 게이트가 아니다. --gate opt-in 시에만 차단.
+    if ns.gate:
+        return 0 if verdict_obj['verdict'] == 'pass' else 1
+    return 0
 
 
 if __name__ == '__main__':

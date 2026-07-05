@@ -131,6 +131,16 @@ class TestEvaluate(unittest.TestCase):
         verdict = evaluate(self.tmpdir / 'unused.md', 0.999, score_text_override='60/60')
         self.assertEqual(verdict['verdict'], 'pass')
 
+    def test_reporting_mode_no_threshold_is_non_gating(self):
+        """설계 B2 §2.3 — threshold 미지정(default) = 보고 모드. 57/60 라도 verdict='report'
+        (비게이팅) + ratio 계속 보고. 점수 절대값은 종료 게이트가 아니다."""
+        path = self.tmpdir / 'tournament-impl-01.md'
+        path.write_text(SAMPLE_TOURNAMENT_IMPL, encoding='utf-8')
+        verdict = evaluate(path)  # threshold None (default)
+        self.assertEqual(verdict['verdict'], 'report')
+        self.assertEqual(verdict['ratio'], 0.95)
+        self.assertFalse(verdict['next_round_required'])
+
 
 class TestMain(unittest.TestCase):
     def setUp(self):
@@ -157,6 +167,13 @@ class TestMain(unittest.TestCase):
 
     def test_cli_exit_0_on_pass(self):
         rc = main(['--score-text', '60/60', '--threshold', '0.999', '--quiet'])
+        self.assertEqual(rc, 0)
+
+    def test_cli_reporting_mode_exit_0_without_threshold(self):
+        """--threshold 미지정 = 보고 모드 → 57/60(0.95) 라도 exit 0(비게이팅, §2.3)."""
+        path = self.tmpdir / 't.md'
+        path.write_text(SAMPLE_TOURNAMENT_IMPL, encoding='utf-8')
+        rc = main(['--tournament-md', str(path), '--quiet'])
         self.assertEqual(rc, 0)
 
 

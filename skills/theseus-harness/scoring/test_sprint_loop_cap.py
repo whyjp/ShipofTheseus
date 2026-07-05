@@ -121,7 +121,8 @@ class TestSprintLoopCap(unittest.TestCase):
         self.assertIn('external', verdict['fail_layers'])
         self.assertEqual(verdict['verdict'], 'continue')
 
-    def test_cli_exit_1_on_continue(self):
+    def test_cli_reporting_mode_exit_0_by_default(self):
+        """설계 B2 §2.3 — default 는 보고 모드(비게이팅). continue 라도 exit 0."""
         self._write_eval_report(1.0)
         self._write_quality_gate('proceed')
         self._write_dacapo(0.95, 'plan')
@@ -131,6 +132,22 @@ class TestSprintLoopCap(unittest.TestCase):
             '--project-root', str(self.project_root),
             '--current-iteration', '1',
             '--max-iterations', '10',
+            '--quiet',
+        ])
+        self.assertEqual(rc, 0)
+
+    def test_cli_gate_opt_in_exit_1_on_continue(self):
+        """--gate opt-in 시 예전 4-layer 차단 동작 복원 — continue → exit 1."""
+        self._write_eval_report(1.0)
+        self._write_quality_gate('proceed')
+        self._write_dacapo(0.95, 'plan')
+        self._write_dacapo(0.95, 'impl')
+
+        rc = main([
+            '--project-root', str(self.project_root),
+            '--current-iteration', '1',
+            '--max-iterations', '10',
+            '--gate',
             '--quiet',
         ])
         self.assertEqual(rc, 1)

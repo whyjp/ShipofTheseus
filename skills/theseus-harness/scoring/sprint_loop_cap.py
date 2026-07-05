@@ -19,9 +19,18 @@ HARD-RULE 9.ss (sprint-41 신규).
         --max-iterations 10 \\
         --output sprints/01/sprint_loop_cap.json
 
+보고 모드(설계 B2 §2.3, default) — exit 0. 도달 불가 임계(≥0.999) layer 게이트를
+해제한다. layer 별 score/verdict 는 여전히 측정·보고되지만 CLI 가 게이팅하지 않는다.
+종료 판정의 유일 권위는 manifest `stop_policy`(§2.2) — meta_audit verdict pass +
+sprint.regression 무회귀 + plateau/budget cap. 점수 절대값은 어디서도 게이트가 아니다.
+
+--gate 를 명시하면(능력 보존) 예전 4-layer 차단 동작 복원.
+
 Exit codes:
-    0 — 모든 layer ≥ threshold OR max_iterations 도달 (stop 허용)
-    1 — 적어도 1 layer 미달 + iter < max (continue 의무)
+    default(보고 모드): 항상 0 (verdict/fail_layers 는 stdout JSON 으로 보고)
+    --gate 지정 시:
+        0 — 모든 layer ≥ threshold OR max_iterations 도달 (stop 허용)
+        1 — 적어도 1 layer 미달 + iter < max (continue — opt-in 강제)
 
 증거 회피 사례 (0510 회차):
     quality/09-quality-gate.md 마지막 절 — *"Given 100% on evaluator, sprint cap = 1
@@ -298,6 +307,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--max-iterations', type=int, default=10)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--quiet', action='store_true')
+    parser.add_argument(
+        '--gate',
+        action='store_true',
+        help=(
+            '예전 4-layer 차단 동작 복원(능력 보존, opt-in) — verdict continue 시 exit 1. '
+            '기본은 보고 모드(비게이팅, 설계 B2 §2.3).'
+        ),
+    )
 
     ns = parser.parse_args(argv)
 
@@ -316,16 +333,20 @@ def main(argv: list[str] | None = None) -> int:
 
     if not ns.quiet and verdict_obj['verdict'] == 'continue':
         print(
-            f"\n[sprint_loop_cap] CONTINUE: {verdict_obj['reason']}",
+            f"\n[sprint_loop_cap] verdict=continue(보고): {verdict_obj['reason']}",
             file=sys.stderr,
         )
-        print(
-            f"[sprint_loop_cap] orchestrator 의무 — sprint iteration "
-            f"{ns.current_iteration} → {ns.current_iteration+1} (HARD-RULE 9.ss).",
-            file=sys.stderr,
-        )
+        if ns.gate:
+            print(
+                f"[sprint_loop_cap] --gate opt-in — sprint iteration "
+                f"{ns.current_iteration} → {ns.current_iteration+1}.",
+                file=sys.stderr,
+            )
 
-    return 0 if verdict_obj['verdict'] == 'stop' else 1
+    # 보고 모드(default) — 점수 절대값은 게이트가 아니다. --gate opt-in 시에만 차단.
+    if ns.gate:
+        return 0 if verdict_obj['verdict'] == 'stop' else 1
+    return 0
 
 
 if __name__ == '__main__':
