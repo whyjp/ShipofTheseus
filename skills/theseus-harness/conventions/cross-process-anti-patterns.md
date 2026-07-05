@@ -99,7 +99,7 @@ def scan_violations(src_root: pathlib.Path) -> list[dict]:
 | Rust | `rand::thread_rng()` (process-local), `HashMap` (DoS resistance random hasher) |
 | TypeScript / Node | `Date.now()` seed, `Math.random()` (no seed control), object key order |
 
-## self_lint C-CXP (cross-process anti-pattern catalogue)
+## C-CXP (self_lint 미등록)
 
 본 컨벤션 파일 존재 + phase 09-quality-gates.md 본문에 `cross-process-anti-patterns.md` 참조 + §V6-Evidence-Bound 키워드 박힘 검증.
 

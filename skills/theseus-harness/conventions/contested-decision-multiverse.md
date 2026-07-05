@@ -140,7 +140,7 @@ class IndependentDirections:
 
 decision_coverage < 0.6 인 universe 즉시 탈락 — *spike 없으면 paradigm 분기 묶음에 불과*.
 
-### E. self_lint 룰 신규 — C-CDM
+### E. C-CDM (self_lint 미등록)
 
 ```
 C-CDM:
@@ -178,7 +178,7 @@ mindmap
       code_spike_50_LOC_cap
       cost_cap_universe_×_spike_cost
     기능
-      C-CDM_self_lint
+      C-CDM_검증
       contested-decisions.md_신규_산출물
       universe_meta.md_spike_block
       tournament_decision_coverage_가중

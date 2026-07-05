@@ -191,7 +191,7 @@ agent 가 검증 우회 위해 `dacapo_loop_executed: true` 거짓 박을 가능
 
 | 거짓 박힘 | 모순 검출 |
 |---|---|
-| dacapo_loop_executed=true 인데 rerun_count > 0 + dacapo-rerun-NN.md 부재 | C-DCL-RERUN-LOG fail |
+| dacapo_loop_executed=true 인데 rerun_count > 0 + dacapo-rerun-NN.md 부재 | C-DCL-RERUN-LOG fail (미등록) |
 | step_d_converged=true 인데 winner_score < threshold | C-DCL-WIN-THRESHOLD 산술 검증 |
 | step_d_tournament_pass=true 인데 winner_score < threshold | 직접 산술 모순 |
 | step_e_cap_reached=true 인데 rerun_count < max_rerun AND budget < 0.95 | 산술 모순 |

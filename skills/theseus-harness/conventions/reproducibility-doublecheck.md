@@ -61,7 +61,7 @@ cross_process_anti_pattern_violations: 0   # sprint-40 신규 — 7 패턴 grep 
 
 컨벤션 파일 존재 + 페이즈 09 게이트 본문에 "doublecheck" + sha256 알고리즘 + "byte-equal" 명시.
 
-## self_lint C-V6X (sprint-40 PR-B 신규)
+## C-V6X (미등록 — sprint-40 PR-B 신규)
 
 phase 09 진입 시 :
 - `quality/gate_v6_reproducibility.json` 존재 확인

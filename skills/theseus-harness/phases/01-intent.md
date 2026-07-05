@@ -95,4 +95,4 @@ mindmap
       <sub-4>
 ```
 
-agent 는 본 stub 을 *그대로 base* 로 도메인-specific 노드 ≥ 9 개 추가하면 자동 ≥ 25 노드 + A 등급 도달. self_lint C-MRD-A-DEFAULT + C-MQG-FORMAT/WIDTH/DEPTH/RICHNESS 검증.
+agent 는 본 stub 을 *그대로 base* 로 도메인-specific 노드 ≥ 9 개 추가하면 자동 ≥ 25 노드 + A 등급 도달. C-MRD-A-DEFAULT + C-MQG-FORMAT/WIDTH/DEPTH/RICHNESS 검증 의무 (미등록).

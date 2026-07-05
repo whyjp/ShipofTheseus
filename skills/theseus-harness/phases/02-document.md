@@ -11,7 +11,7 @@
 
 ## Premortem-Friction (v0.9.7, [`../conventions/premortem-friction.md`](../conventions/premortem-friction.md))
 
-agent prompt 헤더에 격언 prepend (F5 *知之為知之 不知為不知 是知也* / F2 *de omnibus dubitandum est*) + 산출물에 `premortem` 절 의무. 핵심 질문 = "이 의도가 *수정 0* 인 채 페이즈 03/06/08 로 흘러갔을 때, *문맥 누락* 으로 1 sprint 뒤 재해석되면 어떤 차이가 발생할까?". `derived_improvements ≥ 1` 의무 — 0 면 self_lint C-PM fail.
+agent prompt 헤더에 격언 prepend (F5 *知之為知之 不知為不知 是知也* / F2 *de omnibus dubitandum est*) + 산출물에 `premortem` 절 의무. 핵심 질문 = "이 의도가 *수정 0* 인 채 페이즈 03/06/08 로 흘러갔을 때, *문맥 누락* 으로 1 sprint 뒤 재해석되면 어떤 차이가 발생할까?". `derived_improvements ≥ 1` 의무 — 0 면 C-PM 위반 (self_lint 미등록).
 
 ## 산출물
 `intent/02-intent-review.md`:

@@ -61,7 +61,7 @@ premortem:
     - "..."
 ```
 
-`derived_improvements` 가 0개 = *theatrical premortem* → self_lint C-PM (premortem) 자동 fail.
+`derived_improvements` 가 0개 = *theatrical premortem* → C-PM (self_lint 미등록) 자동 fail.
 
 ## 5. 페이즈 매핑
 
@@ -102,7 +102,7 @@ premortem:
     - "premortem 자체가 페이즈 시간 +30% 비용으로 사용자가 끄고 싶어할 가능성"
     - "primer 격언 1 개로는 다른 contemplative 차원 (예: 윤리적 결정) 담아내기 부족할 가능성"
   derived_improvements:
-    - description: "self_lint C-PM 룰에 'findings 의 구체성 — 페이즈/모듈/줄 단위 인용 ≥ 1' 추가"
+    - description: "C-PM 검증 규칙(미등록)에 'findings 의 구체성 — 페이즈/모듈/줄 단위 인용 ≥ 1' 추가"
       target_phase: "본 conventions/premortem-friction.md §6"
       effort_estimate: "low"
     - description: "성능 영향 측정 — premortem on/off 비교 wall clock 차이 측정 회차 1건"

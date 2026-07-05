@@ -105,9 +105,7 @@ def check_decision_support_present(handoff_md: str, q_count: int) -> list[str]:
     return errors
 ```
 
-## 3. self_lint 룰
-
-`scoring/self_lint.py` C-DSF (신규):
+## 3. C-DSF (미등록, 신규)
 
 ```python
 def lint_decision_support_framing(skill_root: Path) -> list[str]:

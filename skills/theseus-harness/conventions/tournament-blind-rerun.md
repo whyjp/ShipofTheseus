@@ -75,7 +75,7 @@ c- Union candidate 가 *기존 winner 와 동급* 이면 union 채택 (covers mo
 
 ## 5. 안티 패턴
 
-a- **anonymize 미완** — previous winner 의 frontmatter 일부 잔존 → fresh agents 가 식별 가능. self_lint C-TBR-ANON 강제.
+a- **anonymize 미완** — previous winner 의 frontmatter 일부 잔존 → fresh agents 가 식별 가능 (C-TBR-ANON, self_lint 미등록).
 b- **infinite blind rerun** — 매 sprint 마다 blind rerun → budget 소진. *budget cap* 또는 *임계 가까이 도달* 시 종료 룰.
 c- **anonymize 후 의미 변형** — universe-W 의 본문 의미가 anonymize 과정에서 *바뀌면* fair test 위반. 의미 보존 검증 의무.
 d- **union 의 cherry-picking** — strongest sub-component 만 픽 → union 이 항상 우승 → competition 우회. 방지책: 강제 분포 의무(폭 7 에서 7×0.2=1.4>1.0 인 수학 모순, §8 동결) 대신 union 의 *origin 분포* 를 **측정·보고**(값, 강제 없음) — 편중이 심하면 서술로 정직 고지.

@@ -15,7 +15,7 @@
 2- 어떤 TODO 부터 시작하겠는가? 이유는?
 3- 과소 명세·과대 사이즈·순서 어긋남이 보이는 TODO 는?
 4- 누락·잘못된 의존은?
-5- **premortem** ([`../conventions/premortem-friction.md`](../conventions/premortem-friction.md), v0.9.7) — "이 플랜이 *수정 0* 으로 페이즈 08 진입 시, sprint 01 의 회귀 발생 위치 ≥ 3 곳?" 격언 prepend (F5 *知之為知之 不知為不知 是知也* / F2 *de omnibus dubitandum est*) + `derived_improvements ≥ 1` 의무. 0 면 self_lint C-PM fail.
+5- **premortem** ([`../conventions/premortem-friction.md`](../conventions/premortem-friction.md), v0.9.7) — "이 플랜이 *수정 0* 으로 페이즈 08 진입 시, sprint 01 의 회귀 발생 위치 ≥ 3 곳?" 격언 prepend (F5 *知之為知之 不知為不知 是知也* / F2 *de omnibus dubitandum est*) + `derived_improvements ≥ 1` 의무. 0 면 C-PM 위반 (미등록).
 
 ## 산출물
 `plan/07-plan-review.md` — 4 답 + premortem 절 + 판정 (`accept` | `revise` | `reject`).
@@ -131,7 +131,7 @@ invariant_violations: 0       # 의무 0
 | Loader queue capacity | T-001.b.1 → T-001.b.2 | max_capacity 일관 | ✓ |
 ```
 
-### self_lint C-DPT / C-DPS / C-CAI
+### self_lint C-DPT (C-DPS/C-CAI 미등록)
 
 ```python
 def check_dispatch_table(skill_root: Path) -> list[str]:

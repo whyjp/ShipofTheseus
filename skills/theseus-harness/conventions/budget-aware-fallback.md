@@ -45,7 +45,7 @@ fallback:
 
 `fallback` 필드 = 산출물 frontmatter 의 **별개 키** (universe / mindmap_revision 와 동일 level).
 
-### Step 3 — self_lint C-BAF (budget-aware fallback) 검증
+### Step 3 — C-BAF (budget-aware fallback, self_lint 미등록)
 
 agent 가 G4 컨벤션 default 미준수 + frontmatter `fallback` 미박힘 → C-BAF auto-fail.
 
@@ -73,7 +73,7 @@ agent 가 G4 컨벤션 default 미준수 + frontmatter `fallback` 미박힘 → 
 
 ## 5. 그레이드별 활성
 
-| Grade | fallback 활성 | self_lint C-BAF |
+| Grade | fallback 활성 | C-BAF (미등록) |
 |---|:-:|:-:|
 | G2 Simple | n/a | n/a |
 | G3 Standard | optional | optional |

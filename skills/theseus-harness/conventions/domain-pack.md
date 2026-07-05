@@ -221,12 +221,12 @@ def estimate_domain(intent_signals: dict, mindmap_signals: dict) -> str | None:
 
 a- **어댑터가 prompt 명시 외 기능 추가** — 사용자 의도 위반.
 b- **여러 어댑터 매칭 시 충돌** — 둘 다 후보로 stack + 페이즈 04 추가 질의로 사용자 ack.
-c- **어댑터 contributions 가 prompt 와 무관** — drift. self_lint C-DRS-EVIDENCE 가 evidence 의무.
+c- **어댑터 contributions 가 prompt 와 무관** — drift. evidence 의무 (C-DRS-EVIDENCE, 미등록).
 d- **failure_patterns 카탈로그 만들고 phase 09 에서 검증 안 함** — gate_failure_patterns 의무.
 e- **severity 명시 안 함** — cap_total / cap_correctness / cap_experimental / warning 4 단계 의무.
 f- **detection 추상적 ("코드 품질 낮음")** — 검증 가능한 *구체적 패턴* 의무.
 
-## 6. self_lint 룰 요약
+## 6. 검증 규칙 요약 (C-DMC 만 등록)
 
 | 룰 ID | layer | 검증 |
 |---|---|---|

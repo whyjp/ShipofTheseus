@@ -104,7 +104,7 @@ Override 는:
 }
 ```
 
-## self_lint C-SPF (sprint-42 PR-E 신규)
+## C-SPF (미등록 — sprint-42 PR-E 신규)
 
 phase 10 / 14 진입 시 :
 - `quality/gate_surrender_phrase.json` 존재 + `verdict == "pass"` 확인

@@ -115,7 +115,7 @@ reconstruct_justified_ratio: 1.00  # 1/1 reconstruct row 정당화
 - plan 의 method = accumulate 인데 impl 이 reconstruct → impl drift (페이즈 08 재진입)
 - plan 의 method = reconstruct 인데 정당화 부족 → plan defect (페이즈 06 재진입)
 
-### E. self_lint 룰 신규 — C-MC
+### E. C-MC (self_lint 미등록)
 
 ```
 C-MC:
@@ -154,7 +154,7 @@ mindmap
       NFR_측정값_매핑_의무
       페이즈_11_분류_입력
     기능
-      C-MC_self_lint
+      C-MC_검증
       페이즈_06_본문_의무_섹션
       frontmatter_sync_자동
       페이즈_09_게이트_6_강화

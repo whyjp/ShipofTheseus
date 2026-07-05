@@ -106,9 +106,7 @@ def check_cycle_coherence(plan: dict, sprint_evidence: dict) -> list[str]:
 
 본 하네스에 *built-in 도메인 어댑터 0* (sprint-19+, 벤치 어뷰징 회피). 사용자가 per-project 로 도메인 어댑터 (`domain-adapters/<domain>.md`) 작성 시 [`domain-pack.md`](domain-pack.md) §3 (sprint-37 PR-AG 통합) 프레임워크 준수 — process-flow-coherence 게이트가 어댑터의 cycle pattern 카탈로그를 자동 활용.
 
-## 3. self_lint 룰
-
-`scoring/self_lint.py` C-PFC (신규):
+## 3. C-PFC (미등록, 신규)
 
 ```python
 def lint_process_flow_coherence(skill_root: Path) -> list[str]:

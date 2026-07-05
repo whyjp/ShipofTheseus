@@ -98,9 +98,9 @@ c- fail policy = 입력 가정 재검증 trigger, 도메인 X.
 ## 6. 안티 패턴
 
 a- **bound 와 simulated 가 *같은 가정* 으로 도출** — circular validation. bound 는 *입력 파라미터 (raw data)*, simulated 는 *코드 결과*. 두 입력 불일치 시 mismatch 자동.
-b- **ratio 임계 임의 조정** — 80% 미만에서 의도적으로 60% 임계로 낮추면 잘못된 가정 catch 못함. self_lint C-AB-RATIO 가 임계 ≥ 80% 강제.
+b- **ratio 임계 임의 조정** — 80% 미만에서 의도적으로 60% 임계로 낮추면 잘못된 가정 catch 못함. 임계 ≥ 80% 강제 (C-AB-RATIO, self_lint 미등록).
 c- **fail 후 *입력 재검증 없이 코드만 수정*** — 본질 위반. fail policy 가 *입력 답안 재확정* 명시 의무 (페이즈 04 답 timestamp 갱신).
 
 ## 7. 자기 검증 (메타)
 
-본 컨벤션 자체에 적용 — 가정 (payload, capacity, service-time) 이 bench data CSV 와 일치하는지 self_lint C-AB-DATA 검증. 본 컨벤션이 본인의 적용 회차 (v0.9.12 첫 적용) 에서 실 결과 박힘.
+본 컨벤션 자체에 적용 — 가정 (payload, capacity, service-time) 이 bench data CSV 와 일치하는지 검증 의무 (C-AB-DATA, 미등록). 본 컨벤션이 본인의 적용 회차 (v0.9.12 첫 적용) 에서 실 결과 박힘.

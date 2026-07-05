@@ -213,14 +213,14 @@ self_lint C-RTG 검증. fail RTG 자동 → 페이즈 10 sprint NN+1 lesson sour
 | 1 | 의도 일치 | simplification 표 ≥ 1 row + direction 명시 ≥ 50% (bg, [`../conventions/directional-simplification.md`](../conventions/directional-simplification.md)) |
 | 6 | NFR 임계 일치 | Measurement Contract row 1:1 매핑 + reconstruct 정당화 (bi, [`../conventions/measurement-contract.md`](../conventions/measurement-contract.md)). direct_ratio < 0.7 시 cap 0.85 |
 
-새 self_lint 룰 (이번 sprint 적용) :
+새 검증 규칙 (이번 sprint 적용) :
 - C-CDM (contested decisions + universe spike) — bf
 - C-MC (measurement contract) — bi
 - C-DS (directional simplification) — bg
 - C-CP (commentary policy) — bh
 - C-GIS (grader-in-sprint) — be (페이즈 10 검증 위치, 본 페이즈 frontmatter 일부)
 - C-RDS (rubric-driven-doc-skeleton) — bj
-- C-RTG (rubric-targeted-gates) — bk
+- C-RTG (rubric-targeted-gates, 등록) — bk
 
 
 ## §PNC/§Mirror/§Primary/§Literal — 4 감점 메타 패턴 (advisory, sprint-39 PR-B~E, B1 강등)
@@ -388,7 +388,7 @@ d- **anti-pattern grep skip** — D-6 회귀 (hash(scenario_id) → SeedSequence
 - `numbers_mapped + numbers_external_source == numbers_total` 의무 (모든 숫자 추적)
 - 미달 시 phase 09 verdict = `halt` + atomic regen step 자동 재실행 → phase 09 재진입
 
-### self_lint C-RDS (sprint-40 PR-E 신규)
+### C-RDS (미등록 — sprint-40 PR-E 신규)
 
 phase 09 진입 시 `quality/gate_readme_summary_consistency.json` 의 `verdict == "pass"` + `atomic_regen_block.atomic == true` 검증. fail 시 phase 09 진입 거부.
 

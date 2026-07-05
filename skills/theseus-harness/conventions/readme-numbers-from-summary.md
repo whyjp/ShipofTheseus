@@ -50,7 +50,7 @@ atomic_regen_block_passed: true       # sprint-40 PR-E 신규 — measure_run + 
 
 컨벤션 파일 존재 + 페이즈 09 게이트 본문에 "readme-numbers" + 알고리즘 step ≥ 4 명시.
 
-## self_lint C-RDS (sprint-40 PR-E 신규 — README↔summary drift strict)
+## C-RDS (미등록 — sprint-40 PR-E 신규, README↔summary drift strict)
 
 phase 09 진입 시 :
 - `quality/gate_readme_summary_consistency.json` 존재 확인

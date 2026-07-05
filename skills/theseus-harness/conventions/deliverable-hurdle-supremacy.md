@@ -126,7 +126,7 @@ v0913_cold01 retro 적용 시 = 답 1 default 였음에도 H1/H2/H3/H4/H5 모두
 - 003 / cold / v091_cold01 / v099 = 정합 (standalone 컨텍스트, 코드 + 실행 ✅)
 - v0913_cold01 = **위반** (standalone 인데 코드 0)
 
-## 7. self_lint C-DHS (deliverable hurdle supremacy)
+## 7. C-DHS (self_lint 미등록)
 
 ```python
 def lint_deliverable_hurdle(project_dir: Path) -> list[str]:
@@ -159,7 +159,7 @@ def lint_deliverable_hurdle(project_dir: Path) -> list[str]:
     return errors
 ```
 
-self_lint C-DHS = supremacy gate. handoff 의 final_status 가 "PASS" 인데 H1-H5 fail 시 *handoff 자체가 invalid*.
+C-DHS(미등록) = supremacy gate. handoff 의 final_status 가 "PASS" 인데 H1-H5 fail 시 *handoff 자체가 invalid*.
 
 ## 8. 그레이드별 활성
 
@@ -185,7 +185,7 @@ d- 메모리 override 룰 = generic supremacy 메커니즘
 ## 11. 안티 패턴
 
 a- **메모리 룰 인용 후 hurdle 면제** — v0913_cold01 패턴. 본 컨벤션 핵심 위반.
-b- **handoff status="PASS" 인데 H1-H5 evidence 0** — handoff 정직성 위반. self_lint C-DHS auto-fail.
+b- **handoff status="PASS" 인데 H1-H5 evidence 0** — handoff 정직성 위반 (C-DHS auto-fail, 미등록).
 c- **retry budget 무시 후 design-only handoff** — sprint loop 우회. 본 컨벤션 §4 의 "graceful skip 금지" 위반.
 d- **사용자 ack 없이 design-only 종료** — Q-D 답 1/2 default 인데 H1-H5 fail → "사용자 명시 ack 누락" 으로 hard-fail.
 e- **self-internal aggregate 만 보고** — bench effective score 별도 보고 의무. v0913_cold01 의 0.999 보고 = 본 컨벤션이라면 *handoff 의 invalid status* 자동 박힘.

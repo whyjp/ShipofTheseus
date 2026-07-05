@@ -201,7 +201,7 @@ d- **Budget 초과 후 gap 은닉** — handoff 에 *gap 명시* 의무. 임계 
 e- **회귀 정정 commit 에 lint_rule_proposal 누락** — 본 컨벤션 핵심 위반.
 f- **rule_id 중복** — registry 가 ValueError raise.
 g- **신규 룰이 정정 산출물에 fail** — 룰 자체가 잘못 = 페이즈 11 재진입.
-h- **bench 도메인 키워드 룰** (예: "plan must contain crusher") — 도메인 종속 룰. self_lint C-RDR-DOMAIN-AGNOSTIC (TBD) 검증.
+h- **bench 도메인 키워드 룰** (예: "plan must contain crusher") — 도메인 종속 룰. C-RDR-DOMAIN-AGNOSTIC (미등록, TBD) 검증 대상.
 
 ## 6. 본 하네스 *우로보로스 자기 강화* 의 메커니즘화
 

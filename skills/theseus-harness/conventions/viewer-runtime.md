@@ -220,7 +220,7 @@ m- **dashboard.json widget 0 또는 1 (G4+)** — phase 13 종료 게이트의 G
 
 ## 5.4 산출물 file-existence 게이트 일람 (sprint-40 PR-C 추가)
 
-| phase | 게이트 위치 | 검사 산출물 | self_lint |
+| phase | 게이트 위치 | 검사 산출물 | 검증 규칙 (미등록) |
 |---|---|---|---|
 | 09 entry | [`../phases/09-quality-gates.md`](../phases/09-quality-gates.md) §V8 | webview/ + interactive-viewer/ 디렉터리 외피 | C-VEX |
 | 12 exit | [`../phases/12-webview-assembly.md`](../phases/12-webview-assembly.md) §종료 게이트 | webview/{index.html, data/webview.json, assets/*.{js,css}} | C-VEX |

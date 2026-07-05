@@ -118,7 +118,7 @@ self_estimate:
 
 `evidence_missing` 명시 의무 — 각 차원 만점 미달 시 *어떤 항목이 누락* 인지 evidence 단위 명시.
 
-### Step 4 — self_lint C-SRO 검증
+### Step 4 — C-SRO (self_lint 미등록)
 
 ```python
 def lint_score_rubric_objectivity(handoff: dict) -> list[str]:
@@ -176,7 +176,7 @@ c- 평가 룰 (만점 -1 per missing) = generic.
 
 ## 7. 안티 패턴
 
-a- **evidence 없이 자체 추정** — 본 컨벤션 핵심 위반. self_lint C-SRO.
+a- **evidence 없이 자체 추정** — 본 컨벤션 핵심 위반 (C-SRO, 미등록).
 b- **type 누락** — bench_rubric vs internal_aggregate 혼동. v0913_cold01 의 0.999 보고 패턴.
 c- **evidence_missing 누락** — 차원 만점 미달인데 누락 항목 명시 0. *generous self-rating* 회귀.
 d- **rubric_version 누락** — 어느 버전 rubric 적용했는지 불명.

@@ -73,7 +73,7 @@ graph LR
 ### (모듈 ≥ 4 만큼 반복)
 ```
 
-### D. self_lint 룰 신규 — C-PMDF
+### D. C-PMDF (미등록)
 
 ```
 C-PMDF:
@@ -101,7 +101,7 @@ mindmap
       페이즈_시퀀스_단일_보존
       마인드맵_단일_root_보존
     기능
-      C-PMDF_self_lint
+      C-PMDF_검증
       trigger_조건_정량화
         module_count
         consumer_producer_pair

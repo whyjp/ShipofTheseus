@@ -234,7 +234,7 @@ graph LR
 (모듈 ≥ 4 만큼 반복)
 ```
 
-self_lint C-PMDF 가 검증.
+검증 (C-PMDF, 미등록).
 
 ### plan sprint loop ([`../conventions/intent-plan-impl-sprint-trinity.md`](../conventions/intent-plan-impl-sprint-trinity.md), bd)
 
@@ -270,7 +270,7 @@ self_lint C-PMDF 가 검증.
 | fe_be_parity | 0.10 |
 | **decision_coverage** (신규) | **0.20** |
 
-`decision_coverage < 0.6` universe 즉시 탈락. self_lint C-CDM 검증.
+`decision_coverage < 0.6` universe 즉시 탈락. 검증 (C-CDM, 미등록).
 
 ### Measurement Contract — 본문 의무 섹션 ([`../conventions/measurement-contract.md`](../conventions/measurement-contract.md), bi)
 
@@ -298,7 +298,7 @@ reconstruct_justified_ratio: <0.0-1.0>
 ---
 ```
 
-작업이 non-metric (pure refactor / UI 변경) 시 표 빈 + reason (no-op). self_lint C-MC 검증. 페이즈 09 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85). 페이즈 11 회귀 분류에 plan_method vs impl 비교가 입력.
+작업이 non-metric (pure refactor / UI 변경) 시 표 빈 + reason (no-op). 검증 (C-MC, 미등록). 페이즈 09 게이트 6 강화 (direct_ratio < 0.7 시 cap 0.85). 페이즈 11 회귀 분류에 plan_method vs impl 비교가 입력.
 
 ### plan 본문 의무 (HARD-RULE 9.a 강화 — sprint-14 추가)
 
@@ -1151,4 +1151,4 @@ python skills/theseus-harness/scoring/cross_phase_context_audit.py \
     --output .ShipofTheseus/<proj>/quality/gate_cross_phase_context_06.json
 ```
 
-본 §은 sprint-43 의 *literal Bash command* 박힘 — agent 가 prose 가 아니라 명령으로 받아들임. self_lint C-OWL 검증.
+본 §은 sprint-43 의 *literal Bash command* 박힘 — agent 가 prose 가 아니라 명령으로 받아들임 (C-OWL, 미등록).

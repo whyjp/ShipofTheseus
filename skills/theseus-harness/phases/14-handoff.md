@@ -30,7 +30,7 @@ j- **Decision-support framing** ([`../conventions/decision-support-framing.md`](
   - **Operational implications** — 결과가 운영에 의미하는 것 (1-2 문단)
   - **Trade-off framing** — 대안 비교 표 (≥3 차원, 예: 비용 / throughput / latency)
   - **Opportunity-cost** — 선택 시 *포기하는* 것 (명시 옵션)
-  Q 답이 *수치 + bottleneck 결론* 만 있으면 self_lint C-DSF fail. handoff frontmatter `evidence_decision_support` 매핑 (Q 별 3 항목 보유 boolean).
+  Q 답이 *수치 + bottleneck 결론* 만 있으면 C-DSF 위반 (미등록). handoff frontmatter `evidence_decision_support` 매핑 (Q 별 3 항목 보유 boolean).
 
 ## 채팅 메시지 (사용자에게)
 
