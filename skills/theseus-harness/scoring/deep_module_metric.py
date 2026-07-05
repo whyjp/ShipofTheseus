@@ -121,6 +121,29 @@ def analyze_module(path: Path) -> dict:
     }
 
 
+def enumerate_modules(code_root: Path, ignore_tests: bool = True) -> list[Path]:
+    """code_root 아래 '모듈'로 계수되는 .py 파일의 정렬된 목록 — module_count 정의의
+    단일 소스. build_report(deep_module)와 measure_solid_static(JW4)가 공유해
+    modules_total 브릿지 정합(설계 §4.1)을 보장한다.
+
+    필터(동작 불변 — 기존 build_report 인라인과 파일 단위 동일):
+      - `code_root.rglob('*.py')` 정렬.
+      - ignore_tests 시 tests/ 디렉터리 · test_*.py · *_test.py · conftest* 제외.
+      - `__init__.py` 는 100바이트 초과일 때만 계수(빈 패키지 마커 제외).
+    """
+    files = sorted(code_root.rglob('*.py'))
+    if ignore_tests:
+        files = [
+            f for f in files
+            if 'tests' not in f.parts
+            and not f.name.startswith('test_')
+            and not f.name.endswith('_test.py')
+            and not f.name.startswith('conftest')
+        ]
+    files = [f for f in files if f.name != '__init__.py' or f.stat().st_size > 100]
+    return files
+
+
 def build_report(
     code_root: Path,
     max_ratio: float = 0.4,
@@ -134,16 +157,7 @@ def build_report(
     갈라지지 않게 한다. `module_count` 는 모든 분기에 present(0 포함) — 호출자가
     string-match 없이 분기를 구분하도록.
     """
-    files = sorted(code_root.rglob('*.py'))
-    if ignore_tests:
-        files = [
-            f for f in files
-            if 'tests' not in f.parts
-            and not f.name.startswith('test_')
-            and not f.name.endswith('_test.py')
-            and not f.name.startswith('conftest')
-        ]
-    files = [f for f in files if f.name != '__init__.py' or f.stat().st_size > 100]
+    files = enumerate_modules(code_root, ignore_tests=ignore_tests)
 
     if not files:
         return {
