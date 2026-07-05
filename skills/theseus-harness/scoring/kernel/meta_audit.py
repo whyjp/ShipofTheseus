@@ -150,6 +150,20 @@ def _evaluate_check(
     return {"result": v.result, "value": v.value, "reasons": list(v.reasons)}
 
 
+def _phase_index(manifest: manifest_mod.Manifest, phase_id: str | None) -> int | None:
+    """manifest.phases 순서에서 phase_id 의 위치(인덱스). 없으면/None 이면 None.
+
+    '이 페이즈 이하/초과' 비교는 이 리스트 순서로 정의된다 — 스칼라 숫자 비교가 아니라
+    매니페스트 phases 배열의 실행 순서(예: 01.5 가 04 뒤)를 그대로 따른다(§2.4).
+    """
+    if phase_id is None:
+        return None
+    for i, p in enumerate(manifest.phases):
+        if p.get("id") == phase_id:
+            return i
+    return None
+
+
 def run_meta_audit(
     project_root: str | Path,
     grade: str,
@@ -157,6 +171,7 @@ def run_meta_audit(
     manifest_path: str | Path = _DEFAULT_MANIFEST,
     checks_dir: str | Path = _DEFAULT_CHECKS_DIR,
     verified_at: str | None = None,
+    phase_upto: str | None = None,
 ) -> dict[str, Any]:
     """레지스트리를 열거해 이 grade 에서 활성인 모든 체크를 커널로 재판정한다.
 
@@ -165,15 +180,28 @@ def run_meta_audit(
     check_id 를 추가하면 이 함수는 코드 변경 없이 다음 호출에서 그 id 를 그대로
     순회한다. "declared but not invoked" 가 구조적으로 불가능해지는 지점이 정확히
     이 한 줄이다(설계 §6).
+
+    phase_upto(§2.4): 지정 시 매니페스트 phases 순서에서 그 페이즈보다 *나중* 페이즈에
+    속한 체크를 verdict 집계(failed/na/advisory)에서 빼고 신규 `deferred` 리스트로
+    분류한다 — 평가·기록은 여전히 하되(침묵 skip 아님) '이 단계의 게이트가 아님'을 값으로
+    명시한다. 예: phase-10 `sprint.regression` 이 phase-09 시점에 evidence 원리상 부재라
+    영구 FAIL 되는 것을 해소. **미지정(None) 시 이 분기는 전혀 실행되지 않고 report 에
+    `deferred` 키도 추가되지 않는다 — 기존 동작·바이트 완전 불변(하위호환).** deferred 는
+    `skipped==pass` 관대함 부활이 아니다: 범위 안(도달 가능) 체크는 여전히 엄격 FAIL 이다.
     """
     root = Path(project_root)
     m = manifest_mod.load_manifest(manifest_path)
     active = manifest_mod.active_checks(m, grade)
 
+    # phase_upto 미지정이면 cutoff=None → 아래 deferral 분기는 구조적으로 도달 불가
+    # (기존 동작 불변). 지정됐으나 매니페스트에 없는 id 면 cutoff=None → 역시 무영향.
+    cutoff_idx = _phase_index(m, phase_upto)
+
     results: dict[str, Any] = {}
     failed: list[str] = []
     na: list[str] = []
     advisory: list[str] = []
+    deferred: list[str] = []
 
     for check_id in active:
         spec_path = Path(checks_dir) / f"{check_id}.json"
@@ -197,6 +225,19 @@ def run_meta_audit(
         outcome = _evaluate_check(spec, ev, root, verified_at)
 
         results[check_id] = outcome
+
+        # 단계 스코프(§2.4): 이 체크의 페이즈가 phase_upto 보다 나중인 *active* 체크는
+        # 게이팅 집계에서 빼고 deferred 로 분류한다. 평가 결과(outcome)는 위에서 이미
+        # results 에 기록됐다 — skip 이 아니라 '평가하되 이 단계의 게이트가 아님'. frozen
+        # 체크(status=="frozen")는 이미 무조건 비게이팅(ADVISORY)이라 deferral 대상이
+        # 아니다 — 설계 문구 "나중 페이즈의 active 체크" 그대로. cutoff_idx 가 None 이면
+        # (미지정) 이 블록 자체가 실행되지 않아 기존 동작이 바이트까지 보존된다.
+        if cutoff_idx is not None and spec.status != "frozen":
+            spec_idx = _phase_index(m, spec.phase)
+            if spec_idx is not None and spec_idx > cutoff_idx:
+                deferred.append(check_id)
+                continue
+
         # result 는 _evaluate_check 가 PASS|FAIL|NA|ADVISORY 중 정확히 하나만 반환하므로
         # 이 if/elif 사슬은 각 check_id 를 4개 리스트 중 하나에만 담는다(상호 배타성).
         if outcome["result"] == ADVISORY:
@@ -206,7 +247,7 @@ def run_meta_audit(
         elif outcome["result"] != kernel.PASS:
             failed.append(check_id)
 
-    return {
+    report: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "project_root": str(root),
         "grade": grade,
@@ -220,6 +261,11 @@ def run_meta_audit(
         "verdict": "pass" if not failed else "fail",
         "evaluated_at": verified_at or _now_iso(),
     }
+    # deferred 키는 phase_upto 가 지정됐을 때만 추가한다 — 미지정 경로의 report 를
+    # 바이트까지 기존과 동일하게 유지하기 위함(하위호환·dogfood behavior-preserving).
+    if phase_upto is not None:
+        report["deferred"] = deferred
+    return report
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -237,6 +283,12 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Verdict/report 타임스탬프 주입(재현 검증용; 기본: 현재 UTC)",
     )
+    parser.add_argument(
+        "--phase-upto",
+        default=None,
+        help="이 페이즈(포함) 이하만 verdict 게이팅에 산입; 매니페스트 phases 순서상 "
+        "나중 페이즈의 체크는 deferred(비게이팅)로 분류. 미지정 시 전 체크 게이팅(기본, 하위호환).",
+    )
     args = parser.parse_args(argv)
 
     report = run_meta_audit(
@@ -245,6 +297,7 @@ def main(argv: list[str] | None = None) -> int:
         manifest_path=args.manifest,
         checks_dir=args.checks_dir,
         verified_at=args.verified_at,
+        phase_upto=args.phase_upto,
     )
 
     out_text = json.dumps(report, indent=2, ensure_ascii=False)

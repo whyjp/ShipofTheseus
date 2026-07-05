@@ -94,6 +94,37 @@ def _write_manifest(tmp_path, check_ids: list[str]):
     return p
 
 
+def _spec_dict_phase(check_id: str, phase: str) -> dict:
+    """임의 페이즈를 갖는 최소 CheckSpec — --phase-upto 단계 스코프 검증용."""
+    d = _spec_dict(check_id)
+    d["phase"] = phase
+    return d
+
+
+def _write_spec_phase(checks_dir, check_id: str, phase: str) -> None:
+    checks_dir.mkdir(parents=True, exist_ok=True)
+    (checks_dir / f"{check_id}.json").write_text(
+        json.dumps(_spec_dict_phase(check_id, phase)), encoding="utf-8"
+    )
+
+
+def _write_two_phase_manifest(tmp_path, check_ids: list[str]):
+    """phases 순서에 09 와 10 을 둔 매니페스트 — 페이즈 이하/초과 비교의 기반."""
+    p = tmp_path / "pipeline.manifest.json"
+    data = {
+        "manifest_schema_version": "1.0",
+        "phases": [
+            {"id": "09", "name": "quality-gates", "active_grades": ["G3"]},
+            {"id": "10", "name": "test-loop", "active_grades": ["G3"]},
+        ],
+        "multiverse_widths": {"G3": 3},
+        "frozen_widths": {"G3": 5},
+        "checks": {"G3": list(check_ids)},
+    }
+    p.write_text(json.dumps(data), encoding="utf-8")
+    return p
+
+
 # --- (i) 활성 체크 전부 evidence 존재 + 커널 통과 → verdict pass ----------------
 
 
@@ -249,6 +280,77 @@ def test_real_registry_meta_audit_reports_evidence_missing_for_all_six(tmp_path)
         assert any(
             "evidence_missing" in r for r in report["results"][check_id]["reasons"]
         )
+
+
+# --- --phase-upto 단계 스코프(§2.4) -------------------------------------------
+
+
+def test_phase_upto_defers_later_phase_check_from_verdict(tmp_path):
+    """phase-10 체크가 evidence 부재로 FAIL 이어도 --phase-upto 09 지정 시 deferred(비게이팅)
+    로 빠져 verdict 를 막지 않는다. 도달 가능(phase≤09) 체크의 PASS 는 그대로 산입."""
+    checks_dir = tmp_path / "checks"
+    _write_spec_phase(checks_dir, "demo.p09", "09")
+    _write_spec_phase(checks_dir, "demo.p10", "10")  # 나중 페이즈, evidence 미저작 → FAIL
+    manifest_path = _write_two_phase_manifest(tmp_path, ["demo.p09", "demo.p10"])
+
+    run_root = tmp_path / "run"
+    _write_passing_evidence(run_root, "demo.p09")
+    # demo.p10 evidence 는 의도적으로 안 씀(phase-09 시점 원리상 부재 모사).
+
+    report = meta_audit.run_meta_audit(
+        run_root, "G3",
+        manifest_path=manifest_path, checks_dir=checks_dir,
+        verified_at=FIXED_TS, phase_upto="09",
+    )
+    assert report["verdict"] == "pass"          # 나중 페이즈 FAIL 이 게이팅 안 함
+    assert report["failed"] == []
+    assert report["deferred"] == ["demo.p10"]   # 평가·기록은 하되 이 단계 게이트 아님
+    # deferred 여도 결과는 results 에 여전히 기록됨(침묵 skip 아님).
+    assert report["results"]["demo.p10"]["result"] == "FAIL"
+    assert report["results"]["demo.p09"]["result"] == "PASS"
+
+
+def test_phase_upto_still_strictly_fails_reachable_checks(tmp_path):
+    """deferred 는 skipped==pass 관대함 부활이 아니다 — 도달 가능(phase≤09) 체크가
+    evidence 부재면 --phase-upto 09 여도 여전히 엄격 FAIL 이다."""
+    checks_dir = tmp_path / "checks"
+    _write_spec_phase(checks_dir, "demo.p09", "09")
+    _write_spec_phase(checks_dir, "demo.p10", "10")
+    manifest_path = _write_two_phase_manifest(tmp_path, ["demo.p09", "demo.p10"])
+
+    run_root = tmp_path / "run"
+    # demo.p09 evidence 도 안 씀 — 도달 가능한 체크의 부재.
+    (run_root / "evidence").mkdir(parents=True)
+
+    report = meta_audit.run_meta_audit(
+        run_root, "G3",
+        manifest_path=manifest_path, checks_dir=checks_dir,
+        verified_at=FIXED_TS, phase_upto="09",
+    )
+    assert report["verdict"] == "fail"
+    assert report["failed"] == ["demo.p09"]     # 도달 가능 → 엄격 FAIL
+    assert report["deferred"] == ["demo.p10"]   # 나중 페이즈 → 비게이팅
+
+
+def test_phase_upto_unset_is_backward_compatible_no_deferred_key(tmp_path):
+    """미지정 시 나중 페이즈 체크도 전부 게이팅되고 report 에 deferred 키가 아예 없다
+    (기존 동작·바이트 불변)."""
+    checks_dir = tmp_path / "checks"
+    _write_spec_phase(checks_dir, "demo.p09", "09")
+    _write_spec_phase(checks_dir, "demo.p10", "10")
+    manifest_path = _write_two_phase_manifest(tmp_path, ["demo.p09", "demo.p10"])
+
+    run_root = tmp_path / "run"
+    _write_passing_evidence(run_root, "demo.p09")
+    # demo.p10 evidence 부재.
+
+    report = meta_audit.run_meta_audit(
+        run_root, "G3",
+        manifest_path=manifest_path, checks_dir=checks_dir, verified_at=FIXED_TS,
+    )
+    assert "deferred" not in report             # 미지정 → 키 자체가 없음
+    assert report["verdict"] == "fail"
+    assert report["failed"] == ["demo.p10"]     # 나중 페이즈도 게이팅
 
 
 # --- CLI -------------------------------------------------------------------
