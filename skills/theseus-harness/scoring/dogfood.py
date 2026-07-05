@@ -10,12 +10,15 @@ Evidence 만 커널에 태운다.
 정직한 범위(과장 금지 — 이 환경에서 측정 가능한 것만 측정한다):
   - 실측 backing 되는 차원: quality.deep_module / quality.dry / quality.define_errors
     (measure_deep_*/dry/define 가 scoring/ 코드를 실제로 스캔) + scoring 테스트 카운트
-    (harness 자기 pytest junit) + cold.isolation 의 computed_overlap(실 파일 Jaccard).
-  - deficit 로 남는 차원: 상류 판단-게이트 producer 가 없는 분석 파생 값
-    (intent_fidelity, files_mapped_to_todos, modules_passing_solid, dip_violation) 과
-    이 dogfood 에 artifact 가 없는 프로세스 게이트(dacapo/tournament/regression).
-    이들은 evidence 부재라 커널 법칙1(evidence_missing)이 FAIL — '측정 안 함'이 통과가
-    아니라 실패다(§2 원칙2). 이 FAIL 은 결함이 아니라 정직한 결손이다.
+    (harness 자기 pytest junit) + cold.isolation 의 computed_overlap(실 파일 Jaccard) +
+    (JW5) scoring.correctness/scope_fit/solid — `_gate_producers` 가 scoring/dogfood_inputs/
+    의 참인 claim 선언을 `gate.intent_fidelity`/`gate.scope_map`/`gate.solid_static`
+    producer 로 디스크 재검사해 emit 한 실측값(PASS 또는 실 assertion FAIL 로 관측된다 —
+    clean tree 라 scope_fit 은 files_touched=0 실 FAIL 이 정직한 결과다).
+  - deficit 로 남는 차원: 이 dogfood 에 artifact 가 없는 프로세스 게이트
+    (coverage/e2e/dacapo/tournament/regression) — 도구·fixture 부재이지 판단 producer
+    부재가 아니다(§8 비목표). evidence 부재라 커널 법칙1(evidence_missing)이 FAIL —
+    '측정 안 함'이 통과가 아니라 실패다(§2 원칙2). 이 FAIL 은 결함이 아니라 정직한 결손이다.
   - NA(비게이팅): cold.isolation 은 이 저장소에 구조화된 dispatch 로그가 없어
     dispatch_log_present=0 → 적용성 false → NA(§7.4 정직 고지). scoring.coverage/
     fe_be_parity 는 단일 사이드(fe 부재)라 NA.
@@ -29,9 +32,17 @@ CLI:
     python dogfood.py [--run-root DIR] [--grade G3] [--code-root DIR] \
         [--test-target DIR] [--junit PATH] [--submission DIR] [--git-base HEAD] \
         [--cold-reunderstanding PATH] [--cold-reference PATH] \
+        [--intent-criteria PATH] [--plan-todos PATH] [--solid-contract PATH] \
         [--measured-at ISO8601] [--verified-at ISO8601]
 
 저장소 self_lint C35 — 모든 open/subprocess encoding="utf-8".
+
+JW5 갱신(2026-07-05): 판단-게이트 producer 3종(gate.intent_fidelity/gate.scope_map/
+gate.solid_static, JW1~JW4 머지)을 `_gate_producers` 단계로 적용해 scoring.correctness/
+scope_fit/solid 3개 deficit 을 실측 backing(PASS 또는 실 assertion FAIL)으로 전환한다
+(`docs/design/2026-07-05-judgment-gate-producers-design.md` §6.5). 선언 아티팩트
+(criteria/todos/contract)는 `scoring/dogfood_inputs/`에 저작되며 참인 claim 만 담는다 —
+이 runner 는 여전히 어떤 measured 값도 스스로 만들지 않는다.
 """
 from __future__ import annotations
 
@@ -65,6 +76,12 @@ _DEFAULT_COLD_RU = _DEFAULT_COLD_DIR / "07-cold-read.md"
 _DEFAULT_COLD_REF = _DEFAULT_COLD_DIR / "06-plan.md"
 
 _DEFAULT_RUN_BASE = _REPO_ROOT / ".ShipofTheseus" / "theseus-self-kernel-dogfood"
+
+# JW5 — scoring 자기 코드에 대한 판단-게이트 선언 아티팩트(참인 claim 만 저작, §6.5).
+_DOGFOOD_INPUTS_DIR = _SCORING_DIR / "dogfood_inputs"
+_DEFAULT_INTENT_CRITERIA = _DOGFOOD_INPUTS_DIR / "intent-criteria.json"
+_DEFAULT_PLAN_TODOS = _DOGFOOD_INPUTS_DIR / "plan-todos.json"
+_DEFAULT_SOLID_CONTRACT = _DOGFOOD_INPUTS_DIR / "solid-contract.json"
 
 
 def _now_iso() -> str:
@@ -160,6 +177,111 @@ def _quality_producers(
             cwd,
         )
         out[name] = {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+    return out
+
+
+def _gate_producers(
+    submission: Path,
+    code_root: Path,
+    junit_path: Path,
+    evidence_dir: Path,
+    git_base: str,
+    intent_criteria: Path,
+    plan_todos: Path,
+    solid_contract: Path,
+    measured_at: str,
+    cwd: Path,
+) -> dict[str, Any]:
+    """판단-게이트 producer 3종(JW1~JW4 머지 완료)을 scoring 자기 코드에 적용해
+    `intent_fidelity`/`files_mapped_to_todos`/`modules_passing_solid`+`dip_violation`
+    을 실측 backing 으로 emit 한다(설계 §6.5, JW5). `_quality_producers` 뒤·
+    `_submission_producer` 앞에서 호출돼야 measure_submission 의 `--from-evidence` 가
+    이 세 evidence 파일을 함께 승계한다.
+
+    선언 아티팩트(criteria/todos/contract)가 디스크에 없으면 그 producer 는 아예 부르지
+    않고 사유만 기록한다 — 기존 `_cold_producer` 의 부재 처리와 동형(정직한 결손 경로
+    보존). 존재하면 producer 를 실제로 돌려 리포트로 자기 확인된 값을 그대로 emit 한다
+    (이 runner 는 값을 만들지 않는다 — WP8 규율 계승)."""
+    out: dict[str, Any] = {}
+
+    if intent_criteria.is_file():
+        step = _run(
+            [
+                sys.executable,
+                str(_PRODUCERS_DIR / "measure_intent_fidelity.py"),
+                "--criteria",
+                str(intent_criteria),
+                "--submission",
+                str(submission),
+                "--test-junit",
+                str(junit_path),
+                "--git-base",
+                git_base,
+                "--measured-at",
+                measured_at,
+                "--out-dir",
+                str(evidence_dir),
+            ],
+            cwd,
+        )
+        out["intent_fidelity"] = {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+    else:
+        out["intent_fidelity"] = {
+            "returncode": None,
+            "summary": {
+                "emitted": False,
+                "reason": "intent-criteria 파일 부재 — measure_intent_fidelity 미실행",
+            },
+        }
+
+    if plan_todos.is_file():
+        step = _run(
+            [
+                sys.executable,
+                str(_PRODUCERS_DIR / "measure_scope_map.py"),
+                "--plan-todos",
+                str(plan_todos),
+                "--submission",
+                str(submission),
+                "--git-base",
+                git_base,
+                "--measured-at",
+                measured_at,
+                "--out-dir",
+                str(evidence_dir),
+            ],
+            cwd,
+        )
+        out["scope_map"] = {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+    else:
+        out["scope_map"] = {
+            "returncode": None,
+            "summary": {"emitted": False, "reason": "plan-todos 파일 부재 — measure_scope_map 미실행"},
+        }
+
+    if solid_contract.is_file():
+        step = _run(
+            [
+                sys.executable,
+                str(_PRODUCERS_DIR / "measure_solid_static.py"),
+                "--code-root",
+                str(code_root),
+                "--solid-contract",
+                str(solid_contract),
+                "--measured-at",
+                measured_at,
+                "--out-dir",
+                str(evidence_dir),
+            ],
+            cwd,
+        )
+        out["solid_static"] = {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+    else:
+        out["solid_static"] = {
+            "returncode": None,
+            "summary": {"emitted": False, "reason": "solid-contract 파일 부재 — measure_solid_static 미실행"},
+        }
+
     return out
 
 
@@ -323,6 +445,21 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     # quality 를 먼저 조립해야 measure_submission --from-evidence 가 modules_total 브릿지를
     # 승계할 수 있다(순서 의존).
     steps["quality"] = _quality_producers(code_root, evidence_dir, measured_at, cwd)
+    # gate producer 3종(JW1~JW4) — quality 뒤·submission 앞이어야 --from-evidence 가
+    # gate.intent_fidelity/gate.scope_map/gate.solid_static 를 함께 승계한다(§4.1 사전순
+    # 승자 규칙과 무관하게 파일이 먼저 디스크에 있어야 색인된다).
+    steps["gates"] = _gate_producers(
+        submission=submission,
+        code_root=code_root,
+        junit_path=junit_path,
+        evidence_dir=evidence_dir,
+        git_base=args.git_base,
+        intent_criteria=Path(args.intent_criteria).resolve(),
+        plan_todos=Path(args.plan_todos).resolve(),
+        solid_contract=Path(args.solid_contract).resolve(),
+        measured_at=measured_at,
+        cwd=cwd,
+    )
     steps["submission"] = _submission_producer(
         submission, junit_path, evidence_dir, args.git_base, measured_at, cwd
     )
@@ -412,6 +549,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--cold-reference",
         default=str(_DEFAULT_COLD_REF),
         help="cold.isolation 참조 텍스트 (기본: v0919 universe-1 06-plan.md)",
+    )
+    p.add_argument(
+        "--intent-criteria",
+        default=str(_DEFAULT_INTENT_CRITERIA),
+        help="gate.intent_fidelity 선언 아티팩트 (기본: scoring/dogfood_inputs/intent-criteria.json)",
+    )
+    p.add_argument(
+        "--plan-todos",
+        default=str(_DEFAULT_PLAN_TODOS),
+        help="gate.scope_map 선언 아티팩트 (기본: scoring/dogfood_inputs/plan-todos.json)",
+    )
+    p.add_argument(
+        "--solid-contract",
+        default=str(_DEFAULT_SOLID_CONTRACT),
+        help="gate.solid_static 선언 아티팩트 (기본: scoring/dogfood_inputs/solid-contract.json)",
     )
     p.add_argument("--measured-at", default=None, help="모든 producer 에 주입할 measured_at(결정성)")
     p.add_argument("--verified-at", default=None, help="meta_audit 에 주입할 verified_at(기본: measured_at)")

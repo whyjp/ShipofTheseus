@@ -1,0 +1,22 @@
+{
+  "criteria": [
+    {
+      "id": "c1",
+      "text": "검증 커널 판정자(kernel.py)가 저장소에 존재한다",
+      "required": true,
+      "backing": {"kind": "file", "ref": "skills/theseus-harness/scoring/kernel/kernel.py"}
+    },
+    {
+      "id": "c2",
+      "text": "얕은 모듈 게이트가 커널 왕복 테스트로 실증된다",
+      "required": true,
+      "backing": {"kind": "test", "ref": "test_kernel_passes_all_deep_modules"}
+    },
+    {
+      "id": "c3",
+      "text": "evidence 스키마 계약 파일이 존재한다 (부가)",
+      "required": false,
+      "backing": {"kind": "file", "ref": "skills/theseus-harness/scoring/kernel/evidence.py"}
+    }
+  ]
+}

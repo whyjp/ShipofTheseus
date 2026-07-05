@@ -1,0 +1,14 @@
+{
+  "todos": [
+    {
+      "id": "t1",
+      "text": "scoring 커널/producer 코드 영역",
+      "paths": ["skills/theseus-harness/scoring/**"]
+    },
+    {
+      "id": "t2",
+      "text": "판단-게이트 producer 설계 문서 영역",
+      "paths": ["docs/design/**"]
+    }
+  ]
+}
