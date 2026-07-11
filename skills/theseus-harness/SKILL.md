@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.52
-description: 재귀 멀티 에이전트 코딩 하네스. sprint-52 = Viewer Finalization Closure — phase 14 lineage_finalize.py 가 viewer JSON placeholder 일괄 refresh + universe candidate created_at 의무. HARD-RULE 9.nnn/9.ooo/9.ppp.
+version: 0.9.54
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.54 = review.context_minimality — pure-review 디스패치 prior_context==0 순도 + loaded_artifacts 무결성/최소성을 커널이 값으로 게이팅(비휴면).
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

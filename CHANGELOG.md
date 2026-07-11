@@ -2,6 +2,42 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.54 — 2026-07-12 (sprint-53 — Pure-Review Context Minimality Gate)
+
+### 마일스톤
+
+하네스 리뷰(사용자 지목: *"핵심은 루프와 회귀 병렬 — 더 핵심은 퓨어리뷰 컨텍스트를 필요한 것만 주입해 리뷰"*) 결과, pure-review 순도가 **코드기반 조건이 아니라 프로즈/휴면**임을 진단. 페이즈 09 게이트는 CheckSpec 커널로 판정하지만:
+
+- `cold.isolation` 은 순도 assertion(`prior_context_token_count==0`)을 갖고도 `applicability: dispatch_log_present==1` 뒤에서 **영원히 NA(휴면)** — 이 저장소 콜드 세션이 dispatch 로그를 안 만들기 때문.
+- shadow-grader(06/08) 순도는 게이트 assertion 이 아니라 `plan.tournament_independence` 의 분산 프록시(`grader_score_variance>0`)로만 대리.
+
+→ **"필요한 것만 주입"이 커널이 검사하는 값이 아니었다.** 본 릴리스가 이를 비휴면 코드 게이트로 승격(P0).
+
+### 변경
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | `producers/measure_context_minimality.py` 신규 — 리뷰 디스패치 로그 스캔, `loaded_tokens_max` 는 로그 자기신고가 아니라 디스크에서 `\w+` **재계산**(game 불가) | 1 producer |
+| PR-B | `checks/review.context_minimality.json` 신규 — 순도(`prior_context_max==0`) + 무결성(`loaded_artifacts_missing==0`, `malformed_calls==0`) + freshness(`duplicate_call_ids==0`) + no-work(`calls_total>=1`). **applicability 없음** → 로그 부재는 NA 아닌 `absence_policy=FAIL`(비휴면) | 1 CheckSpec |
+| PR-C | `pipeline.manifest.json` G3/G4/G5 등록 (drift-check 정합: 파일+맵 동시) | manifest |
+| PR-D | `run_gate.py` `_review_producer` 배선 — `_cold_producer` 패턴, 관례 경로 `state/review_dispatch_log.json`, `--no-review` | 러너 배선 |
+| PR-E | `producers/tests/test_measure_context_minimality.py` — PASS + 5 FAIL 모드 + **비휴면 증명**(부재→FAIL, cold.isolation NA 대비) + **디스크 재계산 증명** + CLI/digest | 12 tests |
+
+### 왜 cold.isolation 과 다른가 (비휴면)
+
+| | cold.isolation (기존) | review.context_minimality (신규) |
+|---|---|---|
+| 순도 assertion | `prior_context_token_count==0` | `prior_context_max==0` |
+| applicability | `dispatch_log_present==1` → 로그 부재 시 **NA(휴면)** | 없음 → 로그 부재 시 **FAIL(강제)** |
+| 최소성 | — | `loaded_tokens_max`(디스크 재계산 value) |
+| 결과 | 이 저장소에서 항상 NA | 페이즈 09 게이트까지 pure-review 로깅 의무화 |
+
+`skipped==FAIL`(§2 원칙2) 그대로 — "리뷰 컨텍스트를 안 남기면 통과가 아니라 실패".
+
+### 검증
+
+전체 scoring 스위트 `495 passed`(신규 12 tests 포함). 남은 후속: P1 `should_stop.py`(루프 정지조건을 manifest stop_policy 단일 코드 진입점으로), P2 회귀 라우팅 단일화(checkpoint.FAILURE_TO_PHASE ↔ phase-11 4분류).
+
 ## v0.9.52 — 2026-05-10 (sprint-52 — Viewer Finalization Closure)
 
 ### 마일스톤

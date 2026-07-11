@@ -441,6 +441,41 @@ def _cold_producer(
     return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
 
 
+def _review_producer(
+    dispatch_log: Path | None,
+    evidence_dir: Path,
+    measured_at: str,
+    cwd: Path,
+) -> dict[str, Any]:
+    """review.context_minimality producer(pure-review 순도, run_gate 신규). 관례 경로의
+    리뷰 디스패치 로그를 measure_context_minimality 에 태워 prior_context/무결성/freshness/
+    최소성을 emit 한다. 로그 부재 시 producer 를 안 부르고 사유만 기록 → evidence 부재 →
+    커널 법칙1 FAIL(정직). cold.isolation 과 달리 CheckSpec 에 applicability 가 없어 부재가
+    NA 가 아니라 FAIL 이다(비휴면: 페이즈 09 게이트까지 pure-review 디스패치 로깅 의무)."""
+    if dispatch_log is None or not dispatch_log.is_file():
+        return {
+            "returncode": None,
+            "summary": {
+                "emitted": False,
+                "reason": "review dispatch 로그 부재 — measure_context_minimality 미실행",
+            },
+        }
+    step = _run(
+        [
+            sys.executable,
+            str(_PRODUCERS_DIR / "measure_context_minimality.py"),
+            "--dispatch-log",
+            str(dispatch_log),
+            "--measured-at",
+            measured_at,
+            "--out-dir",
+            str(evidence_dir),
+        ],
+        cwd,
+    )
+    return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+
+
 # --- meta_audit --------------------------------------------------------------
 
 
@@ -574,10 +609,12 @@ def run_gate(
     shadow_grades_dir: str | Path | None = None,
     cold_reunderstanding: str | Path | None = None,
     cold_reference: str | Path | None = None,
+    review_dispatch_log: str | Path | None = None,
     phase_upto: str | None = None,
     enable_plan: bool = True,
     enable_sprint: bool = True,
     enable_archive: bool = True,
+    enable_review: bool = True,
     measured_at: str | None = None,
     verified_at: str | None = None,
 ) -> dict[str, Any]:
@@ -627,6 +664,8 @@ def run_gate(
         cold_ref_p = _opt_path(cold_reference)
     else:
         cold_ru_p, cold_ref_p = _resolve_cold_pair(run_root)
+    # 관례 경로(§2.3): 명시 override 없으면 state/review_dispatch_log.json.
+    review_log_p = _opt_path(review_dispatch_log) or (run_root / "state" / "review_dispatch_log.json")
 
     steps: dict[str, Any] = {}
     steps["junit"] = _produce_junit(test_target_p, junit_path, reuse_junit, cwd)
@@ -657,6 +696,8 @@ def run_gate(
         current = evidence_dir / "scoring.correctness.json"
         steps["sprint"] = _sprint_producer(prior, current, evidence_dir, measured_at, cwd)
     steps["cold"] = _cold_producer(cold_ru_p, cold_ref_p, evidence_dir, measured_at, cwd)
+    if enable_review:
+        steps["review"] = _review_producer(review_log_p, evidence_dir, measured_at, cwd)
 
     audit = _meta_audit(run_root, grade, verified_at, phase_upto, cwd)
     steps["meta_audit"] = {"returncode": audit["returncode"], "gate_path": audit["gate_path"]}
@@ -743,10 +784,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--shadow-grades-dir", default=None, help="override: shadow-grade dir(기본 관례: plan/)")
     p.add_argument("--cold-reunderstanding", default=None, help="override: cold 재이해 텍스트")
     p.add_argument("--cold-reference", default=None, help="override: cold 참조 텍스트")
+    p.add_argument("--review-dispatch-log", default=None, help="override: 리뷰 디스패치 로그(기본 관례: state/review_dispatch_log.json)")
     p.add_argument("--phase-upto", default=None, help="이 페이즈 이하만 게이팅(나중 페이즈=deferred). phase-09 게이트=09")
     p.add_argument("--no-plan", action="store_true", help="plan producer 단계 비활성")
     p.add_argument("--no-sprint", action="store_true", help="sprint producer 단계 비활성")
     p.add_argument("--no-archive", action="store_true", help="gate_history 아카이브 비활성")
+    p.add_argument("--no-review", action="store_true", help="review.context_minimality producer 단계 비활성")
     p.add_argument("--measured-at", default=None, help="모든 producer 에 주입할 measured_at(결정성)")
     p.add_argument("--verified-at", default=None, help="meta_audit 에 주입할 verified_at(기본: measured_at)")
     return p
@@ -772,10 +815,12 @@ def main(argv: list[str] | None = None) -> int:
         shadow_grades_dir=args.shadow_grades_dir,
         cold_reunderstanding=args.cold_reunderstanding,
         cold_reference=args.cold_reference,
+        review_dispatch_log=args.review_dispatch_log,
         phase_upto=args.phase_upto,
         enable_plan=not args.no_plan,
         enable_sprint=not args.no_sprint,
         enable_archive=not args.no_archive,
+        enable_review=not args.no_review,
         measured_at=args.measured_at,
         verified_at=args.verified_at,
     )
