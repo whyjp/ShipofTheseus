@@ -2,7 +2,7 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
-## v0.9.54 — 2026-07-12 (sprint-53 — Pure-Review Context Minimality Gate)
+## v0.9.54 — 2026-07-12 (sprint-53 — 코드기반 조건: Pure-Review 게이트 + 루프 정지 + 회귀 라우팅 + run_gate 병렬화)
 
 ### 마일스톤
 
@@ -22,6 +22,9 @@
 | PR-C | `pipeline.manifest.json` G3/G4/G5 등록 (drift-check 정합: 파일+맵 동시) | manifest |
 | PR-D | `run_gate.py` `_review_producer` 배선 — `_cold_producer` 패턴, 관례 경로 `state/review_dispatch_log.json`, `--no-review` | 러너 배선 |
 | PR-E | `producers/tests/test_measure_context_minimality.py` — PASS + 5 FAIL 모드 + **비휴면 증명**(부재→FAIL, cold.isolation NA 대비) + **디스크 재계산 증명** + CLI/digest | 12 tests |
+| PR-F (P1) | `scoring/should_stop.py` 신규 — 루프 정지 `gate ∧ no_regression ∧ (plateau ∨ budget≥cap)`를 manifest `stop_policy` 읽는 **단일 코드 진입점**으로(plateau 는 `stagnation.detect` 재사용). 페이즈 09 게이트(meta_audit)와 같은 커널 권위로 루프 제어. exit 0=stop/1=continue. 기존엔 합성 AND 를 오케스트레이터(LLM)가 조립·`sprint_loop_cap`은 옛 4-layer 보고모드 | 1 모듈 + 7 tests |
+| PR-G (G1) | `scoring/run_gate.py` — 독립 producer 그룹(quality/gates/plan/cold/review)을 `ThreadPoolExecutor` **병렬**. 순서의존(2→3→5)은 submission 을 barrier 뒤에 둬 보존, `enable_parallel`/`--no-parallel` escape. 매 sprint hot path 벽시계 절감 | 병렬화 + 병렬≡직렬 바이트 등가 test |
+| PR-H (P2) | `scoring/checkpoint.py` — `FAILURE_TO_PHASE` 를 회귀 라우팅 **단일 소스** 로 통합(런타임 신호 계열 + bisect 4분류 병합, 충돌 0). `phases/11-regression-bisect.md` 참조 노트(C-RB1 키워드 유지) + 문서↔코드 drift 가드 | 단일화 + 3 tests |
 
 ### 왜 cold.isolation 과 다른가 (비휴면)
 
@@ -36,7 +39,7 @@
 
 ### 검증
 
-전체 scoring 스위트 `495 passed`(신규 12 tests 포함). 남은 후속: P1 `should_stop.py`(루프 정지조건을 manifest stop_policy 단일 코드 진입점으로), P2 회귀 라우팅 단일화(checkpoint.FAILURE_TO_PHASE ↔ phase-11 4분류).
+전체 scoring 스위트 **`509 passed`**(P0 12 + P1 7 + G1 1 + P2 3 신규 tests), self_lint **118/118 all_ok**. 리뷰 로드맵 P0/P1/G1/P2 모두 착지 — "루프 정지·리뷰 순도·회귀 분기"라는 제어 흐름 결정 셋을 페이즈 09 게이트와 같은 코드기반 조건으로 통일. 남은 후속: 외부 벤치마크(Spec 2, SWE-bench) — 별도 세션.
 
 ## v0.9.52 — 2026-05-10 (sprint-52 — Viewer Finalization Closure)
 

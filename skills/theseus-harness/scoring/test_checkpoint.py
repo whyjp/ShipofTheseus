@@ -104,6 +104,34 @@ def test_missing_checkpoint_dir_returns_action():
     assert out["action"].startswith("rerun_phase_")
 
 
+# ─── P2 회귀 라우팅 단일화 — bisect 4 defect class ────────────
+
+def test_plan_defect_routes_to_phase_06():
+    root = _project_with_checkpoints({"06": [("06.001", "plan v1")]})
+    rc, out = _run_find(root, "plan_defect")
+    assert rc == 0
+    assert out["target_phase"] == "06"
+
+
+def test_external_defect_routes_to_phase_09():
+    root = _project_with_checkpoints({"09": [("09.001", "env baseline")]})
+    rc, out = _run_find(root, "external_defect")
+    assert rc == 0
+    assert out["target_phase"] == "09"
+
+
+def test_bisect_defect_classes_match_phase11_doc():
+    """P2 drift 가드: phase-11 문서의 4 defect class → 페이즈 매핑이 checkpoint 단일 소스와 정합.
+
+    (문서 표 = plan→06 / impl→08 / data→04 / external→09; checkpoint.FAILURE_TO_PHASE 가 코드 권위.)"""
+    import checkpoint
+
+    expected = {"plan_defect": "06", "impl_defect": "08", "data_defect": "04", "external_defect": "09"}
+    assert set(checkpoint.BISECT_DEFECT_CLASSES) == set(expected)
+    for cls, phase in expected.items():
+        assert checkpoint.FAILURE_TO_PHASE.get(cls) == phase, f"{cls} 라우팅 drift"
+
+
 # ─── 멀티버스 선택 테스트 ──────────────────────────────────────
 
 def test_select_universe_dominant_winner():
