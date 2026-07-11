@@ -33,13 +33,14 @@ exit 의미론(dogfood 와 다름 — verdict 가 곧 exit):
 from __future__ import annotations
 
 import argparse
+import concurrent.futures as cf
 import json
 import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 _SCORING_DIR = Path(__file__).resolve().parent
 _PRODUCERS_DIR = _SCORING_DIR / "producers"
@@ -588,6 +589,33 @@ def _opt_path(value: str | Path | None) -> Path | None:
     return Path(value).resolve() if value else None
 
 
+# --- 독립 producer 그룹 병렬 실행(G1) ------------------------------------------
+
+
+def _run_producer_group(
+    jobs: dict[str, Callable[[], dict[str, Any]]],
+    parallel: bool,
+    max_workers: int,
+) -> dict[str, dict[str, Any]]:
+    """상호 무의존 producer 그룹을 병렬(스레드) 또는 직렬로 실행 → {name: step_result}.
+
+    이 그룹의 job 들은 서로 다른 evidence 파일만 쓰고 서로의 산출을 읽지 않는다
+    (quality/gates/plan/cold/review) — subprocess.run 이 GIL 을 풀어 스레드로 진짜 병렬이
+    되며, 파일명이 겹치지 않아 동시 쓰기 경쟁이 없다. verdict/gate_meta_audit.json 의
+    *바이트* 는 producer 실행 순서가 아니라 evidence 내용에만 의존하므로 병렬화는
+    결정성을 깨지 않는다(measured_at 주입 시 동일 evidence → 동일 verdict).
+
+    parallel=False 또는 job ≤ 1 이면 삽입 순서대로 직렬 — 정확히 옛 동작(escape hatch)."""
+    if not parallel or len(jobs) <= 1:
+        return {name: job() for name, job in jobs.items()}
+    out: dict[str, dict[str, Any]] = {}
+    with cf.ThreadPoolExecutor(max_workers=min(max_workers, len(jobs))) as ex:
+        futures = {name: ex.submit(job) for name, job in jobs.items()}
+        for name, fut in futures.items():
+            out[name] = fut.result()
+    return out
+
+
 # --- 오케스트레이션(라이브러리 API) --------------------------------------------
 
 
@@ -615,6 +643,7 @@ def run_gate(
     enable_sprint: bool = True,
     enable_archive: bool = True,
     enable_review: bool = True,
+    enable_parallel: bool = True,
     measured_at: str | None = None,
     verified_at: str | None = None,
 ) -> dict[str, Any]:
@@ -668,24 +697,37 @@ def run_gate(
     review_log_p = _opt_path(review_dispatch_log) or (run_root / "state" / "review_dispatch_log.json")
 
     steps: dict[str, Any] = {}
+    # junit 은 gates/submission 이 --test-junit 으로 소비하므로 병렬 그룹 *앞* 에 직렬.
     steps["junit"] = _produce_junit(test_target_p, junit_path, reuse_junit, cwd)
-    steps["quality"] = _quality_producers(code_root_p, evidence_dir, measured_at, cwd)
-    steps["gates"] = _gate_producers(
-        submission=submission_p,
-        code_root=code_root_p,
-        junit_path=junit_path,
-        evidence_dir=evidence_dir,
-        git_base=git_base,
-        intent_criteria=intent_criteria_p,
-        plan_todos=plan_todos_p,
-        solid_contract=solid_contract_p,
-        measured_at=measured_at,
-        cwd=cwd,
-    )
+
+    # 독립 producer 그룹(G1 병렬) — quality/gates/plan/cold/review 는 상호 무의존.
+    # 순서 의존(2→3→5)은 submission 을 이 barrier *뒤* 에 둠으로써 보존한다
+    # (quality+gates evidence 가 먼저 디스크에 존재해야 --from-evidence 가 승계).
+    indep_jobs: dict[str, Callable[[], dict[str, Any]]] = {
+        "quality": lambda: _quality_producers(code_root_p, evidence_dir, measured_at, cwd),
+        "gates": lambda: _gate_producers(
+            submission=submission_p,
+            code_root=code_root_p,
+            junit_path=junit_path,
+            evidence_dir=evidence_dir,
+            git_base=git_base,
+            intent_criteria=intent_criteria_p,
+            plan_todos=plan_todos_p,
+            solid_contract=solid_contract_p,
+            measured_at=measured_at,
+            cwd=cwd,
+        ),
+        "cold": lambda: _cold_producer(cold_ru_p, cold_ref_p, evidence_dir, measured_at, cwd),
+    }
     if enable_plan:
-        steps["plan"] = _plan_producers(
+        indep_jobs["plan"] = lambda: _plan_producers(
             plan_dir, tournament_md_p, shadow_grades_dir_p, evidence_dir, measured_at, cwd
         )
+    if enable_review:
+        indep_jobs["review"] = lambda: _review_producer(review_log_p, evidence_dir, measured_at, cwd)
+    steps.update(_run_producer_group(indep_jobs, enable_parallel, max_workers=8))
+
+    # submission — quality+gates barrier 뒤(2→3→5 순서 보존). sprint 은 submission 뒤.
     steps["submission"] = _submission_producer(
         submission_p, junit_path, evidence_dir, git_base,
         _opt_path(coverage), _opt_path(e2e_junit), measured_at, cwd,
@@ -695,9 +737,6 @@ def run_gate(
         prior = _latest_history_correctness(history_root)
         current = evidence_dir / "scoring.correctness.json"
         steps["sprint"] = _sprint_producer(prior, current, evidence_dir, measured_at, cwd)
-    steps["cold"] = _cold_producer(cold_ru_p, cold_ref_p, evidence_dir, measured_at, cwd)
-    if enable_review:
-        steps["review"] = _review_producer(review_log_p, evidence_dir, measured_at, cwd)
 
     audit = _meta_audit(run_root, grade, verified_at, phase_upto, cwd)
     steps["meta_audit"] = {"returncode": audit["returncode"], "gate_path": audit["gate_path"]}
@@ -790,6 +829,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-sprint", action="store_true", help="sprint producer 단계 비활성")
     p.add_argument("--no-archive", action="store_true", help="gate_history 아카이브 비활성")
     p.add_argument("--no-review", action="store_true", help="review.context_minimality producer 단계 비활성")
+    p.add_argument("--no-parallel", action="store_true", help="독립 producer 그룹 병렬 실행 비활성(직렬 escape hatch)")
     p.add_argument("--measured-at", default=None, help="모든 producer 에 주입할 measured_at(결정성)")
     p.add_argument("--verified-at", default=None, help="meta_audit 에 주입할 verified_at(기본: measured_at)")
     return p
@@ -821,6 +861,7 @@ def main(argv: list[str] | None = None) -> int:
         enable_sprint=not args.no_sprint,
         enable_archive=not args.no_archive,
         enable_review=not args.no_review,
+        enable_parallel=not args.no_parallel,
         measured_at=args.measured_at,
         verified_at=args.verified_at,
     )

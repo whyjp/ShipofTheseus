@@ -252,6 +252,36 @@ def test_run_gate_determinism_same_measured_at(tmp_path: Path) -> None:
     assert first_bytes == second_bytes
 
 
+# --- (5b) G1 병렬 producer 그룹 = 직렬 등가 --------------------------------------
+
+
+def test_parallel_producer_group_equals_serial(tmp_path: Path) -> None:
+    """G1: 병렬(default)과 직렬(--no-parallel)이 같은 run_root 에서 gate_meta_audit.json
+    바이트 동일 + 같은 evidence emit + 같은 verdict — 독립 producer 병렬화가 verdict 를
+    바꾸지 않음(behavior-preserving; 결정성은 evidence 내용에만 의존, 실행 순서 무관)."""
+    code = _plain_submission(tmp_path)
+    run_root = tmp_path / "run"
+    kw = dict(
+        project_root=str(run_root),
+        intent_criteria=str(tmp_path / "nx1.json"),
+        plan_todos=str(tmp_path / "nx2.json"),
+        solid_contract=str(tmp_path / "nx3.json"),
+        enable_archive=False,   # gate_history 누적 없이 두 실행을 독립 함수로
+        **_common_kwargs(tmp_path, code),
+    )
+    par = run_gate.run_gate(enable_parallel=True, **kw)
+    par_bytes = (run_root / "quality" / "gate_meta_audit.json").read_bytes()
+    ser = run_gate.run_gate(enable_parallel=False, **kw)
+    ser_bytes = (run_root / "quality" / "gate_meta_audit.json").read_bytes()
+
+    assert par_bytes == ser_bytes
+    assert set(par["emitted_evidence"]) == set(ser["emitted_evidence"])
+    assert par["verdict"] == ser["verdict"]
+    # 병렬 그룹의 step 결과가 모두 실렸는지(누락 없이 barrier 취합).
+    for name in ("quality", "gates", "plan", "cold", "review"):
+        assert name in par["steps"]
+
+
 # --- (6) CLI exit code = verdict 매핑 -----------------------------------------
 
 
