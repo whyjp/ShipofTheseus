@@ -1525,6 +1525,44 @@ def check_phase11_regression_classification(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_review_dispatch_log_wired(skill_root: Path) -> list[str]:
+    """C-RDL (v0.9.54 P1-A) — pure-review 디스패치 로그 emit 배선 (declared=invoked).
+
+    phase 09 게이트의 review.context_minimality 가 소비하는 state/review_dispatch_log.json 을
+    *누가 emit 하는지* 페이즈/컨벤션 문서에 실제로 박혔는지 검증한다(무장한 게이트를 페이즈
+    흐름이 실제로 먹이는지). phase 03(콜드리뷰) + intra-phase-dacapo-loop(06/08 shadow grader).
+    """
+    issues: list[str] = []
+    p03 = _read(skill_root / "phases" / "03-independent-comprehension.md")
+    if "review_dispatch_log" not in p03:
+        issues.append(
+            "phases/03-independent-comprehension.md: 'review_dispatch_log' emit 지시 누락 "
+            "(review.context_minimality 배선 — 무장한 게이트 미급식)"
+        )
+    dcl = _read(skill_root / "conventions" / "intra-phase-dacapo-loop.md")
+    if "review_dispatch_log" not in dcl:
+        issues.append(
+            "conventions/intra-phase-dacapo-loop.md: shadow grader 의 'review_dispatch_log' "
+            "append 지시 누락 (06/08 pure-review 배선)"
+        )
+    return issues
+
+
+def check_should_stop_wired(skill_root: Path) -> list[str]:
+    """C-SSW (v0.9.54 P1-A) — 루프 정지 판정(should_stop.py) 배선 (declared=invoked).
+
+    루프 정지 권위(manifest stop_policy 합성)가 phase 10 흐름에서 실제 호출되는지 검증.
+    """
+    issues: list[str] = []
+    p10 = _read(skill_root / "phases" / "10-test-loop.md")
+    if "should_stop.py" not in p10:
+        issues.append(
+            "phases/10-test-loop.md: 'should_stop.py' 정지 판정 CLI 호출 누락 "
+            "(루프 정지 권위 미배선 — manifest stop_policy 합성이 페이즈 흐름에서 안 불림)"
+        )
+    return issues
+
+
 def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
     """C-IG1 — phases/06-plan.md 본문에 implementation guidance 절 (sprint-05-e Q3)."""
     text = _read(skill_root / "phases" / "06-plan.md")
@@ -3086,6 +3124,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-IVP", "interactive-viewer prebuilt shell + dashboard.json schema (sprint-36)", check_interactive_viewer_prebuilt),
     ("C-UNIV-CREATED-AT", "phases/06-plan.md (sprint-52 PR-D, HARD-RULE 9.ooo) — universe candidate frontmatter created_at 의무 + 정시 stub 차단", check_univ_created_at),
     ("C-LFW", "phases/14-handoff.md (sprint-52 PR-C, HARD-RULE 9.nnn/9.ppp) — lineage_finalize.py refresh + placeholder_grep --include-viewer-json literal Bash invoke", check_lineage_finalize_wired),
+    ("C-RDL", "phases/03 + intra-phase-dacapo-loop.md (v0.9.54 P1-A) — review_dispatch_log emit 배선 (review.context_minimality 먹이기, declared=invoked)", check_review_dispatch_log_wired),
+    ("C-SSW", "phases/10 (v0.9.54 P1-A) — should_stop.py 정지 판정 배선 (manifest stop_policy 단일 권위 호출)", check_should_stop_wired),
 ]
 
 

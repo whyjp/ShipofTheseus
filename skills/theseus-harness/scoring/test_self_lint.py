@@ -65,3 +65,26 @@ def test_self_score_reports_without_99999_gate():
 def test_lint_score_is_perfect():
     out = _run_score()
     assert out["lint_score"] == 1.0, f"lint_score={out['lint_score']} 가 1.0 미달"
+
+
+def test_review_and_should_stop_wiring_guards_bite(tmp_path):
+    """C-RDL/C-SSW (v0.9.54 P1-A) 가 배선 누락 시 실제로 FAIL 하는지 — 무장 게이트 미급식 차단.
+
+    가짜 skill_root(키워드 없는 stub)에서는 issue 반환, 실 skill_root(배선 존재)에서는 통과.
+    """
+    import self_lint
+
+    (tmp_path / "phases").mkdir()
+    (tmp_path / "conventions").mkdir()
+    (tmp_path / "phases" / "03-independent-comprehension.md").write_text("cold reunderstanding", encoding="utf-8")
+    (tmp_path / "phases" / "10-test-loop.md").write_text("sprint loop", encoding="utf-8")
+    (tmp_path / "conventions" / "intra-phase-dacapo-loop.md").write_text("dacapo", encoding="utf-8")
+
+    # 배선 부재 → 가드가 issue 반환(truthy).
+    assert self_lint.check_review_dispatch_log_wired(tmp_path)
+    assert self_lint.check_should_stop_wired(tmp_path)
+
+    # 실 저장소(배선 존재) → 통과(빈 리스트).
+    real = Path(self_lint.__file__).resolve().parents[1]
+    assert self_lint.check_review_dispatch_log_wired(real) == []
+    assert self_lint.check_should_stop_wired(real) == []

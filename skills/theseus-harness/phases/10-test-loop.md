@@ -328,6 +328,22 @@ c- "rubric 조정" — rubric 은 실행 동안 read-only.
 
 phase 10 sprint iteration 종료 직전 orchestrator 의무 호출 :
 
+### 정지 결정 — should_stop.py (v0.9.54 P1, manifest stop_policy 단일 권위)
+
+정지/계속 판정의 *단일 코드 권위*. 위 §정지 판정 `should_stop_sprint` 의사코드의 실제 구현이다 — 합성 AND `gate ∧ no_regression ∧ (plateau ∨ budget≥cap)` 를 manifest `stop_policy` 를 읽어 커널 권위로 낸다(오케스트레이터가 머릿속 조립 금지):
+
+```bash
+python skills/theseus-harness/scoring/should_stop.py \
+    --gate-report .ShipofTheseus/<proj>/quality/gate_meta_audit.json \
+    --score-history <{"sprint_scores": [누적 sprint 점수...]} JSON> \
+    --grade <G3|G4|G5> \
+    --budget-used <0..1>
+# exit 0 = stop(수렴) → phase 11/12 진입
+# exit 1 = continue → 다음 sprint iteration
+```
+
+아래 sprint_loop_cap / stagnation_breakthrough / surrender_phrase 는 *보조 신호·능력 보존* 이며 정지 권위는 should_stop 단일 소스다(sprint_loop_cap 의 옛 4-layer 공식은 보고 모드).
+
 ```bash
 # HARD-RULE 9.ss — 4 layer 종료 조건 (auto + internal + tournament + external)
 python skills/theseus-harness/scoring/sprint_loop_cap.py \

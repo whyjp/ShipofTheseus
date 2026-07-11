@@ -9,6 +9,23 @@
 ## 서브에이전트
 **반드시 fresh `Agent(subagent_type="general-purpose")`** — 이전 컨텍스트를 절대 공유하지 않음. [`../agents/independent-comprehender.md`](../agents/independent-comprehender.md) 의 self-contained 프롬프트로.
 
+## 리뷰 디스패치 로그 emit (review.context_minimality 배선, v0.9.54 P1-A)
+
+본 페이즈의 fresh 콜드 재이해 agent(및 [`../conventions/parallel-cold-review.md`](../conventions/parallel-cold-review.md) 의 N framing)은 *pure-review 디스패치* 다 — 각 호출 직후 `state/review_dispatch_log.json` 의 `calls` 배열에 append **의무**:
+
+```json
+{"calls": [
+  {"agent_call_id": "<유니크 호출 id>", "prior_context_token_count": 0,
+   "loaded_artifacts": ["intent/01-intent.md"]}
+]}
+```
+
+- `prior_context_token_count`: fresh sub-agent 이므로 **0**(누적 conversation 미주입 보증).
+- `loaded_artifacts`: 그 호출에 *명시 주입한 파일* 만(콜드 재이해는 `intent/01-intent.md` 만) — 상대경로.
+- `agent_call_id`: 호출마다 **유니크**(재호출 중복 = freshness 위반).
+
+phase 09 게이트에서 [`../scoring/producers/measure_context_minimality.py`](../scoring/producers/measure_context_minimality.py) 가 이 로그를 스캔해 `review.context_minimality`(순도 `prior_context_max==0` + 무결성 `loaded_artifacts_missing==0` + freshness + 최소성 `loaded_tokens_max` 디스크 재계산)를 값으로 판정한다. **로그 부재 = NA 아닌 FAIL(비휴면)** — pure-review 를 안 남기면 통과가 아니라 실패(`skipped==FAIL`). 06/08 shadow grader 호출도 같은 로그에 append → [`../conventions/intra-phase-dacapo-loop.md`](../conventions/intra-phase-dacapo-loop.md) Step C.
+
 ## Premortem-Friction (v0.9.7, [`../conventions/premortem-friction.md`](../conventions/premortem-friction.md))
 
 agent prompt 헤더에 격언 prepend + 산출물에 `premortem` 절 의무. 핵심 질문 = "이 문서를 *처음 보는 사람* 의 첫 5 질문이 자기가 답할 수 없으면 어떤 결손이 표면화될까?". 콜드 재이해의 *친숙성 자동 동의* 결손이 본 컨벤션의 1차 적용 대상. `derived_improvements ≥ 1` 의무.
