@@ -2,6 +2,30 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.55 — 2026-07-12 (sprint-53b — 무장한 게이트를 페이즈 흐름에 배선, declared=invoked)
+
+### 마일스톤
+
+v0.9.54는 코드기반 조건(`review.context_minimality`, `should_stop.py`)을 **무장(armed)**하고 러너(run_gate)까지 배선했으나, **페이즈 오케스트레이션 문서가 아직 이 게이트를 먹이지 않았다** — 실 G3+ run에서 review 로그 부재 → deficit-FAIL, should_stop은 페이즈 흐름이 안 부름. 본 릴리스가 그 급식(feeding)을 배선한다(핸드오프 `docs/design/2026-07-12-pure-review-followups-handoff.md` §3.A).
+
+### 변경
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A (A1) | `phases/03-independent-comprehension.md` — 콜드 재이해 fresh agent가 `state/review_dispatch_log.json`에 `{agent_call_id, prior_context_token_count:0, loaded_artifacts}` append 의무(스키마 명시) | phase 배선 |
+| PR-B (A1) | `conventions/intra-phase-dacapo-loop.md` Step C — 06/08 shadow grader도 같은 로그에 append(`append_review_dispatch_log`) | 배선 |
+| PR-C (A2) | `phases/10-test-loop.md` §자동 CLI 호출 — `should_stop.py`를 정지 판정 **단일 권위**로 literal Bash 배선(exit 0=stop/1=continue), sprint_loop_cap은 보조·보고 모드로 격하 명시 | phase 배선 |
+| PR-D | `self_lint.py` **C-RDL**(phase 03 + dacapo-loop에 `review_dispatch_log` emit) / **C-SSW**(phase 10에 `should_stop.py` 호출) 신규 — declared=invoked 강제(무장 게이트 미급식 차단) | 2 lint |
+| PR-E | `test_self_lint.py` — 배선 누락 시 C-RDL/C-SSW 가드가 실제로 FAIL 함을 가짜 skill_root로 증명 | guard-bite test |
+
+### 왜 필요한가 (armed → fed)
+
+무장(armed)과 급식(fed)은 다르다: v0.9.54는 게이트/producer/should_stop을 만들고 run_gate가 관례경로에서 로그를 소비하도록 했으나, **그 로그를 누가 쓰는가**가 페이즈 문서에 없었다. C-RDL/C-SSW가 "phase 03/06/08은 review 로그를 emit한다 / phase 10은 should_stop을 부른다"를 self_lint로 강제해, sprint-43 declared=invoked 패턴을 이번 게이트에도 적용한다.
+
+### 검증
+
+전체 scoring 스위트 **`510 passed`**(신규 guard-bite test 포함), self_lint **120/120 all_ok**(C-RDL/C-SSW 추가). 버전 SKILL.md + plugin.json = 0.9.55.
+
 ## v0.9.54 — 2026-07-12 (sprint-53 — 코드기반 조건: Pure-Review 게이트 + 루프 정지 + 회귀 라우팅 + run_gate 병렬화)
 
 ### 마일스톤
