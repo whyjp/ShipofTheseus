@@ -71,6 +71,8 @@ c- **깊은 품질 위반 점검 6 차원** (DIP/코드 오류 누적/스펙 누
 | **data defect** | 입력 데이터 자체 변경/오류 (CSV 컬럼 변동, YAML 스키마 깨짐) | 페이즈 04 Q-D8 재검증 (re-data) + 데이터 수정 |
 | **external defect** | 외부 의존 변경 (라이브러리 버전, 환경 변수, OS) | 페이즈 09 게이트 7 재실행 (re-env) |
 
+> **라우팅 단일 소스 (P2 통합)**: 위 4 분류 → 페이즈 매핑의 *코드 권위* 는 [`../scoring/checkpoint.py`](../scoring/checkpoint.py) 의 `FAILURE_TO_PHASE` 단일 테이블이다 (`plan_defect→06 / impl_defect→08 / data_defect→04 / external_defect→09`). 본 표는 *설명* 이고 실제 라우팅은 그 테이블이 낸다 — 런타임 신호 계열(`stagnation`/`dip_violation` 등)과 bisect 4 분류가 한 테이블로 통합되어 이원화가 제거됐다. 본 표와 `FAILURE_TO_PHASE` 가 어긋나면 `test_checkpoint` 의 drift 가드가 FAIL.
+
 ### 분류 알고리즘
 
 ```

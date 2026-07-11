@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "shipoftheseus",
-  "version": "0.9.53",
-  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.53: 검증 커널 실배선 — phase 09 가 run_gate.py(producer→meta_audit)로 실제 게이팅, phase 01/04/06/08 선언 아티팩트(intent-criteria/plan-todos/solid-contract) 저작. 종료=manifest stop_policy(점수 절대값이 게이트 아님 — 인플레이션·소각 유인 제거), dacapo 0.999 지뢰 제거. 동결 mandate(멀티버스 폭·viewer·budget-80%) advisory 강등(능력 보존). self_lint 순감 + 진입 지시질량 −9.7%. 판단-게이트 producer 로 correctness/scope_fit/solid 를 자기신고 아닌 실측 backing 으로.",
+  "version": "0.9.54",
+  "description": "테세우스 하네스 — 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.54: pure-review 컨텍스트 최소주입 게이트(review.context_minimality) — prior_context==0 순도 + loaded_artifacts 무결성/최소성(디스크 재계산)을 커널이 값으로 게이팅(applicability 없는 비휴면; cold.isolation 휴면 대비). v0.9.53: 검증 커널 실배선 — phase 09 가 run_gate.py(producer→meta_audit)로 실제 게이팅, phase 01/04/06/08 선언 아티팩트(intent-criteria/plan-todos/solid-contract) 저작. 종료=manifest stop_policy(점수 절대값이 게이트 아님 — 인플레이션·소각 유인 제거), dacapo 0.999 지뢰 제거. 동결 mandate(멀티버스 폭·viewer·budget-80%) advisory 강등(능력 보존). self_lint 순감 + 진입 지시질량 −9.7%. 판단-게이트 producer 로 correctness/scope_fit/solid 를 자기신고 아닌 실측 backing 으로.",
   "author": {
     "name": "whyjp",
     "url": "https://github.com/whyjp/shipoftheseus"

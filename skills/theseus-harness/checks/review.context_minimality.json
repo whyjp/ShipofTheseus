@@ -1,0 +1,36 @@
+{
+  "check_id": "review.context_minimality",
+  "phase": "03",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_context_minimality\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["calls_total", "malformed_calls", "prior_context_max", "duplicate_call_ids", "loaded_artifacts_missing", "loaded_tokens_max"],
+  "assertions": [
+    {
+      "expr": "calls_total >= 1",
+      "on_fail": "calls_total < 1 — 리뷰 디스패치 호출이 로그에 0 (no-work guard: 무엇을 pure-review 했는지 불명, shadow-grader-zero-context.md)"
+    },
+    {
+      "expr": "malformed_calls == 0",
+      "on_fail": "malformed_calls > 0 — 필수 필드(agent_call_id/prior_context_token_count/loaded_artifacts) 결손 호출 존재 (순도 검증 불가 = FAIL)"
+    },
+    {
+      "expr": "prior_context_max == 0",
+      "on_fail": "prior_context_max != 0 — 어떤 review 호출이 사전 conversation 컨텍스트를 들고 옴 (pure-review 순도 위반: 생성 컨텍스트 누출, shadow-grader-zero-context.md 룰1 / cold.isolation prior_context 정합)"
+    },
+    {
+      "expr": "loaded_artifacts_missing == 0",
+      "on_fail": "loaded_artifacts_missing > 0 — 로그가 선언한 주입 파일이 디스크에 부재 (무결성 위반: 실재하지 않는 컨텍스트를 리뷰했다고 신고, producer 디스크 stat 결과 — 상상값 주입 0)"
+    },
+    {
+      "expr": "duplicate_call_ids == 0",
+      "on_fail": "duplicate_call_ids > 0 — review 호출 agent_call_id 중복 (fresh sub-agent 재호출 위반, shadow-grader-zero-context.md 룰3)"
+    }
+  ],
+  "value": "loaded_tokens_max",
+  "absence_policy": "FAIL",
+  "_dimension_note": "pure-review 순도(prior_context_max==0) + 무결성(loaded_artifacts_missing==0, malformed_calls==0) + freshness(duplicate_call_ids==0)를 게이팅한다. value 인 loaded_tokens_max 는 '필요한 것만 주입'의 최소성 관측값 — producer 가 로그의 자기 신고가 아니라 실제 파일을 디스크에서 재계산한 토큰 합의 최대치라 game 불가(정보 값이며 절대 임계 assertion 대상 아님; 하드 토큰 상한은 후속에서 per-phase budget 으로 additive). applicability 없음 — cold.isolation(dispatch_log_present==1 뒤 휴면)과 달리 로그 부재는 NA 가 아니라 absence_policy FAIL 로 강제(비휴면: 페이즈 09 게이트까지 pure-review 디스패치 로깅이 의무). skipped==FAIL(§2 원칙2): 로그를 안 쓰면 '측정 안 함'이 통과가 아니라 실패다."
+}

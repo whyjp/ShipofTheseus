@@ -17,8 +17,17 @@ import json
 import sys
 from pathlib import Path
 
-# 실패 유형 → 회귀 페이즈 매핑 (checkpoints.md §"회귀 알고리즘")
+# 회귀 라우팅 단일 소스 (P2 통합) — 회귀 분류 → 재진입 페이즈 매핑.
+# 두 라벨 계열을 한 테이블로 통합한다(이원화 제거):
+#   (a) 런타임 신호 계열 — stagnation/quality 신호가 낳는 failure_kind (checkpoints.md §회귀 알고리즘).
+#   (b) phase-11 bisect 계열 — bisect 가 식별하는 4 defect class
+#       (phases/11-regression-bisect.md §회귀 원인 분류).
+# 두 계열은 정합한다: plan_defect~plan_misfit→06, impl_defect~module_impl_violation→08,
+# data_defect~resource_ceiling→04. external_defect→09(게이트 재실행)만 bisect 고유.
+# phases/11-regression-bisect.md 는 이 테이블을 *유일 코드 소스* 로 참조한다(문서=설명, 코드=권위).
+# 문서↔코드 drift 는 test_checkpoint 의 가드가 FAIL 로 잡는다.
 FAILURE_TO_PHASE: dict[str, str] = {
+    # (a) 런타임 신호 계열
     "intent_mismatch": "01",
     "plan_misfit": "06",
     "module_impl_violation": "08",
@@ -27,7 +36,20 @@ FAILURE_TO_PHASE: dict[str, str] = {
     "stagnation": "08",
     "dip_violation": "06",
     "scope_creep": "06",
+    # (b) phase-11 bisect 4 defect class (sprint-05-e Q1 / P2 단일화)
+    "plan_defect": "06",       # re-plan (universe 재분기 가능)
+    "impl_defect": "08",       # re-impl (08-γ, 같은 plan 유지)
+    "data_defect": "04",       # re-data (04 Q-D8 재검증)
+    "external_defect": "09",   # re-env (09 게이트 재실행)
 }
+
+# phase-11 bisect 가 식별하는 4 defect class 부분집합 — 문서 C-RB1 ↔ 코드 라우팅 drift 가드용.
+BISECT_DEFECT_CLASSES: tuple[str, ...] = (
+    "plan_defect",
+    "impl_defect",
+    "data_defect",
+    "external_defect",
+)
 
 
 def find_regression_target(
