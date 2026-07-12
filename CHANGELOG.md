@@ -2,6 +2,40 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.56 — 2026-07-12 (sprint-54 — 멀티버스 fan-out 폭 강제 primitive: 폭을 코드가 소유)
+
+### 마일스톤
+
+핸드오프 §3.B1 착지. 멀티버스 fan-out 폭(활성 폭 G3=3/G4=4/G5=6)이 지금까지 `conventions/intra-phase-dacapo-loop.md` 의사코드 + 모델재량이라 **모델이 폭을 skip** 할 수 있었다(cold session winner 0.853, universe 3 < G4 폭 4, 재경합 0회). `universe_count_monotonicity.py` 는 라운드 간 단조성(N+1 ≥ N)만 사후 검사할 뿐 **초기 폭 바닥을 강제하지 않는다**(라운드0 width=1 이어도 단조성 통과). 본 릴리스가 폭을 `review.context_minimality` 와 같은 계약의 **비휴면 커널 게이트**로 승격 — 폭이 모델재량이 아니라 *코드가 소유하는 조건*이 된다(사용자 논지 "다이나믹 워크플로우의 코드기반 조건 검사"의 병렬성 종착점).
+
+### 설계 red-team (Fable)
+
+초안은 `plan_observed_width = max(candidates 디렉터리, round0 표)` 를 게이팅했으나 Fable critique 가 **실질 결함**을 잡았다: candidates 디렉터리는 다카포 rerun 마다 fresh universe 가 누적(anti-pattern g)이라 **초기 폭이 아니다**. 초기 2 폭 + rerun 3 = 5 dir 로 floor 4 를 통과시키는 우회(under-width-then-rerun)가 열린다. → assertion 을 **round0-primary** 로 교정: `round0 >= floor OR (round0==0 AND candidates >= floor)`. round0 tournament 표(초기 폭 권위)를 우선하고, 그 표가 파싱 불가일 때만 candidates 로 폴백(비표준 라벨 레이아웃 구제). phantom-row 방어를 커널 안으로: `round0_rows_without_dirs == 0`. floor override 봉쇄: `cmd_pattern` 이 `--manifest` 거부.
+
+### 변경
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | `checks/multiverse.fan_out_width.json` (active G3+, phase 06, absence FAIL, applicability 없음) — round0-primary 폭 assertion + phantom 교차 assertion + `--manifest` 봉쇄 cmd_pattern | CheckSpec |
+| PR-B | `scoring/producers/measure_multiverse_width.py` — plan/candidates·round0 tournament 표를 디스크에서 ID 집합으로 재계산(game-proof), `width_floor` = manifest `multiverse_widths[grade]` 단일 소스 | producer |
+| PR-C | `pipeline.manifest.json` checks 맵 G3/G4/G5 등록(+ drift 균형) + `_note` | manifest |
+| PR-D | `scoring/run_gate.py` — `_multiverse_producer` 독립 병렬 그룹 배선(항상 호출) + `--no-multiverse` | 러너 |
+| PR-E | `self_lint.py` **C-MFW** — run_gate 가 producer 를 실제 호출(declared=invoked) 강제 | lint |
+| PR-F | doc-sync — `intra-phase-dacapo-loop.md`/`impl-multiverse-strict.md`/`contested-decision-multiverse.md` 의 frozen 폭(5/7/9) preach 를 활성 폭(3/4/6 manifest 단일 소스) + frozen advisory 로 정합 | 3 doc |
+| PR-G | `test_measure_multiverse_width.py`(11) — under-width-then-rerun 우회 차단 명시 증명 포함 + `test_self_lint.py` C-MFW guard-bite | test |
+
+### 왜 폭 강제가 첫 증분인가 (merge-ownership 아님)
+
+사용자 논지의 종착점은 "폭 강제 + 병합을 코드로 소유"다. 폭은 디스크 존재(디렉터리·표)로 *반증 가능*하지만, 병합(tournament argmax)은 6-dim sub-score 가 모델 저작이라 *일관성 검사*만 가능하다 — 코드 소유 argmax 도 우승자가 옳음을 증명 못 하고 서술이 숫자와 맞음만 본다. 문서화된 회귀(0.853 winner, 3<4 폭, 재경합 0)는 전부 폭/루프 skip 이지 argmax 불일치가 아니다. 병합 소유는 후속 증분(`plan.tournament_winner_argmax`: frontmatter sub-score 재계산 + winner==argmax + canonical digest 매칭)으로 큐잉.
+
+### 정직한 한계
+
+round0 표를 파싱 불가로 쓰고 폭을 줄인 뒤 rerun 누적하는 잔여 우회는 본 체크 단독이 아니라 생태계(`universe_count_monotonicity` 단조성/mismatch — 단 *비-커널* 오케스트레이터 CLI + `plan.tournament_independence` shadow 변량)가 좁힌다. 위조의 궁극 증명은 불가(review.context_minimality 와 같은 전제). impl(phase 08)은 impl-multiverse-strict single-universe+7조건(프로즈) 예외가 있어 폭 게이팅 대상 아님 — `impl_candidates_width` 는 관측용 measured 만.
+
+### 검증
+
+전체 scoring 스위트 **`523 passed`**(신규 producer 11 + guard-bite 포함), self_lint **121/121 all_ok**(C-MFW 추가). 버전 SKILL.md + plugin.json = 0.9.56.
+
 ## v0.9.55 — 2026-07-12 (sprint-53b — 무장한 게이트를 페이즈 흐름에 배선, declared=invoked)
 
 ### 마일스톤

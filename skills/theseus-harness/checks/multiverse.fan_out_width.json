@@ -1,0 +1,24 @@
+{
+  "check_id": "multiverse.fan_out_width",
+  "phase": "06",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python (?!.*--manifest).*measure_multiverse_width\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["plan_round0_tournament_width", "plan_candidates_width", "round0_rows_without_dirs", "width_floor"],
+  "assertions": [
+    {
+      "expr": "plan_round0_tournament_width >= width_floor or (plan_round0_tournament_width == 0 and plan_candidates_width >= width_floor)",
+      "on_fail": "plan multiverse 초기 fan-out 폭 < 활성 폭 바닥(width_floor = manifest multiverse_widths[grade]) — 모델이 폭을 skip(cold session winner 0.853 재경합 0 회 = universe 3 < G4 폭 4 회귀). 게이트는 round0 tournament 표(초기 폭 권위 신호)를 우선하고, 그 표가 파싱 불가(=0)일 때만 candidates 디렉터리로 폴백한다 — candidates 는 rerun 누적이라 초기 폭이 아니다(under-width-then-rerun 우회 차단)."
+    },
+    {
+      "expr": "plan_candidates_width == 0 or round0_rows_without_dirs == 0",
+      "on_fail": "round0_rows_without_dirs > 0 — round0 tournament 표가 인용한 universe 중 디렉터리 부재(phantom 행) 존재: 실재하지 않는 우주를 초기 폭으로 신고(무결성 위반, 커널 내 phantom 방어). candidates 디렉터리가 collapse 로 비었으면(plan_candidates_width==0) 이 검사는 면제된다(impl-multiverse-strict plan collapse 허용)."
+    }
+  ],
+  "value": "plan_observed_width",
+  "absence_policy": "FAIL",
+  "_dimension_note": "멀티버스 fan-out 폭을 모델재량이 아니라 코드가 소유하는 조건으로 만든다(다이나믹 워크플로우 코드기반 조건 검사). *초기 폭* 판정 권위 = plan_round0_tournament_width(다카포 라운드 0 = 초기 fan-out). candidates 디렉터리는 rerun 마다 fresh universe 가 누적(anti-pattern g)이라 초기 폭이 아니므로 게이트 assertion 은 round0 을 우선하고 파싱 불가 시에만 폴백한다 — max() 로 게이팅하면 초기 2 폭 + rerun 3 = 5 dir 로 floor 4 를 통과시키는 우회가 열린다(plan_observed_width=max 는 정보값일 뿐 assertion 아님). 모든 수치는 producer 가 디스크의 universe-N 디렉터리·tournament 표를 다시 세어 낸 값(상상값 주입 0). width_floor 는 하드코딩이 아니라 manifest multiverse_widths[grade] 활성 폭 단일 소스(frozen_widths 5/7/9 는 편익 미실증 advisory — 여기선 안 씀). cmd_pattern 은 --manifest override 를 금지해 floor 몰래 낮추기를 봉쇄. universe_count_monotonicity.py 는 라운드 간 단조성만 사후 검사할 뿐 초기 폭 바닥을 강제 안 해(라운드0 width=1 이어도 단조성 통과) 본 게이트가 그 구멍을 닫는다 — 상호 보완(단 그것은 *비-커널* 오케스트레이터 CLI). impl(phase 08)은 impl-multiverse-strict single-universe+7조건(프로즈) 예외가 있어 폭 게이팅 대상 아님(impl_candidates_width 는 관측용). applicability 없음 — plan fan-out 미발생 시 evidence 부재 → absence_policy FAIL(비휴면; G2 는 multiverse_widths=1·체크 맵 제외라 비게이팅). skipped==FAIL(§2 원칙2). 위조의 궁극 저항은 본 체크 단독이 아니라 생태계(monotonicity + plan.tournament_independence shadow 변량)와 함께다(review.context_minimality 가 순도의 궁극 증명 대신 무결성으로 조이는 것과 같은 전제)."
+}

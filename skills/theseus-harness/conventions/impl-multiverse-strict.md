@@ -40,7 +40,7 @@ indexed-in: conventions/INDEX.md
 
 ```
 1- impl/candidates/universe-1/, universe-2/, ..., universe-N/ 디렉터리 존재
-   N == multiverse_width (G3=5/G4=7/G5=9 default)
+   N == multiverse_width (활성 폭 manifest multiverse_widths: G3=3/G4=4/G5=6; 격상 5/7/9 는 frozen advisory §8)
    각 디렉터리 본문 ≥ 1 (placeholder 금지)
 2- impl/tournament-impl-NN.md frontmatter 6-dim weighted (cf plan-tournament-scoring-strict 정합)
 3- impl/shadow-grade-impl-NN.json (be 정합)

@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.55
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.55 = review.context_minimality 로그·should_stop 을 phase 03/06/08/10 흐름에 배선(declared=invoked). v0.9.54 = pure-review 순도 게이트.
+version: 0.9.56
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.56 = multiverse.fan_out_width 커널 게이트 — plan 초기 fan-out 폭을 manifest 활성 폭 바닥으로 강제(round0-primary, 폭 모델재량 제거). v0.9.55 = review·should_stop 배선.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

@@ -477,6 +477,34 @@ def _review_producer(
     return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
 
 
+def _multiverse_producer(
+    grade: str,
+    evidence_dir: Path,
+    measured_at: str,
+    cwd: Path,
+) -> dict[str, Any]:
+    """multiverse.fan_out_width producer(폭 강제 primitive, run_gate 신규). plan 초기 fan-out
+    폭이 grade 활성 폭(manifest multiverse_widths) 바닥을 채웠는지 디스크에서 세어 emit 한다.
+    항상 호출한다 — cold/review 처럼 입력 파일을 미리 가드하지 않는 이유: 입력이 항상 존재하는
+    run_root(plan/ 스캔)라 '폭 강제'는 무조건 발동해야 한다(declared=invoked, C-MFW). producer 는
+    plan 디렉터리 부재 시 스스로 evidence 를 안 낸다 — 그 경우 G3+ 는 absence_policy FAIL 로
+    강제되고 G2 는 체크 맵 제외라 무영향(멀티버스 없음)."""
+    step = _run(
+        [
+            sys.executable,
+            str(_PRODUCERS_DIR / "measure_multiverse_width.py"),
+            "--grade",
+            grade,
+            "--measured-at",
+            measured_at,
+            "--out-dir",
+            str(evidence_dir),
+        ],
+        cwd,
+    )
+    return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+
+
 # --- meta_audit --------------------------------------------------------------
 
 
@@ -600,7 +628,7 @@ def _run_producer_group(
     """상호 무의존 producer 그룹을 병렬(스레드) 또는 직렬로 실행 → {name: step_result}.
 
     이 그룹의 job 들은 서로 다른 evidence 파일만 쓰고 서로의 산출을 읽지 않는다
-    (quality/gates/plan/cold/review) — subprocess.run 이 GIL 을 풀어 스레드로 진짜 병렬이
+    (quality/gates/plan/cold/review/multiverse) — subprocess.run 이 GIL 을 풀어 스레드로 진짜 병렬이
     되며, 파일명이 겹치지 않아 동시 쓰기 경쟁이 없다. verdict/gate_meta_audit.json 의
     *바이트* 는 producer 실행 순서가 아니라 evidence 내용에만 의존하므로 병렬화는
     결정성을 깨지 않는다(measured_at 주입 시 동일 evidence → 동일 verdict).
@@ -643,6 +671,7 @@ def run_gate(
     enable_sprint: bool = True,
     enable_archive: bool = True,
     enable_review: bool = True,
+    enable_multiverse: bool = True,
     enable_parallel: bool = True,
     measured_at: str | None = None,
     verified_at: str | None = None,
@@ -700,7 +729,7 @@ def run_gate(
     # junit 은 gates/submission 이 --test-junit 으로 소비하므로 병렬 그룹 *앞* 에 직렬.
     steps["junit"] = _produce_junit(test_target_p, junit_path, reuse_junit, cwd)
 
-    # 독립 producer 그룹(G1 병렬) — quality/gates/plan/cold/review 는 상호 무의존.
+    # 독립 producer 그룹(G1 병렬) — quality/gates/plan/cold/review/multiverse 는 상호 무의존.
     # 순서 의존(2→3→5)은 submission 을 이 barrier *뒤* 에 둠으로써 보존한다
     # (quality+gates evidence 가 먼저 디스크에 존재해야 --from-evidence 가 승계).
     indep_jobs: dict[str, Callable[[], dict[str, Any]]] = {
@@ -725,6 +754,8 @@ def run_gate(
         )
     if enable_review:
         indep_jobs["review"] = lambda: _review_producer(review_log_p, evidence_dir, measured_at, cwd)
+    if enable_multiverse:
+        indep_jobs["multiverse"] = lambda: _multiverse_producer(grade, evidence_dir, measured_at, cwd)
     steps.update(_run_producer_group(indep_jobs, enable_parallel, max_workers=8))
 
     # submission — quality+gates barrier 뒤(2→3→5 순서 보존). sprint 은 submission 뒤.
@@ -829,6 +860,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-sprint", action="store_true", help="sprint producer 단계 비활성")
     p.add_argument("--no-archive", action="store_true", help="gate_history 아카이브 비활성")
     p.add_argument("--no-review", action="store_true", help="review.context_minimality producer 단계 비활성")
+    p.add_argument("--no-multiverse", action="store_true", help="multiverse.fan_out_width producer 단계 비활성")
     p.add_argument("--no-parallel", action="store_true", help="독립 producer 그룹 병렬 실행 비활성(직렬 escape hatch)")
     p.add_argument("--measured-at", default=None, help="모든 producer 에 주입할 measured_at(결정성)")
     p.add_argument("--verified-at", default=None, help="meta_audit 에 주입할 verified_at(기본: measured_at)")
@@ -861,6 +893,7 @@ def main(argv: list[str] | None = None) -> int:
         enable_sprint=not args.no_sprint,
         enable_archive=not args.no_archive,
         enable_review=not args.no_review,
+        enable_multiverse=not args.no_multiverse,
         enable_parallel=not args.no_parallel,
         measured_at=args.measured_at,
         verified_at=args.verified_at,
