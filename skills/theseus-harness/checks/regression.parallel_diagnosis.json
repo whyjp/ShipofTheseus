@@ -1,0 +1,41 @@
+{
+  "check_id": "regression.parallel_diagnosis",
+  "phase": "11",
+  "grades": ["G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python (?!.*--manifest).*measure_regression_diagnosis\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["regression_events_total", "undiagnosed_events", "hypotheses_count", "malformed_hypotheses", "duplicate_call_ids", "invalid_class_votes", "corroboration_count", "class_argmax_match", "routing_matches_class", "hypotheses_without_alternative", "hypo_floor", "corroboration_min"],
+  "applicability": "regression_events_total >= 1",
+  "assertions": [
+    {
+      "expr": "undiagnosed_events == 0",
+      "on_fail": "undiagnosed_events > 0 — 회귀(score_delta < -0.05) 이벤트 중 bound 진단(sprints/NN/bisect.md, gate_history_ref + prior/current score 일치)이 없는 것이 존재: 회귀 직후 진단 없이 추가 구현이 진행됐다(테세우스의 배에 잘못된 판자를 빼기 전에 더 박음)."
+    },
+    {
+      "expr": "hypotheses_count >= hypo_floor and malformed_hypotheses == 0",
+      "on_fail": "hypotheses_count < hypo_floor(manifest regression_diagnosis.min_hypotheses[grade]) 또는 malformed_hypotheses > 0 — 병렬 회의론자 K 명이 dispatch 되지 않았거나(진단이 단일 서술로 축소) 가설 JSON 이 필수 필드(agent_call_id/defect_class/suspect_file_or_commit/failing_test) 결손. 진단 병렬화가 코드 소유 조건이 아니라 모델재량으로 흘렀다."
+    },
+    {
+      "expr": "duplicate_call_ids == 0 and invalid_class_votes == 0",
+      "on_fail": "duplicate_call_ids > 0(같은 agent_call_id 재사용 = zero-shared-context 병렬 dispatch 위조) 또는 invalid_class_votes > 0(defect_class 가 유효 4-class BISECT_DEFECT_CLASSES 밖) — 병렬 가설의 무결성 위반."
+    },
+    {
+      "expr": "corroboration_count >= corroboration_min",
+      "on_fail": "corroboration_count < corroboration_min(manifest regression_diagnosis.corroboration_min) — 같은 defect_class 에 합의한 회의론자가 임계 미만: 진단이 corroborated 되지 않았다(독립 축이 서로 다른 결론 = 회귀 원인 미수렴, 추가 구현 차단)."
+    },
+    {
+      "expr": "class_argmax_match == 1 and routing_matches_class == 1",
+      "on_fail": "class_argmax_match == 0(bisect 선언 regression_class 가 표결 argmax defect_class 와 불일치 = merge 를 코드가 소유 못 함) 또는 routing_matches_class == 0(fix_target_phase 가 checkpoint.py FAILURE_TO_PHASE[regression_class] 와 불일치 = 재진입 페이즈 라우팅이 코드 권위와 어긋남)."
+    },
+    {
+      "expr": "hypotheses_without_alternative == 0",
+      "on_fail": "hypotheses_without_alternative > 0 — 비어있지 않은 alternative_class 가 없는 가설 존재: 단독 가설은 과신(반대 가설 의무 위반, agents/regression-analyst.md 하드 룰 c-)."
+    }
+  ],
+  "value": "corroboration_count",
+  "absence_policy": "FAIL",
+  "_dimension_note": "회귀 검출 후 *진단*을 모델재량이 아니라 코드가 소유하는 조건으로 만든다(다이나믹 워크플로우 코드기반 조건 — sprint.regression 이 회귀를 '검출'하면 본 게이트가 그 회귀의 '진단'이 corroborated 병렬 판단임을 강제). applicability(regression_events_total >= 1)로 조건부다 — 회귀가 없으면 NA(비게이팅)이되 producer 는 항상 measured 를 emit 하므로 *비휴면*: 회귀가 있는데 진단 병렬화가 없으면 evidence 는 존재하되 assertion FAIL(침묵 skip 아님, §2 원칙2). skeptic 은 defect-class-advocate 가 아니라 *evidence-axis* framing(diff-reader / failing-test-trace-reader / data-schema-reader / env-dependency-reader) — 결론(defect_class)이 아니라 관측 축을 나눠 dispatch 편향을 줄인다. 라우팅(defect_class→phase)과 유효 4-class 는 checkpoint.py FAILURE_TO_PHASE / BISECT_DEFECT_CLASSES 단일 소스를 재사용한다(plan.tournament_winner_argmax 가 winner argmax 를 재계산하듯 본 게이트는 vote argmax + 라우팅을 재계산 — 이원화 0). 모든 수치는 producer 가 디스크의 gate_history evidence·bisect.md frontmatter·hypothesis-*.json 을 다시 파싱해 낸 값(상상값 주입 0). hypo_floor/corroboration_min 은 하드코딩이 아니라 manifest regression_diagnosis 단일 소스. 정직 고지: 본 게이트는 '진단이 corroborated 병렬 가설로 뒷받침됨 + merge/라우팅이 코드 소유'를 증명하지 *정확한* 진단을 증명하지 않는다 — 병렬 가설의 존재가 진단의 진리를 보장하지 않고, agent_call_id 는 dispatch 자기 신고(zero-context skeptic 여부의 궁극 증명 불가)다. 그 위조 압력은 본 체크 단독이 아니라 생태계(review.context_minimality 의 dispatch 순도/freshness/최소성 + state/review_dispatch_log.json 무결성)가 좁힌다(review.context_minimality 가 순도의 궁극 증명 대신 무결성으로 조이는 것과 같은 전제). G4/G5 만(phase 11 은 manifest 상 G4/G5 활성) — G2/G3 는 체크 맵 제외라 비게이팅. cmd_pattern 은 --manifest override 를 금지해 floor 몰래 낮추기를 봉쇄. 후속: hypothesis suspect 의 diff-line 실재 검증·skeptic prior_context_token_count==0 교차 대조."
+}

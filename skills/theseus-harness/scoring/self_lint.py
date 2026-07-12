@@ -1596,6 +1596,40 @@ def check_tournament_argmax_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_regression_diagnosis_wired(skill_root: Path) -> list[str]:
+    """C-RPD (B2 regression-parallel-diagnosis) — 회귀 진단 병렬화 producer 가 run_gate 에 배선(declared=invoked).
+
+    manifest 가 regression.parallel_diagnosis 를 선언(G4/G5)해도 run_gate 가
+    measure_regression_diagnosis 를 안 부르면(not invoked) 회귀 발생 run 에서 게이트가 영구
+    evidence_missing FAIL — 무장했으나 미급식. 러너가 producer 를 실제 호출하는지 검증한다
+    (회귀 진단이 모델재량이 아니라 코드가 소유하는 조건임을 배선으로 보증)."""
+    issues: list[str] = []
+    rg = _read(skill_root / "scoring" / "run_gate.py")
+    if "measure_regression_diagnosis" not in rg:
+        issues.append(
+            "scoring/run_gate.py: 'measure_regression_diagnosis' producer 미배선 "
+            "(regression.parallel_diagnosis 무장 게이트 미급식 — declared=invoked 위반)"
+        )
+    return issues
+
+
+def check_regression_hypotheses_wired(skill_root: Path) -> list[str]:
+    """C-RPH (B2 regression-parallel-diagnosis) — phase 11 이 병렬 가설 emission 계약을 실제로 지시.
+
+    regression.parallel_diagnosis 가 소비하는 sprints/NN/hypotheses/hypothesis-*.json 과
+    bisect.md binding 키를 *누가 emit 하는지* 페이즈 11 문서에 실제로 박혔는지 검증한다
+    (무장한 게이트를 페이즈 흐름이 실제로 먹이는지 — 병렬 회의론자 dispatch 계약)."""
+    issues: list[str] = []
+    p11 = _read(skill_root / "phases" / "11-regression-bisect.md")
+    for kw in ("hypotheses/hypothesis-", "gate_history_ref", "agent_call_id", "defect_class"):
+        if kw not in p11:
+            issues.append(
+                f"phases/11-regression-bisect.md: '{kw}' 병렬 가설 emission 계약 키워드 누락 "
+                "(regression.parallel_diagnosis 배선 — 무장한 게이트 미급식)"
+            )
+    return issues
+
+
 def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
     """C-IG1 — phases/06-plan.md 본문에 implementation guidance 절 (sprint-05-e Q3)."""
     text = _read(skill_root / "phases" / "06-plan.md")
@@ -3161,6 +3195,8 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-SSW", "phases/10 (v0.9.54 P1-A) — should_stop.py 정지 판정 배선 (manifest stop_policy 단일 권위 호출)", check_should_stop_wired),
     ("C-MFW", "scoring/run_gate.py (B1 v0.9.56) — measure_multiverse_width producer 배선 (multiverse.fan_out_width 폭 강제 게이트 먹이기, declared=invoked)", check_multiverse_width_wired),
     ("C-TWA", "scoring/run_gate.py (merge-ownership v0.9.57) — measure_tournament_argmax producer 배선 (plan.tournament_winner_argmax 병합 소유 게이트 먹이기, declared=invoked)", check_tournament_argmax_wired),
+    ("C-RPD", "scoring/run_gate.py (B2 regression-parallel-diagnosis) — measure_regression_diagnosis producer 배선 (regression.parallel_diagnosis 진단 병렬화 게이트 먹이기, declared=invoked)", check_regression_diagnosis_wired),
+    ("C-RPH", "phases/11-regression-bisect.md (B2 regression-parallel-diagnosis) — hypotheses/hypothesis-* + gate_history_ref + agent_call_id + defect_class emission 계약 (병렬 회의론자 dispatch 배선)", check_regression_hypotheses_wired),
 ]
 
 
