@@ -41,7 +41,7 @@
 ### B. 더 깊은 병렬성 갭 (병렬성 리뷰 결론, 미착수)
 - **B1 (최대 가치)** — **멀티버스 fan-out 코드 primitive.** 현재 `intra-phase-dacapo-loop.md`의 fan-out(width G4=4/G5=6)이 의사코드/모델재량 → 모델이 skip 가능(cold session winner 0.853 재경합 0회가 증거). `universe_count_monotonicity.py`는 사후 검사일 뿐. 폭 강제 + 병합을 코드로 소유하는 harness 필요(Workflow의 parallel()/pipeline() 유형). 당신 논지가 병렬성에 도달하는 종착점.
 - **B2** — 회귀 진단(phase 11 `regression-analyst`)이 단일 에이전트 직렬. 가설을 adversarial 병렬 skeptic으로 검증하도록 fan-out.
-- **B3** — 하네스 오케스트레이션에 백그라운드/async 개념 부재.
+- **B3** — 하네스 오케스트레이션에 백그라운드/async 개념 부재. **[2026-07-12 DEFER — Fable 판정, 착수 안 함]** gap 이 과장. (a) 뷰어 서버(유일한 실 장기 서비스)는 이미 완전 백그라운드(`viewer_runtime.py` `Popen(start_new_session/CREATE_NEW_PROCESS_GROUP)` + PID lock + `server.log` + up/down/status lifecycle) + lint(C-VRL) 소유. (b) 나머지 병렬성은 전부 parallel-then-**join** 이 올바른 시맨틱(게이트는 전 evidence 필요, fan-out 은 tournament-merge 로 join, 스프린트 루프는 결과에 의존해 본질상 순차). (c) 페이즈 오버랩은 명시적 안티패턴(`intra-phase-dacapo-loop.md` §8.e 페이즈 의존성). (d) `run_in_background` 는 skill 트리에 0 회(핸드오프 §68 언급은 유지보수 콘솔-포커스 팁이지 오케스트레이션 개념 아님). (e) "run 중 백그라운드 뷰어"는 이미 시도→편익 미실증으로 §8 동결(`pre-cold-session-bootup.md`). **게이트(A) 불가**: 비휴면 아티팩트 없음(viewer.lock 게이팅은 뷰어 미부팅=기본값 시 휴면 → cold.isolation dormant-NA 병폐 재현; "detached 실행" 은 scoring 층이 관측 불가한 순수 자기신고). **컨벤션(B) 불가**: doc-only 모델재량=무치(C1 shim 류) + 측정불가 + 루프가 즉시 join. **부활 조건**: D1(Spec 2 SWE-bench) 착지 시 per-instance Docker eval 이 독립 장기 job → 코드소유 job manifest(`jobs/<id>.json`: pid/container-id/submitted_at/collected_at)가 실 아티팩트가 됨(viewer.lock 패턴 복제). 또는 B1 의 parallel primitive 설계 공간에 흡수. 독립 착수는 강제 약증분이라 non-goal 기록.
 
 ### C. 정리
 - **C1** — `sprint_loop_cap.py` 폐기/redirect(should_stop이 정지 권위 됨). test_sprint_loop_cap 정리 동반.
