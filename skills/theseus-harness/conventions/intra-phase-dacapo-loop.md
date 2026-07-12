@@ -54,7 +54,7 @@ def dacapo_loop(
     #    정지 판정의 실제 권위는 manifest stop_policy(설계 B2 §2.2) 단일 소스.
     threshold     = {G3: 0.97,  G4: 0.999,    G5: 0.99999}[grade]   # 참고값(레거시 grade 표기)
     shadow_target = {G3: 90,    G4: 95,       G5: 98     }[grade]
-    width         = {G3: 5,     G4: 7,        G5: 9      }[grade]   # bc default
+    width         = {G3: 3,     G4: 4,        G5: 6      }[grade]   # 활성 폭(manifest multiverse_widths 단일 소스) — multiverse.fan_out_width 게이트(B1)가 plan 초기 fan-out 을 이 바닥으로 강제. 격상 5/7/9(frozen_widths)는 편익 미실증 advisory(§8).
     max_rerun     = {G3: 2,     G4: 3,        G5: 5      }[grade]   # 참고용 가드 — "budget 충분 시 임계 도달까지 무한 회귀" 프레이밍은 폐기(설계 B2 §2.2), 실제 종료는 stop_policy budget_hard_cap
     budget_cap    = 0.95   # budget-saturation-loop stop_policy 정합
 

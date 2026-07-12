@@ -93,7 +93,7 @@ multiverse_axis_priority:
   3. mixed_axis           # ← contested ≥ width 미달 시 paradigm 보충
 ```
 
-폭 W (G3=5/G4=7/G5=9, [`multiverse-width-default-bump.md`](multiverse-width-default-bump.md) bc) :
+폭 W (활성 폭 G3=3/G4=4/G5=6 — manifest multiverse_widths; 격상 5/7/9 는 frozen advisory, [`multiverse-width-default-bump.md`](multiverse-width-default-bump.md) bc) :
 - contested ≥ W → 상위 W decisions 의 *branch_a/branch_b* 양 가지를 universe 로 spike
 - contested < W → 모든 decisions + domain_paradigm 시드로 보충
 

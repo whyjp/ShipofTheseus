@@ -1563,6 +1563,23 @@ def check_should_stop_wired(skill_root: Path) -> list[str]:
     return issues
 
 
+def check_multiverse_width_wired(skill_root: Path) -> list[str]:
+    """C-MFW (B1 v0.9.56) — 멀티버스 폭 강제 producer 가 run_gate 러너에 배선(declared=invoked).
+
+    manifest 가 multiverse.fan_out_width 를 선언(declared)했는데 run_gate 가
+    measure_multiverse_width 를 안 부르면(not invoked) 게이트가 영구 evidence_missing FAIL —
+    무장했으나 미급식. 러너가 producer 를 실제로 호출하는지 검증한다(fan-out 폭이 모델재량이
+    아니라 코드가 소유하는 조건임을 배선으로 보증)."""
+    issues: list[str] = []
+    rg = _read(skill_root / "scoring" / "run_gate.py")
+    if "measure_multiverse_width" not in rg:
+        issues.append(
+            "scoring/run_gate.py: 'measure_multiverse_width' producer 미배선 "
+            "(multiverse.fan_out_width 무장 게이트 미급식 — declared=invoked 위반)"
+        )
+    return issues
+
+
 def check_phase06_implementation_guidance(skill_root: Path) -> list[str]:
     """C-IG1 — phases/06-plan.md 본문에 implementation guidance 절 (sprint-05-e Q3)."""
     text = _read(skill_root / "phases" / "06-plan.md")
@@ -3126,6 +3143,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-LFW", "phases/14-handoff.md (sprint-52 PR-C, HARD-RULE 9.nnn/9.ppp) — lineage_finalize.py refresh + placeholder_grep --include-viewer-json literal Bash invoke", check_lineage_finalize_wired),
     ("C-RDL", "phases/03 + intra-phase-dacapo-loop.md (v0.9.54 P1-A) — review_dispatch_log emit 배선 (review.context_minimality 먹이기, declared=invoked)", check_review_dispatch_log_wired),
     ("C-SSW", "phases/10 (v0.9.54 P1-A) — should_stop.py 정지 판정 배선 (manifest stop_policy 단일 권위 호출)", check_should_stop_wired),
+    ("C-MFW", "scoring/run_gate.py (B1 v0.9.56) — measure_multiverse_width producer 배선 (multiverse.fan_out_width 폭 강제 게이트 먹이기, declared=invoked)", check_multiverse_width_wired),
 ]
 
 
