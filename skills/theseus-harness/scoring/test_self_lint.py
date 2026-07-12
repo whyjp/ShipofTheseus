@@ -122,3 +122,35 @@ def test_tournament_argmax_wiring_guard_bites(tmp_path):
     # 실 저장소(배선 존재) → 통과(빈 리스트).
     real = Path(self_lint.__file__).resolve().parents[1]
     assert self_lint.check_tournament_argmax_wired(real) == []
+
+
+def test_regression_diagnosis_wiring_guard_bites(tmp_path):
+    """C-RPD (B2 regression-parallel-diagnosis) 가 배선 누락 시 실제로 FAIL 하는지 — 무장 진단 게이트 미급식 차단."""
+    import self_lint
+
+    (tmp_path / "scoring").mkdir()
+    (tmp_path / "scoring" / "run_gate.py").write_text("# producer 미배선 stub\n", encoding="utf-8")
+
+    # 배선 부재 → 가드가 issue 반환(truthy).
+    assert self_lint.check_regression_diagnosis_wired(tmp_path)
+
+    # 실 저장소(배선 존재) → 통과(빈 리스트).
+    real = Path(self_lint.__file__).resolve().parents[1]
+    assert self_lint.check_regression_diagnosis_wired(real) == []
+
+
+def test_regression_hypotheses_wiring_guard_bites(tmp_path):
+    """C-RPH (B2 regression-parallel-diagnosis) 가 emission 계약 키워드 누락 시 실제로 FAIL 하는지."""
+    import self_lint
+
+    (tmp_path / "phases").mkdir()
+    (tmp_path / "phases" / "11-regression-bisect.md").write_text(
+        "# 회귀 원인 분류 (키워드 없는 stub)\n", encoding="utf-8"
+    )
+
+    # emission 계약 키워드 부재 → 가드가 issue 반환(truthy).
+    assert self_lint.check_regression_hypotheses_wired(tmp_path)
+
+    # 실 저장소(계약 키워드 존재) → 통과(빈 리스트).
+    real = Path(self_lint.__file__).resolve().parents[1]
+    assert self_lint.check_regression_hypotheses_wired(real) == []

@@ -84,6 +84,35 @@ c- 반대 가설 1개 이상 — 단독 가설은 과신.
 d- 코드 편집 금지. `bisect.md` 만 쓰고 멈춤.
 e- 산출물 작성 후 `python scoring/fingerprint.py compute --file sprints/NN/bisect.md --prev sprints/NN/report.md` 호출.
 
+## 병렬 회의론자 / 병합 이중 모드 (B2 — `regression.parallel_diagnosis` 게이트)
+
+회귀(`score_delta < -0.05`)가 검출된 진단은 단일 서술이 아니라 *corroborated 병렬 판단* 이어야 한다. 본 에이전트는 두 모드로 동작한다 — 자세한 dispatch 절차는 [`../phases/11-regression-bisect.md`](../phases/11-regression-bisect.md) 의 "병렬 회의론자 진단".
+
+### 모드 A — 회의론자 (evidence-axis skeptic)
+
+`K = manifest.regression_diagnosis.min_hypotheses[grade]`(G4=3, G5=4) 명이 *fresh, zero-shared-context* 로 **동시** dispatch 된다. 각자는 *결론이 아니라 관측 축* 을 맡는다(diff-reader / failing-test-trace-reader / data-schema-reader / env-dependency-reader — defect-class 옹호자 아님). 각 회의론자는 자기 축만 읽고 `sprints/NN/hypotheses/hypothesis-<k>.json` 을 독립 작성:
+
+```json
+{
+  "agent_call_id": "<이 dispatch 고유 ID>",
+  "defect_class": "plan_defect | impl_defect | data_defect | external_defect",
+  "suspect_file_or_commit": "<file:line 또는 commit>",
+  "failing_test": "<가설과 정합하는 실패 테스트>",
+  "alternative_class": "<대안 defect_class>",
+  "alternative_reason": "<왜 덜 가능성 있는지 — 단독 가설 과신 방지>"
+}
+```
+
+그리고 자기 dispatch 를 `state/review_dispatch_log.json` 에 append(`agent_call_id` / `prior_context_token_count: 0` / `loaded_artifacts`). `defect_class` 는 [`../scoring/checkpoint.py`](../scoring/checkpoint.py) `BISECT_DEFECT_CLASSES` 밖이면 게이트 FAIL. `agent_call_id` 중복은 병렬성 위조로 FAIL.
+
+### 모드 B — 병합 (merge)
+
+병렬 회의론자 뒤, 본 에이전트는 옹호가 아니라 **코드 소유 argmax 병합** 을 한다:
+
+- `regression_class` := 회의론자 표결의 **argmax** `defect_class`(최다 득표). 같은 class 합의 < `corroboration_min`(=2) 이면 미수렴 → 게이트 FAIL.
+- `fix_target_phase` := `FAILURE_TO_PHASE[regression_class]`([`../scoring/checkpoint.py`](../scoring/checkpoint.py) 단일 소스).
+- `bisect.md` frontmatter 에 `gate_history_ref` + `prior_score` + `current_score`(회귀 이벤트 `state/gate_history/<NN>` evidence 와 일치) 를 써 회귀 이벤트에 binding.
+
 ## 경쟁 컨벤션 활용 (revert vs re-architect 길항 시)
 
 회귀 권고가 `revert` 와 `re-architect` 사이에서 길항하면 ([`../conventions/competition.md`](../conventions/competition.md) 트리거 a-) 두 권고를 *2 후보 격리* 로 동시 작성하고, 각자의 후속 영향도 (예상 추가 회귀 가능성, 테스트 변경량) 를 점수화해 비교. critic 에이전트가 머지 또는 우승자 선택을 수행. 단순 회귀는 단일 권고로 충분 — 경쟁은 길항 시에만.

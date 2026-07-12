@@ -526,6 +526,34 @@ def _multiverse_producer(
     return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
 
 
+def _regression_diagnosis_producer(
+    grade: str,
+    evidence_dir: Path,
+    measured_at: str,
+    cwd: Path,
+) -> dict[str, Any]:
+    """regression.parallel_diagnosis producer(진단 병렬화 소유, run_gate 신규). 회귀(sprint.
+    regression) 검출 후 최신 회귀의 진단이 corroborated 병렬 가설로 뒷받침됐는지 디스크에서
+    세어 emit 한다. multiverse 처럼 항상 호출한다 — 입력이 항상 존재하는 run_root(gate_history/
+    sprints 스캔)라 '진단 병렬화'는 무조건 발동해야 한다(declared=invoked, C-RPD). producer 는
+    manifest regression_diagnosis[grade] 결손 시(G2/G3) 스스로 evidence 를 안 낸다 — 그 경우
+    체크 맵 제외라 무영향, G4/G5 는 회귀 0 이면 measured emit 하되 applicability 로 NA(비휴면)."""
+    step = _run(
+        [
+            sys.executable,
+            str(_PRODUCERS_DIR / "measure_regression_diagnosis.py"),
+            "--grade",
+            grade,
+            "--measured-at",
+            measured_at,
+            "--out-dir",
+            str(evidence_dir),
+        ],
+        cwd,
+    )
+    return {"returncode": step["returncode"], "summary": _parse_json_stdout(step)}
+
+
 # --- meta_audit --------------------------------------------------------------
 
 
@@ -693,6 +721,7 @@ def run_gate(
     enable_archive: bool = True,
     enable_review: bool = True,
     enable_multiverse: bool = True,
+    enable_regression_diag: bool = True,
     enable_parallel: bool = True,
     measured_at: str | None = None,
     verified_at: str | None = None,
@@ -750,7 +779,7 @@ def run_gate(
     # junit 은 gates/submission 이 --test-junit 으로 소비하므로 병렬 그룹 *앞* 에 직렬.
     steps["junit"] = _produce_junit(test_target_p, junit_path, reuse_junit, cwd)
 
-    # 독립 producer 그룹(G1 병렬) — quality/gates/plan/cold/review/multiverse 는 상호 무의존.
+    # 독립 producer 그룹(G1 병렬) — quality/gates/plan/cold/review/multiverse/regression_diag 는 상호 무의존.
     # 순서 의존(2→3→5)은 submission 을 이 barrier *뒤* 에 둠으로써 보존한다
     # (quality+gates evidence 가 먼저 디스크에 존재해야 --from-evidence 가 승계).
     indep_jobs: dict[str, Callable[[], dict[str, Any]]] = {
@@ -777,6 +806,10 @@ def run_gate(
         indep_jobs["review"] = lambda: _review_producer(review_log_p, evidence_dir, measured_at, cwd)
     if enable_multiverse:
         indep_jobs["multiverse"] = lambda: _multiverse_producer(grade, evidence_dir, measured_at, cwd)
+    if enable_regression_diag:
+        indep_jobs["regression_diag"] = lambda: _regression_diagnosis_producer(
+            grade, evidence_dir, measured_at, cwd
+        )
     steps.update(_run_producer_group(indep_jobs, enable_parallel, max_workers=8))
 
     # submission — quality+gates barrier 뒤(2→3→5 순서 보존). sprint 은 submission 뒤.
@@ -882,6 +915,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-archive", action="store_true", help="gate_history 아카이브 비활성")
     p.add_argument("--no-review", action="store_true", help="review.context_minimality producer 단계 비활성")
     p.add_argument("--no-multiverse", action="store_true", help="multiverse.fan_out_width producer 단계 비활성")
+    p.add_argument("--no-regression-diag", action="store_true", help="regression.parallel_diagnosis producer 단계 비활성")
     p.add_argument("--no-parallel", action="store_true", help="독립 producer 그룹 병렬 실행 비활성(직렬 escape hatch)")
     p.add_argument("--measured-at", default=None, help="모든 producer 에 주입할 measured_at(결정성)")
     p.add_argument("--verified-at", default=None, help="meta_audit 에 주입할 verified_at(기본: measured_at)")
@@ -915,6 +949,7 @@ def main(argv: list[str] | None = None) -> int:
         enable_archive=not args.no_archive,
         enable_review=not args.no_review,
         enable_multiverse=not args.no_multiverse,
+        enable_regression_diag=not args.no_regression_diag,
         enable_parallel=not args.no_parallel,
         measured_at=args.measured_at,
         verified_at=args.verified_at,

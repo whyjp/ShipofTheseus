@@ -30,6 +30,59 @@ e- **권고** — 다음 셋 중 하나:
   2- `re-architect <module>` — *깊은 품질 위반* 의 증상 → 그 모듈에 대해 페이즈 06 부터 재실행. 트리거 차원: DIP/SOLID · 코드 오류 누적 · 기획-구현 갭 · 성능/NFR 미달 · 의도 표류 · 정체/회귀 누적 6 종 중 *어느 하나라도* 깊이 임계 초과면 충분.
   3- `accept` — 회귀가 실은 의도된 변화 (제약이 중간에 바뀜) — 사용자가 명시 확인.
 
+## 병렬 회의론자 진단 (B2 — `regression.parallel_diagnosis` 게이트)
+
+> **커널 게이트 배선**: 회귀(`score_delta < -0.05`)가 검출되면 진단은 단일 분석가의 서술이 아니라 *여러 독립 회의론자의 corroborated 병렬 판단* 이어야 한다. [`../scoring/producers/measure_regression_diagnosis.py`](../scoring/producers/measure_regression_diagnosis.py) 가 산출물을 디스크에서 세어 커널 게이트 `regression.parallel_diagnosis`(G4/G5) 를 먹인다. 진단 병렬화가 모델재량이 아니라 코드가 소유하는 조건.
+
+### 1. K 회의론자 병렬 dispatch (evidence-axis framing)
+
+`K = manifest.regression_diagnosis.min_hypotheses[grade]` (G4=3, G5=4) 명의 *fresh, zero-shared-context* 회의론자를 **동시에** dispatch 한다. 각 회의론자는 서로의 결론을 보지 않는다(공유 컨텍스트 0). 프레이밍은 *defect-class 별 옹호자* 가 아니라 **관측 축(evidence-axis)** 별이다 — 결론이 아니라 *무엇을 읽을지* 를 나눠 dispatch 편향을 줄인다:
+
+| 회의론자 축 | 읽는 것 |
+|----|----|
+| **diff-reader** | 회귀 시작 commit 의 diff (파일·함수·라인) |
+| **failing-test-trace-reader** | 실패 테스트의 스택/assert 메시지 트레이스 |
+| **data-schema-reader** | 입력 데이터 스키마 변동 (CSV 컬럼/YAML 키) |
+| **env-dependency-reader** | 외부 의존 변경 (requirements/pyproject/.env/OS) |
+
+각 회의론자는 자기 축에서 관측한 것만으로 `defect_class` 를 *독립* 판정하고 `sprints/NN/hypotheses/hypothesis-<k>.json` 을 쓴다:
+
+```json
+{
+  "agent_call_id": "<이 dispatch 고유 ID>",
+  "defect_class": "plan_defect | impl_defect | data_defect | external_defect",
+  "suspect_file_or_commit": "internal/auth/token.go:42 | <commit-sha>",
+  "failing_test": "internal/auth/token_test.go::TestExpiredRejected",
+  "alternative_class": "impl_defect",
+  "alternative_reason": "왜 이 대안이 덜 가능성 있는지 — 단독 가설은 과신"
+}
+```
+
+동시에 각 회의론자는 자기 dispatch 를 `state/review_dispatch_log.json` 에 append 한다(순도 교차 대조용, `review.context_minimality` 게이트 생태계 보강):
+
+```json
+{"agent_call_id": "<위와 동일>", "prior_context_token_count": 0, "loaded_artifacts": ["<자기 축 파일들>"]}
+```
+
+- `defect_class` 는 유효 4-class([`../scoring/checkpoint.py`](../scoring/checkpoint.py) `BISECT_DEFECT_CLASSES`) 밖이면 `invalid_class_votes` FAIL.
+- `agent_call_id` 재사용(중복)은 zero-shared-context 병렬성 위조 → `duplicate_call_ids` FAIL.
+- 비어있지 않은 `alternative_class` 없는 가설은 `hypotheses_without_alternative` FAIL(반대 가설 의무).
+
+### 2. 회귀 분석가 = MERGE 역할
+
+병렬 회의론자 뒤, [`../agents/regression-analyst.md`](../agents/regression-analyst.md) 는 옹호가 아니라 **병합(merge)** 을 수행한다 — 코드가 소유하는 argmax:
+
+- `regression_class` := 회의론자 표결의 **argmax** `defect_class` (최다 득표). 같은 class 합의가 `corroboration_min`(=2) 미만이면 `corroboration_count` FAIL(미수렴 → 추가 구현 차단).
+- `fix_target_phase` := `FAILURE_TO_PHASE[regression_class]` ([`../scoring/checkpoint.py`](../scoring/checkpoint.py) 단일 소스 — `plan_defect→06 / impl_defect→08 / data_defect→04 / external_defect→09`). 이 라우팅 테이블과 어긋나면 `routing_matches_class` FAIL.
+- 회귀 이벤트 binding: `bisect.md` frontmatter 에 `gate_history_ref`(회귀가 기록된 `state/gate_history/<NN>` dir 이름) + `prior_score` + `current_score`(그 이벤트의 evidence score 와 일치) 를 쓴다. 일치하는 bound 진단이 없는 회귀 이벤트는 `undiagnosed_events` FAIL.
+
+```yaml
+# sprints/NN/bisect.md frontmatter 추가 키 (기존 regression_class/fix_target_phase 위)
+gate_history_ref: "07"        # 회귀 이벤트가 기록된 gate_history dir
+prior_score: 0.92             # 그 이벤트의 prior_score 와 일치
+current_score: 0.78           # 그 이벤트의 current_score 와 일치
+```
+
 ## 지휘자 후속 — 사전 위임 자동 적용 (인터럽트 없음)
 
 페이즈 04 의 [`../conventions/autonomy.md`](../conventions/autonomy.md) Q-D1 답에 따라 회귀 권고를 *자동 적용*. 인터뷰 종료 후 사용자에게 추가 ack 호출 절대 없음:

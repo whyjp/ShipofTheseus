@@ -2,6 +2,40 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.58 — 2026-07-12 (sprint-56 — 회귀 진단 병렬화: 진단을 코드가 소유)
+
+### 마일스톤
+
+사용자 원래 논지 **"핵심은 루프와 회귀 병렬"**의 *회귀 병렬* 절반 착지(폭 강제 v0.9.56 · 병합 소유 v0.9.57 에 이어). 회귀(sprint.regression `score_delta < -0.05`)가 검출된 뒤 페이즈 11 진단이 지금까지 **단일 분석가의 서술**(주 가설 + 자가 반대 가설)이었다 — 아무도 진단이 *여러 독립 회의론자의 corroborated 병렬 판단*인지 디스크에서 재확인하지 않았다. `regression.parallel_diagnosis` 커널 게이트가 그걸 값으로 강제한다: **회귀 검출 후 corroborated 병렬 진단이 디스크에 있기 전엔 루프가 게이트를 다시 통과 못 한다.**
+
+### 설계 (Fable): GO-WITH-DOC-ADDITION
+
+Fable 판정 — 커널 게이트만으론 휴면(phase 11 이 기계판독 가능한 가설 아티팩트를 안 냄), 문서만으론 무치(self_lint 은 run 아티팩트를 검사 안 함). 정답은 merge-ownership 과 같은 복합: **커널 게이트 + phase-11 가설 아티팩트 계약 + 양방향 declared=invoked lint**. B1 과 다른 핵심: 회귀는 *조건부* 현상이라 `absence_policy: FAIL` + no-applicability 면 정상 run 마다 FAIL(연극적 회귀 유발). → `applicability: regression_events_total >= 1`(cold.isolation 패턴) + **항상 호출 producer**(NA 가 가정 아닌 *측정값*). 타이밍: gate_history 아카이브가 meta_audit *후*라, 회귀 검출 run 은 no_regression 실패로 phase 11 라우팅하고, *다음* gate 가 corroborated 진단을 요구한다.
+
+### 변경 (opus 서브에이전트 구현, Fable 설계 그대로 — 오케스트레이터 검수)
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | `checks/regression.parallel_diagnosis.json` (active G4/G5, phase 11, applicability `regression_events_total>=1`, absence FAIL, 6 assertion) | CheckSpec |
+| PR-B | `scoring/producers/measure_regression_diagnosis.py` — gate_history evidence·bisect.md·hypothesis-*.json 디스크 재파싱, event↔diagnosis 바인딩(gate_history_ref+score 일치), vote argmax+corroboration 재계산 | producer |
+| PR-C | `pipeline.manifest.json` `regression_diagnosis` 블록(min_hypotheses G4=3/G5=4, corroboration_min=2) + G4/G5 checks 맵 | manifest |
+| PR-D | `scoring/run_gate.py` `_regression_diagnosis_producer` 독립 병렬 배선(항상 호출) + `--no-regression-diag` | 러너 |
+| PR-E | `self_lint.py` **C-RPD**(run_gate 배선) + **C-RPH**(phase 11 emit 계약) declared=invoked | 2 lint |
+| PR-F | `phases/11-regression-bisect.md` 병렬 회의론자 진단 절(K evidence-axis skeptic + hypothesis JSON 스키마 + review_dispatch_log append + analyst merge 역할); `agents/regression-analyst.md` skeptic/merge dual-mode | 2 doc |
+| PR-G | `test_measure_regression_diagnosis.py`(14, NA·PASS·6 FAIL 모드·drift-guard) + `test_self_lint.py` C-RPD/C-RPH guard-bite | test |
+
+### 병렬성·무결성이 디스크에서 무엇을 고정하나
+
+K 개 well-formed 가설(hypotheses_count/malformed), distinct `agent_call_id`(duplicate==0, review.context_minimality freshness 정합), 유효 4-class 표결(checkpoint.BISECT_DEFECT_CLASSES 소유), ≥2-of-K corroboration, 선언 class==표결 argmax, routing==`checkpoint.FAILURE_TO_PHASE`(plan.tournament_winner_argmax 가 winner argmax 를 재계산하듯), skeptic 별 alternative 의무. skeptic dispatch 를 `review_dispatch_log` 로 흘려 review.context_minimality 가 같은 dispatch 의 순도까지 게이팅(생태계 보강, 커널 추가비용 0).
+
+### 정직한 한계
+
+병렬 가설이 디스크에 존재함 + 분류→라우팅이 기계적임을 증명하지 *정확한 진단*을 증명하지 않는다 — defect_class 는 LLM 판단(일관된 위조 가능), agent_call_id 는 dispatch 자기 신고(zero-context 궁극 증명 불가, review.context_minimality 와 같은 전제). 그 압력은 review_dispatch_log 무결성·fingerprint 체인이 좁힌다. G4/G5 만(phase 11 활성 grade) — G3 회귀는 직렬 유지. 후속: hypothesis suspect 의 diff-line 실재 검증.
+
+### 검증
+
+전체 scoring 스위트 **`555 passed`**(신규 producer 14 + C-RPD/C-RPH guard-bite 2 포함), self_lint **124/124 all_ok**. 버전 SKILL.md + plugin.json = 0.9.58.
+
 ## v0.9.57 — 2026-07-12 (sprint-55 — 병합/승자 소유: tournament argmax 를 코드가 소유)
 
 ### 마일스톤
