@@ -9,12 +9,12 @@ Chain 구성:
         - skill_version major + minor ≥ orchestrator
         - phase 단조성 (직전 phase fingerprint 정합)
     [phase exit]
-        - phase exit hook (e.g., phase 06/08 = dacapo_threshold.py, phase 10 = sprint_loop_cap.py)
+        - phase exit hook (e.g., phase 06/08 = dacapo_threshold.py). phase 10 정지 권위는
+          should_stop.py 가 phase-10 흐름에서 소유 — 여기 exit hook 없음.
         - frontmatter 박힘 (skill_name / skill_version / phase / fingerprint / prev_fingerprint / created_at)
         - 산출물 emit 확인 (phase별 의무 산출물 list)
 
-본 CLI = sprint-41 의 *통합 진입점*. 다른 2 CLI (dacapo_threshold /
-sprint_loop_cap) 가 sub-call.
+본 CLI = sprint-41 의 *통합 진입점*. dacapo_threshold CLI 가 sub-call.
 
 사용:
     python runtime_guard_chain.py \\
@@ -30,7 +30,6 @@ Exit codes:
 
 References:
 - sprint-41 PR-B (dacapo_threshold)
-- sprint-41 PR-D (sprint_loop_cap)
 - sprint-41 PR-E (본 PR — chain dispatcher)
 """
 
@@ -199,7 +198,8 @@ def check_exit_hook(
     iteration: int = 1,
     max_iterations: int = 10,
 ) -> dict[str, Any] | None:
-    """phase exit hook — 06/08 = dacapo_threshold.py, 10 = sprint_loop_cap.py."""
+    """phase exit hook — 06/08 = dacapo_threshold.py. (phase 10 정지 권위는 should_stop.py 가
+    phase-10 흐름에서 소유 — 여기 hook 없음, 다른 no-hook phase 처럼 return None)."""
     if phase == '06':
         tournament = project_root / 'plan' / 'tournament-01.md'
         if not tournament.exists():
@@ -258,26 +258,7 @@ def check_exit_hook(
             'passed': result['exit_code'] == 0,
         }
 
-    if phase == '10':
-        cmd = [
-            sys.executable,
-            str(skill_root / 'scoring' / 'sprint_loop_cap.py'),
-            '--project-root', str(project_root),
-            '--current-iteration', str(iteration),
-            '--max-iterations', str(max_iterations),
-            '--quiet',
-        ]
-        result = run_subprocess(cmd)
-        return {
-            'check': 'exit_hook_phase_10',
-            'sub_cli': 'sprint_loop_cap.py',
-            'exit_code': result['exit_code'],
-            'parsed_verdict': (result.get('parsed_json') or {}).get('verdict'),
-            'fail_layers': (result.get('parsed_json') or {}).get('fail_layers'),
-            'passed': result['exit_code'] == 0,
-        }
-
-    return None  # 다른 phase 는 sub-CLI 없음 (확장 가능)
+    return None  # 다른 phase (10 포함) 는 sub-CLI 없음 (확장 가능). phase 10 정지 권위는 should_stop.py.
 
 
 def evaluate(
@@ -301,7 +282,7 @@ def evaluate(
     checks.append(check_skill_version(project_root, orchestrator_version))
     checks.append(check_phase_monotonicity(project_root, phase))
 
-    # transition 별 exit hook (06/08 = dacapo_threshold, 10 = sprint_loop_cap).
+    # transition 별 exit hook (06/08 = dacapo_threshold). phase 10 정지 권위는 should_stop.py.
     # 구 phase 09 entry hook 은 은퇴 — entry 는 skill_version + monotonicity 만.
     # cold session 정합은 run_gate (cold.isolation) 가 값 기반으로 대체.
     if transition == 'exit':

@@ -342,16 +342,9 @@ python skills/theseus-harness/scoring/should_stop.py \
 # exit 1 = continue → 다음 sprint iteration
 ```
 
-아래 sprint_loop_cap / stagnation_breakthrough / surrender_phrase 는 *보조 신호·능력 보존* 이며 정지 권위는 should_stop 단일 소스다(sprint_loop_cap 의 옛 4-layer 공식은 보고 모드).
+아래 stagnation_breakthrough / surrender_phrase 는 *보조 신호·능력 보존* 이며 정지 권위는 should_stop 단일 소스다.
 
 ```bash
-# HARD-RULE 9.ss — 4 layer 종료 조건 (auto + internal + tournament + external)
-python skills/theseus-harness/scoring/sprint_loop_cap.py \
-    --project-root .ShipofTheseus/<proj>/ \
-    --current-iteration <N> --max-iterations 10 \
-    --output .ShipofTheseus/<proj>/sprints/<N>/sprint_loop_cap.json
-# exit 1 시 sprint iteration 자동 +1 (continue 의무)
-
 # HARD-RULE 9.ww — stagnation 후 자율 종료 차단
 python skills/theseus-harness/scoring/stagnation_breakthrough.py \
     --project-root .ShipofTheseus/<proj>/ \
