@@ -79,6 +79,11 @@ def dacapo_loop(
             context_mode  = 'zero-context',           # 누적 conversation 0
         )
         write(artifact_dir / f'shadow-grade-{rerun:02d}.json', shadow)
+        # shadow grader 도 pure-review 디스패치 — state/review_dispatch_log.json 에 append
+        # (phase 03 §리뷰 디스패치 로그 emit 스키마: agent_call_id / prior_context_token_count=0
+        #  / loaded_artifacts=collect_winner_artifacts). phase 09 게이트의 review.context_minimality
+        #  (v0.9.54 P1-A) 가 이 로그를 스캔해 순도/무결성/freshness/최소성을 값으로 판정한다.
+        append_review_dispatch_log('state/review_dispatch_log.json', shadow.agent_call_id, 0, collect_winner_artifacts(winner, phase))
 
         # Step D. 4 conjunction AND threshold check (be — phase-내 변형)
         tournament_pass = (winner.tournament_score >= threshold)

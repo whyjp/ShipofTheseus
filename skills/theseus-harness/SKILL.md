@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.54
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.54 = review.context_minimality — pure-review 디스패치 prior_context==0 순도 + loaded_artifacts 무결성/최소성을 커널이 값으로 게이팅(비휴면).
+version: 0.9.55
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.55 = review.context_minimality 로그·should_stop 을 phase 03/06/08/10 흐름에 배선(declared=invoked). v0.9.54 = pure-review 순도 게이트.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
