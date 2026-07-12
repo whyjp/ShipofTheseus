@@ -15,6 +15,9 @@
   - class_argmax_match             : bisect 선언 regression_class == 표결 argmax(1/0)
   - routing_matches_class          : bisect fix_target_phase == FAILURE_TO_PHASE[class](1/0)
   - hypotheses_without_alternative : 비어있지 않은 alternative_class 없는 가설 수
+  - suspect_anchor_present         : 회귀 게이트 NN 의 gate.scope_map.report.json 실재(1/0; 앵커)
+  - file_suspect_count             : impl_defect + 파일 경로형 suspect_file_or_commit 수
+  - grounded_file_suspects         : 그중 회귀 게이트 실관측 touched 셋에 실재하는 수
   - hypo_floor                     : manifest regression_diagnosis.min_hypotheses[grade]
   - corroboration_min              : manifest regression_diagnosis.corroboration_min
 
@@ -287,6 +290,79 @@ def _hypothesis_metrics(hyps: list[Any], diag: dict[str, Any] | None) -> dict[st
     }
 
 
+# suspect 가 commit SHA 인지(파일 suspect 아님) 판별.
+_SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
+
+
+def _norm_suspect_path(s: str) -> str | None:
+    """suspect_file_or_commit → posix 상대경로(라인 :N 접미사 제거). 파일 경로형 아니면 None.
+
+    경로형 = '/' 포함 + (라인 접미사 제거 후) commit SHA 형태 아님. env/data/commit suspect 는
+    파일이 아니라 None(계수 제외)."""
+    s = (s or "").strip()
+    if not s:
+        return None
+    core = re.sub(r":\d+$", "", s)          # 라인 번호 접미사 제거
+    if _SHA_RE.match(core):
+        return None                          # commit SHA — 파일 suspect 아님
+    if "/" not in core:
+        return None                          # 경로형 아님(단순 토큰/모듈명)
+    return core.replace("\\", "/").lstrip("./")
+
+
+def _load_touched_paths(run_root: Path, gate_history_ref: str | None) -> set[str] | None:
+    """회귀 게이트(gate_history_ref)의 gate.scope_map.report.json 이 관측한 touched 파일 셋.
+
+    _archive_gate_history 가 evidence/*.json 을 NN 별로 복사하므로 회귀 이벤트 NN 에 scope_map
+    리포트가 NN-고정으로 남는다(drift 불가). 부재/파싱불가/observed<1 → None(앵커 없음 = exempt)."""
+    if not gate_history_ref:
+        return None
+    p = run_root / "state" / "gate_history" / gate_history_ref / "evidence" / "gate.scope_map.report.json"
+    if not p.is_file():
+        return None
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    observed = data.get("files_touched_observed", 0)
+    if not isinstance(observed, int) or isinstance(observed, bool) or observed < 1:
+        return None
+    files = data.get("files")
+    if not isinstance(files, list):
+        return None
+    paths = {
+        f["path"].replace("\\", "/").lstrip("./")
+        for f in files
+        if isinstance(f, dict) and isinstance(f.get("path"), str)
+    }
+    return paths or None
+
+
+def _suspect_grounding(hyps: list[Any], touched: set[str] | None) -> tuple[int, int, int]:
+    """(suspect_anchor_present, file_suspect_count, grounded_file_suspects).
+
+    impl_defect + 파일 경로형 suspect 만 계수(plan/data/external 은 파일이 아니라 exempt).
+    앵커(touched) 없으면 anchor_present=0 → CheckSpec 이 그 경우 exempt. grounded = 관측 touched
+    셋 안에 있는 impl 파일 suspect 수."""
+    anchor_present = 1 if touched is not None else 0
+    file_suspects = 0
+    grounded = 0
+    for h in hyps:
+        if not isinstance(h, dict):
+            continue
+        if str(h.get("defect_class", "")).strip() != "impl_defect":
+            continue
+        norm = _norm_suspect_path(str(h.get("suspect_file_or_commit", "")))
+        if norm is None:
+            continue
+        file_suspects += 1
+        if touched is not None and norm in touched:
+            grounded += 1
+    return anchor_present, file_suspects, grounded
+
+
 def _build_report(run_root: Path, grade: str, hypo_floor: int, corroboration_min: int) -> dict[str, Any]:
     """gate_history + sprints 디스크 스캔 → 원시 관측 리포트(verdict 없음).
 
@@ -314,6 +390,10 @@ def _build_report(run_root: Path, grade: str, hypo_floor: int, corroboration_min
     hyps = _load_hypotheses(bound_diag["sprint_dir"]) if bound_diag is not None else []
     metrics = _hypothesis_metrics(hyps, bound_diag)
 
+    # suspect grounding — impl_defect 파일 suspect 가 회귀 게이트의 실관측 touched 셋에 실재하는가.
+    touched = _load_touched_paths(run_root, (latest or {}).get("gate_history_ref"))
+    suspect_anchor_present, file_suspect_count, grounded_file_suspects = _suspect_grounding(hyps, touched)
+
     report: dict[str, Any] = {
         "grade": grade,
         "regression_events_total": len(events),
@@ -326,6 +406,9 @@ def _build_report(run_root: Path, grade: str, hypo_floor: int, corroboration_min
         "class_argmax_match": metrics["class_argmax_match"],
         "routing_matches_class": metrics["routing_matches_class"],
         "hypotheses_without_alternative": metrics["hypotheses_without_alternative"],
+        "suspect_anchor_present": suspect_anchor_present,
+        "file_suspect_count": file_suspect_count,
+        "grounded_file_suspects": grounded_file_suspects,
         "hypo_floor": hypo_floor,
         "corroboration_min": corroboration_min,
         # 비-measured 감사 detail(backing artifact 에만; measured 는 스칼라만).
@@ -349,6 +432,9 @@ _MEASURED_KEYS = (
     "class_argmax_match",
     "routing_matches_class",
     "hypotheses_without_alternative",
+    "suspect_anchor_present",
+    "file_suspect_count",
+    "grounded_file_suspects",
     "hypo_floor",
     "corroboration_min",
 )

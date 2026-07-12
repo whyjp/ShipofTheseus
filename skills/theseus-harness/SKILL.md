@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.60
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.60 = 옛 sprint_loop_cap 폐기(전체 제거) — should_stop 단일 정지 권위 확정 + C-SSW 부활 가드. v0.9.59 = winner sub-score hull.
+version: 0.9.61
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.61 = regression.parallel_diagnosis 확장 — impl 파일 suspect 가 회귀 게이트 실관측 touched 셋에 grounded 인지 커널 강제(조작 suspect 차단). v0.9.60 = sprint_loop_cap 폐기.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)
