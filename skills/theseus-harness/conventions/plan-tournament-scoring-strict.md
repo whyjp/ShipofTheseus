@@ -47,8 +47,8 @@ winner_score: <weighted total, 0.0~1.0>
 
 | Universe | feasibility | invariant | decision_coverage | modular | determinism | measurement | weighted |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| U1 | 0.95 | 0.92 | 0.85 | 0.93 | 0.95 | 0.88 | **0.913** |
-| U2 | ... | ... | ... | ... | ... | ... | ... |
+| universe-1 | 0.95 | 0.92 | 0.85 | 0.93 | 0.95 | 0.88 | **0.913** |
+| universe-2 | ... | ... | ... | ... | ... | ... | ... |
 
 ## 자동 reject 패턴
 

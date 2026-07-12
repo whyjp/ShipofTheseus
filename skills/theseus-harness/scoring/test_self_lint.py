@@ -107,3 +107,18 @@ def test_multiverse_width_wiring_guard_bites(tmp_path):
     # 실 저장소(배선 존재) → 통과(빈 리스트).
     real = Path(self_lint.__file__).resolve().parents[1]
     assert self_lint.check_multiverse_width_wired(real) == []
+
+
+def test_tournament_argmax_wiring_guard_bites(tmp_path):
+    """C-TWA (merge-ownership v0.9.57) 가 배선 누락 시 실제로 FAIL 하는지 — 무장 병합 게이트 미급식 차단."""
+    import self_lint
+
+    (tmp_path / "scoring").mkdir()
+    (tmp_path / "scoring" / "run_gate.py").write_text("# producer 미배선 stub\n", encoding="utf-8")
+
+    # 배선 부재 → 가드가 issue 반환(truthy).
+    assert self_lint.check_tournament_argmax_wired(tmp_path)
+
+    # 실 저장소(배선 존재) → 통과(빈 리스트).
+    real = Path(self_lint.__file__).resolve().parents[1]
+    assert self_lint.check_tournament_argmax_wired(real) == []

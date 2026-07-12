@@ -60,11 +60,17 @@ step_e_cap_reached: false                     # rerun_count >= max_rerun OR budg
 budget_used_total: 0.42                       # 0.0~1.0
 budget_cap_status: under                      # under | at | over
 
+# ── 승격 정책 (plan.tournament_winner_argmax 입력, v0.9.57) ─
+promotion_policy: copy                        # copy | merge (미기재 → copy 기본; merge 는 선언 의무 예외)
+merge_sources: []                             # merge 시만: winner 를 포함한 base universe id 목록 (예: [universe-3, universe-1])
+
 # ── 다음 액션 ─────────────────────────────────────────────
 next_action: dacapo_rerun                     # converge | dacapo_rerun | budget_bound
 fallback_reason: ""                           # BUDGET_BOUND 시만 본문 채움
 ---
 ```
+
+**승격 정책 필드(v0.9.57, [`multiverse.fan_out_width`](../checks/multiverse.fan_out_width.json) 폭 강제의 짝 — 병합 소유)**: `promotion_policy`/`merge_sources` 는 *선택* 필드다(미기재 → `copy` 기본이라 하위호환·비휴면). `plan.tournament_winner_argmax` 게이트가 소비한다. `copy` 면 canonical `plan/06-plan.md` 가 winner 후보 `plan/candidates/<winner_id>/06-plan.md` 와 byte-동일이어야 한다(기계적 복사 — 조용한 재작성 차단). `merge`([`competition.md`](competition.md) Δ<0.05/0.02 자동 머지)면 `merge_sources` 에 winner 를 포함한 base universe id 를 선언한다 — 선언 안 하면 copy 로 간주돼 digest 불일치로 FAIL 된다. REQUIRED_TOURNAMENT 에는 넣지 않는다(기존 run false-FAIL 방지; default-copy 가 비휴면 강제).
 
 ## 2. shadow-grade-NN.json 스키마
 
@@ -196,6 +202,8 @@ agent 가 검증 우회 위해 `dacapo_loop_executed: true` 거짓 박을 가능
 | step_d_tournament_pass=true 인데 winner_score < threshold | 직접 산술 모순 |
 | step_e_cap_reached=true 인데 rerun_count < max_rerun AND budget < 0.95 | 산술 모순 |
 | anonymized_prev_winner_id 박힘 인데 candidates/ 디렉터리 부재 | 파일시스템 검증 |
+| promotion_policy: merge 인데 merge_sources 부재/winner_id 제외 | plan.tournament_winner_argmax merge_sources_include_winner 검증 |
+| winner_id 선언인데 본문 표 argmax ≠ winner (총점 최대 아님) | plan.tournament_winner_argmax winner_argmax_match 재계산 |
 
 self_lint `check_dacapo_frontmatter_consistency()` 가 5 모순 자동 검증.
 

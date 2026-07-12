@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.56
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.56 = multiverse.fan_out_width 커널 게이트 — plan 초기 fan-out 폭을 manifest 활성 폭 바닥으로 강제(round0-primary, 폭 모델재량 제거). v0.9.55 = review·should_stop 배선.
+version: 0.9.57
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.57 = plan.tournament_winner_argmax — 선언 winner==디스크 표 argmax + 승격 canonical digest 매칭을 커널이 값으로 강제(병합을 코드로 소유). v0.9.56 = multiverse 폭 강제.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

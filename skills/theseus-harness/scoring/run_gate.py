@@ -256,10 +256,12 @@ def _plan_producers(
     measured_at: str,
     cwd: Path,
 ) -> dict[str, Any]:
-    """plan.* producer 2종(§2.2 단계 4, run_gate 신규). tournament-md 로 dacapo_threshold,
-    shadow-grade glob 으로 tournament_independence 를 emit 한다. artifact 부재 시 producer 를
-    부르지 않고 사유만 기록 → evidence 부재 → 커널 법칙1 FAIL(정직). dogfood 는 이 단계를
-    비활성화한다(plan/sprint 미호출은 dogfood 특수성)."""
+    """plan.* producer 3종(§2.2 단계 4, run_gate 신규). tournament-md 로 dacapo_threshold,
+    shadow-grade glob 으로 tournament_independence, 최종 tournament 로 tournament_winner_argmax
+    (병합/승자 소유)를 emit 한다. 앞 둘은 artifact 부재 시 producer 를 부르지 않고 사유만
+    기록하지만, tournament_winner_argmax 는 항상 호출(producer 가 tournament 부재 시 스스로
+    미방출) → 병합 소유는 무조건 발동. evidence 부재 → 커널 법칙1 FAIL(정직). dogfood 는 이
+    단계를 비활성화한다(plan/sprint 미호출은 dogfood 특수성)."""
     out: dict[str, Any] = {}
 
     if tournament_md is not None and tournament_md.is_file():
@@ -309,6 +311,25 @@ def _plan_producers(
                 "reason": "shadow-grades 디렉터리 부재 — measure_tournament 미실행",
             },
         }
+
+    # 병합/승자 소유(run_gate 신규) — 항상 호출. producer 가 최종 tournament/winner_id 부재 시
+    # 스스로 evidence 를 안 낸다(그 경우 G3+ 는 absence_policy FAIL). tournament_md 처럼 미리
+    # 가드하지 않는 이유: 병합 소유는 tournament 가 있으면 무조건 발동해야 한다(declared=invoked C-TWA).
+    step = _run(
+        [
+            sys.executable,
+            str(_PRODUCERS_DIR / "measure_tournament_argmax.py"),
+            "--measured-at",
+            measured_at,
+            "--out-dir",
+            str(evidence_dir),
+        ],
+        cwd,
+    )
+    out["tournament_winner_argmax"] = {
+        "returncode": step["returncode"],
+        "summary": _parse_json_stdout(step),
+    }
 
     return out
 

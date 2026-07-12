@@ -2,6 +2,40 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.57 — 2026-07-12 (sprint-55 — 병합/승자 소유: tournament argmax 를 코드가 소유)
+
+### 마일스톤
+
+B1(v0.9.56 폭 강제)의 짝 — 사용자 논지 "폭 강제 + **병합**을 코드로 소유"의 병합 절반. 멀티버스 tournament 의 승자 *선택*(argmax)과 *승격*(promotion)이 지금까지 모델 서술이었다: 모델이 sub-score 를 쓰고 winner 를 선언하고 canonical 로 복사한다 — 아무도 선언 winner 가 선언 sub-score 의 argmax 인지, 승격된 canonical 이 실제 winner 아티팩트인지 재계산하지 않았다. `plan.tournament_winner_argmax` 커널 게이트가 그 둘을 값으로 강제한다.
+
+### 설계 (Fable): GO-WITH-SCHEMA-ADDITION
+
+Fable feasibility 판정 — (i) winner==argmax 는 오늘 가능(`winner_id`/`winner_score` 필수 frontmatter + 본문 표 총점), (ii) canonical digest 매칭은 **legit 머지 승격 경로**(competition.md Δ<0.05/0.02) 때문에 무조건 digest 동일이 틀림 → `promotion_policy: copy|merge` + `merge_sources` 2필드 추가(미기재→copy 기본, 비휴면·하위호환). **weight-free**: 컨벤션에 6-dim 스키마가 둘 충돌(plan-tournament-scoring-strict vs intra-phase-dacapo-loop)하므로 가중치를 manifest 로 옮기지 않고 총점(표 `weighted` 열)의 argmax 만 재계산.
+
+### 변경
+
+| PR | scope | 산출 |
+|---|---|---|
+| PR-A | `checks/plan.tournament_winner_argmax.json` (active G3+, phase 06, absence FAIL, applicability 없음) — 5 assertion: winner==argmax / universes>=2·malformed==0 / 총점 [0,1] / winner_score==표 총점 / 승격 무결성(copy digest·merge base) | CheckSpec |
+| PR-B | `scoring/producers/measure_tournament_argmax.py` — 최종 tournament frontmatter+본문 표+승격 아티팩트를 디스크에서 재파싱(상상값 0), universe 총점 argmax 재계산, canonical/winner sha256 대조 | producer |
+| PR-C | `pipeline.manifest.json` checks 맵 G3/G4/G5 등록(+drift 균형) + `_note` | manifest |
+| PR-D | `scoring/run_gate.py` `_plan_producers` 3번째 블록 — 항상 호출(tournament 부재 시 producer 자체 미방출) | 러너 |
+| PR-E | `self_lint.py` **C-TWA**(run_gate 가 producer 실제 호출 declared=invoked) | lint |
+| PR-F | `dacapo-frontmatter-schema.md` promotion_policy/merge_sources 선택 필드 + §5 모순 행 2개; `plan-tournament-scoring-strict.md` U1→universe-1(라벨이 winner_id 형식과 매칭되게) | 2 doc |
+| PR-G | `test_measure_tournament_argmax.py`(15, winner≠argmax 차단·copy/merge 승격 증명) + `test_self_lint.py` C-TWA guard-bite | test |
+
+### 왜 병합이 폭 다음인가
+
+폭은 디스크 존재(디렉터리·표)로 *반증 가능*하지만 병합은 sub-score 가 모델 저작이라 *일관성 검사*만 가능하다 — 코드 argmax 도 우승자 옳음을 증명 못 하고 서술이 숫자와 맞음만 본다. 그래서 폭 강제(B1)가 먼저, 병합 소유(본 릴리스)가 다음. 두 절반이 사용자 논지를 완성한다.
+
+### 정직한 한계
+
+본 게이트는 "선언 winner 가 선언 sub-score 의 argmax 다 + 승격이 기계적이다"를 증명하지 *계획 품질*을 증명하지 않는다 — sub-score 는 LLM 판단이고 모델은 자기 선호 universe 가 이기는 *일관된* 위조를 만들 수 있다(본 체크가 재심사 안 함). 그 압력은 `plan.tournament_independence` shadow 변량·zero-context shadow grading·monotonicity 가 좁힌다(B1/review.context_minimality 와 같은 전제). 머지 내용 파생은 digest 로 증명 불가. 후속: winner sub-score convex hull(winner_sub_scores frontmatter) 검사.
+
+### 검증
+
+전체 scoring 스위트 **`539 passed`**(신규 producer 15 + C-TWA guard-bite 1 포함), self_lint **122/122 all_ok**(C-TWA 추가). 버전 SKILL.md + plugin.json = 0.9.57.
+
 ## v0.9.56 — 2026-07-12 (sprint-54 — 멀티버스 fan-out 폭 강제 primitive: 폭을 코드가 소유)
 
 ### 마일스톤
