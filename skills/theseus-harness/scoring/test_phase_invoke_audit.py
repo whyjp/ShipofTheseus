@@ -20,10 +20,9 @@ ORCH_SAMPLE_FULL_DECLARED = """# theseus-orchestrator
 python skills/theseus-harness/scoring/dacapo_threshold.py --tournament-md ...
 \\`\\`\\`
 
-## HARD-RULE 9.ss
+## HARD-RULE 9.tt
 
 \\`\\`\\`bash
-python skills/theseus-harness/scoring/sprint_loop_cap.py ...
 python skills/theseus-harness/scoring/runtime_guard_chain.py ...
 \\`\\`\\`
 """
@@ -44,7 +43,7 @@ class TestExtractDeclared(unittest.TestCase):
         self.assertTrue(info['present'])
         self.assertEqual(
             sorted(info['declared_clis']),
-            sorted(['dacapo_threshold', 'runtime_guard_chain', 'sprint_loop_cap']),
+            sorted(['dacapo_threshold', 'runtime_guard_chain']),
         )
 
     def test_orchestrator_missing(self):
@@ -71,11 +70,12 @@ class TestCheckInvocationTrace(unittest.TestCase):
         result = check_invocation_trace(self.root, 'runtime_guard_chain')
         self.assertFalse(result['invoked'])
 
-    def test_sprint_loop_cap_glob(self):
-        p = self.root / 'sprints' / '03' / 'sprint_loop_cap.json'
+    def test_stagnation_breakthrough_glob(self):
+        # glob 브랜치 (sprints/*/...) 커버리지 — CLI_TRACE_PATHS 의 glob-매핑 CLI 로 검증.
+        p = self.root / 'sprints' / '03' / 'gate_stagnation_breakthrough.json'
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(json.dumps({'verdict': 'stop', 'evaluated_at': '2026-05-10T10:00:00Z'}), encoding='utf-8')
-        result = check_invocation_trace(self.root, 'sprint_loop_cap')
+        p.write_text(json.dumps({'verdict': 'pass', 'evaluated_at': '2026-05-10T10:00:00Z'}), encoding='utf-8')
+        result = check_invocation_trace(self.root, 'stagnation_breakthrough')
         self.assertTrue(result['invoked'])
 
 
@@ -95,14 +95,13 @@ class TestEvaluate(unittest.TestCase):
         self.orch.write_text(ORCH_SAMPLE_FULL_DECLARED, encoding='utf-8')
         verdict = evaluate(self.orch, self.proj)
         self.assertEqual(verdict['verdict'], 'fail')
-        self.assertEqual(len(verdict['not_invoked']), 3)
+        self.assertEqual(len(verdict['not_invoked']), 2)
 
     def test_all_invoked_passes(self):
         self.orch.write_text(ORCH_SAMPLE_FULL_DECLARED, encoding='utf-8')
-        # 3 CLI 의 trace 모두 박음
+        # 2 CLI 의 trace 모두 박음
         traces = [
             ('plan/dacapo_threshold.json', {'verdict': 'pass'}),
-            ('sprints/03/sprint_loop_cap.json', {'verdict': 'stop'}),
             ('quality/gate_runtime_guard_chain.json', {'verdict': 'pass'}),
         ]
         for rel, content in traces:

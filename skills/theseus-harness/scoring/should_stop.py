@@ -7,11 +7,11 @@ boolean 으로 합성한다:
     stop = gate(meta_audit verdict pass) AND no_regression AND (plateau OR budget ≥ hard_cap)
 
 기존 갭(하네스 리뷰 P1): stop_policy 는 manifest 에 *선언* 됐으나 이 합성식을 평가하는 코드
-진입점이 없었다 — `manifest.stop_policy()` 는 dict 만 반환하고, `sprint_loop_cap.py` 는 다른
-옛 4-layer 공식(보고모드)이라 manifest 권위를 소비하지 않으며, 합성 AND 는 오케스트레이터
-(LLM)가 세 산출물을 읽어 머릿속으로 조립했다. 본 모듈이 그 합성을 코드로 소유해, phase 09
-게이트(meta_audit)와 *같은 커널 권위* 로 루프 제어 흐름을 돌린다(다이나믹 워크플로우의
-코드기반 조건 검사).
+진입점이 없었다 — `manifest.stop_policy()` 는 dict 만 반환했고, 구 4-layer 보고모드 종료-조건
+CLI(C1 에서 폐기)는 manifest 권위를 소비하지 않았으며, 합성 AND 는 오케스트레이터(LLM)가 세
+산출물을 읽어 머릿속으로 조립했다. 본 모듈이 그 합성을 코드로 소유해 *루프 정지의 유일 권위*
+가 됐고(폐기된 옛 CLI 를 대체), phase 09 게이트(meta_audit)와 *같은 커널 권위* 로 루프 제어
+흐름을 돌린다(다이나믹 워크플로우의 코드기반 조건 검사).
 
 producer/kernel 분리 유지: 값을 만들지 않는다. 이미 산출된 gate_meta_audit.json(verdict +
 sprint.regression 결과) + sprint score 시계열 + budget 사용률 + manifest stop_policy 를 읽어

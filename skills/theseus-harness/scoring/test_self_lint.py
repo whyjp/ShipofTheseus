@@ -90,6 +90,30 @@ def test_review_and_should_stop_wiring_guards_bite(tmp_path):
     assert self_lint.check_should_stop_wired(real) == []
 
 
+def test_should_stop_single_authority_resurrection_guard_bites(tmp_path):
+    """C-SSW C1 부활 가드 — 폐기된 4-layer 종료-조건 CLI 가 정지 배선 지점에 재등장하면 FAIL.
+
+    should_stop.py 는 배선돼 있으나(정지 배선 통과) 폐기 CLI 토큰이 phases/10 에 부활한 상태 →
+    부활 가드가 issue 를 반환해야 한다. 리터럴 토큰은 소스에 담지 않으려 문자열 합성(grep-zero 정합).
+    """
+    import self_lint
+
+    dead = "sprint_loop" + "_cap"
+    (tmp_path / "phases").mkdir()
+    # should_stop.py 배선은 존재(정지 배선 통과) + 폐기 CLI 부활 → 부활 가드만 격리 발동.
+    (tmp_path / "phases" / "10-test-loop.md").write_text(
+        f"정지 결정은 should_stop.py 단일 권위.\npython .../{dead}.py --project-root ...\n",
+        encoding="utf-8",
+    )
+
+    issues = self_lint.check_should_stop_wired(tmp_path)
+    assert any(dead in i for i in issues), issues
+
+    # 실 저장소(폐기 완료 — 두 배선 지점에 부재) → 통과(빈 리스트).
+    real = Path(self_lint.__file__).resolve().parents[1]
+    assert self_lint.check_should_stop_wired(real) == []
+
+
 def test_multiverse_width_wiring_guard_bites(tmp_path):
     """C-MFW (B1 v0.9.56) 가 배선 누락 시 실제로 FAIL 하는지 — 무장 폭 게이트 미급식 차단.
 

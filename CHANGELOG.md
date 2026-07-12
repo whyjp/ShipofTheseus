@@ -2,6 +2,27 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.60 — 2026-07-12 (sprint-58 — C1: 옛 sprint_loop_cap 폐기, 단일 정지 권위 확정)
+
+### 마일스톤
+
+정리(C1). v0.9.54(P1)에서 `should_stop.py`(manifest `stop_policy` 합성 = `gate ∧ no_regression ∧ (plateau ∨ budget)`)가 단일 정지 권위가 됐고, `sprint_loop_cap`(옛 4-layer 종료-조건 CLI)은 report-mode 로 강등됐다. C1 이 그 폐기를 완결한다 — 이중 권위·dead code 제거.
+
+### 설계 (Fable): (a) 전체 제거, 원자적
+
+`sprint_loop_cap` 은 report-mode default 라 항상 exit 0(비게이팅), 어떤 convention/self_lint 도 그것을 강제하지 않으며, 유일한 아티팩트 소비자는 "그 아티팩트가 존재하는가"를 보는 audit 뿐 — shim(b)/report-only(c)로 남기면 하네스가 금하는 dead-code·이중 권위를 보존한다. **능력 파리티 0 손실**: Auto/Internal→`gate_pass`(meta_audit), Tournament→`dacapo_threshold`(phase 06/08 별도 유지), External 절대점수 게이팅은 B2 에서 이미 폐지, max-iter→`budget_hard_cap`. 리포트 JSON 은 genuinely dead.
+
+### 변경 (opus 서브에이전트 구현, 메인 루프 검수)
+
+- **삭제**: `scoring/sprint_loop_cap.py`, `scoring/test_sprint_loop_cap.py`.
+- **원자적 배선 제거**(부분 제거 시 phase-10 exit/invoke-audit 파손): `scoring/runtime_guard_chain.py`(phase-10 exit hook → `return None`), `scoring/phase_invoke_audit.py`(CLI_TRACE_PATHS 항목), `skills/theseus-orchestrator/SKILL.md`(HARD-RULE 9.ss 선언 → should_stop 포인터, 9.tt 정정), `phases/10-test-loop.md`(sprint_loop_cap 블록 삭제, should_stop·stagnation 블록 유지), `scoring/should_stop.py`(docstring).
+- **부활 가드**: `self_lint.py` **C-SSW 확장** — phases/10 ∪ orchestrator SKILL.md 에 폐기 CLI 재등장 시 FAIL(리터럴 토큰은 `"sprint_loop"+"_cap"` 문자열 합성으로 소스 grep-zero 유지, C35식 메타-회피) + guard-bite test.
+- `test_phase_invoke_audit.py` 정정(declared 목록·not_invoked 카운트·glob 커버리지를 stagnation_breakthrough 로 이관).
+
+### 검증
+
+전체 scoring 스위트 **`554 passed`**(test_sprint_loop_cap 삭제 반영), self_lint **124/124 all_ok**(C-SSW 부활 가드 확장). `sprint_loop_cap` 소스 grep-zero(stale .pyc 만 잔존, gitignore). 버전 SKILL.md + plugin.json = 0.9.60.
+
 ## v0.9.59 — 2026-07-12 (sprint-57 — winner sub-score convex hull: 병합 게이트에 산술 그립)
 
 ### 마일스톤

@@ -1549,9 +1549,12 @@ def check_review_dispatch_log_wired(skill_root: Path) -> list[str]:
 
 
 def check_should_stop_wired(skill_root: Path) -> list[str]:
-    """C-SSW (v0.9.54 P1-A) — 루프 정지 판정(should_stop.py) 배선 (declared=invoked).
+    """C-SSW (v0.9.54 P1-A + C1 single-authority) — 루프 정지 판정(should_stop.py) 배선
+    (declared=invoked) + 폐기된 옛 4-layer 종료-조건 CLI 부활 방지.
 
-    루프 정지 권위(manifest stop_policy 합성)가 phase 10 흐름에서 실제 호출되는지 검증.
+    (1) 루프 정지 권위(manifest stop_policy 합성)가 phase 10 흐름에서 실제 호출되는지 검증.
+    (2) C1 에서 폐기한 옛 4-layer 종료-조건 CLI 가 두 정지 배선 지점(phases/10-test-loop.md ∪
+        theseus-orchestrator/SKILL.md)에 재등장하지 않았는지 *단일-권위 부활 가드*.
     """
     issues: list[str] = []
     p10 = _read(skill_root / "phases" / "10-test-loop.md")
@@ -1560,6 +1563,19 @@ def check_should_stop_wired(skill_root: Path) -> list[str]:
             "phases/10-test-loop.md: 'should_stop.py' 정지 판정 CLI 호출 누락 "
             "(루프 정지 권위 미배선 — manifest stop_policy 합성이 페이즈 흐름에서 안 불림)"
         )
+    # C1 단일-권위 부활 가드 — 폐기 CLI 토큰이 정지 배선 지점에 재등장하면 FAIL.
+    # (리터럴 토큰을 소스에 담지 않으려 문자열 합성 — 저장소 grep-zero 정합, C35 메타-회피와 동일 패턴)
+    dead_cli = "sprint_loop" + "_cap"
+    orch_skill = skill_root.parent / "theseus-orchestrator" / "SKILL.md"
+    for label, path in (
+        ("phases/10-test-loop.md", skill_root / "phases" / "10-test-loop.md"),
+        ("theseus-orchestrator/SKILL.md", orch_skill),
+    ):
+        if path.exists() and dead_cli in _read(path):
+            issues.append(
+                f"{label}: 폐기된 '{dead_cli}' 재등장 — C1 단일 정지 권위(should_stop.py) 위반 "
+                "(부활 가드 — 두 정지 배선 지점에 옛 4-layer 종료-조건 CLI 금지)"
+            )
     return issues
 
 
@@ -3192,7 +3208,7 @@ CHECKS: list[tuple[str, str, callable]] = [
     ("C-UNIV-CREATED-AT", "phases/06-plan.md (sprint-52 PR-D, HARD-RULE 9.ooo) — universe candidate frontmatter created_at 의무 + 정시 stub 차단", check_univ_created_at),
     ("C-LFW", "phases/14-handoff.md (sprint-52 PR-C, HARD-RULE 9.nnn/9.ppp) — lineage_finalize.py refresh + placeholder_grep --include-viewer-json literal Bash invoke", check_lineage_finalize_wired),
     ("C-RDL", "phases/03 + intra-phase-dacapo-loop.md (v0.9.54 P1-A) — review_dispatch_log emit 배선 (review.context_minimality 먹이기, declared=invoked)", check_review_dispatch_log_wired),
-    ("C-SSW", "phases/10 (v0.9.54 P1-A) — should_stop.py 정지 판정 배선 (manifest stop_policy 단일 권위 호출)", check_should_stop_wired),
+    ("C-SSW", "phases/10 (v0.9.54 P1-A + C1) — should_stop.py 정지 판정 배선 (manifest stop_policy 단일 권위 호출) + 폐기 4-layer CLI 부활 가드 (phases/10 ∪ orchestrator SKILL.md)", check_should_stop_wired),
     ("C-MFW", "scoring/run_gate.py (B1 v0.9.56) — measure_multiverse_width producer 배선 (multiverse.fan_out_width 폭 강제 게이트 먹이기, declared=invoked)", check_multiverse_width_wired),
     ("C-TWA", "scoring/run_gate.py (merge-ownership v0.9.57) — measure_tournament_argmax producer 배선 (plan.tournament_winner_argmax 병합 소유 게이트 먹이기, declared=invoked)", check_tournament_argmax_wired),
     ("C-RPD", "scoring/run_gate.py (B2 regression-parallel-diagnosis) — measure_regression_diagnosis producer 배선 (regression.parallel_diagnosis 진단 병렬화 게이트 먹이기, declared=invoked)", check_regression_diagnosis_wired),

@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.59
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.59 = plan.tournament_winner_argmax 확장 — winner_score 가 자기 sub-scores convex hull 안인지 weight-free 강제(Σ-단순합산/위조 탐지). v0.9.58 = 회귀 진단 병렬.
+version: 0.9.60
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.60 = 옛 sprint_loop_cap 폐기(전체 제거) — should_stop 단일 정지 권위 확정 + C-SSW 부활 가드. v0.9.59 = winner sub-score hull.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

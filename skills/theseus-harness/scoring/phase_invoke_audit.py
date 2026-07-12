@@ -49,7 +49,6 @@ CLI_TRACE_PATHS = {
         'plan/dacapo_threshold.json',
         'impl/dacapo_threshold.json',
     ],
-    'sprint_loop_cap': ['sprints/*/sprint_loop_cap.json'],  # glob
     'runtime_guard_chain': ['quality/gate_runtime_guard_chain.json'],
     'cross_phase_context_audit': ['quality/gate_cross_phase_context.json'],
     'universe_count_monotonicity': ['quality/gate_universe_monotonicity.json'],
