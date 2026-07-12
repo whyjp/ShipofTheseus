@@ -1,0 +1,36 @@
+{
+  "check_id": "plan.tournament_winner_argmax",
+  "phase": "06",
+  "grades": ["G3", "G4", "G5"],
+  "status": "active",
+  "producer": {
+    "cmd_pattern": "^python .*measure_tournament_argmax\\.py",
+    "must_exit_zero": true
+  },
+  "provenance_required": ["winner_in_table", "winner_argmax_match", "universes_scored", "malformed_rows", "scores_out_of_range", "winner_row_delta", "canonical_exists", "winner_dir_exists", "promotion_policy_copy", "canonical_digest_match", "merge_sources_include_winner", "score_margin"],
+  "assertions": [
+    {
+      "expr": "winner_in_table == 1 and winner_argmax_match == 1",
+      "on_fail": "winner_in_table==0(선언 winner_id 가 채점 표에 없음) 또는 winner_argmax_match==0(선언 winner 총점 < 전 universe 최대 총점) — 병합 소유 위반: 모델이 argmax 가 아닌 universe 를 winner 로 선언(선택을 코드가 소유하지 못함). 동률은 통과(argmax_tie_count 로 보고)."
+    },
+    {
+      "expr": "universes_scored >= 2 and malformed_rows == 0",
+      "on_fail": "universes_scored < 2(1-universe tournament 는 무의미 — 폭은 multiverse.fan_out_width 소관) 또는 malformed_rows > 0(universe- 행이 총점 미파싱 = 채점 안 된 universe, 무결성 위반)."
+    },
+    {
+      "expr": "scores_out_of_range == 0",
+      "on_fail": "scores_out_of_range > 0 — universe 총점이 [0,1] 밖(1-5 coarse 채점 등, plan-tournament-scoring-strict 연속 0.0-1.0 의무 위반 — coarse 는 dacapo Step D 산술 무력화)."
+    },
+    {
+      "expr": "winner_row_delta <= 0.005",
+      "on_fail": "winner_row_delta > 0.005 — frontmatter winner_score 가 winner 자신의 표 행 총점과 불일치(서술이 숫자와 안 맞음). winner_id/winner_score 부재 시에도 발동."
+    },
+    {
+      "expr": "canonical_exists == 1 and winner_dir_exists == 1 and (promotion_policy_copy == 0 or canonical_digest_match == 1) and (promotion_policy_copy == 1 or merge_sources_include_winner == 1)",
+      "on_fail": "승격 무결성 위반: canonical_exists/winner_dir_exists==0(plan/06-plan.md 또는 winner 후보 부재), 또는 copy 인데 canonical_digest_match==0(승격된 canonical 이 winner 아티팩트와 byte-불일치 = 조용한 재작성), 또는 merge 인데 merge_sources_include_winner==0(선언 머지가 winner 를 base 로 안 함). promotion_policy 미기재 → copy 기본(digest 매칭 의무)."
+    }
+  ],
+  "value": "score_margin",
+  "absence_policy": "FAIL",
+  "_dimension_note": "멀티버스 tournament 의 *병합/승자 선택*을 모델재량이 아니라 코드가 소유하는 조건으로 만든다(다이나믹 워크플로우 코드기반 조건 — B1 폭 강제의 짝, '폭 강제 + 병합을 코드로 소유'). winner_argmax_match 는 producer 가 디스크 tournament 본문 표의 universe 별 총점을 다시 파싱해 argmax 를 재계산한 값(상상값 주입 0). weight-free: 총점(표 weighted 열)의 argmax 는 가중치 불필요 — 컨벤션에 6-dim 스키마가 둘 충돌(plan-tournament-scoring-strict vs intra-phase-dacapo-loop)하므로 가중치를 재계산하지 않는다. 승격 정책: competition.md 는 Δ<0.05/0.02 시 머지 승격을 허용하므로 canonical==winner byte-동일이 정당하지 않은 경로가 있다 → frontmatter promotion_policy(copy|merge)+merge_sources 를 읽는다(미기재→copy 기본: copy 는 의사코드 계약, merge 는 선언 의무 예외). applicability 없음 — tournament 미발생 시 evidence 부재 → absence_policy FAIL(비휴면; G2 는 tournament 없음이라 체크 맵 제외). 정직 고지: 본 게이트는 선언 winner 가 선언 sub-score 의 argmax 임 + 승격이 기계적임을 증명하지 계획 품질을 증명하지 않는다(sub-score 는 LLM 판단 — 일관된 위조 가능, 본 체크가 재심사 안 함). 위조 압력은 plan.tournament_independence shadow 변량·zero-context shadow grading·monotonicity 가 좁힌다(review.context_minimality/multiverse.fan_out_width 와 같은 전제). 후속: winner sub-score hull(winner_sub_scores frontmatter 로 convex 검사)·머지 내용 파생 검증."
+}
