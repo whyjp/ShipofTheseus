@@ -1,7 +1,7 @@
 ---
 name: theseus-harness
-version: 0.9.58
-description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.58 = regression.parallel_diagnosis — 회귀 검출 후 진단이 corroborated 병렬 회의론자 판단임을 커널이 강제(회귀 병렬 소유). v0.9.57 = 병합 소유(tournament argmax).
+version: 0.9.59
+description: 재귀 멀티 에이전트 코딩 하네스. 16 페이즈 / 18 에이전트. v0.9.59 = plan.tournament_winner_argmax 확장 — winner_score 가 자기 sub-scores convex hull 안인지 weight-free 강제(Σ-단순합산/위조 탐지). v0.9.58 = 회귀 진단 병렬.
 ---
 
 # theseus-harness — 콘텐츠 source of truth (인덱스)

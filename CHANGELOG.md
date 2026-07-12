@@ -2,6 +2,30 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.59 — 2026-07-12 (sprint-57 — winner sub-score convex hull: 병합 게이트에 산술 그립)
+
+### 마일스톤
+
+merge-ownership(v0.9.57)이 큐잉한 후속 착지. `plan.tournament_winner_argmax` 를 *확장*해(신규 체크 아님) frontmatter sub-score 에 커널의 *첫 산술 그립*을 준다: winner 의 `winner_score` 는 자기 `winner_sub_scores` 의 convex hull `[min, max]` 안이어야 한다 — 어떤 가중 평균도 sub-score 범위 밖 값을 못 내므로, 밖이면 위조/Σ-단순합산(`plan-tournament-scoring-strict` reject #2)이다. **weight-free**: 두 6-dim 스키마가 충돌하므로 가중합을 재계산하지 않고 하한만 검증.
+
+### 설계 (Fable): EXTEND, not new check
+
+같은 tournament 아티팩트·producer·phase/grade → 기존 체크에 measured 1블록 + assertion 1개. `winner_sub_scores` 는 nested frontmatter 블록이라(기존 `_parse_frontmatter` 는 최상위만) 별도 `_parse_winner_sub_scores` 로 파싱(들여쓰기 소비 + 인라인 주석 제거). **부재/미파싱(subset) 시 hull_delta 0.0 관용** — `winner_sub_scores` 는 REQUIRED_TOURNAMENT 아님이라 기존 15 테스트(모두 sub-score 없음)가 무회귀로 통과.
+
+### 변경
+
+- `producers/measure_tournament_argmax.py` — `_parse_winner_sub_scores` + hull 계산; measured `winner_subscores_count`(정보)·`winner_subscore_hull_delta`(asserted).
+- `checks/plan.tournament_winner_argmax.json` — provenance 2키 + assertion `winner_subscore_hull_delta <= 0.005`(eps=winner_row_delta 정합) + `_dimension_note` 갱신. **producer 와 동일 커밋 필수**(테스트가 실 checkspec 로드 → safe_eval 이 measured 이름 누락 시 hard error).
+- `test_measure_tournament_argmax.py` — 4 신규(hull 위반 FAIL·범위내 PASS·부재 기본 PASS 가드·미파싱 관용 PASS). manifest/self_lint 무변경(동일 check id).
+
+### 정직한 한계
+
+winner_score 가 자기 sub-scores 의 *가능한 가중 평균*임(필요조건)을 증명하지 정확성·가중치 정합을 증명하지 않는다 — sub-score 자체는 LLM 판단(일관된 위조는 hull 을 통과, plan.tournament_independence shadow 변량이 좁힘).
+
+### 검증
+
+전체 scoring 스위트 **`559 passed`**(신규 hull 4), self_lint 124/124(무변경). 버전 SKILL.md + plugin.json = 0.9.59.
+
 ## v0.9.58 — 2026-07-12 (sprint-56 — 회귀 진단 병렬화: 진단을 코드가 소유)
 
 ### 마일스톤

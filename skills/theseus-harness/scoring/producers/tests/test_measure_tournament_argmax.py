@@ -49,13 +49,16 @@ def _row(lbl, tot) -> str:
 
 
 def _tournament(plan_dir: Path, winner_id, winner_score, rows,
-                policy=None, merge_sources=None, name="tournament-00.md") -> None:
+                policy=None, merge_sources=None, sub_scores=None, name="tournament-00.md") -> None:
     fm = ["---", "phase: 06-tournament",
           f"winner_id: {winner_id}", f"winner_score: {winner_score}"]
     if policy is not None:
         fm.append(f"promotion_policy: {policy}")
     if merge_sources is not None:
         fm.append(f"merge_sources: [{', '.join(merge_sources)}]")
+    if sub_scores is not None:
+        fm.append("winner_sub_scores:")
+        fm += [f"  dim_{i}: {sv}" for i, sv in enumerate(sub_scores)]
     fm.append("---")
     body = ["", "| Universe | feasibility | weighted |", "| --- | --- | --- |"]
     body += [_row(lbl, tot) for lbl, tot in rows]
@@ -313,3 +316,60 @@ def test_cli_subprocess_matches_pattern_and_deterministic(tmp_path):
     assert re.search(_spec().producer.cmd_pattern, ev.producer_cmd)
     rel = ev.measured["winner_argmax_match"]["artifact_path"]
     assert evidence_mod.sha256_of_file(run_root / rel) == ev.artifact_digests[rel]
+
+
+def test_hull_violation_fails(tmp_path):
+    """winner_score(0.99)가 자기 sub-scores [0.72,0.95] convex hull 밖 → FAIL(Σ-단순합산/위조)."""
+    run_root = tmp_path / "run"
+    plan = run_root / "plan"
+    _tournament(plan, "universe-1", "0.99",
+                [("universe-1", "0.99"), ("universe-2", "0.80")], policy="copy",
+                sub_scores=["0.85", "0.72", "0.95"])
+    _promote(plan, "universe-1")
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["winner_subscore_hull_delta"]["value"] > 0.005
+    v = _verify(run_root)
+    assert v.result == "FAIL"
+    assert any("winner_subscore_hull_delta" in r for r in v.reasons)
+
+
+def test_hull_in_range_passes(tmp_path):
+    """winner_score(0.892)가 sub-scores [0.72,0.95] 안 → PASS."""
+    run_root = tmp_path / "run"
+    plan = run_root / "plan"
+    _tournament(plan, "universe-1", "0.892",
+                [("universe-1", "0.892"), ("universe-2", "0.80")], policy="copy",
+                sub_scores=["0.85", "0.72", "0.95"])
+    _promote(plan, "universe-1")
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["winner_subscores_count"]["value"] == 3
+    assert ev.measured["winner_subscore_hull_delta"]["value"] == 0.0
+    assert _verify(run_root).result == "PASS", _verify(run_root).reasons
+
+
+def test_absent_subscores_default_passes(tmp_path):
+    """winner_sub_scores 부재 → count 0, delta 0.0(관용) → PASS(기존 run 무회귀 가드)."""
+    run_root = tmp_path / "run"
+    _clean(run_root)   # sub_scores 없음
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["winner_subscores_count"]["value"] == 0
+    assert ev.measured["winner_subscore_hull_delta"]["value"] == 0.0
+    assert _verify(run_root).result == "PASS"
+
+
+def test_malformed_subscore_is_tolerant(tmp_path):
+    """sub-score 하나가 미파싱(n/a) → subset hull 위험이라 delta 0.0(관용) → PASS."""
+    run_root = tmp_path / "run"
+    plan = run_root / "plan"
+    _tournament(plan, "universe-1", "0.99",
+                [("universe-1", "0.99"), ("universe-2", "0.80")], policy="copy",
+                sub_scores=["n/a", "0.72", "0.95"])
+    _promote(plan, "universe-1")
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["winner_subscores_count"]["value"] == 2   # n/a 제외
+    assert ev.measured["winner_subscore_hull_delta"]["value"] == 0.0   # subset → 관용
+    assert _verify(run_root).result == "PASS"
