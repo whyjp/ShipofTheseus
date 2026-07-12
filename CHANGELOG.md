@@ -2,6 +2,32 @@
 
 본 저장소의 의미 있는 변경만 기록 — 메모리 `feedback_version_conservatism.md` (1.0 임박, 의미 있는 마일스톤만 발행) 정합. **사용자 원칙 (sprint-20+): 스킬 / 컨벤션 본문은 *현재* 활성 룰만 — sprint/version history 는 본 CHANGELOG 단일 위치.**
 
+## v0.9.61 — 2026-07-12 (sprint-59 — suspect grounding: 회귀 진단에 실관측 diff 그립)
+
+### 마일스톤
+
+B2(`regression.parallel_diagnosis`)가 `_dimension_note` 에 큐잉한 후속. 회귀 진단의 impl_defect 파일 suspect 가 회귀 게이트의 *실제 관측된* 변경 파일에 실재하는지 커널이 강제한다 — 조작된 suspect 파일명 차단.
+
+### 설계 (Fable): GO-WEAKER-FORM
+
+full "diff-line 실재 검증"은 **휴면 확정** — producer 는 git 컨텍스트가 없고(`_regression_diagnosis_producer` 는 `--grade/--out-dir` 만), 회귀 유발 commit 의 per-line diff 는 run_root 어디에도 materialize 안 됨. 하지만 비휴면 앵커 존재: `measure_scope_map` 이 evidence 에 쓴 `gate.scope_map.report.json`(실관측 touched 파일 셋)이 `_archive_gate_history` 로 `state/gate_history/<NN>/evidence/` 에 **NN-고정** 복사되고, bisect 가 그 NN(`gate_history_ref`)에 바인딩된다. → suspect 를 그 셋에 grounding. suspect-distinctness(c)는 기각(evidence-axis skeptic 이 같은 실 파일에 수렴하는 게 좋은 진단의 signature — distinct 강제는 최선 run 을 false-fail).
+
+### 변경 (기존 체크 확장, 메인 루프 구현)
+
+- `producers/measure_regression_diagnosis.py` — `_load_touched_paths`(NN-고정 scope_map 리포트) + `_norm_suspect_path`(경로형·라인접미사·SHA 판별) + `_suspect_grounding`; measured `suspect_anchor_present`·`file_suspect_count`·`grounded_file_suspects`.
+- `checks/regression.parallel_diagnosis.json` — provenance 3키 + assertion `suspect_anchor_present == 0 or file_suspect_count == 0 or grounded_file_suspects >= 1`(class-conditional·앵커 부재 exempt) + `_dimension_note`. **producer 와 동일 커밋**(safe_eval 이름 누락 hard error).
+- `test_measure_regression_diagnosis.py` — 4 신규(grounded PASS·조작 FAIL·앵커부재 exempt·SHA suspect exempt).
+
+run_gate/manifest/self_lint **무변경**(동일 check id).
+
+### 정직한 한계
+
+impl 파일 suspect 가 하네스가 *실제 관측한* 변경 셋에 grounded 임을 증명하지(조작 파일명 차단) line-level 실재나 suspect *정확성*을 증명하지 않는다(어떤 touched 파일이든 고를 수 있음 — grounding ≠ truth). commit-SHA suspect 는 git 컨텍스트 부재라 exempt. 앵커 부재(빈 diff/scope_map 미아카이브)는 `suspect_anchor_present==0` 로 *가시적* exempt(침묵 skip 아님). 후속: per-line diff NN-아카이브 시 line 검증.
+
+### 검증
+
+전체 scoring 스위트 **`558 passed`**(신규 suspect-grounding 4), self_lint 124/124(무변경). 버전 SKILL.md + plugin.json = 0.9.61.
+
 ## v0.9.60 — 2026-07-12 (sprint-58 — C1: 옛 sprint_loop_cap 폐기, 단일 정지 권위 확정)
 
 ### 마일스톤

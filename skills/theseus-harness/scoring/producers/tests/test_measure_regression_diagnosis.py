@@ -94,13 +94,14 @@ def _write_bisect(run_root: Path, sprint: str, *, gate_history_ref: str, prior: 
 
 
 def _write_hypothesis(sprint_dir: Path, k: int, *, agent_call_id: str, defect_class: str,
-                      alternative_class: str = "impl_defect", omit: tuple[str, ...] = ()) -> None:
+                      alternative_class: str = "impl_defect", suspect: str = "internal/auth/token.py:42",
+                      omit: tuple[str, ...] = ()) -> None:
     hdir = sprint_dir / "hypotheses"
     hdir.mkdir(parents=True, exist_ok=True)
     data = {
         "agent_call_id": agent_call_id,
         "defect_class": defect_class,
-        "suspect_file_or_commit": "internal/auth/token.py:42",
+        "suspect_file_or_commit": suspect,
         "failing_test": "tests/test_auth.py::test_expired",
         "alternative_class": alternative_class,
         "alternative_reason": "diff 에 fixture 변경 없음 — 덜 가능성",
@@ -108,6 +109,20 @@ def _write_hypothesis(sprint_dir: Path, k: int, *, agent_call_id: str, defect_cl
     for key in omit:
         data.pop(key, None)
     (hdir / f"hypothesis-{k}.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+
+
+def _write_scope_map(run_root: Path, idx: str, paths: list[str]) -> None:
+    """gate_history/<idx>/evidence/gate.scope_map.report.json — 회귀 게이트 실관측 touched 셋(앵커)."""
+    ev_dir = run_root / "state" / "gate_history" / idx / "evidence"
+    ev_dir.mkdir(parents=True, exist_ok=True)
+    report = {
+        "git_base": "HEAD",
+        "files_touched_observed": len(paths),
+        "files": [{"path": p, "matched_todos": []} for p in paths],
+    }
+    (ev_dir / "gate.scope_map.report.json").write_text(
+        json.dumps(report, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def _clean(run_root: Path) -> None:
@@ -379,3 +394,62 @@ def test_regression_threshold_matches_sprint_regression_checkspec():
     m = re.search(r"-\d+\.\d+", expr)
     assert m is not None, expr
     assert float(m.group(0)) == producer.REGRESSION_SCORE_DELTA_THRESHOLD
+
+
+# --- suspect grounding (v0.9.61) ----------------------------------------------
+
+
+def test_suspect_grounded_passes(tmp_path):
+    """impl 파일 suspect 가 회귀 게이트 실관측 touched 셋에 실재 → grounded ≥ 1 → PASS."""
+    run_root = tmp_path / "run"
+    _clean(run_root)   # impl hyp suspect = internal/auth/token.py:42
+    _write_scope_map(run_root, "00", ["internal/auth/token.py", "internal/auth/session.py"])
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["suspect_anchor_present"]["value"] == 1
+    assert ev.measured["file_suspect_count"]["value"] == 1     # impl_defect 만(plan 2 제외)
+    assert ev.measured["grounded_file_suspects"]["value"] == 1
+    assert _verify(run_root).result == "PASS", _verify(run_root).reasons
+
+
+def test_fabricated_suspect_fails(tmp_path):
+    """앵커 존재 + impl 파일 suspect 가 touched 셋 어디에도 없음 → 조작 → FAIL."""
+    run_root = tmp_path / "run"
+    _clean(run_root)
+    _write_scope_map(run_root, "00", ["src/unrelated.py"])   # suspect 미포함
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["suspect_anchor_present"]["value"] == 1
+    assert ev.measured["file_suspect_count"]["value"] == 1
+    assert ev.measured["grounded_file_suspects"]["value"] == 0
+    v = _verify(run_root)
+    assert v.result == "FAIL"
+    assert any("grounded_file_suspects" in r for r in v.reasons)
+
+
+def test_absent_anchor_exempt_passes(tmp_path):
+    """scope_map 앵커 부재(NN-아카이브 없음/빈 diff) → suspect_anchor_present==0 → exempt PASS."""
+    run_root = tmp_path / "run"
+    _clean(run_root)   # scope_map 안 씀
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["suspect_anchor_present"]["value"] == 0
+    assert _verify(run_root).result == "PASS"
+
+
+def test_sha_suspect_is_exempt(tmp_path):
+    """impl suspect 가 commit SHA(파일 아님) → file_suspect_count 제외 → 앵커 있어도 exempt PASS."""
+    run_root = tmp_path / "run"
+    _write_regression_event(run_root, "00", 0.92, 0.78)
+    sprint = _write_bisect(run_root, "01", gate_history_ref="00", prior=0.92, current=0.78,
+                           regression_class="plan_defect", fix_target_phase="06")
+    _write_hypothesis(sprint, 0, agent_call_id="c-a", defect_class="plan_defect")
+    _write_hypothesis(sprint, 1, agent_call_id="c-b", defect_class="plan_defect")
+    _write_hypothesis(sprint, 2, agent_call_id="c-c", defect_class="impl_defect",
+                      suspect="a1b2c3d4e5f6")   # commit SHA — 파일 suspect 아님
+    _write_scope_map(run_root, "00", ["src/unrelated.py"])
+    _run(run_root)
+    ev = _ev(run_root)
+    assert ev.measured["suspect_anchor_present"]["value"] == 1
+    assert ev.measured["file_suspect_count"]["value"] == 0   # SHA 제외
+    assert _verify(run_root).result == "PASS"
